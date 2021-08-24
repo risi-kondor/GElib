@@ -1,0 +1,28 @@
+include $(ROOTDIR)/options.txt
+
+CNINE_INCLUDES=-I$(CNINE_ROOT)/include -I$(CNINE_ROOT)/include/cmaps \
+-I$(CNINE_ROOT)/objects/scalar -I$(CNINE_ROOT)/objects/tensor \
+-I$(CNINE_ROOT)/objects/tensor_array -I$(CNINE_ROOT)/objects/tensor_array/cell_ops 
+
+GELIB_INCLUDEDIR=$(ROOTDIR)/include
+SO3DIR=$(ROOTDIR)/objects/SO3
+GELIB_CUDADIR=$(ROOTDIR)/cuda
+
+COMBINATORIALDIR=$(ROOTDIR)/objects/combinatorial
+GROUPSDIR=$(ROOTDIR)/objects/groups
+SNDIR=$(ROOTDIR)/objects/Sn
+
+CFLAGS= -std=c++11 -O3 #-ferror-limit=1  
+INCLUDE= -I $(ROOTDIR)/include 
+LIBS= -lstdc++ -lm -lpthread 
+
+MACROS=
+
+ifdef WITH_CUDA
+MACROS+=-D_WITH_CUDA
+endif 
+
+ifdef WITH_CUBLAS
+MACROS+=-D_WITH_CUBLAS
+endif 
+
