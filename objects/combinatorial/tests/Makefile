@@ -1,5 +1,5 @@
 ROOTDIR=../../..
-include $(ROOTDIR)/Makefile.common
+include $(ROOTDIR)/common.txt
 
 INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(COMBINATORIALDIR) -I$(SNDIR) 
 
@@ -17,7 +17,7 @@ CUDA_EXTERNS=
 
 ifdef WITH_CUDA
 INCLUDE+=-I$(CUDA_HOME)/include
-#CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partA_CGproduct.o $(CNINE_ROOT)/cuda/CtensorA_add.o 
+CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partA_CGproduct.o $(CNINE_ROOT)/cuda/CtensorA_add.o 
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
 endif 
 

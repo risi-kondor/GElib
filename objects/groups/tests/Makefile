@@ -1,5 +1,5 @@
 ROOTDIR=../../..
-include $(ROOTDIR)/Makefile.common
+include $(ROOTDIR)/common.txt
 
 INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(GROUPSDIR) 
 

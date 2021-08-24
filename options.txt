@@ -1,6 +1,6 @@
 CC=clang 
 
-CNINE_ROOT=$(ROOTDIR)/../../cnine/v1
+CNINE_ROOT=$(ROOTDIR)/../cnine/
 
 
 # ---- CUDA OPTIONS ----------------------------------
