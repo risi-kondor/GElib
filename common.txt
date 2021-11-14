@@ -1,4 +1,4 @@
-include $(ROOTDIR)/options.txt
+include $(ROOTDIR)/config.txt
 
 CNINE_INCLUDES=-I$(CNINE_ROOT)/include -I$(CNINE_ROOT)/include/cmaps \
 -I$(CNINE_ROOT)/objects/scalar -I$(CNINE_ROOT)/objects/tensor \
