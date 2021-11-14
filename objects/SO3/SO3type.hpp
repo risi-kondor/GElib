@@ -59,6 +59,10 @@ namespace GElib{
     int operator()(const int l) const{
       return (*this)[l];
     }
+    
+    void set(const int l, const int m){
+      (*this)[l]=m;
+    }
 
     bool operator<(const SO3type& x){
       if(x.size()>size()) return true;
@@ -136,13 +140,17 @@ namespace GElib{
 
   public:
 
-    string str() const{
+    string str(const string indent="") const{
       ostringstream oss;
-      oss<<"(";
+      oss<<indent<<"(";
       if(size()>0) for(int i=0; i<size()-1; i++) oss<<(*this)[i]<<",";
       if(size()>0) oss<<(*this)[size()-1];
       oss<<")";
       return oss.str();
+    }
+
+    string repr(const string indent="") const{
+      return indent+"<GElib::SO3type"+str()+">";
     }
 
     friend ostream& operator<<(ostream& stream, const GElib::SO3type& x){

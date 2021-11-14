@@ -1,5 +1,5 @@
-#include "GElib_base.cpp"
-#include "GElibSession.hpp"
+#include "Snob2_base.cpp"
+#include "Snob2_session.hpp"
 #include "SnClasses.hpp"
 
 
@@ -12,7 +12,7 @@ using namespace GElib;
 
 
 int main(int argc, char** argv){
-  GElibSession session;
+  Snob2_session session;
   SnClasses Snclasses;
   cout<<endl;
 
