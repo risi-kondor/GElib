@@ -13,6 +13,8 @@ GElib
 .. include:: intro.rst
 
 .. include:: SO3classes.rst
+.. include:: SO3part.rst
+.. include:: SO3vec.rst
 
 
 Indices and tables
