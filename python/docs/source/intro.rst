@@ -9,41 +9,40 @@ This document provides documentation for GElib's Python interface. Not all featu
 are available through this interface. The documentation of the C++ API can be found in pdf format 
 in the package's ``doc`` directory.
 
-********
+########
 Features
-********
+########
 
 
  
-************
+############
 Installation
-************
+############
 
 Installing GElib requires the following:
 
 #. C++11 or higher
 #. Python
-#. pybind11 
-#. PyTorch (optional)
+#. pybind11 (comes with PyTorch)
 #. cnine (see below) 
-
-pybind11 is probably already installed on your system if PyTorch is installed.
+#. PyTorch (optional)
 
 To install GElib follow these steps:
 
 #. Download the `cnine <https://github.com/risi-kondor/cnine>`_  and 
    `GElib <https://github.com/risi-kondor/GElib>`_ libraries. 
 #. Edit the file ``config.txt`` as necessary, in particular, make sure that ``CNINE_ROOT`` points to the root 
-   of the **cnine** package on your system. 
+   of the *cnine* package on your system. 
 #. Run ``python setup.sty install`` in the ``python`` directory to compile the package and install it on your 
    system.
  
 To use GElib from Python, load the corresponding module the usual way with ``import GElib``. 
-In the following we assume that ``from GElib import *`` has also been called,  
-obviating the need to prefix all GElib classes with ``GElib.``.
+In the following we assume that ``from GElib import *`` has been called,  
+obviating the need to prefix all GElib classes with ``GElib.``. 
+For matrix/tensor functionality the ``cnine`` module must also be loaded. 
 
-************
+############
 Known issues
-************
+############
 
 GPU functionality is temporarily disabled. 
