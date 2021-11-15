@@ -28,6 +28,10 @@ GElib
 
 .. include:: SO3vec.rst
 
+|
+
+.. include:: CGproducts.rst
+
 
 Indices and tables
 ==================
