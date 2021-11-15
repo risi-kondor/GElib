@@ -2,7 +2,7 @@
 SO3part
 *******
 
-An ``SO3part`` objects stores `m` different vectors transforming accoring to the same 
+An ``SO3part`` objects stores `n` different vectors transforming accoring to the same 
 irreducible representation :math:`D^{(\ell)}`. 
 Since :math:`D^{(\ell)}` is a :math:`2\ell\!+\!1` dimensional representation, 
 the vectors can be jointly stored in a matrix :math:`\mathbb{C}^{(2\ell+1)\times n}`.   
@@ -21,6 +21,17 @@ irrep.
  [ (-1.20183,-2.1947) (-0.399454,0.680457) (-0.727057,1.40633) ]
  [ (0.43853,-0.31774) (-0.42954,0.123568) (-2.20967,-0.37048) ]
  [ (-1.22569,0.0266631) (0.73464,0.592888) (0.630166,-0.165017) ]
+
+The order ``l`` and multiplicity ``n`` of an ``SO3part`` is accessed as follows.
+
+.. code-block:: python
+
+ >>> A=SO3part.gaussian(2,3)
+ >>> A.getl()
+ 2
+ >>> A.getn()
+ 3
+ 
 
 =====================
 Access and arithmetic

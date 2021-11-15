@@ -31,3 +31,19 @@ corresponding to :math:`\ell=0,1,2,\ldots,L`.
    [ (0.0431933,-0.391737) ]
    [ (-1.96668,2.69588) ]
    [ (-0.480737,1.6585) ]
+
+
+==============
+GPU operations
+==============
+
+
+Similarly to ``cnine`` tensors, ``SO3part`` objects, ``SO3vec`` objects 
+ can moved back and forth between the host (CPU) and the GPU with the ``to`` method. 
+
+.. code-block:: python
+
+  >>> A=SO3vec.gaussian([2,3,1])
+  >>> B=A.to(1) # Create a copy of A on the first GPU (GPU0)
+  >>> C=B.to(0) # Move B back to the host 
+
