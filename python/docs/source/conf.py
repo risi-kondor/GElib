@@ -29,6 +29,7 @@ author = 'Risi Kondor'
 # ones.
 extensions = ['sphinx.ext.autodoc','sphinx.ext.intersphinx','sphinx.ext.autosummary','sphinx.ext.napoleon',
               'sphinx.ext.imgmath'
+              #,'sphinx_copybutton'
               ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -55,6 +56,11 @@ html_static_path = ['_static']
 intersphinx_mapping = {'https://docs.python.org/': None}
 
 imgmath_image_format = 'svg'
+
+#imgmath_image_format = 'png'
+#imgmath_dvipng_args=['-gamma', '1.5', '-D', '110', '-bg', 'Transparent']
+imgmath_use_preview=True
+
 imgmath_font_size = 14
 
 autodoc_default_options = {

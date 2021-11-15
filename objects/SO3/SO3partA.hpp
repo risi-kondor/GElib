@@ -403,7 +403,7 @@ namespace GElib{
     }
 
     string str(const string indent="") const{
-      return gtensor().str_transp(indent);
+      return gtensor().str(indent); //_transp(indent);
     }
 
    

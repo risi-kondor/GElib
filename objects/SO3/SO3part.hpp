@@ -57,17 +57,23 @@ namespace GElib{
     using GELIB_SO3PART_IMPL::GELIB_SO3PART_IMPL;
 
 
-    static SO3part zero(const int _l, const int _n, const int _nbu=-1){
+    static SO3part zero(const int _l, const int _n){
+      return SO3part(_l,_n,-1,cnine::fill::zero);}
+    static SO3part zero(const int _l, const int _n, const int _nbu){
       return SO3part(_l,_n,_nbu,cnine::fill::zero);}
     static SO3part zero(const int _l, const int _n, const int _nbu, const device& _dev){
       return SO3part(_l,_n,_nbu,cnine::fill::zero,_dev);}
 
-    static SO3part ones(const int _l, const int _n, const int _nbu=-1){
+    static SO3part ones(const int _l, const int _n){
+      return SO3part(_l,_n,-1,cnine::fill::ones);}
+    static SO3part ones(const int _l, const int _n, const int _nbu){
       return SO3part(_l,_n,_nbu,cnine::fill::ones);}
     static SO3part ones(const int _l, const int _n, const int _nbu, const device& _dev){
       return SO3part(_l,_n,_nbu,cnine::fill::ones,_dev);}
 
-    static SO3part gaussian(const int _l, const int _n, const int _nbu=-1){
+    static SO3part gaussian(const int _l, const int _n){
+      return SO3part(_l,_n,-1,cnine::fill::gaussian);}
+    static SO3part gaussian(const int _l, const int _n, const int _nbu){
       return SO3part(_l,_n,_nbu,cnine::fill::gaussian);}
     static SO3part gaussian(const int _l, const int _n, const int _nbu, const device& _dev){
       return SO3part(_l,_n,_nbu,cnine::fill::gaussian,_dev.id());}
@@ -329,6 +335,10 @@ namespace GElib{
 
     string describe() const{
       return "SO3part(l="+to_string(getl())+",n="+to_string(getn())+")";
+    }
+
+    string repr(const string indent="") const{
+      return indent+"GElib::SO3part(l="+to_string(getl())+",n="+to_string(getn())+")";
     }
 
     friend ostream& operator<<(ostream& stream, const SO3part& x){
