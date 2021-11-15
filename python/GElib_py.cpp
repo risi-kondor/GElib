@@ -19,6 +19,7 @@
 
 #include "SO3type.hpp"
 #include "SO3part.hpp"
+#include "SO3vec.hpp"
 
 
 //std::default_random_engine rndGen;

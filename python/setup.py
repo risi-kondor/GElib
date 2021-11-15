@@ -29,7 +29,8 @@ setup(name='GElib',
                                                                '-Wno-reorder',
                                                                ]},
                                  depends=['setup.py',
-                                          'GElib_py.cpp'
+                                          'GElib_py.cpp',
+                                          'SO3vec_py.cpp'
                                           ])], 
       cmdclass={'build_ext': BuildExtension}
       )
