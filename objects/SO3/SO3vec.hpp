@@ -162,7 +162,7 @@ namespace GElib{
     SO3vec(const SO3part& x0, const SO3part& x1, Args...args){
       vector<SO3part*> argv;
       const_parts_unroller_sub(argv, x0, x1, args...);
-      (*this)=std::move(SO3vec(argv,dev));
+      (*this)=std::move(SO3vec(argv,dev)); // problem with this?
     }
 
   private:
@@ -1086,6 +1086,10 @@ namespace GElib{
 	}
       }
       return oss.str();
+    }
+
+    string repr(const string indent="") const{
+      return "<GElib::SO3vec of type"+tau.str()+">";
     }
 
     friend ostream& operator<<(ostream& stream, const SO3vec& x){
