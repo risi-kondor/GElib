@@ -12,6 +12,10 @@ py::class_<SO3vec>(m,"SO3vec",
   .def_static("gaussian",[](const vector<int>& v){
       return SO3vec::gaussian(SO3type(v));})
 
+  .def("__len__",&SO3vec::size)
+  .def("type",&SO3vec::type)
+
+  .def("__getitem__",&SO3vec::get_part)
 
   .def("str",&SO3vec::str,py::arg("indent")="")
   .def("__str__",&SO3vec::str,py::arg("indent")="")

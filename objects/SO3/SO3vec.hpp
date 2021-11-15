@@ -379,6 +379,10 @@ namespace GElib{
       return tau.size(); 
     }
 
+    int size() const{
+      return tau.size(); 
+    }
+
     int get_device() const{
       return dev;
     }

@@ -33,6 +33,35 @@ corresponding to :math:`\ell=0,1,2,\ldots,L`.
    [ (-0.480737,1.6585) ]
 
 
+The type of an SO(3)-vector and the total number of parts can be accessed as follows.
+
+.. code-block:: python
+
+ >>> v.type()
+ <GElib::SO3type(2,3,1)>
+ >>> len(v)
+ 3
+
+===============
+Accessing parts
+===============
+
+Individual parts of the vector can be extracted as follows.
+
+.. code-block:: python
+
+ >>> A=v[1]
+ >>> print(A)
+ [ (1.3828,-0.89237) (0.0523187,-0.228782) (-0.904146,1.16493) ]
+ [ (1.87065,0.584898) (-1.66043,-0.660558) (-0.688081,0.534755) ]
+ [ (0.0757219,-0.607787) (1.47339,0.74589) (0.097221,-1.75177) ]
+
+
+==========
+Arithmetic
+==========
+
+
 ==============
 GPU operations
 ==============
@@ -46,4 +75,5 @@ Similarly to ``cnine`` tensors, ``SO3part`` objects, ``SO3vec`` objects
   >>> A=SO3vec.gaussian([2,3,1])
   >>> B=A.to(1) # Create a copy of A on the first GPU (GPU0)
   >>> C=B.to(0) # Move B back to the host 
+
 
