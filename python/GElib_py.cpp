@@ -107,6 +107,14 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
     .def("__str__",&SO3part::str,py::arg("indent")="")
     .def("__repr__",&SO3part::repr,py::arg("indent")="");
     
+  m.def("inp",[](const SO3part& x, const SO3part& y){return x.inp(y);});
+  //m.def("odot",[](const CtensorObj& x, const CtensorObj& y){return x.odot(y);});
+  m.def("norm2",[](const SO3part& x){return x.norm2();});
+
+  m.def("inp",[](const SO3part& x, const SO3part& y){return x.inp(y);});
+
+  m.def("CGproduct",[](const SO3part& x, const SO3part& y, const int l){return CGproduct(x,y,l);});
+
 
 #include "SO3vec_py.cpp"
 

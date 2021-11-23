@@ -304,6 +304,18 @@ namespace GElib{
       if(fmt==1) vec=new SO3veci(*x.vec,_dev.id());
     }
     
+    /*
+    SO3vec(const SO3vec& x, const int _dev=0):
+      SO3vec(cnine::fill::noalloc,x.tau,x.nbu,x.fmt,_dev){
+      if(fmt==0){
+	for(auto p: x.parts)
+	  if(p) parts.push_back(new SO3part(*p,_dev));
+	  else parts.push_back(nullptr);
+      }
+      if(fmt==1) vec=new SO3veci(*x.vec,_dev);
+    }
+    */
+
     SO3vec(const SO3vec& x, const SO3vec_format& _fmt):
       SO3vec(cnine::fill::noalloc,x.tau,x.nbu,toint(_fmt),x.dev){
       
@@ -333,6 +345,10 @@ namespace GElib{
 
 
     SO3vec to(const device& _dev) const{
+      return SO3vec(*this,_dev);
+    }
+
+    SO3vec to_device(const int _dev) const{
       return SO3vec(*this,_dev);
     }
 
