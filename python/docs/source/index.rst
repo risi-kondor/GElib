@@ -20,17 +20,14 @@ GElib
 
 .. include:: SO3type.rst
 
-|
-
 .. include:: SO3part.rst
-
-|
 
 .. include:: SO3vec.rst
 
-|
+.. include:: SO3partArray.rst
 
-.. include:: CGproducts.rst
+.. include:: SO3vecArray.rst
+
 
 
 Indices and tables
