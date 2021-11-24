@@ -13,9 +13,11 @@ cwd = os.getcwd()
 setup(name='GElib',
       ext_modules=[CppExtension('GElib', ['GElib_py.cpp'],
                                 include_dirs=['../../cnine/include',
+                                              '../../cnine/include/cmaps',
                                               '../../cnine/objects/scalar',
                                               '../../cnine/objects/tensor',
                                               '../../cnine/objects/tensor_array',
+                                              '../../cnine/objects/tensor_array/cell_ops',
                                               cwd+'/../include',
                                               cwd+'/../combinatorial',
                                               cwd+'/../objects/SO3',
@@ -30,7 +32,9 @@ setup(name='GElib',
                                                                ]},
                                  depends=['setup.py',
                                           'GElib_py.cpp',
-                                          'SO3vec_py.cpp'
+                                          'SO3part_py.cpp',
+                                          'SO3vec_py.cpp',
+                                          'SO3partArray_py.cpp'
                                           ])], 
       cmdclass={'build_ext': BuildExtension}
       )

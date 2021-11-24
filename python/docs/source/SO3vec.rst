@@ -45,7 +45,7 @@ The type of an SO(3)-vector and the total number of parts can be accessed as fol
 
 
 ==============================
-Accessing parts and arithmetic
+Access and arithmetic
 ==============================
 
 Individual parts of the vector can be accessed as follows.
