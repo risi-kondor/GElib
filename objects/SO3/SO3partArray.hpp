@@ -506,7 +506,7 @@ namespace GElib{
     }
 
     string repr(const string indent="") const{
-      return indent+"GElib::SO3partArray"<<adims.str()<<" l="+to_string(getl())+",n="+to_string(getn())+")";
+      return indent+"GElib::SO3partArray"+adims.str()+" l="+to_string(getl())+",n="+to_string(getn())+")";
     }
 
     friend ostream& operator<<(ostream& stream, const SO3partArray& x){

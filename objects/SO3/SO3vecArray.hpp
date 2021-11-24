@@ -519,7 +519,7 @@ namespace GElib{
     //}
 
     string repr(const string indent="") const{
-      return "<GElib::SO3vecArray"<<adims.str()<<" of type"+tau.str()+">";
+      return "<GElib::SO3vecArray"+adims.str()+" of type"+tau.str()+">";
     }
 
     friend ostream& operator<<(ostream& stream, const SO3vecArray& x){

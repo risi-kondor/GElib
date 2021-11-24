@@ -1,3 +1,14 @@
+
+// This file is part of GElib, a C++/CUDA library for group
+// equivariant tensor operations. 
+// 
+// Copyright (c) 2021, Imre Risi Kondor
+//
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+
 pybind11::class_<SO3partArray>(m,"SO3partArr",
   "Class to store an array of SO3part objects.")
 
@@ -76,7 +87,7 @@ pybind11::class_<SO3partArray>(m,"SO3partArr",
   .def("to",&SO3partArray::to_device)
 
   .def("str",&SO3partArray::str,py::arg("indent")="")
-  .def("__str__",&SO3partArray::str,py::arg("indent")="");
+  .def("__str__",&SO3partArray::str,py::arg("indent")="")
   .def("__repr__",&SO3partArray::repr,py::arg("indent")="");
 
 
