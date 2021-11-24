@@ -25,8 +25,9 @@ pybind11::class_<SO3vecArray>(m,"SO3vecArr",
 //      return SO3vecArray::gaussian(Gdims(av),l,n,-1,dev);},
 //    py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
 
-  .def("getl",&SO3vecArray::getl)
-  .def("getn",&SO3vecArray::getn)
+
+  .def("__len__",&SO3vec::size)
+  .def("type",&SO3vec::type)
 
   .def("get_adims",&CtensorArray::get_adims)
   .def("get_adim",&CtensorArray::get_adim)
@@ -88,5 +89,5 @@ pybind11::class_<SO3vecArray>(m,"SO3vecArr",
 
 //m.def("inp",[](const SO3vecArray& x, const SO3vecArray& y){return x.inp(y);});
 
-m.def("CGproduct",[](const SO3vecArray& x, const SO3vecArray& y, const int l){return CGproduct(x,y,l);});
+m.def("CGproduct",[](const SO3vecArray& x, const SO3vecArray& y){return CGproduct(x,y);});
 
