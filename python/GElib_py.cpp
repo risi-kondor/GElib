@@ -2,7 +2,7 @@
 // This file is part of GElib, a C++/CUDA library for group
 // equivariant tensor operations. 
 // 
-// Copyright (c) 2021, Imre Risi Kondor and Erik H Thiede
+// Copyright (c) 2021, Imre Risi Kondor
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -69,11 +69,6 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   m.def("CGproduct",[](const vector<int>& x, const SO3type& y, const int maxl){
       return CGproduct(SO3type(x),y,maxl);},
     py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
-
-
-  // ---- SO3part --------------------------------------------------------------------------------------------
-
-
 
 
 #include "SO3part_py.cpp"
