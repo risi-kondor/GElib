@@ -518,6 +518,10 @@ namespace GElib{
     //return gtensor().str_transp(indent);
     //}
 
+    string repr(const string indent="") const{
+      return "<GElib::SO3vecArray"<<adims.str()<<" of type"+tau.str()+">";
+    }
+
     friend ostream& operator<<(ostream& stream, const SO3vecArray& x){
       stream<<x.str(); return stream;}
 

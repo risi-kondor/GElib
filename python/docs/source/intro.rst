@@ -1,7 +1,6 @@
 GElib is a C++ library with a CUDA backend for performing certain operations related to 
 the rotation group :math:`\mathrm{SO}(3)`. 
-GElib is written by Risi Kondor at the University of Chicago and Erik H Thiede at the 
-Flatiron Institute. 
+GElib is developed by Risi Kondor at the University of Chicago. 
 GElib is released under the 
 `Mozilla public license v.2.0 <https://www.mozilla.org/en-US/MPL/2.0/>`_.   
 

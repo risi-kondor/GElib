@@ -47,7 +47,7 @@ The type of an SO(3)-vector and the total number of parts can be accessed as fol
 Access and arithmetic
 ==============================
 
-Individual parts of the vector can be accessed as follows.
+Individual parts can be accessed with the usual Python indexing notation.
 
 .. code-block:: python
 
@@ -77,7 +77,7 @@ Individual parts of the vector can be accessed as follows.
    [ (-0.409665,1.25511) ]
 
 
-Arithmetic operations can be applied to ``SO3vec`` objects just as to ``SO3part`` s.
+Arithmetic operations can be applied to ``SO3vec`` objects the same way they can be applied ``SO3part`` s.
 
 .. code-block:: python
 
@@ -121,7 +121,7 @@ Arithmetic operations can be applied to ``SO3vec`` objects just as to ``SO3part`
 Clebsch-Gordan products
 =======================
 
-The Clebsch-Gordan product of two SO3-vectors can be computed as follows.
+The Clebsch-Gordan product of two SO3-vectors is computed as follows.
 
 .. code-block:: python
 
