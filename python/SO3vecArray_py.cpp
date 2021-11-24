@@ -1,66 +1,81 @@
 pybind11::class_<SO3vecArray>(m,"SO3vecArr",
   "Class to store an array of SO3vec objects.")
 
-//.def_static("zero",static_cast<SO3vecArray (*)(const Gdims&, const int, const int)>(&SO3vecArray::zero))
   .def_static("zero",[](const Gdims& adims, const SO3type& tau, const int dev){
       return SO3vecArray::zero(adims,tau,-1,dev);}, 
     py::arg("adims"), py::arg("type"), py::arg("device")=0)
-//.def_static("zero",[](const vector<int>& av, const int l, int n, const int dev){
-//    return SO3vecArray::zero(Gdims(av),l,n,-1,dev);},
-//  py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
+  .def_static("zero",[](const Gdims& adims, const vector<int>& v, const int dev){
+      return SO3vecArray::zero(adims,SO3type(v),-1,dev);}, 
+    py::arg("adims"), py::arg("type"), py::arg("device")=0)
+  .def_static("zero",[](const vector<int>& adims, const vector<int>& v, const int dev){
+      return SO3vecArray::zero(Gdims(adims),SO3type(v),-1,dev);}, 
+    py::arg("adims"), py::arg("type"), py::arg("device")=0)
 
-//.def_static("ones",static_cast<SO3vecArray (*)(const Gdims&, const Gdims&, const int, const int)>(&SO3vecArray::ones))
   .def_static("ones",[](const Gdims& adims, const SO3type& tau, const int dev){
       return SO3vecArray::ones(adims,tau,dev);}, 
     py::arg("adims"),py::arg("type"),py::arg("device")=0)
-//  .def_static("ones",[](const vector<int>& av, const int l, const int n, const int dev){
-//      return SO3vecArray::ones(Gdims(av),l,n,-1,dev);},
-//    py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
+  .def_static("ones",[](const Gdims& adims, const vector<int>& v, const int dev){
+      return SO3vecArray::ones(adims,SO3type(v),-1,dev);}, 
+    py::arg("adims"), py::arg("type"), py::arg("device")=0)
+  .def_static("ones",[](const vector<int>& adims, const vector<int>& v, const int dev){
+      return SO3vecArray::ones(Gdims(adims),SO3type(v),-1,dev);}, 
+    py::arg("adims"), py::arg("type"), py::arg("device")=0)
 
-//.def_static("gaussian",static_cast<SO3vecArray (*)(const Gdims&, const Gdims&, const int, const int)>(&SO3vecArray::gaussian))
   .def_static("gaussian",[](const Gdims& adims, const SO3type& tau, const int dev){
       return SO3vecArray::gaussian(adims,tau,-1,dev);}, 
     py::arg("adims"),py::arg("type"),py::arg("device")=0)
-//  .def_static("gaussian",[](const vector<int>& av, const int l, const int n, const int dev){
-//      return SO3vecArray::gaussian(Gdims(av),l,n,-1,dev);},
-//    py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
+  .def_static("gaussian",[](const Gdims& adims, const vector<int>& v, const int dev){
+      return SO3vecArray::gaussian(adims,SO3type(v),-1,dev);}, 
+    py::arg("adims"), py::arg("type"), py::arg("device")=0)
+  .def_static("gaussian",[](const vector<int>& adims, const vector<int>& v, const int dev){
+      return SO3vecArray::gaussian(Gdims(adims),SO3type(v),-1,dev);}, 
+    py::arg("adims"), py::arg("type"), py::arg("device")=0)
 
+  .def("__len__",&SO3vecArray::size)
+  .def("type",&SO3vecArray::type)
 
-  .def("__len__",&SO3vec::size)
-  .def("type",&SO3vec::type)
-
-  .def("get_adims",&CtensorArray::get_adims)
-  .def("get_adim",&CtensorArray::get_adim)
+  .def("get_adims",[](const SO3vecArray& obj){return obj.get_adims();})
+  .def("get_adim",[](const SO3vecArray& obj, const int i){return obj.get_adim(i);})
 
   .def("get_cell",[](const SO3vecArray& obj, const Gindex& ix){
-      return SO3vecArray(obj.get_cell(ix));})
+      return SO3vec(obj.get_cell(ix));})
   .def("get_cell",[](const SO3vecArray& obj, const vector<int> v){
-      return SO3vecArray(obj.get_cell(Gindex(v)));})
+      return SO3vec(obj.get_cell(Gindex(v)));})
   .def("__call__",[](const SO3vecArray& obj, const Gindex& ix){
-      return SO3vecArray(obj.get_cell(ix));})
+      return SO3vec(obj.get_cell(ix));})
   .def("__call__",[](const SO3vecArray& obj, const vector<int> v){
-      return SO3vecArray(obj.get_cell(Gindex(v)));})
+      return SO3vec(obj.get_cell(Gindex(v)));})
   .def("__getitem__",[](const SO3vecArray& obj, const Gindex& ix){
-      return SO3vecArray(obj.get_cell(ix));})
-  .def("__getitem__",[](const SO3vecArray& obj, const vector<int> v){return obj.get_cell(Gindex(v));})
+      return SO3vec(obj.get_cell(ix));})
+  .def("__getitem__",[](const SO3vecArray& obj, const vector<int> v){
+      return SO3vec(obj.get_cell(Gindex(v)));})
 
   .def("__setitem__",[](SO3vecArray& obj, const Gindex& ix, const SO3vec& x){
       obj.set_cell(ix,x);})
   .def("__setitem__",[](SO3vecArray& obj, const vector<int> v, const SO3vec& x){
       obj.set_cell(Gindex(v),x);})
 
+  .def("get_part",[](const SO3vecArray& obj, const int l){
+      return SO3partArray(obj.get_part(l));})
+  .def("set_part",[](SO3vecArray& obj, const int l, const SO3partArray& p){
+      return obj.set_part(l,p);})
+
   .def("__add__",[](const SO3vecArray& x, const SO3vecArray& y){
       return SO3vecArray(x.plus(y));})
   .def("__sub__",[](const SO3vecArray& x, const SO3vecArray& y){
       return SO3vecArray(x-y);})
-  .def("__mul__",[](const SO3vecArray& x, const float c){
-      SO3vecArray R(x.get_adims(),x.getl(),x.getn(),x.get_nbu(),fill::zero,x.get_dev());
+
+  .def("__mul__",[](const SO3vecArray& x, const complex<float> c){
+      SO3vecArray R=SO3vecArray::zero(x.get_adims(),x.type(),x.get_nbu(),x.get_dev());
       R.add(x,c);
-      return R;})
+      return R;
+    })
+/*
   .def("__rmul__",[](const SO3vecArray& x, const float c){
       SO3vecArray R(x.get_dims(),x.getl(),x.getn(),x.get_nbu(),fill::zero,x.get_dev());
       R.add(x,c);
       return R;})
+*/
 //.def("__mul__",[](const SO3vecArray& x, const SO3vecArray& y){
 //    SO3vecArray R(x.get_dims().Mprod(y.get_dims()),x.get_nbu(),fill::zero,x.get_dev());
 //    R.add_mprod(x,y);

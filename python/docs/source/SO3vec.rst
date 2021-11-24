@@ -43,7 +43,6 @@ The type of an SO(3)-vector and the total number of parts can be accessed as fol
  >>> len(v)
  3
 
-
 ==============================
 Access and arithmetic
 ==============================

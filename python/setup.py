@@ -34,7 +34,8 @@ setup(name='GElib',
                                           'GElib_py.cpp',
                                           'SO3part_py.cpp',
                                           'SO3vec_py.cpp',
-                                          'SO3partArray_py.cpp'
+                                          'SO3partArray_py.cpp',
+                                          'SO3vecArray_py.cpp'
                                           ])], 
       cmdclass={'build_ext': BuildExtension}
       )
