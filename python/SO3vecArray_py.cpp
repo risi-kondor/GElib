@@ -93,6 +93,7 @@ pybind11::class_<SO3vecArray>(m,"SO3vecArr",
 
   .def("str",&SO3vecArray::str,py::arg("indent")="")
   .def("__str__",&SO3vecArray::str,py::arg("indent")="");
+  .def("__repr__",&SO3vecArray::repr,py::arg("indent")="");
 
 
 // ---- Stand-alone functions --------------------------------------------------------------------------------

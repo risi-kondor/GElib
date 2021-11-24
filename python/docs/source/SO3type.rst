@@ -3,7 +3,7 @@ SO3type
 *******
 
 An ``SO3type`` object specifies the multiplicites :math:`\tau_0,\tau_1,\ldots,\tau_L` of each irreducible 
-representation :math:`D^{(0)},D^{(1)},\ldots,D^{(L)}`. 
+representation :math:`D^{(0)},D^{(1)},\ldots,D^{(L)}` in an SO3-vector. 
 
 .. code-block:: python
 

@@ -3,12 +3,12 @@ SO3partArr
 ************
 
 Similary to the tensor array classes in ``cnine``, the basic tool for parallelizing SO3-operations in GElib 
-are the ``SO3partArr`` and ``SO3vecArr``. An ``SO3partArr`` is just a multidimensional array of 
-``SO3part`` objects called `cells`. 
+are the ``SO3partArr`` and ``SO3vecArr`` classes. 
+An ``SO3partArr`` is a multidimensional array of ``SO3part`` objects with the same :math:`\ell` and :math:`n`. 
 
 .. code-block:: python
 
- >>> A=SO3partArr.gaussian([2,2],2,2)
+ >>> A=SO3partArr.gaussian([2,2],2,2) # Create a 2x2 array of SO3parts with l=2 and n=2
  >>> print(A)
  Cell (0,0)
  [ (-1.23974,-0.653697) (-0.407472,-0.645572) ]

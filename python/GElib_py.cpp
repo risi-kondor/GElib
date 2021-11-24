@@ -60,6 +60,15 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
 
   m.def("CGproduct",static_cast<SO3type (*)(const SO3type&, const SO3type&, const int)>(&CGproduct),
     py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
+  m.def("CGproduct",[](const vector<int>& x, const vector<int>& y, const int maxl){
+      return CGproduct(SO3type(x),SO3type(y),maxl);},
+    py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
+  m.def("CGproduct",[](const SO3type& x, const vector<int>& y, const int maxl){
+      return CGproduct(x,SO3type(y),maxl);},
+    py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
+  m.def("CGproduct",[](const vector<int>& x, const SO3type& y, const int maxl){
+      return CGproduct(SO3type(x),y,maxl);},
+    py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
 
 
   // ---- SO3part --------------------------------------------------------------------------------------------

@@ -5,7 +5,7 @@ SO3part
 An ``SO3part`` objects stores `n` different vectors transforming accoring to the same 
 irreducible representation :math:`D^{(\ell)}`. 
 Since :math:`D^{(\ell)}` is a :math:`2\ell\!+\!1` dimensional representation, 
-the vectors can be jointly stored in a matrix :math:`\mathbb{C}^{(2\ell+1)\times n}`.   
+the vectors are jointly stored in a matrix :math:`\mathbb{C}^{(2\ell+1)\times n}`.   
 
 The following constructs an ``SO3part`` object holding ``n=3`` vectors corresponding to the ``l=2`` 
 irrep. 
@@ -67,11 +67,12 @@ by scalars, and so on.
  [ (3.75732,-5.90005) (3.12511,-1.44221) (-2.09089,-5.50922) ]
 
 
-Individual entries in an ``SO3part`` can be accessed with the same syntax as how matrix elements are accessed. 
-Note however the that indexing convention is that ``n`` index comes first, and the ``m`` index corresponding 
-to indexing the components within a given irreducible vector is second. 
+Individual entries in an ``SO3part`` can be accessed with the same syntax as how matrix elements are accessed 
+in ``cnine``. 
+Note however the that indexing convention is that ``n`` index comes first, and the ``m`` index 
+:math:`0\leq m< 2\ell+1` corresponding to the index within a given irreducible vector is second.  
 
-It is also important to note that in general manually setting entries in ``SO3part`` objects individually 
+It is important to note that manually setting entries in ``SO3part`` objects individually in general 
 breaks equivariance. 
 
 .. code-block:: python
@@ -112,7 +113,7 @@ Matrix operations
 =================
 
 
-``SO3part`` objects can also be multiplied by ``cnine::ctensor`` matrices from the `right`. 
+``SO3part`` objects can be multiplied by ``cnine::ctensor`` matrices from the `right`. 
 Multiplication by matrices from the left is not allowed because it would break equivariance. 
 Note that to construct ``cnine`` tensors, first the ``cnine`` module must be loaded.
 

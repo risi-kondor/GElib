@@ -77,6 +77,7 @@ pybind11::class_<SO3partArray>(m,"SO3partArr",
 
   .def("str",&SO3partArray::str,py::arg("indent")="")
   .def("__str__",&SO3partArray::str,py::arg("indent")="");
+  .def("__repr__",&SO3partArray::repr,py::arg("indent")="");
 
 
 // ---- Stand-alone functions --------------------------------------------------------------------------------
