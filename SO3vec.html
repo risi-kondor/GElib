@@ -215,9 +215,9 @@ corresponding to <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/7
 <span class="go">3</span>
 </pre></div>
 </div>
-<section id="accessing-parts-and-arithmetic">
-<h2>Accessing parts and arithmetic<a class="headerlink" href="#accessing-parts-and-arithmetic" title="Permalink to this headline">¶</a></h2>
-<p>Individual parts of the vector can be accessed as follows.</p>
+<section id="access-and-arithmetic">
+<h2>Access and arithmetic<a class="headerlink" href="#access-and-arithmetic" title="Permalink to this headline">¶</a></h2>
+<p>Individual parts can be accessed with the usual Python indexing notation.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">[ (1.3828,-0.89237) (0.0523187,-0.228782) (-0.904146,1.16493) ]</span>
@@ -243,7 +243,7 @@ corresponding to <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/7
 <span class="go">  [ (-0.409665,1.25511) ]</span>
 </pre></div>
 </div>
-<p>Arithmetic operations can be applied to <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects just as to <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> s.</p>
+<p>Arithmetic operations can be applied to <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects the same way they can be applied <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> s.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="n">u</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">v</span>
@@ -279,7 +279,7 @@ corresponding to <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/7
 </section>
 <section id="clebsch-gordan-products">
 <h2>Clebsch-Gordan products<a class="headerlink" href="#clebsch-gordan-products" title="Permalink to this headline">¶</a></h2>
-<p>The Clebsch-Gordan product of two SO3-vectors can be computed as follows.</p>
+<p>The Clebsch-Gordan product of two SO3-vectors is computed as follows.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
@@ -351,7 +351,7 @@ corresponding to <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/7
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">SO3vec</a><ul>
-<li><a class="reference internal" href="#accessing-parts-and-arithmetic">Accessing parts and arithmetic</a></li>
+<li><a class="reference internal" href="#access-and-arithmetic">Access and arithmetic</a></li>
 <li><a class="reference internal" href="#functions-of-so3vec-objects">Functions of SO3vec objects</a></li>
 <li><a class="reference internal" href="#clebsch-gordan-products">Clebsch-Gordan products</a></li>
 <li><a class="reference internal" href="#gpu-operations">GPU operations</a></li>
