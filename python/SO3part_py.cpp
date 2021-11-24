@@ -1,7 +1,6 @@
   py::class_<SO3part>(m,"SO3part",
-    "Class to store an array consisting of n vectors transforming according to a 
-specific irreducible representation of SO(3)")
-
+    "Class to store an array consisting of n vectors transforming according to a specific irreducible representation of SO(3)")
+    
     .def_static("zero",static_cast<SO3part (*)(const int, const int)>(&SO3part::zero))
     .def_static("ones",static_cast<SO3part (*)(const int, const int)>(&SO3part::ones))
     .def_static("gaussian",static_cast<SO3part (*)(const int, const int)>(&SO3part::gaussian))

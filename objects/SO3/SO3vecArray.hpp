@@ -159,6 +159,19 @@ namespace GElib{
   public: // ---- Conversions --------------------------------------------------------------------------------
 
 
+    SO3vecArray(const ArrayPack<SO3partArray>& x):
+      ArrayPack<SO3partArray>(x){
+      for(auto p:array)
+	tau.push_back(p->getn());
+    }
+
+    SO3vecArray(ArrayPack<SO3partArray>&& x):
+      ArrayPack<SO3partArray>(std::move(x)){
+      for(auto p:array)
+	tau.push_back(p->getn());
+    }
+
+
     SO3vecArray to(const device& _dev) const{
       return SO3vecArray(*this,_dev);
     }
@@ -176,6 +189,14 @@ namespace GElib{
       return tau;
     }
 
+    SO3type type() const{
+      return tau;
+    }
+
+    int size() const{
+      return array.size(); 
+    }
+
     int getL() const{
       return tau.size()-1; 
     }
@@ -184,7 +205,6 @@ namespace GElib{
       if(array.size()==0) return -1;
       return array[0]->get_nbu();
     }
-
 
     SO3partArray get_part(const int l) const{
       return get_array(l);
