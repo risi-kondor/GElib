@@ -51,7 +51,7 @@ An ``SO3partArr`` is a multidimensional array of ``SO3part`` objects with the sa
  2
 
 ==============================
-Accessing cells and arithmetic
+Access and arithmetic
 ==============================
 
 Individual cells are accessed similarly to how cells are accessed in ``cnine``.

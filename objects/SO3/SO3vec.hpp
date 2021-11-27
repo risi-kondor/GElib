@@ -234,7 +234,7 @@ namespace GElib{
 
     SO3vec(const SO3vec& x):
       tau(x.tau), nbu(x.nbu), dev(x.dev), fmt(x.fmt){
-      CNINE_COPY_WARNING;
+      CNINE_COPY_WARNING();
       for(auto p: x.parts)
 	if(p) parts.push_back(new SO3part(*p));
 	else parts.push_back(nullptr);

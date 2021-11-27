@@ -29,13 +29,20 @@ setup(name='GElib',
                                                                '-Wno-unused-variable',
                                                                '-Wno-reorder-ctor',
                                                                '-Wno-reorder',
+                                                               '-D_WITH_ATEN',
+                                                                    '-DCNINE_COPY_WARNINGS',
+                                                               '-DCNINE_ASSIGN_WARNINGS',
+                                                                                '-DCNINE_MOVE_WARNINGS',
+                                                               '-DCNINE_MOVEASSIGN_WARNINGS',
+                                                               '-DCNINE_RANGE_CHECKING'
                                                                ]},
                                  depends=['setup.py',
                                           'GElib_py.cpp',
                                           'SO3part_py.cpp',
                                           'SO3vec_py.cpp',
                                           'SO3partArray_py.cpp',
-                                          'SO3vecArray_py.cpp'
+                                          'SO3vecArray_py.cpp',
+                                          'build/*/*'
                                           ])], 
       cmdclass={'build_ext': BuildExtension}
       )

@@ -84,7 +84,7 @@ namespace GElib{
 
     SO3vecA(const SO3vecA& x): 
       CtensorA(x,cnine::nowarn), tau(x.tau), offs(x.offs){
-      CNINE_COPY_WARNING;
+      CNINE_COPY_WARNING();
     }
 
     SO3vecA(const SO3vecA& x, const cnine::nowarn_flag& dummy): 

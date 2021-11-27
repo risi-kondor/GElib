@@ -21,6 +21,10 @@ py::class_<SO3part>(m,"SO3part",
   .def_static("spharm",[](const int l, const cnine::RtensorObj v){
       return SO3part::spharm(l,1,v.gtensor());})
 
+  .def(pybind11::init([](const at::Tensor& x){return SO3part(cnine::CtensorObj(x));}))
+  .def_static("view",[](at::Tensor& x){return SO3part(cnine::CtensorObj::view(x));})
+  .def("torch",&cnine::CtensorObj::torch)
+
   .def("getl",&SO3part::getl)
   .def("getn",&SO3part::getn)
 
