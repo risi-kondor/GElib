@@ -9,7 +9,7 @@ from GElib import SO3part as _SO3part
 
 
 class SO3part(tcn.ctensor):
-        
+
     @staticmethod
     def zeros(l,n):
         r=SO3part(torch.zeros(2,2*l+1,n))
@@ -37,4 +37,6 @@ class CGproduct(torch.autograd.Function):
 
     @staticmethod
     def forward(ctx, x, y, l):
-        return SO3part(GElib.CGproduct(GElib.SO3part.view(x),GElib.SO3part.view(y)).torch())
+        #u=GElib.CGproduct(_SO3part.view(x),_SO3part.view(y),l)
+        #return SO3part(u.torch())
+        return SO3part(GElib.CGproduct(_SO3part.view(x),_SO3part.view(y)).torch())

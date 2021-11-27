@@ -23,10 +23,13 @@ py::class_<SO3part>(m,"SO3part",
 
   .def(pybind11::init([](const at::Tensor& x){return SO3part(cnine::CtensorObj(x));}))
   .def_static("view",[](at::Tensor& x){return SO3part(cnine::CtensorObj::view(x));})
-  .def("torch",&cnine::CtensorObj::torch)
+//.def("torch",&cnine::CtensorObj::torch)
+  .def("torch",[](const SO3part& x){return x.torch();})
 
   .def("getl",&SO3part::getl)
   .def("getn",&SO3part::getn)
+
+//.def("__len__",[](const SO3part& obj){return 1;})
 
   .def("__call__",[](const SO3part& obj, const int i, const int m){return obj.get_value(i,m);})
   .def("__getitem__",[](const SO3part& obj, const vector<int> v){
