@@ -29,8 +29,6 @@ py::class_<SO3part>(m,"SO3part",
   .def("getl",&SO3part::getl)
   .def("getn",&SO3part::getn)
 
-//.def("__len__",[](const SO3part& obj){return 1;})
-
   .def("__call__",[](const SO3part& obj, const int i, const int m){return obj.get_value(i,m);})
   .def("__getitem__",[](const SO3part& obj, const vector<int> v){
       return obj.get_value(v[0],v[1]);})
@@ -53,7 +51,11 @@ py::class_<SO3part>(m,"SO3part",
 
   .def("__iadd__",[](SO3part& x, const SO3part& y){x+=y; return x;})
   .def("__isub__",[](SO3part& x, const SO3part& y){x+=y; return x;})
-    
+
+  .def("addCGproduct",&SO3part::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
+  .def("addCGproduct_back0",&SO3part::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
+  .def("addCGproduct_back1",&SO3part::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
+
   .def("to",&SO3part::to_device)
     
   .def("str",&SO3part::str,py::arg("indent")="")
