@@ -24,6 +24,9 @@ namespace GElib{
 
     double phi, psi, theta;
 
+    SO3element():
+      phi(0), psi(0), theta(0){}
+
     SO3element(const double _phi, const double _theta, const double _psi):
       phi(_phi), psi(_psi), theta(_theta){}
 
@@ -39,6 +42,15 @@ namespace GElib{
       phi=distr(rndGen)*M_PI*2;
       theta=distr(rndGen)*M_PI;
       psi=distr(rndGen)*M_PI*2;
+    }
+
+
+    static SO3element identity(){
+      return SO3element(0,0,0);
+    }
+
+    static SO3element uniform(){
+      return SO3element(cnine::fill_uniform());
     }
 
 
@@ -69,12 +81,12 @@ namespace GElib{
 
 
     string str() const{
-      return "("+to_string(phi)+","+to_string(theta)+","+to_string(psi)+")";
+      return "SO3element("+to_string(phi)+","+to_string(theta)+","+to_string(psi)+")";
     }
 
     friend ostream& operator<<(ostream& stream, const GElib::SO3element& x){
       stream<<x.str(); return stream;}
-
+    
   };
 
 }

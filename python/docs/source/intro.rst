@@ -1,5 +1,5 @@
 GElib is a C++ library with a CUDA backend for computations related to 
-the rotation group :math:`\mathrm{SO}(3)`, specifically for building SO(3)-equivariant 
+the rotation group SO(3), specifically for building SO(3)-equivariant 
 neural networks. 
 GElib is developed by Risi Kondor at the University of Chicago. 
 GElib is released under the 
@@ -14,9 +14,9 @@ Features
 ########
 
 #. Classes to store and manipulate SO(3)-equivariant vectors
-#. Fast implementation of Clebsch-Gordan transforms on both the CPU and the GPU
+#. Fast implementation of the Clebsch-Gordan transform on both the CPU and the GPU
 #. Facilities for operating on arrays of SO(3)-equivariant vectors in parallel, even in irregular patterns (graphs)
-#. Full support for automatic differentiation
+#. Support for automatic differentiation
 #. Interoperability with PyTorch
 
  
@@ -50,11 +50,13 @@ GElib has two distinct interfaces implemented in two different modules:
 #. To use the library *with* automatic differentiation, load the library with ``import gelib_torch as gelib``. 
 
 The two modules use identical syntax, therefore the following description of their usage applies to both. 
-The backend implementation of the two modules however is quite different: whereas ``gelib_base`` is mostly  
-just a wrapper for the underlying C++ classes, 
-``gelib_torch`` 's core classes are derived from ``torch.tensor`` for interoperability with ``torch.autodiff``. 
-Inevitably, the latter approach incurs some performanvce overhead.  
-``gelib_torch`` is built on ``gelib_base``, so the two modules can also be used together.   
+The backend implementation of the two modules however is quite different. 
+``gelib_base`` is just a wrapper for the underlying C++ classes. 
+In contrast, ``gelib_torch`` 's core classes are Python classes derived from ``torch.tensor`` 
+for interoperability with ``torch.autodiff``. 
+These Python classes then, in turn, call the wrappers implemented in ``gelib_base``.  
+Inevitably, the latter approach incurs some performance overhead.  
+Since ``gelib_torch`` is built on ``gelib_base``, so the two modules can also be used together.   
 
 ############
 Known issues
