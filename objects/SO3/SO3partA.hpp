@@ -241,7 +241,7 @@ namespace GElib{
       const int l2=y.getl(); 
       const int N1=getn();
       const int N2=y.getn();
-      const SO3_CGcoeffs<float>& C=SO3_cgbank.get<float>(l1,l2,l);
+      const SO3_CGcoeffs<float>& C=SO3_cgbank.getf(CGindex(l1,l2,l));
 
       if(nbu==-1){
 	for(int n1=0; n1<N1; n1++){
@@ -281,7 +281,7 @@ namespace GElib{
       const int l2=getl(); 
       const int N1=x.getn();
       const int N2=getn();
-      const SO3_CGcoeffs<float>& C=SO3_cgbank.get<float>(l1,l2,l);
+      const SO3_CGcoeffs<float>& C=SO3_cgbank.getf(CGindex(l1,l2,l));
 
       if(nbu==-1){
 	for(int n1=0; n1<N1; n1++){

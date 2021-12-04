@@ -26,6 +26,8 @@ py::class_<SO3part>(m,"SO3part",
 //.def("torch",&cnine::CtensorObj::torch)
   .def("torch",[](const SO3part& x){return x.torch();})
 
+  .def("__len__",[](const SO3part& obj){cout<<"111"<<endl;return 1;})
+
   .def("getl",&SO3part::getl)
   .def("getn",&SO3part::getn)
 

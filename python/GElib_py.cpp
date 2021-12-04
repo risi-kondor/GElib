@@ -18,6 +18,7 @@
 
 #include "RtensorObj.hpp"
 
+#include "WignerMatrix.hpp"
 #include "SO3type.hpp"
 #include "SO3part.hpp"
 #include "SO3vec.hpp"
@@ -40,6 +41,22 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   py::options options;
   //options.disable_function_signatures();
 
+  py::class_<SO3element>(m,"SO3element")
+
+    .def(pybind11::init<>(),"")
+    .def(pybind11::init<double,double,double>(),"")
+
+    .def_static("identity",&SO3element::identity)
+    .def_static("uniform",&SO3element::uniform)
+
+    .def("rho",[](const SO3element& g, const int l){
+	return cnine::CtensorObj(WignerMatrix<float>(l,g));
+      })
+
+    .def("str",&SO3element::str,"Print the SO3element to string.")
+    .def("__str__",&SO3element::str,"Print the SO3element to string.")
+    .def("__repr__",&SO3element::str,"Print the SO3element to string.");
+
 
   // ---- SO3type --------------------------------------------------------------------------------------------
 
@@ -59,8 +76,10 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
     .def("__str__",&SO3type::str,py::arg("indent")="","Print the SO3type to string.")
     .def("__repr__",&SO3type::repr,py::arg("indent")="","Print the SO3type to string.");
 
+
   m.def("CGproduct",static_cast<SO3type (*)(const SO3type&, const SO3type&, const int)>(&CGproduct),
     py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
+
   /*
   m.def("CGproduct",[](const vector<int>& x, const vector<int>& y, const int maxl){ // this causes problems with dispatch
       return CGproduct(SO3type(x),SO3type(y),maxl);},
@@ -73,10 +92,10 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
     py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
   */
 
-#include "SO3part_py.cpp"
-#include "SO3vec_py.cpp"
-#include "SO3partArray_py.cpp"
-#include "SO3vecArray_py.cpp"
+  #include "SO3part_py.cpp"
+  #include "SO3vec_py.cpp"
+  #include "SO3partArray_py.cpp"
+  #include "SO3vecArray_py.cpp"
 
 
 }
