@@ -183,8 +183,9 @@
 <h1>GElib<a class="headerlink" href="#gelib" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<p>GElib is a C++ library with a CUDA backend for performing certain operations related to
-the rotation group <img alt="\mathrm{SO}(3)" class="math" src="_images/math/0b503006ec577f16a7aefa87ce5cda9dcdfac897.svg"/>.
+<p>GElib is a C++ library with a CUDA backend for computations related to
+the rotation group SO(3), specifically for building SO(3)-equivariant
+neural networks.
 GElib is developed by Risi Kondor at the University of Chicago.
 GElib is released under the
 <a class="reference external" href="https://www.mozilla.org/en-US/MPL/2.0/">Mozilla public license v.2.0</a>.</p>
@@ -193,16 +194,22 @@ are available through this interface. The documentation of the C++ API can be fo
 in the package’s <code class="docutils literal notranslate"><span class="pre">doc</span></code> directory.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Classes to store and manipulate SO(3)-equivariant vectors</p></li>
+<li><p>Fast implementation of the Clebsch-Gordan transform on both the CPU and the GPU</p></li>
+<li><p>Facilities for operating on arrays of SO(3)-equivariant vectors in parallel, even in irregular patterns (graphs)</p></li>
+<li><p>Support for automatic differentiation</p></li>
+<li><p>Interoperability with PyTorch</p></li>
+</ol>
 </section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>Installing GElib requires the following:</p>
 <ol class="arabic simple">
-<li><p>C++11 or higher</p></li>
+<li><p>C++14 or higher</p></li>
 <li><p>Python</p></li>
-<li><p>pybind11 (comes with PyTorch)</p></li>
+<li><p>PyTorch</p></li>
 <li><p>cnine (see below)</p></li>
-<li><p>PyTorch (optional)</p></li>
 </ol>
 <p>To install GElib follow these steps:</p>
 <ol class="arabic simple">
@@ -213,10 +220,22 @@ of the <em>cnine</em> package on your system.</p></li>
 <li><p>Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.sty</span> <span class="pre">install</span></code> in the <code class="docutils literal notranslate"><span class="pre">python</span></code> directory to compile the package and install it on your
 system.</p></li>
 </ol>
-<p>To use GElib from Python, load the corresponding module the usual way with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">GElib</span></code>.
-In the following we assume that <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">GElib</span> <span class="pre">import</span> <span class="pre">*</span></code> has been called,
-obviating the need to prefix all GElib classes with <code class="docutils literal notranslate"><span class="pre">GElib.</span></code>.
-For matrix/tensor functionality the <code class="docutils literal notranslate"><span class="pre">cnine</span></code> module must also be loaded.</p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>GElib has two distinct interfaces implemented in two different modules:</p>
+<ol class="arabic simple">
+<li><p>To use the library <em>without</em> PyTorch’s autodiff functionality, load the library with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gelib_base</span> <span class="pre">as</span> <span class="pre">gelib</span></code>.</p></li>
+<li><p>To use the library <em>with</em> automatic differentiation, load the library with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gelib_torch</span> <span class="pre">as</span> <span class="pre">gelib</span></code>.</p></li>
+</ol>
+<p>The two modules use identical syntax, therefore the following description of their usage applies to both.
+The backend implementation of the two modules however is quite different.
+<code class="docutils literal notranslate"><span class="pre">gelib_base</span></code> is just a wrapper for the underlying C++ classes.
+In contrast, <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> ‘s core classes are Python classes derived from <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>
+for interoperability with <code class="docutils literal notranslate"><span class="pre">torch.autodiff</span></code>.
+These Python classes then, in turn, call the wrappers implemented in <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>.
+Inevitably, the latter approach incurs some performance overhead.
+Since <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> is built on <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>, so the two modules can also be used together.</p>
 </section>
 <section id="known-issues">
 <h2>Known issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h2>
@@ -227,20 +246,41 @@ For matrix/tensor functionality the <code class="docutils literal notranslate"><
 </section>
 <section id="so3-classes">
 <h2>SO3 classes<a class="headerlink" href="#so3-classes" title="Permalink to this headline">¶</a></h2>
-<p>The fundamental classes in GElib for storing and manipulating SO(3)-equivariant vectors are <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code>,
-<code class="docutils literal notranslate"><span class="pre">SO3part</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3type</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> stores a vector that the group SO(3) acts on.
-Any such vector can be decomposed into a sequence of smaller vectors that <img alt="\mathrm{SO}(3)" class="math" src="_images/math/0b503006ec577f16a7aefa87ce5cda9dcdfac897.svg"/>
-acts on in an irreducible way, i.e., vectors that transform as
-<img alt="\mathbf{v}^{(\ell)}_i\mapsto D^{(l)}(R)\,\mathbf{v}^{(\ell)}_i" class="math" src="_images/math/8cd2761031ed8e18ad0e6ebfe985b5169e8bfeb9.svg"/> for one of the irreducible
-representations <img alt="D^{(l)}(R)" class="math" src="_images/math/fc661808ccaae4d2daea88a62fccc5aa43e899e6.svg"/> of <img alt="\mathrm{SO}(3)" class="math" src="_images/math/0b503006ec577f16a7aefa87ce5cda9dcdfac897.svg"/>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> collects those components of an SO3-vector that transform according to the <em>same</em> irreducible
-representation.
-Finally, <code class="docutils literal notranslate"><span class="pre">SO3type</span></code> is a vector of integers that specifies how many irreducible components corresponding to
-<img alt="D^{(0)},D^{(1)},\ldots" class="math" src="_images/math/3da0b3b7ce0660c015c14e8b05acaf129a649f84.svg"/> are featured in a given SO3-vector.</p>
+<p>The core classes in GElib for storing and manipulating SO(3)-equivariant vectors are
+<code class="docutils literal notranslate"><span class="pre">SO3part</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> stores <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg"/> vectors that transform according to a specific irreducible
+representation <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> of SO(3).</p>
+<p>In contrast <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> stores a vector that transforms according to a generic representation.
+Since any representation decomposes into a sum of irreducibles, the vector is actually
+stored as a sequence of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.</p>
+<p>The library also provides the <code class="docutils literal notranslate"><span class="pre">SO3element</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3type</span></code> helper classes.</p>
 <div class="line-block">
 <div class="line"><br/></div>
 </div>
+<section id="so3element">
+<h3>SO3element<a class="headerlink" href="#so3element" title="Permalink to this headline">¶</a></h3>
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3element</span></code> object represents a single group element <img alt="R\in\mathrm{SO}(3)" class="math" src="_images/math/58098a343047e1438732735950b6a5ef3fa5550d.svg"/>.
+The group element can either be initialized from the <img alt="(\phi,\theta,\psi)" class="math" src="_images/math/360e0faa1a98c2db28b5f9623272a2a4703ece1f.svg"/> Euler angles or
+chosen randomly from the group.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="n">SO3element</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">SO3element(0.200000,1.000000,-0.100000)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">=</span><span class="n">SO3element</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span>
+<span class="go">SO3element(0.534275,2.801079,1.191856)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">rho</span></code> method returns the D-matrix <img alt="D^{(l)}(R)" class="math" src="_images/math/fc661808ccaae4d2daea88a62fccc5aa43e899e6.svg"/>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="n">b</span><span class="o">.</span><span class="n">rho</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">[ (-0.000784713,-0.000251944) (-0.00610006,0.00739689) (0.0328803,0.0598668) (0.32192,-0.0398973) (0.238549,-0.91275) ]</span>
+<span class="go">[ (0.00934904,-0.00212605) (0.0128144,-0.081831) (-0.331814,-0.196326) (-0.680473,0.525486) (-0.0892214,-0.311872) ]</span>
+<span class="go">[ (-0.0496073,0.0469496) (0.142627,0.358192) (0.832695,0) (-0.142627,0.358192) (-0.0496073,-0.0469496) ]</span>
+<span class="go">[ (0.0892214,-0.311872) (-0.680473,-0.525486) (0.331814,-0.196326) (0.0128144,0.081831) (-0.00934904,-0.00212605) ]</span>
+<span class="go">[ (0.238549,0.91275) (-0.32192,-0.0398973) (0.0328803,-0.0598668) (0.00610006,0.00739689) (-0.000784713,0.000251944) ]</span>
+</pre></div>
+</div>
+</section>
 <section id="so3type">
 <h3>SO3type<a class="headerlink" href="#so3type" title="Permalink to this headline">¶</a></h3>
 <p>An <code class="docutils literal notranslate"><span class="pre">SO3type</span></code> object specifies the multiplicites <img alt="\tau_0,\tau_1,\ldots,\tau_L" class="math" src="_images/math/d7147e4ad088c12da3f10a615fba364768182e6e.svg"/> of each irreducible
@@ -609,8 +649,8 @@ An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span
 <span class="go">2</span>
 </pre></div>
 </div>
-<section id="accessing-cells-and-arithmetic">
-<h4>Accessing cells and arithmetic<a class="headerlink" href="#accessing-cells-and-arithmetic" title="Permalink to this headline">¶</a></h4>
+<section id="id5">
+<h4>Access and arithmetic<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
 <p>Individual cells are accessed similarly to how cells are accessed in <code class="docutils literal notranslate"><span class="pre">cnine</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="n">A</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
@@ -693,8 +733,8 @@ An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span
 </pre></div>
 </div>
 </section>
-<section id="id5">
-<h4>Clebsch-Gordan products<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<section id="id6">
+<h4>Clebsch-Gordan products<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
 <p>The cellwise Clebsch–Gordan product of two <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> objects is computed the natural way.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
@@ -787,8 +827,8 @@ objects, however logically it is accessible as a single array of <code class="do
 <span class="go">(2,2)</span>
 </pre></div>
 </div>
-<section id="id6">
-<h4>Access and arithmetic<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<section id="id7">
+<h4>Access and arithmetic<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">A</span><span class="o">+</span><span class="mf">3.0</span><span class="o">*</span><span class="n">B</span>
@@ -854,8 +894,8 @@ objects, however logically it is accessible as a single array of <code class="do
 </pre></div>
 </div>
 </section>
-<section id="id7">
-<h4>Clebsch-Gordan products<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<section id="id8">
+<h4>Clebsch-Gordan products<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">U</span><span class="o">=</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">V</span><span class="o">=</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">W</span><span class="o">=</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">U</span><span class="p">,</span><span class="n">V</span><span class="p">)</span>
@@ -949,8 +989,10 @@ objects, however logically it is accessible as a single array of <code class="do
 <li><a class="reference internal" href="#">GElib</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
 <li><a class="reference internal" href="#known-issues">Known issues</a></li>
 <li><a class="reference internal" href="#so3-classes">SO3 classes</a><ul>
+<li><a class="reference internal" href="#so3element">SO3element</a></li>
 <li><a class="reference internal" href="#so3type">SO3type</a></li>
 <li><a class="reference internal" href="#so3part">SO3part</a><ul>
 <li><a class="reference internal" href="#access-and-arithmetic">Access and arithmetic</a></li>
@@ -969,13 +1011,13 @@ objects, however logically it is accessible as a single array of <code class="do
 </ul>
 </li>
 <li><a class="reference internal" href="#so3partarr">SO3partArr</a><ul>
-<li><a class="reference internal" href="#accessing-cells-and-arithmetic">Accessing cells and arithmetic</a></li>
-<li><a class="reference internal" href="#id5">Clebsch-Gordan products</a></li>
+<li><a class="reference internal" href="#id5">Access and arithmetic</a></li>
+<li><a class="reference internal" href="#id6">Clebsch-Gordan products</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#so3vecarr">SO3vecArr</a><ul>
-<li><a class="reference internal" href="#id6">Access and arithmetic</a></li>
-<li><a class="reference internal" href="#id7">Clebsch-Gordan products</a></li>
+<li><a class="reference internal" href="#id7">Access and arithmetic</a></li>
+<li><a class="reference internal" href="#id8">Clebsch-Gordan products</a></li>
 </ul>
 </li>
 </ul>

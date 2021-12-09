@@ -179,8 +179,9 @@
           </label>
         </div>
         <article role="main">
-          <p>GElib is a C++ library with a CUDA backend for performing certain operations related to
-the rotation group <img alt="\mathrm{SO}(3)" class="math" src="_images/math/0b503006ec577f16a7aefa87ce5cda9dcdfac897.svg"/>.
+          <p>GElib is a C++ library with a CUDA backend for computations related to
+the rotation group SO(3), specifically for building SO(3)-equivariant
+neural networks.
 GElib is developed by Risi Kondor at the University of Chicago.
 GElib is released under the
 <a class="reference external" href="https://www.mozilla.org/en-US/MPL/2.0/">Mozilla public license v.2.0</a>.</p>
@@ -189,16 +190,22 @@ are available through this interface. The documentation of the C++ API can be fo
 in the package’s <code class="docutils literal notranslate"><span class="pre">doc</span></code> directory.</p>
 <section id="features">
 <h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic simple">
+<li><p>Classes to store and manipulate SO(3)-equivariant vectors</p></li>
+<li><p>Fast implementation of the Clebsch-Gordan transform on both the CPU and the GPU</p></li>
+<li><p>Facilities for operating on arrays of SO(3)-equivariant vectors in parallel, even in irregular patterns (graphs)</p></li>
+<li><p>Support for automatic differentiation</p></li>
+<li><p>Interoperability with PyTorch</p></li>
+</ol>
 </section>
 <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>Installing GElib requires the following:</p>
 <ol class="arabic simple">
-<li><p>C++11 or higher</p></li>
+<li><p>C++14 or higher</p></li>
 <li><p>Python</p></li>
-<li><p>pybind11 (comes with PyTorch)</p></li>
+<li><p>PyTorch</p></li>
 <li><p>cnine (see below)</p></li>
-<li><p>PyTorch (optional)</p></li>
 </ol>
 <p>To install GElib follow these steps:</p>
 <ol class="arabic simple">
@@ -209,10 +216,22 @@ of the <em>cnine</em> package on your system.</p></li>
 <li><p>Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.sty</span> <span class="pre">install</span></code> in the <code class="docutils literal notranslate"><span class="pre">python</span></code> directory to compile the package and install it on your
 system.</p></li>
 </ol>
-<p>To use GElib from Python, load the corresponding module the usual way with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">GElib</span></code>.
-In the following we assume that <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">GElib</span> <span class="pre">import</span> <span class="pre">*</span></code> has been called,
-obviating the need to prefix all GElib classes with <code class="docutils literal notranslate"><span class="pre">GElib.</span></code>.
-For matrix/tensor functionality the <code class="docutils literal notranslate"><span class="pre">cnine</span></code> module must also be loaded.</p>
+</section>
+<section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>GElib has two distinct interfaces implemented in two different modules:</p>
+<ol class="arabic simple">
+<li><p>To use the library <em>without</em> PyTorch’s autodiff functionality, load the library with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gelib_base</span> <span class="pre">as</span> <span class="pre">gelib</span></code>.</p></li>
+<li><p>To use the library <em>with</em> automatic differentiation, load the library with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gelib_torch</span> <span class="pre">as</span> <span class="pre">gelib</span></code>.</p></li>
+</ol>
+<p>The two modules use identical syntax, therefore the following description of their usage applies to both.
+The backend implementation of the two modules however is quite different.
+<code class="docutils literal notranslate"><span class="pre">gelib_base</span></code> is just a wrapper for the underlying C++ classes.
+In contrast, <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> ‘s core classes are Python classes derived from <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>
+for interoperability with <code class="docutils literal notranslate"><span class="pre">torch.autodiff</span></code>.
+These Python classes then, in turn, call the wrappers implemented in <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>.
+Inevitably, the latter approach incurs some performance overhead.
+Since <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> is built on <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>, so the two modules can also be used together.</p>
 </section>
 <section id="known-issues">
 <h1>Known issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h1>
@@ -256,6 +275,7 @@ For matrix/tensor functionality the <code class="docutils literal notranslate"><
             <ul>
 <li><a class="reference internal" href="#">Features</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
 <li><a class="reference internal" href="#known-issues">Known issues</a></li>
 </ul>
 
