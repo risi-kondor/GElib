@@ -183,7 +183,7 @@
 <h1>SO3type<a class="headerlink" href="#so3type" title="Permalink to this headline">¶</a></h1>
 <p>An <code class="docutils literal notranslate"><span class="pre">SO3type</span></code> object specifies the multiplicites <img alt="\tau_0,\tau_1,\ldots,\tau_L" class="math" src="_images/math/d7147e4ad088c12da3f10a615fba364768182e6e.svg"/> of each irreducible
 representation <img alt="D^{(0)},D^{(1)},\ldots,D^{(L)}" class="math" src="_images/math/242df7fe88048357a461493d55343bbc00f9a4af.svg"/> in an SO3-vector.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># Define tau=(3,4,1)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># Define tau=(3,4,1)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span>
 <span class="go">&lt;GElib::SO3type(3,4,1)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
@@ -199,17 +199,17 @@ representation <img alt="D^{(0)},D^{(1)},\ldots,D^{(L)}" class="math" src="_imag
 </div>
 <p>The function <code class="docutils literal notranslate"><span class="pre">CGproduct</span></code> computes the type of the Clebsch–Gordan product of two SO-vectors
 of given types.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span><span class="o">=</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="n">tau</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="n">tau</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
 <span class="go">(8,12,4)</span>
 </pre></div>
 </div>
 <p>The optional argument <cite>maxl</cite> limits the product to a given maximal <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="n">tau</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="n">tau</span><span class="p">))</span>
 <span class="go">(3,6,6,3,1)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="n">tau</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="n">tau</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
 <span class="go">(3,6,6)</span>
 </pre></div>
 </div>

@@ -184,7 +184,7 @@
 <p>Similary to the tensor array classes in <code class="docutils literal notranslate"><span class="pre">cnine</span></code>, the basic tool for parallelizing SO3-operations in GElib
 are the <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> classes.
 An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> is a multidimensional array of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects with the same <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/> and <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg"/>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># Create a 2x2 array of SO3parts with l=2 and n=2</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># Create a 2x2 array of SO3parts with l=2 and n=2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">Cell (0,0)</span>
 <span class="go">[ (-1.23974,-0.653697) (-0.407472,-0.645572) ]</span>
@@ -239,7 +239,7 @@ An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span
 <span class="go">[ (1.32256,-0.795502) (1.93468,0.333338) ]</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">Cell (0,0)</span>
 <span class="go">[ (-1.23974,-0.653697) (-0.407472,-0.645572) ]</span>
@@ -273,8 +273,8 @@ An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> supports the same arithmetic operations as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">A</span><span class="o">+</span><span class="mf">3.0</span><span class="o">*</span><span class="n">B</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
 <span class="go">Cell (0,0)</span>
@@ -313,7 +313,7 @@ An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span
 <section id="clebsch-gordan-products">
 <h2>Clebsch-Gordan products<a class="headerlink" href="#clebsch-gordan-products" title="Permalink to this headline">¶</a></h2>
 <p>The cellwise Clebsch–Gordan product of two <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> objects is computed the natural way.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
 <span class="go">Cell (0,0)</span>
 <span class="go">[ (-0.612916,0.358383) (0.131453,2.15649) (-0.287549,0.0733472) (-0.55767,-0.214064) ]</span>
@@ -347,6 +347,13 @@ An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span
 <span class="go">[ (0.11913,-0.072755) (1.11784,0.475784) (-0.689207,1.01557) (-0.0981837,-0.554621) ]</span>
 </pre></div>
 </div>
+</section>
+<section id="gpu-operations">
+<h2>GPU operations<a class="headerlink" href="#gpu-operations" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> objects can be moved to/from the GPU the same way as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects.</p>
+<p>The benefits of GPU acceleration for arrayed objects is particularly great, because the corresponding
+kernels (specifically, kernels implementing Clebsch-Gordan operations) are written in a way as to
+parallelize the operation across array cells.</p>
 </section>
 </section>
 
@@ -388,6 +395,7 @@ An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span
 <li><a class="reference internal" href="#">SO3partArr</a><ul>
 <li><a class="reference internal" href="#access-and-arithmetic">Access and arithmetic</a></li>
 <li><a class="reference internal" href="#clebsch-gordan-products">Clebsch-Gordan products</a></li>
+<li><a class="reference internal" href="#gpu-operations">GPU operations</a></li>
 </ul>
 </li>
 </ul>

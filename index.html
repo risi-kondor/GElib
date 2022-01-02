@@ -193,6 +193,7 @@ and can be downloaded from <a class="reference external" href="https://github.co
 <p>This document provides documentation for GElib’s Python interface. Not all features in the C++ library
 are available through this interface. The documentation of the C++ API can be found in pdf format
 in the package’s <code class="docutils literal notranslate"><span class="pre">doc</span></code> directory.</p>
+<p>GElib is currently in alpha. Some features described in the following may still be incomplete or untested.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
@@ -269,14 +270,13 @@ the <code class="docutils literal notranslate"><span class="pre">CUDA_HOME</span
 <li><p>To use the library <em>without</em> PyTorch’s autodiff functionality, load the library with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gelib_base</span> <span class="pre">as</span> <span class="pre">gelib</span></code>.</p></li>
 <li><p>To use the library <em>with</em> automatic differentiation, load the library with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gelib_torch</span> <span class="pre">as</span> <span class="pre">gelib</span></code>.</p></li>
 </ol>
-<p>The two modules use identical syntax, therefore the following description of their usage applies to both.
+<p>The two modules use identical syntax, therefore the following documentation applies to both.
 The backend implementation of the two modules however is quite different.
 <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code> is just a wrapper for the underlying C++ classes.
 In contrast, for interoperability with <code class="docutils literal notranslate"><span class="pre">torch.autodiff</span></code>,
 <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> ‘s core classes are Python classes derived from <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>.
 These Python classes, in turn, call the wrappers implemented in <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>.
-Inevitably, the latter approach incurs some performance overhead.
-Since <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> is built on <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>, the two modules can also be used together.</p>
+Inevitably, this incurs some performance overhead.</p>
 <div class="line-block">
 <div class="line"><br/></div>
 </div>
@@ -288,7 +288,7 @@ Since <code class="docutils literal notranslate"><span class="pre">gelib_torch</
 <ol class="arabic simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> stores <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg"/> vectors that transform according to a specific irreducible representation <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> of SO(3).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> stores a vector that transforms according to a generic representation of SO(3).
-Since any representation decomposes into a sum of irreducibles, the vector is actually
+Since any representation decomposes into a sum of irreducibles, internally, the vector is
 stored as a sequence of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.</p></li>
 </ol>
 <p>The library also provides the <code class="docutils literal notranslate"><span class="pre">SO3element</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3type</span></code> helper classes.</p>
@@ -300,10 +300,10 @@ stored as a sequence of <code class="docutils literal notranslate"><span class="
 <p>An <code class="docutils literal notranslate"><span class="pre">SO3element</span></code> object represents a single group element <img alt="R\in\mathrm{SO}(3)" class="math" src="_images/math/58098a343047e1438732735950b6a5ef3fa5550d.svg"/>.
 The group element can either be initialized from the <img alt="(\phi,\theta,\psi)" class="math" src="_images/math/360e0faa1a98c2db28b5f9623272a2a4703ece1f.svg"/> Euler angles or
 chosen randomly from the group.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="n">SO3element</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3element</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
 <span class="go">SO3element(0.200000,1.000000,-0.100000)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">=</span><span class="n">SO3element</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3element</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span>
 <span class="go">SO3element(0.534275,2.801079,1.191856)</span>
 </pre></div>
@@ -328,7 +328,7 @@ Since <img alt="D^{(l)}(R)" class="math" src="_images/math/fc661808ccaae4d2daea8
 <h3>SO3type<a class="headerlink" href="#so3type" title="Permalink to this headline">¶</a></h3>
 <p>An <code class="docutils literal notranslate"><span class="pre">SO3type</span></code> object specifies the multiplicites <img alt="\tau_0,\tau_1,\ldots,\tau_L" class="math" src="_images/math/d7147e4ad088c12da3f10a615fba364768182e6e.svg"/> of each irreducible
 representation <img alt="D^{(0)},D^{(1)},\ldots,D^{(L)}" class="math" src="_images/math/242df7fe88048357a461493d55343bbc00f9a4af.svg"/> in an SO3-vector.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># Define tau=(3,4,1)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># Define tau=(3,4,1)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span>
 <span class="go">&lt;GElib::SO3type(3,4,1)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
@@ -344,17 +344,17 @@ representation <img alt="D^{(0)},D^{(1)},\ldots,D^{(L)}" class="math" src="_imag
 </div>
 <p>The function <code class="docutils literal notranslate"><span class="pre">CGproduct</span></code> computes the type of the Clebsch–Gordan product of two SO-vectors
 of given types.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span><span class="o">=</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="n">tau</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="n">tau</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
 <span class="go">(8,12,4)</span>
 </pre></div>
 </div>
 <p>The optional argument <cite>maxl</cite> limits the product to a given maximal <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="n">tau</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="n">tau</span><span class="p">))</span>
 <span class="go">(3,6,6,3,1)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="n">tau</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="n">tau</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
 <span class="go">(3,6,6)</span>
 </pre></div>
 </div>
@@ -370,7 +370,7 @@ Since <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b66
 the vectors are jointly stored in a matrix <img alt="\mathbb{C}^{(2\ell+1)\times n}" class="math" src="_images/math/b1be3e1209376d353d86358bbcc30acd3fd61d17.svg"/>.</p>
 <p>The following constructs an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> object holding <code class="docutils literal notranslate"><span class="pre">n=3</span></code> gaussian random vectors corresponding to the <code class="docutils literal notranslate"><span class="pre">l=2</span></code>
 irrep.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
 <span class="go">GElib::SO3part(l=2,n=3)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
@@ -385,7 +385,7 @@ irrep.</p>
 <cite>zero</cite>, <cite>ones</cite> and <cite>raw</cite> constructors. The optional <code class="docutils literal notranslate"><span class="pre">device</span></code> argument specifies with the SO3part
 is created on the CPU or the GPU.</p>
 <p>The order <code class="docutils literal notranslate"><span class="pre">l</span></code> and multiplicity <code class="docutils literal notranslate"><span class="pre">n</span></code> of an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is accessed as follows.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">getl</span><span class="p">()</span>
 <span class="go">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">getn</span><span class="p">()</span>
@@ -396,8 +396,8 @@ is created on the CPU or the GPU.</p>
 <h4>Access and arithmetic<a class="headerlink" href="#access-and-arithmetic" title="Permalink to this headline">¶</a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects support the usual arithmetic operations of addition, subtraction, multiplication
 by scalars, and so on.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="o">+</span><span class="n">B</span><span class="p">)</span>
 <span class="go">[ (1.47879,-0.459842) (0.490458,0.545539) (1.19309,-0.792573) ]</span>
 <span class="go">[ (2.22926,-3.41237) (-2.06763,1.01224) (-2.15526,-0.777298) ]</span>
@@ -426,7 +426,7 @@ Note however the that indexing convention is that <code class="docutils literal 
 <img alt="0\leq m&lt; 2\ell+1" class="math" src="_images/math/14cf54e4e64716dca970ce46b7fe950ce1471e6f.svg"/> corresponding to the index within a given irreducible vector is second.
 It is important to note that manually setting entries in <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects individually in general
 breaks equivariance.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">(1.4733880758285522+0.1949467808008194j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
@@ -441,15 +441,36 @@ breaks equivariance.</p>
 </pre></div>
 </div>
 </section>
+<section id="group-action">
+<h4>Group action<a class="headerlink" href="#group-action" title="Permalink to this headline">¶</a></h4>
+<p>SO(3) acts on an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> <img alt="A" class="math" src="_images/math/565db5272a70df8fe06f163b6a0deedd44272896.svg"/> of index <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/> by <img alt="A\mapsto D^{(l)}(r) A" class="math" src="_images/math/b43a1e571ba5d1089f447e192a0a1221854bc8cc.svg"/>
+for any <img alt="r\in\mathrm{SO}(3)" class="math" src="_images/math/677eba826091fc7b207ccba72931a97a27f2505b.svg"/>. This action is implemented via the <code class="docutils literal notranslate"><span class="pre">apply</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">[ (-1.23974,0.0757219) (-0.407472,1.47339) ]</span>
+<span class="go">[ (1.61201,0.097221) (0.399771,-0.89237) ]</span>
+<span class="go">[ (1.3828,-0.228782) (0.0523187,1.16493) ]</span>
+<span class="go">[ (-0.904146,0.584898) (1.87065,-0.660558) ]</span>
+<span class="go">[ (-1.66043,0.534755) (-0.688081,-0.607787) ]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3element</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Ar</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">Ar</span><span class="p">)</span>
+<span class="go">[ (-1.11709,0.147657) (-1.11769,1.24745) ]</span>
+<span class="go">[ (-1.60924,0.32233) (1.23518,1.00509) ]</span>
+<span class="go">[ (0.618006,-0.476802) (-0.583183,-0.775842) ]</span>
+<span class="go">[ (2.06776,-0.517233) (0.637578,0.790121) ]</span>
+<span class="go">[ (-1.09639,0.00411239) (0.878735,-1.1598) ]</span>
+</pre></div>
+</div>
+</section>
 <section id="functions-of-so3-parts">
 <h4>Functions of SO3-parts<a class="headerlink" href="#functions-of-so3-parts" title="Permalink to this headline">¶</a></h4>
 <p>Similarly to tensors, it is possible to take the inner products and norms of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">GElib</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">inp</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gelib</span><span class="o">.</span><span class="n">inp</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
 <span class="go">(1.5953152179718018+5.115486145019531j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">norm2</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gelib</span><span class="o">.</span><span class="n">norm2</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">7.411661148071289</span>
 </pre></div>
 </div>
@@ -459,9 +480,8 @@ breaks equivariance.</p>
 <p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can be multiplied by <code class="docutils literal notranslate"><span class="pre">cnine::ctensor</span></code> matrices from the <cite>right</cite>.
 Multiplication by matrices from the left is not allowed because it would break equivariance.
 Note that to construct <code class="docutils literal notranslate"><span class="pre">cnine</span></code> tensors, first the <code class="docutils literal notranslate"><span class="pre">cnine</span></code> module must be loaded.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">GElib</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cnine</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cnine</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">M</span><span class="o">=</span><span class="n">ctensor</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="o">*</span><span class="n">M</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
@@ -477,7 +497,7 @@ Note that to construct <code class="docutils literal notranslate"><span class="p
 <h4>Spherical harmonics<a class="headerlink" href="#spherical-harmonics" title="Permalink to this headline">¶</a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can be initialized as spherical harmonic coefficients of a three dimensional vector
 correspnding to a given <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">spharm</span><span class="p">(</span><span class="mi">2</span><span class="p">,[</span><span class="mf">0.12</span><span class="p">,</span><span class="mf">0.31</span><span class="p">,</span><span class="o">-</span><span class="mf">0.55</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">spharm</span><span class="p">(</span><span class="mi">2</span><span class="p">,[</span><span class="mf">0.12</span><span class="p">,</span><span class="mf">0.31</span><span class="p">,</span><span class="o">-</span><span class="mf">0.55</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">[ (-0.0764131,-0.0695855) ]</span>
 <span class="go">[ (-0.123458,0.318933) ]</span>
@@ -491,9 +511,9 @@ correspnding to a given <img alt="\ell" class="math" src="_images/math/b63508a5d
 <h4>Clebsch-Gordan products<a class="headerlink" href="#clebsch-gordan-products" title="Permalink to this headline">¶</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">CGproduct</span></code> function computes a single part (indexed by the last argument)
 of the part of Clebsch–Gordan product of two SO3-parts.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
 <span class="go">[ (-1.99979,-0.121461) (-3.58782,2.10019) (-1.34679,-1.51318) (-2.83808,-0.352546) ]</span>
 <span class="go">[ (1.14425,0.901388) (2.9222,0.910338) (-0.409205,0.741729) (-1.40359,1.8079) ]</span>
@@ -504,6 +524,29 @@ of the part of Clebsch–Gordan product of two SO3-parts.</p>
 <span class="go">[ (-0.387969,-1.5089) (-0.163056,1.1043) (0.628268,-0.465748) (-0.576328,0.309953) ]</span>
 </pre></div>
 </div>
+<p>The Clebsch-Gordan product is an equivariant operation. This can be verified as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3element</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Br</span><span class="o">=</span><span class="n">B</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">Br</span><span class="p">)</span>
+<span class="go">[ (-2.29009,1.34611) (1.87151,1.91239) (1.87151,1.91239) (1.39403,-1.47615) ]</span>
+<span class="go">[ (-2.4749,0.63966) (-2.28298,1.25885) (-2.28298,1.25885) (-2.25532,0.710633) ]</span>
+<span class="go">[ (-0.46347,0.938204) (1.08875,0.235826) (1.08875,0.235826) (0.633137,2.93817) ]</span>
+<span class="go">[ (1.75711,0.22648) (-1.34673,0.988074) (-1.34673,0.988074) (2.81846,-0.208569) ]</span>
+<span class="go">[ (-3.34617,1.96189) (-0.792441,-1.00736) (-0.792441,-1.00736) (-1.36723,-0.665336) ]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Ar</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Br2</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">Ar</span><span class="p">,</span><span class="n">Ar</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># by equiariance should be the same as Br</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">Br2</span><span class="p">)</span>
+<span class="go">[ (-2.29009,1.34611) (1.87151,1.91239) (1.87151,1.91239) (1.39403,-1.47615) ]</span>
+<span class="go">[ (-2.4749,0.639659) (-2.28298,1.25885) (-2.28298,1.25885) (-2.25532,0.710633) ]</span>
+<span class="go">[ (-0.46347,0.938204) (1.08875,0.235827) (1.08875,0.235826) (0.633138,2.93817) ]</span>
+<span class="go">[ (1.75711,0.22648) (-1.34673,0.988074) (-1.34673,0.988074) (2.81846,-0.20857) ]</span>
+<span class="go">[ (-3.34617,1.96189) (-0.792441,-1.00736) (-0.792441,-1.00736) (-1.36723,-0.665336) ]</span>
+</pre></div>
+</div>
 </section>
 <section id="gpu-operations">
 <h4>GPU operations<a class="headerlink" href="#gpu-operations" title="Permalink to this headline">¶</a></h4>
@@ -512,7 +555,7 @@ of the part of Clebsch–Gordan product of two SO3-parts.</p>
 In general, if the operands are on the host, any given operation will be performed on the host and
 the result is placed on the host. Conversely, if the operands are on the GPU,
 the operation will be performed on the GPU and the result will be placed on the same GPU.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Create a copy of A on the first GPU (GPU0)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">device</span><span class="p">()</span> <span class="c1"># Return whether the SO3part is resident on the CPU or GPU</span>
 <span class="go">1</span>
@@ -533,9 +576,9 @@ On the backend,  <code class="docutils literal notranslate"><span class="pre">SO
 of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects with <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/74a40cacf2c26b043cada66d44985bf42992572e.svg"/>.</p>
 <p>An <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> can be initialized from an <code class="docutils literal notranslate"><span class="pre">SO3type</span></code> object or just a vector of multiplicities
 corresponding to <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/74a40cacf2c26b043cada66d44985bf42992572e.svg"/>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3type</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span>
 <span class="go">&lt;GElib::SO3vec of type(2,3,1)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
@@ -572,7 +615,7 @@ corresponding to <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/7
 <span class="go">[ (0.0757219,-0.607787) (1.47339,0.74589) (0.097221,-1.75177) ]</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 <span class="go">Part l=0:</span>
 <span class="go">  [ (-0.0893479,0.200541) (2.04214,0.277807) ]</span>
@@ -591,8 +634,8 @@ corresponding to <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/7
 </pre></div>
 </div>
 <p>Arithmetic operations can be applied to <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects the same way they can be applied <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> s.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="n">u</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">v</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 <span class="go">Part l=0:</span>
@@ -615,8 +658,8 @@ corresponding to <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/7
 <section id="functions-of-so3vec-objects">
 <h4>Functions of SO3vec objects<a class="headerlink" href="#functions-of-so3vec-objects" title="Permalink to this headline">¶</a></h4>
 <p>Arithmetic operations can be applied to <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects just as to <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> s.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">inp</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
 <span class="go">(5.523734092712402-1.4036915302276611j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">norm2</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
@@ -627,9 +670,9 @@ corresponding to <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/7
 <section id="id3">
 <h4>Clebsch-Gordan products<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
 <p>The Clebsch-Gordan product of two SO3-vectors is computed as follows.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 <span class="go">Part l=0:</span>
 <span class="go">  [ (0.800454,-2.72231) (0.387997,-2.21325) ]</span>
@@ -652,7 +695,7 @@ corresponding to <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/7
 <h4>GPU operations<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects can be can moved back and forth between the host (CPU) and the GPU
 the same was as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Create a copy of A on the first GPU (GPU0)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">B</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Move B back to the host</span>
 </pre></div>
@@ -664,7 +707,7 @@ the same was as <code class="docutils literal notranslate"><span class="pre">SO3
 <p>Similary to the tensor array classes in <code class="docutils literal notranslate"><span class="pre">cnine</span></code>, the basic tool for parallelizing SO3-operations in GElib
 are the <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> classes.
 An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> is a multidimensional array of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects with the same <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/> and <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg"/>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># Create a 2x2 array of SO3parts with l=2 and n=2</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># Create a 2x2 array of SO3parts with l=2 and n=2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">Cell (0,0)</span>
 <span class="go">[ (-1.23974,-0.653697) (-0.407472,-0.645572) ]</span>
@@ -719,7 +762,7 @@ An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span
 <span class="go">[ (1.32256,-0.795502) (1.93468,0.333338) ]</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">Cell (0,0)</span>
 <span class="go">[ (-1.23974,-0.653697) (-0.407472,-0.645572) ]</span>
@@ -753,8 +796,8 @@ An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> supports the same arithmetic operations as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">A</span><span class="o">+</span><span class="mf">3.0</span><span class="o">*</span><span class="n">B</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
 <span class="go">Cell (0,0)</span>
@@ -793,7 +836,7 @@ An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span
 <section id="id6">
 <h4>Clebsch-Gordan products<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
 <p>The cellwise Clebsch–Gordan product of two <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> objects is computed the natural way.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
 <span class="go">Cell (0,0)</span>
 <span class="go">[ (-0.612916,0.358383) (0.131453,2.15649) (-0.287549,0.0733472) (-0.55767,-0.214064) ]</span>
@@ -828,13 +871,20 @@ An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span
 </pre></div>
 </div>
 </section>
+<section id="id7">
+<h4>GPU operations<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> objects can be moved to/from the GPU the same way as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects.</p>
+<p>The benefits of GPU acceleration for arrayed objects is particularly great, because the corresponding
+kernels (specifically, kernels implementing Clebsch-Gordan operations) are written in a way as to
+parallelize the operation across array cells.</p>
+</section>
 </section>
 <section id="so3vecarr">
 <h3>SO3vecArr<a class="headerlink" href="#so3vecarr" title="Permalink to this headline">¶</a></h3>
 <p>An <code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> is a multidimensional array of <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects.
 On the backend, the <code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> is stored as a list of <code class="docutils literal notranslate"><span class="pre">GElib::SO3partArray</span></code>
 objects, however logically it is accessible as a single array of <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">Cell (0,0)</span>
 <span class="go">[ (-1.23974,-0.653697) (-0.407472,-0.645572) ]</span>
@@ -884,10 +934,10 @@ objects, however logically it is accessible as a single array of <code class="do
 <span class="go">(2,2)</span>
 </pre></div>
 </div>
-<section id="id7">
-<h4>Access and arithmetic<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<section id="id8">
+<h4>Access and arithmetic<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">A</span><span class="o">+</span><span class="mf">3.0</span><span class="o">*</span><span class="n">B</span>
 </pre></div>
 </div>
@@ -902,7 +952,7 @@ objects, however logically it is accessible as a single array of <code class="do
 <span class="go">  [ (0.612628,-1.36454) (0.183707,-0.0820907) ]</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">v</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">Cell (0,0)</span>
@@ -946,16 +996,16 @@ objects, however logically it is accessible as a single array of <code class="do
 <span class="go">[ (-1.71069,0.500273) (-0.460123,1.38648) ]</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">V</span><span class="o">.</span><span class="n">set_part</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="id8">
-<h4>Clebsch-Gordan products<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">U</span><span class="o">=</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">V</span><span class="o">=</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">W</span><span class="o">=</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">U</span><span class="p">,</span><span class="n">V</span><span class="p">)</span>
+<section id="id9">
+<h4>Clebsch-Gordan products<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">U</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">V</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">W</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">U</span><span class="p">,</span><span class="n">V</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
 <span class="go">Cell (0)</span>
 <span class="go">[ (-2.53487,-2.85716) (-0.842041,0.952523) ]</span>
@@ -995,6 +1045,11 @@ objects, however logically it is accessible as a single array of <code class="do
 <span class="go">[ (0.172447,-0.105246) ]</span>
 </pre></div>
 </div>
+</section>
+<section id="id10">
+<h4>GPU operations<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> objects can be moved to/from the GPU the same way as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects.
+Similarly to <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code>, operations on <code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> objects are parallelized across cells.</p>
 </section>
 </section>
 </section>
@@ -1055,6 +1110,7 @@ objects, however logically it is accessible as a single array of <code class="do
 <li><a class="reference internal" href="#so3type">SO3type</a></li>
 <li><a class="reference internal" href="#so3part">SO3part</a><ul>
 <li><a class="reference internal" href="#access-and-arithmetic">Access and arithmetic</a></li>
+<li><a class="reference internal" href="#group-action">Group action</a></li>
 <li><a class="reference internal" href="#functions-of-so3-parts">Functions of SO3-parts</a></li>
 <li><a class="reference internal" href="#matrix-operations">Matrix operations</a></li>
 <li><a class="reference internal" href="#spherical-harmonics">Spherical harmonics</a></li>
@@ -1072,11 +1128,13 @@ objects, however logically it is accessible as a single array of <code class="do
 <li><a class="reference internal" href="#so3partarr">SO3partArr</a><ul>
 <li><a class="reference internal" href="#id5">Access and arithmetic</a></li>
 <li><a class="reference internal" href="#id6">Clebsch-Gordan products</a></li>
+<li><a class="reference internal" href="#id7">GPU operations</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#so3vecarr">SO3vecArr</a><ul>
-<li><a class="reference internal" href="#id7">Access and arithmetic</a></li>
-<li><a class="reference internal" href="#id8">Clebsch-Gordan products</a></li>
+<li><a class="reference internal" href="#id8">Access and arithmetic</a></li>
+<li><a class="reference internal" href="#id9">Clebsch-Gordan products</a></li>
+<li><a class="reference internal" href="#id10">GPU operations</a></li>
 </ul>
 </li>
 </ul>

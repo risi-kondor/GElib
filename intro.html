@@ -189,6 +189,7 @@ and can be downloaded from <a class="reference external" href="https://github.co
 <p>This document provides documentation for GElib’s Python interface. Not all features in the C++ library
 are available through this interface. The documentation of the C++ API can be found in pdf format
 in the package’s <code class="docutils literal notranslate"><span class="pre">doc</span></code> directory.</p>
+<p>GElib is currently in alpha. Some features described in the following may still be incomplete or untested.</p>
 <section id="features">
 <h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
 <ol class="arabic simple">
@@ -265,14 +266,13 @@ the <code class="docutils literal notranslate"><span class="pre">CUDA_HOME</span
 <li><p>To use the library <em>without</em> PyTorch’s autodiff functionality, load the library with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gelib_base</span> <span class="pre">as</span> <span class="pre">gelib</span></code>.</p></li>
 <li><p>To use the library <em>with</em> automatic differentiation, load the library with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gelib_torch</span> <span class="pre">as</span> <span class="pre">gelib</span></code>.</p></li>
 </ol>
-<p>The two modules use identical syntax, therefore the following description of their usage applies to both.
+<p>The two modules use identical syntax, therefore the following documentation applies to both.
 The backend implementation of the two modules however is quite different.
 <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code> is just a wrapper for the underlying C++ classes.
 In contrast, for interoperability with <code class="docutils literal notranslate"><span class="pre">torch.autodiff</span></code>,
 <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> ‘s core classes are Python classes derived from <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>.
 These Python classes, in turn, call the wrappers implemented in <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>.
-Inevitably, the latter approach incurs some performance overhead.
-Since <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> is built on <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>, the two modules can also be used together.</p>
+Inevitably, this incurs some performance overhead.</p>
 </section>
 
         </article>
