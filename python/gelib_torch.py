@@ -115,16 +115,12 @@ class SO3vec(tensorlike):
     def gaussian(_tau):
         return SO3vec(_SO3vec.gaussian(_tau))
 
-    #def __plus__
 
     def __str__(self):
         return self.obj.__str__()
 
     def __repr__(self):
         return self.obj.__repr__()
-
-    #def __add__(self,y):
-     #   return
 
     
 

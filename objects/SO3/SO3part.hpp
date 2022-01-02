@@ -57,6 +57,13 @@ namespace GElib{
     using GELIB_SO3PART_IMPL::GELIB_SO3PART_IMPL;
 
 
+    static SO3part raw(const int _l, const int _n){
+      return SO3part(_l,_n,-1,cnine::fill::raw);}
+    static SO3part raw(const int _l, const int _n, const int _nbu){
+      return SO3part(_l,_n,_nbu,cnine::fill::raw);}
+    static SO3part raw(const int _l, const int _n, const int _nbu, const device& _dev){
+      return SO3part(_l,_n,_nbu,cnine::fill::raw,_dev);}
+
     static SO3part zero(const int _l, const int _n){
       return SO3part(_l,_n,-1,cnine::fill::zero);}
     static SO3part zero(const int _l, const int _n, const int _nbu){

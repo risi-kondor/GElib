@@ -12,9 +12,21 @@
 py::class_<SO3part>(m,"SO3part",
   "Class to store an array consisting of n vectors transforming according to a specific irreducible representation of SO(3)")
     
+  .def_static("raw",static_cast<SO3part (*)(const int, const int)>(&SO3part::raw))
+  .def_static("raw",[](const int l, const int n, const int dev) {return SO3part::raw(l,n,-1,dev);}, 
+    py::arg("l"), py::arg("n")=1, py::arg("device")=0)
+
   .def_static("zero",static_cast<SO3part (*)(const int, const int)>(&SO3part::zero))
+  .def_static("zero",[](const int l, const int n, const int dev) {return SO3part::zero(l,n,-1,dev);}, 
+    py::arg("l"), py::arg("n")=1, py::arg("device")=0)
+
   .def_static("ones",static_cast<SO3part (*)(const int, const int)>(&SO3part::ones))
+  .def_static("ones",[](const int l, const int n, const int dev) {return SO3part::ones(l,n,-1,dev);}, 
+    py::arg("l"), py::arg("n")=1, py::arg("device")=0)
+
   .def_static("gaussian",static_cast<SO3part (*)(const int, const int)>(&SO3part::gaussian))
+  .def_static("gaussian",[](const int l, const int n, const int dev) {return SO3part::gaussian(l,n,-1,dev);}, 
+    py::arg("l"), py::arg("n")=1, py::arg("device")=0)
 
   .def_static("spharm",[](const int l, const vector<float> v){
       return SO3part::spharm(l,1,cnine::Gtensor<float>(v));})
@@ -58,7 +70,10 @@ py::class_<SO3part>(m,"SO3part",
   .def("addCGproduct_back0",&SO3part::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
   .def("addCGproduct_back1",&SO3part::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
 
+  .def("device",&SO3part::get_device)
   .def("to",&SO3part::to_device)
+  .def("to_device",&SO3part::to_device)
+  .def("move_to",[](SO3part& x, const int _dev){x.move_to_device(_dev);})
     
   .def("str",&SO3part::str,py::arg("indent")="")
   .def("__str__",&SO3part::str,py::arg("indent")="")

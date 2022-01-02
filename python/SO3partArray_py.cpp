@@ -84,7 +84,10 @@ pybind11::class_<SO3partArray>(m,"SO3partArr",
 //.def("widen",&SO3partArray::widen)
 //.def("reduce",&SO3partArray::reduce)
 
+  .def("device",&SO3partArray::get_device)
   .def("to",&SO3partArray::to_device)
+  .def("to_device",&SO3partArray::to_device)
+  .def("move_to",[](SO3partArray& x, const int _dev){x.move_to_device(_dev);})
 
   .def("str",&SO3partArray::str,py::arg("indent")="")
   .def("__str__",&SO3partArray::str,py::arg("indent")="")

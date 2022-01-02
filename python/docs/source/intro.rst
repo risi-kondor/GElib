@@ -3,7 +3,8 @@ the rotation group SO(3), specifically for building SO(3)-equivariant
 neural networks. 
 GElib is developed by Risi Kondor at the University of Chicago. 
 GElib is released under the 
-`Mozilla public license v.2.0 <https://www.mozilla.org/en-US/MPL/2.0/>`_.   
+`Mozilla public license v.2.0 <https://www.mozilla.org/en-US/MPL/2.0/>`_ 
+and can be downloaded from `https://github.com/risi-kondor/GElib <https://github.com/risi-kondor/GElib>`_.
 
 This document provides documentation for GElib's Python interface. Not all features in the C++ library 
 are available through this interface. The documentation of the C++ API can be found in pdf format 
@@ -13,33 +14,85 @@ in the package's ``doc`` directory.
 Features
 ########
 
-#. Classes to store and manipulate SO(3)-equivariant vectors
-#. Fast implementation of the Clebsch-Gordan transform on both the CPU and the GPU
-#. Facilities for operating on arrays of SO(3)-equivariant vectors in parallel, even in irregular patterns (graphs)
-#. Support for automatic differentiation
-#. Interoperability with PyTorch
+#. Classes to store and manipulate SO(3)-equivariant vectors.
+#. Fast implementation of the Clebsch-Gordan transform on both the CPU and the GPU.
+#. Facilities for operating on arrays of SO(3)-equivariant vectors in parallel, 
+   even in irregular patterns (graphs).
+#. Support for automatic differentiation.
+#. Interoperability with PyTorch. 
 
  
 ############
 Installation
 ############
 
-Installing GElib requires the following:
+GElib is installed as a PyTorch C++ (or CUDA) extension. Installation requires the following: 
 
 #. C++14 or higher
-#. Python
 #. PyTorch
 #. cnine (see below) 
 
 To install GElib follow these steps:
 
-#. Download the `cnine <https://github.com/risi-kondor/cnine>`_  and 
-   `GElib <https://github.com/risi-kondor/GElib>`_ libraries. 
-#. Edit the file ``config.txt`` as necessary, in particular, make sure that ``CNINE_ROOT`` points to the root 
-   of the *cnine* package on your system. 
-#. Run ``python setup.sty install`` in the ``python`` directory to compile the package and install it on your 
-   system.
+#. Download the `cnine <https://github.com/risi-kondor/cnine>`_  library and install it on your system as per its own instructions. 
+#. Download `GElib <https://github.com/risi-kondor/GElib>`_. 
+#. Edit the user configurable variables in ``python/setup.py`` as necessary. 
+#. Run ``python setup.sty install`` in the ``python`` directory to compile the package and install it on your system.
 
+#############
+Configuration
+#############
+
+The installation can be configured by setting the following variables in ``python/setup.py``.
+
+``compile_with_cuda``
+  If set to ``True``, `GElib` will be compiled with GPU suport. This requires a working CUDA and CUBLAS installation 
+  on your system and PyTorch itself having been compiled with CUDA enabled. If `GElib` is compiled with CUDA,  
+  you must always import ``torch`` before importing ``GElib``.
+
+``copy_warnings``
+  If set to ``True``, `GElib` will print a message to the terminal whenever a data object 
+  is copied or move-copied. This option is useful for code optimization. 
+
+``torch_convert_warnings`` 
+  If set to ``True``, `cnine` will print a message to the terminal whenver a data object is explicitly 
+  converted (as opposed to just forming a tensor view) to/from PyTorch format. 
+
+
+
+###############
+Troubleshooting
+###############
+
+#. If it becomes necessary to change the location where `setuptools` 
+   places the compiled module, add a file called ``setup.cfg`` 
+   with content 
+
+   .. code-block:: none
+   
+    [install]
+    prefix=<target directory where you want the module to be placed>
+
+   in the ``python`` directory. Make sure that the new target directory is in Python's load path.
+
+#. PyTorch requires C++ extensions to be compiled against the same version of CUDA that it  
+   itself was compiled with. If this becomes an issue, it might be necessary to install an 
+   alternative version of CUDA on your system and force `setuptools` to use that version by setting 
+   the ``CUDA_HOME`` enironment variable, as, e.g. 
+
+   .. code-block:: none
+   
+    export CUDA_HOME=/usr/local/cuda-11.3
+
+
+############
+Known issues
+############
+
+GPU functionality is not fully tested.
+
+
+ 
 ##### 
 Usage 
 #####
@@ -52,14 +105,10 @@ GElib has two distinct interfaces implemented in two different modules:
 The two modules use identical syntax, therefore the following description of their usage applies to both. 
 The backend implementation of the two modules however is quite different. 
 ``gelib_base`` is just a wrapper for the underlying C++ classes. 
-In contrast, ``gelib_torch`` 's core classes are Python classes derived from ``torch.tensor`` 
-for interoperability with ``torch.autodiff``. 
-These Python classes then, in turn, call the wrappers implemented in ``gelib_base``.  
+In contrast, for interoperability with ``torch.autodiff``, 
+``gelib_torch`` 's core classes are Python classes derived from ``torch.tensor``. 
+These Python classes, in turn, call the wrappers implemented in ``gelib_base``.  
 Inevitably, the latter approach incurs some performance overhead.  
-Since ``gelib_torch`` is built on ``gelib_base``, so the two modules can also be used together.   
+Since ``gelib_torch`` is built on ``gelib_base``, the two modules can also be used together.   
 
-############
-Known issues
-############
 
-GPU functionality is temporarily disabled. 

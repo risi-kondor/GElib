@@ -152,8 +152,8 @@ GPU operations
 ==============
 
 
-Similarly to ``cnine`` tensors, ``SO3part`` objects, ``SO3vec`` objects 
- can moved back and forth between the host (CPU) and the GPU with the ``to`` method. 
+``SO3vec`` objects can be can moved back and forth between the host (CPU) and the GPU 
+the same was as ``SO3part`` objects. 
 
 .. code-block:: python
 
