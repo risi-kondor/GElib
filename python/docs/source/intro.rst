@@ -34,7 +34,7 @@ GElib is installed as a PyTorch C++ (or CUDA) extension. Installation requires t
 
 To install GElib follow these steps:
 
-#. Download the `cnine <https://github.com/risi-kondor/cnine>`_  library and install it on your system as per its own instructions. 
+#. Download the `cnine <https://github.com/risi-kondor/cnine>`_  library and install it on your system. 
 #. Download `GElib <https://github.com/risi-kondor/GElib>`_. 
 #. Edit the user configurable variables in ``python/setup.py`` as necessary. 
 #. Run ``python setup.sty install`` in the ``python`` directory to compile the package and install it on your system.
