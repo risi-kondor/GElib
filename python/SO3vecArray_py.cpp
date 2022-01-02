@@ -100,7 +100,10 @@ pybind11::class_<SO3vecArray>(m,"SO3vecArr",
 //.def("widen",&SO3vecArray::widen)
 //.def("reduce",&SO3vecArray::reduce)
 
+//.def("device",&SO3vecArray::get_device)
   .def("to",&SO3vecArray::to_device)
+  .def("to_device",&SO3vecArray::to_device)
+//.def("move_to",[](SO3vecArray& x, const int _dev){x.move_to_device(_dev);})
 
   .def("str",&SO3vecArray::str,py::arg("indent")="")
   .def("__str__",&SO3vecArray::str,py::arg("indent")="") 

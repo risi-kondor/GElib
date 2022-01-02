@@ -7,7 +7,7 @@ irreducible representation :math:`D^{(\ell)}`.
 Since :math:`D^{(\ell)}` is a :math:`2\ell\!+\!1` dimensional representation, 
 the vectors are jointly stored in a matrix :math:`\mathbb{C}^{(2\ell+1)\times n}`.   
 
-The following constructs an ``SO3part`` object holding ``n=3`` vectors corresponding to the ``l=2`` 
+The following constructs an ``SO3part`` object holding ``n=3`` gaussian random vectors corresponding to the ``l=2`` 
 irrep. 
 
 .. code-block:: python
@@ -21,6 +21,10 @@ irrep.
  [ (-1.20183,-2.1947) (-0.399454,0.680457) (-0.727057,1.40633) ]
  [ (0.43853,-0.31774) (-0.42954,0.123568) (-2.20967,-0.37048) ]
  [ (-1.22569,0.0266631) (0.73464,0.592888) (0.630166,-0.165017) ]
+
+Similarly to real and complex valued tensors in `cnine`, ``SO3part`` objects can also be created with the 
+`zero`, `ones` and `raw` constructors. The optional ``device`` argument specifies with the SO3part 
+is created on the CPU or the GPU.
 
 The order ``l`` and multiplicity ``n`` of an ``SO3part`` is accessed as follows.
 
@@ -71,7 +75,6 @@ Individual entries in an ``SO3part`` can be accessed with the same syntax as how
 in ``cnine``. 
 Note however the that indexing convention is that ``n`` index comes first, and the ``m`` index 
 :math:`0\leq m< 2\ell+1` corresponding to the index within a given irreducible vector is second.  
-
 It is important to note that manually setting entries in ``SO3part`` objects individually in general 
 breaks equivariance. 
 
@@ -177,13 +180,19 @@ GPU operations
 ==============
 
 
-Similarly to ``cnine`` tensors, ``SO3part`` objects can moved back and forth between the host (CPU) 
-and the GPU with the ``to`` method. 
+Similarly to ``cnine`` tensors, if `GElib` was compiled with GPU support and a GPU is avaliable, 
+``SO3part`` objects can be moved back and forth between the host (CPU) and the GPU. 
+In general, if the operands are on the host, any given operation will be performed on the host and 
+the result is placed on the host. Conversely, if the operands are on the GPU, 
+the operation will be performed on the GPU and the result will be placed on the same GPU. 
 
 .. code-block:: python
 
   >>> A=SO3part.gaussian(4,4)
   >>> B=A.to(1) # Create a copy of A on the first GPU (GPU0)
+  >>> B.device() # Return whether the SO3part is resident on the CPU or GPU
+  1   
   >>> C=B.to(0) # Move B back to the host 
-
+  >>> B.device() 
+  0
 

@@ -20,9 +20,16 @@ GElib
 
 .. include:: SO3element.rst
 
+|
+
 .. include:: SO3type.rst
 
+
+|
+
 .. include:: SO3part.rst
+
+|
 
 .. include:: SO3vec.rst
 

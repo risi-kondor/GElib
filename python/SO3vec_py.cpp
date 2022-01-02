@@ -38,7 +38,10 @@ py::class_<SO3vec>(m,"SO3vec",
   .def("__iadd__",[](SO3vec& x, const SO3vec& y){x+=y; return x;})
   .def("__isub__",[](SO3vec& x, const SO3vec& y){x+=y; return x;})
   
+  .def("device",&SO3vec::get_device)
   .def("to",&SO3vec::to_device)
+  .def("to_device",&SO3vec::to_device)
+//.def("move_to",[](SO3vec& x, const int _dev){x.move_to_device(_dev);})
 
   .def("str",&SO3vec::str,py::arg("indent")="")
   .def("__str__",&SO3vec::str,py::arg("indent")="")
