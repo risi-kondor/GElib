@@ -184,38 +184,79 @@ the rotation group SO(3), specifically for building SO(3)-equivariant
 neural networks.
 GElib is developed by Risi Kondor at the University of Chicago.
 GElib is released under the
-<a class="reference external" href="https://www.mozilla.org/en-US/MPL/2.0/">Mozilla public license v.2.0</a>.</p>
+<a class="reference external" href="https://www.mozilla.org/en-US/MPL/2.0/">Mozilla public license v.2.0</a>
+and can be downloaded from <a class="reference external" href="https://github.com/risi-kondor/GElib">https://github.com/risi-kondor/GElib</a>.</p>
 <p>This document provides documentation for GElib’s Python interface. Not all features in the C++ library
 are available through this interface. The documentation of the C++ API can be found in pdf format
 in the package’s <code class="docutils literal notranslate"><span class="pre">doc</span></code> directory.</p>
 <section id="features">
 <h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
 <ol class="arabic simple">
-<li><p>Classes to store and manipulate SO(3)-equivariant vectors</p></li>
-<li><p>Fast implementation of the Clebsch-Gordan transform on both the CPU and the GPU</p></li>
-<li><p>Facilities for operating on arrays of SO(3)-equivariant vectors in parallel, even in irregular patterns (graphs)</p></li>
-<li><p>Support for automatic differentiation</p></li>
-<li><p>Interoperability with PyTorch</p></li>
+<li><p>Classes to store and manipulate SO(3)-equivariant vectors.</p></li>
+<li><p>Fast implementation of the Clebsch-Gordan transform on both the CPU and the GPU.</p></li>
+<li><p>Facilities for operating on arrays of SO(3)-equivariant vectors in parallel,
+even in irregular patterns (graphs).</p></li>
+<li><p>Support for automatic differentiation.</p></li>
+<li><p>Interoperability with PyTorch.</p></li>
 </ol>
 </section>
 <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>Installing GElib requires the following:</p>
+<p>GElib is installed as a PyTorch C++ (or CUDA) extension. Installation requires the following:</p>
 <ol class="arabic simple">
 <li><p>C++14 or higher</p></li>
-<li><p>Python</p></li>
 <li><p>PyTorch</p></li>
 <li><p>cnine (see below)</p></li>
 </ol>
 <p>To install GElib follow these steps:</p>
 <ol class="arabic simple">
-<li><p>Download the <a class="reference external" href="https://github.com/risi-kondor/cnine">cnine</a>  and
-<a class="reference external" href="https://github.com/risi-kondor/GElib">GElib</a> libraries.</p></li>
-<li><p>Edit the file <code class="docutils literal notranslate"><span class="pre">config.txt</span></code> as necessary, in particular, make sure that <code class="docutils literal notranslate"><span class="pre">CNINE_ROOT</span></code> points to the root
-of the <em>cnine</em> package on your system.</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.sty</span> <span class="pre">install</span></code> in the <code class="docutils literal notranslate"><span class="pre">python</span></code> directory to compile the package and install it on your
-system.</p></li>
+<li><p>Download the <a class="reference external" href="https://github.com/risi-kondor/cnine">cnine</a>  library and install it on your system as per its own instructions.</p></li>
+<li><p>Download <a class="reference external" href="https://github.com/risi-kondor/GElib">GElib</a>.</p></li>
+<li><p>Edit the user configurable variables in <code class="docutils literal notranslate"><span class="pre">python/setup.py</span></code> as necessary.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.sty</span> <span class="pre">install</span></code> in the <code class="docutils literal notranslate"><span class="pre">python</span></code> directory to compile the package and install it on your system.</p></li>
 </ol>
+</section>
+<section id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+<p>The installation can be configured by setting the following variables in <code class="docutils literal notranslate"><span class="pre">python/setup.py</span></code>.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">compile_with_cuda</span></code></dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, <cite>GElib</cite> will be compiled with GPU suport. This requires a working CUDA and CUBLAS installation
+on your system and PyTorch itself having been compiled with CUDA enabled. If <cite>GElib</cite> is compiled with CUDA,
+you must always import <code class="docutils literal notranslate"><span class="pre">torch</span></code> before importing <code class="docutils literal notranslate"><span class="pre">GElib</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">copy_warnings</span></code></dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, <cite>GElib</cite> will print a message to the terminal whenever a data object
+is copied or move-copied. This option is useful for code optimization.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">torch_convert_warnings</span></code></dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, <cite>cnine</cite> will print a message to the terminal whenver a data object is explicitly
+converted (as opposed to just forming a tensor view) to/from PyTorch format.</p>
+</dd>
+</dl>
+</section>
+<section id="troubleshooting">
+<h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic">
+<li><p>If it becomes necessary to change the location where <cite>setuptools</cite>
+places the compiled module, add a file called <code class="docutils literal notranslate"><span class="pre">setup.cfg</span></code>
+with content</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[install]
+prefix=&lt;target directory where you want the module to be placed&gt;
+</pre></div>
+</div>
+<p>in the <code class="docutils literal notranslate"><span class="pre">python</span></code> directory. Make sure that the new target directory is in Python’s load path.</p>
+</li>
+<li><p>PyTorch requires C++ extensions to be compiled against the same version of CUDA that it
+itself was compiled with. If this becomes an issue, it might be necessary to install an
+alternative version of CUDA on your system and force <cite>setuptools</cite> to use that version by setting
+the <code class="docutils literal notranslate"><span class="pre">CUDA_HOME</span></code> enironment variable, as, e.g.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>export CUDA_HOME=/usr/local/cuda-11.3
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="known-issues">
+<h1>Known issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h1>
+<p>GPU functionality is not fully tested.</p>
 </section>
 <section id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
@@ -227,15 +268,11 @@ system.</p></li>
 <p>The two modules use identical syntax, therefore the following description of their usage applies to both.
 The backend implementation of the two modules however is quite different.
 <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code> is just a wrapper for the underlying C++ classes.
-In contrast, <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> ‘s core classes are Python classes derived from <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>
-for interoperability with <code class="docutils literal notranslate"><span class="pre">torch.autodiff</span></code>.
-These Python classes then, in turn, call the wrappers implemented in <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>.
+In contrast, for interoperability with <code class="docutils literal notranslate"><span class="pre">torch.autodiff</span></code>,
+<code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> ‘s core classes are Python classes derived from <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>.
+These Python classes, in turn, call the wrappers implemented in <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>.
 Inevitably, the latter approach incurs some performance overhead.
-Since <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> is built on <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>, so the two modules can also be used together.</p>
-</section>
-<section id="known-issues">
-<h1>Known issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h1>
-<p>GPU functionality is temporarily disabled.</p>
+Since <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> is built on <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>, the two modules can also be used together.</p>
 </section>
 
         </article>
@@ -275,8 +312,10 @@ Since <code class="docutils literal notranslate"><span class="pre">gelib_torch</
             <ul>
 <li><a class="reference internal" href="#">Features</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 <li><a class="reference internal" href="#known-issues">Known issues</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 
           </div>

@@ -188,38 +188,79 @@ the rotation group SO(3), specifically for building SO(3)-equivariant
 neural networks.
 GElib is developed by Risi Kondor at the University of Chicago.
 GElib is released under the
-<a class="reference external" href="https://www.mozilla.org/en-US/MPL/2.0/">Mozilla public license v.2.0</a>.</p>
+<a class="reference external" href="https://www.mozilla.org/en-US/MPL/2.0/">Mozilla public license v.2.0</a>
+and can be downloaded from <a class="reference external" href="https://github.com/risi-kondor/GElib">https://github.com/risi-kondor/GElib</a>.</p>
 <p>This document provides documentation for GElib’s Python interface. Not all features in the C++ library
 are available through this interface. The documentation of the C++ API can be found in pdf format
 in the package’s <code class="docutils literal notranslate"><span class="pre">doc</span></code> directory.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
-<li><p>Classes to store and manipulate SO(3)-equivariant vectors</p></li>
-<li><p>Fast implementation of the Clebsch-Gordan transform on both the CPU and the GPU</p></li>
-<li><p>Facilities for operating on arrays of SO(3)-equivariant vectors in parallel, even in irregular patterns (graphs)</p></li>
-<li><p>Support for automatic differentiation</p></li>
-<li><p>Interoperability with PyTorch</p></li>
+<li><p>Classes to store and manipulate SO(3)-equivariant vectors.</p></li>
+<li><p>Fast implementation of the Clebsch-Gordan transform on both the CPU and the GPU.</p></li>
+<li><p>Facilities for operating on arrays of SO(3)-equivariant vectors in parallel,
+even in irregular patterns (graphs).</p></li>
+<li><p>Support for automatic differentiation.</p></li>
+<li><p>Interoperability with PyTorch.</p></li>
 </ol>
 </section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>Installing GElib requires the following:</p>
+<p>GElib is installed as a PyTorch C++ (or CUDA) extension. Installation requires the following:</p>
 <ol class="arabic simple">
 <li><p>C++14 or higher</p></li>
-<li><p>Python</p></li>
 <li><p>PyTorch</p></li>
 <li><p>cnine (see below)</p></li>
 </ol>
 <p>To install GElib follow these steps:</p>
 <ol class="arabic simple">
-<li><p>Download the <a class="reference external" href="https://github.com/risi-kondor/cnine">cnine</a>  and
-<a class="reference external" href="https://github.com/risi-kondor/GElib">GElib</a> libraries.</p></li>
-<li><p>Edit the file <code class="docutils literal notranslate"><span class="pre">config.txt</span></code> as necessary, in particular, make sure that <code class="docutils literal notranslate"><span class="pre">CNINE_ROOT</span></code> points to the root
-of the <em>cnine</em> package on your system.</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.sty</span> <span class="pre">install</span></code> in the <code class="docutils literal notranslate"><span class="pre">python</span></code> directory to compile the package and install it on your
-system.</p></li>
+<li><p>Download the <a class="reference external" href="https://github.com/risi-kondor/cnine">cnine</a>  library and install it on your system as per its own instructions.</p></li>
+<li><p>Download <a class="reference external" href="https://github.com/risi-kondor/GElib">GElib</a>.</p></li>
+<li><p>Edit the user configurable variables in <code class="docutils literal notranslate"><span class="pre">python/setup.py</span></code> as necessary.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.sty</span> <span class="pre">install</span></code> in the <code class="docutils literal notranslate"><span class="pre">python</span></code> directory to compile the package and install it on your system.</p></li>
 </ol>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>The installation can be configured by setting the following variables in <code class="docutils literal notranslate"><span class="pre">python/setup.py</span></code>.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">compile_with_cuda</span></code></dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, <cite>GElib</cite> will be compiled with GPU suport. This requires a working CUDA and CUBLAS installation
+on your system and PyTorch itself having been compiled with CUDA enabled. If <cite>GElib</cite> is compiled with CUDA,
+you must always import <code class="docutils literal notranslate"><span class="pre">torch</span></code> before importing <code class="docutils literal notranslate"><span class="pre">GElib</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">copy_warnings</span></code></dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, <cite>GElib</cite> will print a message to the terminal whenever a data object
+is copied or move-copied. This option is useful for code optimization.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">torch_convert_warnings</span></code></dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, <cite>cnine</cite> will print a message to the terminal whenver a data object is explicitly
+converted (as opposed to just forming a tensor view) to/from PyTorch format.</p>
+</dd>
+</dl>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p>If it becomes necessary to change the location where <cite>setuptools</cite>
+places the compiled module, add a file called <code class="docutils literal notranslate"><span class="pre">setup.cfg</span></code>
+with content</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[install]
+prefix=&lt;target directory where you want the module to be placed&gt;
+</pre></div>
+</div>
+<p>in the <code class="docutils literal notranslate"><span class="pre">python</span></code> directory. Make sure that the new target directory is in Python’s load path.</p>
+</li>
+<li><p>PyTorch requires C++ extensions to be compiled against the same version of CUDA that it
+itself was compiled with. If this becomes an issue, it might be necessary to install an
+alternative version of CUDA on your system and force <cite>setuptools</cite> to use that version by setting
+the <code class="docutils literal notranslate"><span class="pre">CUDA_HOME</span></code> enironment variable, as, e.g.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>export CUDA_HOME=/usr/local/cuda-11.3
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="known-issues">
+<h2>Known issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h2>
+<p>GPU functionality is not fully tested.</p>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
@@ -231,15 +272,11 @@ system.</p></li>
 <p>The two modules use identical syntax, therefore the following description of their usage applies to both.
 The backend implementation of the two modules however is quite different.
 <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code> is just a wrapper for the underlying C++ classes.
-In contrast, <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> ‘s core classes are Python classes derived from <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>
-for interoperability with <code class="docutils literal notranslate"><span class="pre">torch.autodiff</span></code>.
-These Python classes then, in turn, call the wrappers implemented in <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>.
+In contrast, for interoperability with <code class="docutils literal notranslate"><span class="pre">torch.autodiff</span></code>,
+<code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> ‘s core classes are Python classes derived from <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>.
+These Python classes, in turn, call the wrappers implemented in <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>.
 Inevitably, the latter approach incurs some performance overhead.
-Since <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> is built on <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>, so the two modules can also be used together.</p>
-</section>
-<section id="known-issues">
-<h2>Known issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h2>
-<p>GPU functionality is temporarily disabled.</p>
+Since <code class="docutils literal notranslate"><span class="pre">gelib_torch</span></code> is built on <code class="docutils literal notranslate"><span class="pre">gelib_base</span></code>, the two modules can also be used together.</p>
 <div class="line-block">
 <div class="line"><br/></div>
 </div>
@@ -247,12 +284,13 @@ Since <code class="docutils literal notranslate"><span class="pre">gelib_torch</
 <section id="so3-classes">
 <h2>SO3 classes<a class="headerlink" href="#so3-classes" title="Permalink to this headline">¶</a></h2>
 <p>The core classes in GElib for storing and manipulating SO(3)-equivariant vectors are
-<code class="docutils literal notranslate"><span class="pre">SO3part</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> stores <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg"/> vectors that transform according to a specific irreducible
-representation <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> of SO(3).</p>
-<p>In contrast <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> stores a vector that transforms according to a generic representation.
+<code class="docutils literal notranslate"><span class="pre">SO3part</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code>:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> stores <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg"/> vectors that transform according to a specific irreducible representation <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> of SO(3).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> stores a vector that transforms according to a generic representation of SO(3).
 Since any representation decomposes into a sum of irreducibles, the vector is actually
-stored as a sequence of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.</p>
+stored as a sequence of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.</p></li>
+</ol>
 <p>The library also provides the <code class="docutils literal notranslate"><span class="pre">SO3element</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3type</span></code> helper classes.</p>
 <div class="line-block">
 <div class="line"><br/></div>
@@ -270,7 +308,9 @@ chosen randomly from the group.</p>
 <span class="go">SO3element(0.534275,2.801079,1.191856)</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">rho</span></code> method returns the D-matrix <img alt="D^{(l)}(R)" class="math" src="_images/math/fc661808ccaae4d2daea88a62fccc5aa43e899e6.svg"/>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">rho</span></code> method returns the representation matrix (Wigner D-matrix) <img alt="D^{(l)}(R)" class="math" src="_images/math/fc661808ccaae4d2daea88a62fccc5aa43e899e6.svg"/>.
+Since <img alt="D^{(l)}(R)" class="math" src="_images/math/fc661808ccaae4d2daea88a62fccc5aa43e899e6.svg"/> is a <img alt="2\ell+1" class="math" src="_images/math/1d3f01d9f1a70210c7595a682d9887f8b61be160.svg"/> dimensional representation, the result is a
+<img alt="(2\ell+1)\times(2\ell+1)" class="math" src="_images/math/84847223766245e89d47c260e7b647159980eb11.svg"/> dimensional complex matrix.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="n">b</span><span class="o">.</span><span class="n">rho</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 <span class="go">[ (-0.000784713,-0.000251944) (-0.00610006,0.00739689) (0.0328803,0.0598668) (0.32192,-0.0398973) (0.238549,-0.91275) ]</span>
@@ -279,6 +319,9 @@ chosen randomly from the group.</p>
 <span class="go">[ (0.0892214,-0.311872) (-0.680473,-0.525486) (0.331814,-0.196326) (0.0128144,0.081831) (-0.00934904,-0.00212605) ]</span>
 <span class="go">[ (0.238549,0.91275) (-0.32192,-0.0398973) (0.0328803,-0.0598668) (0.00610006,0.00739689) (-0.000784713,0.000251944) ]</span>
 </pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br/></div>
 </div>
 </section>
 <section id="so3type">
@@ -315,6 +358,9 @@ of given types.</p>
 <span class="go">(3,6,6)</span>
 </pre></div>
 </div>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
 </section>
 <section id="so3part">
 <h3>SO3part<a class="headerlink" href="#so3part" title="Permalink to this headline">¶</a></h3>
@@ -322,7 +368,7 @@ of given types.</p>
 irreducible representation <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/>.
 Since <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> is a <img alt="2\ell\!+\!1" class="math" src="_images/math/9d92fcb93216b22d3ad1507285348f8058a2f8d5.svg"/> dimensional representation,
 the vectors are jointly stored in a matrix <img alt="\mathbb{C}^{(2\ell+1)\times n}" class="math" src="_images/math/b1be3e1209376d353d86358bbcc30acd3fd61d17.svg"/>.</p>
-<p>The following constructs an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> object holding <code class="docutils literal notranslate"><span class="pre">n=3</span></code> vectors corresponding to the <code class="docutils literal notranslate"><span class="pre">l=2</span></code>
+<p>The following constructs an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> object holding <code class="docutils literal notranslate"><span class="pre">n=3</span></code> gaussian random vectors corresponding to the <code class="docutils literal notranslate"><span class="pre">l=2</span></code>
 irrep.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
@@ -335,6 +381,9 @@ irrep.</p>
 <span class="go">[ (-1.22569,0.0266631) (0.73464,0.592888) (0.630166,-0.165017) ]</span>
 </pre></div>
 </div>
+<p>Similarly to real and complex valued tensors in <cite>cnine</cite>, <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can also be created with the
+<cite>zero</cite>, <cite>ones</cite> and <cite>raw</cite> constructors. The optional <code class="docutils literal notranslate"><span class="pre">device</span></code> argument specifies with the SO3part
+is created on the CPU or the GPU.</p>
 <p>The order <code class="docutils literal notranslate"><span class="pre">l</span></code> and multiplicity <code class="docutils literal notranslate"><span class="pre">n</span></code> of an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is accessed as follows.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">getl</span><span class="p">()</span>
@@ -374,8 +423,8 @@ by scalars, and so on.</p>
 <p>Individual entries in an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> can be accessed with the same syntax as how matrix elements are accessed
 in <code class="docutils literal notranslate"><span class="pre">cnine</span></code>.
 Note however the that indexing convention is that <code class="docutils literal notranslate"><span class="pre">n</span></code> index comes first, and the <code class="docutils literal notranslate"><span class="pre">m</span></code> index
-<img alt="0\leq m&lt; 2\ell+1" class="math" src="_images/math/14cf54e4e64716dca970ce46b7fe950ce1471e6f.svg"/> corresponding to the index within a given irreducible vector is second.</p>
-<p>It is important to note that manually setting entries in <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects individually in general
+<img alt="0\leq m&lt; 2\ell+1" class="math" src="_images/math/14cf54e4e64716dca970ce46b7fe950ce1471e6f.svg"/> corresponding to the index within a given irreducible vector is second.
+It is important to note that manually setting entries in <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects individually in general
 breaks equivariance.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
@@ -458,12 +507,22 @@ of the part of Clebsch–Gordan product of two SO3-parts.</p>
 </section>
 <section id="gpu-operations">
 <h4>GPU operations<a class="headerlink" href="#gpu-operations" title="Permalink to this headline">¶</a></h4>
-<p>Similarly to <code class="docutils literal notranslate"><span class="pre">cnine</span></code> tensors, <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can moved back and forth between the host (CPU)
-and the GPU with the <code class="docutils literal notranslate"><span class="pre">to</span></code> method.</p>
+<p>Similarly to <code class="docutils literal notranslate"><span class="pre">cnine</span></code> tensors, if <cite>GElib</cite> was compiled with GPU support and a GPU is avaliable,
+<code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can be moved back and forth between the host (CPU) and the GPU.
+In general, if the operands are on the host, any given operation will be performed on the host and
+the result is placed on the host. Conversely, if the operands are on the GPU,
+the operation will be performed on the GPU and the result will be placed on the same GPU.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3part</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Create a copy of A on the first GPU (GPU0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">device</span><span class="p">()</span> <span class="c1"># Return whether the SO3part is resident on the CPU or GPU</span>
+<span class="go">1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">B</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Move B back to the host</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">device</span><span class="p">()</span>
+<span class="go">0</span>
 </pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br/></div>
 </div>
 </section>
 </section>
@@ -591,10 +650,8 @@ corresponding to <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/7
 </section>
 <section id="id4">
 <h4>GPU operations<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
-<dl class="simple">
-<dt>Similarly to <code class="docutils literal notranslate"><span class="pre">cnine</span></code> tensors, <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects, <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects</dt><dd><p>can moved back and forth between the host (CPU) and the GPU with the <code class="docutils literal notranslate"><span class="pre">to</span></code> method.</p>
-</dd>
-</dl>
+<p><code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects can be can moved back and forth between the host (CPU) and the GPU
+the same was as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Create a copy of A on the first GPU (GPU0)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">B</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Move B back to the host</span>
@@ -989,8 +1046,10 @@ objects, however logically it is accessible as a single array of <code class="do
 <li><a class="reference internal" href="#">GElib</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 <li><a class="reference internal" href="#known-issues">Known issues</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
 <li><a class="reference internal" href="#so3-classes">SO3 classes</a><ul>
 <li><a class="reference internal" href="#so3element">SO3element</a></li>
 <li><a class="reference internal" href="#so3type">SO3type</a></li>

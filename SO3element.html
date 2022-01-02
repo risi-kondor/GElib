@@ -192,7 +192,9 @@ chosen randomly from the group.</p>
 <span class="go">SO3element(0.534275,2.801079,1.191856)</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">rho</span></code> method returns the D-matrix <img alt="D^{(l)}(R)" class="math" src="_images/math/fc661808ccaae4d2daea88a62fccc5aa43e899e6.svg"/>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">rho</span></code> method returns the representation matrix (Wigner D-matrix) <img alt="D^{(l)}(R)" class="math" src="_images/math/fc661808ccaae4d2daea88a62fccc5aa43e899e6.svg"/>.
+Since <img alt="D^{(l)}(R)" class="math" src="_images/math/fc661808ccaae4d2daea88a62fccc5aa43e899e6.svg"/> is a <img alt="2\ell+1" class="math" src="_images/math/1d3f01d9f1a70210c7595a682d9887f8b61be160.svg"/> dimensional representation, the result is a
+<img alt="(2\ell+1)\times(2\ell+1)" class="math" src="_images/math/84847223766245e89d47c260e7b647159980eb11.svg"/> dimensional complex matrix.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="n">b</span><span class="o">.</span><span class="n">rho</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 <span class="go">[ (-0.000784713,-0.000251944) (-0.00610006,0.00739689) (0.0328803,0.0598668) (0.32192,-0.0398973) (0.238549,-0.91275) ]</span>

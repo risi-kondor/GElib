@@ -303,10 +303,8 @@ corresponding to <img alt="\ell=0,1,2,\ldots,L" class="math" src="_images/math/7
 </section>
 <section id="gpu-operations">
 <h2>GPU operations<a class="headerlink" href="#gpu-operations" title="Permalink to this headline">¶</a></h2>
-<dl class="simple">
-<dt>Similarly to <code class="docutils literal notranslate"><span class="pre">cnine</span></code> tensors, <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects, <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects</dt><dd><p>can moved back and forth between the host (CPU) and the GPU with the <code class="docutils literal notranslate"><span class="pre">to</span></code> method.</p>
-</dd>
-</dl>
+<p><code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects can be can moved back and forth between the host (CPU) and the GPU
+the same was as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Create a copy of A on the first GPU (GPU0)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">B</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Move B back to the host</span>
