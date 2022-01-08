@@ -251,6 +251,10 @@ namespace GElib{
     //return GELIB_SO3PART_IMPL::chunk(1,i,n);
     //}
 
+    SO3part rotate(const SO3element& r){
+      return SO3part(GELIB_SO3PART_IMPL::rotate(r));
+    }
+
     /*
     SO3part rotate(const SO3element& r){
       GELIB_SO3PART_IMPL D(WignerMatrix<float>(getl(),r),dev);

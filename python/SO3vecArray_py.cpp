@@ -100,7 +100,13 @@ pybind11::class_<SO3vecArray>(m,"SO3vecArr",
 //.def("widen",&SO3vecArray::widen)
 //.def("reduce",&SO3vecArray::reduce)
 
-//.def("device",&SO3vecArray::get_device)
+  .def("apply",&SO3vecArray::rotate)
+
+  .def("addCGproduct",&SO3vecArray::add_CGproduct<0>,py::arg("x"),py::arg("y"),py::arg("offs")=0)
+//.def("addCGproduct_back0",&SO3vecArray::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
+//.def("addCGproduct_back1",&SO3vecArray::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
+
+  .def("device",&SO3vecArray::get_device)
   .def("to",&SO3vecArray::to_device)
   .def("to_device",&SO3vecArray::to_device)
 //.def("move_to",[](SO3vecArray& x, const int _dev){x.move_to_device(_dev);})

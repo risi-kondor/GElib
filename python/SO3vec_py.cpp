@@ -38,6 +38,12 @@ py::class_<SO3vec>(m,"SO3vec",
   .def("__iadd__",[](SO3vec& x, const SO3vec& y){x+=y; return x;})
   .def("__isub__",[](SO3vec& x, const SO3vec& y){x+=y; return x;})
   
+  .def("apply",&SO3vec::rotate)
+
+  .def("addCGproduct",&SO3vec::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("maxl")=-1)
+  .def("addCGproduct_back0",&SO3vec::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("maxl")=-1)
+  .def("addCGproduct_back1",&SO3vec::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("maxl")=-1)
+
   .def("device",&SO3vec::get_device)
   .def("to",&SO3vec::to_device)
   .def("to_device",&SO3vec::to_device)
@@ -52,4 +58,5 @@ m.def("inp",[](const SO3vec& x, const SO3vec& y){return inp(x,y).get_value();});
 //m.def("odot",[](const CtensorObj& x, const CtensorObj& y){return x.odot(y);});
 m.def("norm2",[](const SO3vec& x){return norm2(x).get_value();});
 
-m.def("CGproduct",[](const SO3vec& x, const SO3vec& y){return CGproduct(x,y);});
+m.def("CGproduct",[](const SO3vec& x, const SO3vec& y, const int _maxl){return CGproduct(x,y,_maxl);}, 
+  py::arg("x"), py::arg("y"), py::arg("maxl")=-1);

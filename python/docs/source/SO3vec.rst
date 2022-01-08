@@ -12,9 +12,9 @@ corresponding to :math:`\ell=0,1,2,\ldots,L`.
 
 .. code-block:: python
 
- >>> tau=SO3type([2,3,1])
- >>> v=SO3vec.gaussian(tau)
- >>> v=SO3vec.gaussian([2,3,1])
+ >>> tau=gelib.SO3type([2,3,1])
+ >>> v=gelib.SO3vec.gaussian(tau)
+ >>> v=gelib.SO3vec.gaussian([2,3,1])
  >>> v
  <GElib::SO3vec of type(2,3,1)>
  >>> print(v)
@@ -59,7 +59,7 @@ Individual parts can be accessed with the usual Python indexing notation.
 
 .. code-block:: python
 
- >>> v[1]=SO3part.ones(1,2)
+ >>> v[1]=gelib.SO3part.ones(1,2)
  >>> print(v)
  Part l=0:
    [ (-0.0893479,0.200541) (2.04214,0.277807) ]
@@ -81,8 +81,8 @@ Arithmetic operations can be applied to ``SO3vec`` objects the same way they can
 
 .. code-block:: python
 
- >>> v=SO3vec.gaussian([2,3,1])
- >>> u=SO3vec.gaussian([2,3,1])
+ >>> v=gelib.SO3vec.gaussian([2,3,1])
+ >>> u=gelib.SO3vec.gaussian([2,3,1])
  >>> w=u+2*v
  >>> print(w)
  Part l=0:
@@ -109,8 +109,8 @@ Arithmetic operations can be applied to ``SO3vec`` objects just as to ``SO3part`
 
 .. code-block:: python
 
- >>> u=SO3vec.gaussian([1,1])
- >>> v=SO3vec.gaussian([1,1])
+ >>> u=gelib.SO3vec.gaussian([1,1])
+ >>> v=gelib.SO3vec.gaussian([1,1])
  >>> inp(u,v)
  (5.523734092712402-1.4036915302276611j)
  >>> norm2(u)
@@ -125,9 +125,9 @@ The Clebsch-Gordan product of two SO3-vectors is computed as follows.
 
 .. code-block:: python
 
- >>> u=SO3vec.gaussian([1,1])
- >>> v=SO3vec.gaussian([1,1])
- >>> w=CGproduct(u,v)
+ >>> u=gelib.SO3vec.gaussian([1,1])
+ >>> v=gelib.SO3vec.gaussian([1,1])
+ >>> w=gelib.CGproduct(u,v)
  >>> print(w)
  Part l=0:
    [ (0.800454,-2.72231) (0.387997,-2.21325) ]
@@ -157,7 +157,7 @@ the same was as ``SO3part`` objects.
 
 .. code-block:: python
 
-  >>> A=SO3vec.gaussian([2,3,1])
+  >>> A=gelib.SO3vec.gaussian([2,3,1])
   >>> B=A.to(1) # Create a copy of A on the first GPU (GPU0)
   >>> C=B.to(0) # Move B back to the host 
 

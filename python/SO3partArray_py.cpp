@@ -84,6 +84,12 @@ pybind11::class_<SO3partArray>(m,"SO3partArr",
 //.def("widen",&SO3partArray::widen)
 //.def("reduce",&SO3partArray::reduce)
 
+  .def("apply",&SO3partArray::rotate)
+
+  .def("addCGproduct",&SO3partArray::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
+  .def("addCGproduct_back0",&SO3partArray::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
+  .def("addCGproduct_back1",&SO3partArray::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
+
   .def("device",&SO3partArray::get_device)
   .def("to",&SO3partArray::to_device)
   .def("to_device",&SO3partArray::to_device)

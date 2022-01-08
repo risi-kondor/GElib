@@ -9,7 +9,7 @@ objects, however logically it is accessible as a single array of ``SO3vec`` obje
 
 .. code-block:: python
 
- >>> A=SO3vecArr.gaussian([2,2],[2,2])
+ >>> A=gelib.SO3vecArr.gaussian([2,2],[2,2])
  >>> print(A)
  Cell (0,0)
  [ (-1.23974,-0.653697) (-0.407472,-0.645572) ]
@@ -67,8 +67,8 @@ Access and arithmetic
 
 .. code-block:: python
 
- >>> A=SO3partArr.gaussian([2,2],2,2)
- >>> B=SO3partArr.gaussian([2,2],2,2)
+ >>> A=gelib.SO3partArr.gaussian([2,2],2,2)
+ >>> B=gelib.SO3partArr.gaussian([2,2],2,2)
  >>> C=A+3.0*B
 
 
@@ -87,7 +87,7 @@ Access and arithmetic
  
 .. code-block:: python
 
- >>> v=SO3vec.ones([2,2])
+ >>> v=gelib.SO3vec.ones([2,2])
  >>> A[0,1]=v
  >>> print(A)
  Cell (0,0)
@@ -132,7 +132,7 @@ Access and arithmetic
 
 .. code-block:: python
 
- >>> B=SO3partArr.ones([2,2],1,2)
+ >>> B=gelib.SO3partArr.ones([2,2],1,2)
  >>> V.set_part(1,B)
 
 
@@ -143,9 +143,9 @@ Clebsch-Gordan products
 
 .. code-block:: python
 
- >>> U=SO3vecArr.gaussian([2],[1,1])
- >>> V=SO3vecArr.gaussian([2],[1,1])
- >>> W=CGproduct(U,V)
+ >>> U=gelib.SO3vecArr.gaussian([2],[1,1])
+ >>> V=gelib.SO3vecArr.gaussian([2],[1,1])
+ >>> W=gelib.CGproduct(U,V)
  >>> print(W)
  Cell (0)
  [ (-2.53487,-2.85716) (-0.842041,0.952523) ]
@@ -183,4 +183,12 @@ Clebsch-Gordan products
  [ (3.85525,-5.50227) ]
  [ (1.06791,-1.4773) ]
  [ (0.172447,-0.105246) ]
+
+
+==============
+GPU operations
+==============
+
+``SO3vecArr`` objects can be moved to/from the GPU the same way as ``SO3part`` and ``SO3vec`` objects. 
+Similarly to ``SO3partArr``, operations on ``SO3vecArr`` objects are parallelized across cells. 
 

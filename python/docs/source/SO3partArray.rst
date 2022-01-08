@@ -8,7 +8,7 @@ An ``SO3partArr`` is a multidimensional array of ``SO3part`` objects with the sa
 
 .. code-block:: python
 
- >>> A=SO3partArr.gaussian([2,2],2,2) # Create a 2x2 array of SO3parts with l=2 and n=2
+ >>> A=gelib.SO3partArr.gaussian([2,2],2,2) # Create a 2x2 array of SO3parts with l=2 and n=2
  >>> print(A)
  Cell (0,0)
  [ (-1.23974,-0.653697) (-0.407472,-0.645572) ]
@@ -70,7 +70,7 @@ Individual cells are accessed similarly to how cells are accessed in ``cnine``.
 
 .. code-block:: python
 
- >>> A[[0,1]]=SO3part.ones(2,2)
+ >>> A[[0,1]]=gelib.SO3part.ones(2,2)
  >>> print(A)
  Cell (0,0)
  [ (-1.23974,-0.653697) (-0.407472,-0.645572) ]
@@ -107,8 +107,8 @@ Individual cells are accessed similarly to how cells are accessed in ``cnine``.
 
 .. code-block:: python
 
- >>> A=SO3partArr.gaussian([2,2],2,2)
- >>> B=SO3partArr.gaussian([2,2],2,2)
+ >>> A=gelib.SO3partArr.gaussian([2,2],2,2)
+ >>> B=gelib.SO3partArr.gaussian([2,2],2,2)
  >>> C=A+3.0*B
  >>> print(C)
  Cell (0,0)
@@ -152,7 +152,7 @@ The cellwise Clebsch--Gordan product of two ``SO3partArr`` objects is computed t
 
 .. code-block:: python
 
- >>> C=CGproduct(A,B,2)
+ >>> C=gelib.CGproduct(A,B,2)
  >>> print(C)
  Cell (0,0)
  [ (-0.612916,0.358383) (0.131453,2.15649) (-0.287549,0.0733472) (-0.55767,-0.214064) ]
@@ -184,3 +184,14 @@ The cellwise Clebsch--Gordan product of two ``SO3partArr`` objects is computed t
  [ (-0.606422,0.415338) (0.159727,0.606347) (-1.61022,2.2472) (1.66179,1.52155) ]
  [ (0.877033,-0.98302) (-1.30973,-1.31185) (0.53583,-1.4956) (0.176557,-0.774645) ]
  [ (0.11913,-0.072755) (1.11784,0.475784) (-0.689207,1.01557) (-0.0981837,-0.554621) ]
+
+
+==============
+GPU operations
+==============
+
+``SO3partArr`` objects can be moved to/from the GPU the same way as ``SO3part`` and ``SO3vec`` objects. 
+
+The benefits of GPU acceleration for arrayed objects is particularly great, because the corresponding 
+kernels (specifically, kernels implementing Clebsch-Gordan operations) are written in a way as to 
+parallelize the operation across array cells.  

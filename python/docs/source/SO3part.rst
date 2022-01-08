@@ -12,7 +12,7 @@ irrep.
 
 .. code-block:: python
 
- >>> A=SO3part.gaussian(2,3)
+ >>> A=gelib.SO3part.gaussian(2,3)
  >>> A
  GElib::SO3part(l=2,n=3)
  >>> print(A)
@@ -30,7 +30,7 @@ The order ``l`` and multiplicity ``n`` of an ``SO3part`` is accessed as follows.
 
 .. code-block:: python
 
- >>> A=SO3part.gaussian(2,3)
+ >>> A=gelib.SO3part.gaussian(2,3)
  >>> A.getl()
  2
  >>> A.getn()
@@ -47,8 +47,8 @@ by scalars, and so on.
 
 .. code-block:: python
 
- >>> A=SO3part.gaussian(2,3)
- >>> B=SO3part.gaussian(2,3)
+ >>> A=gelib.SO3part.gaussian(2,3)
+ >>> B=gelib.SO3part.gaussian(2,3)
  >>> print(A+B)
  [ (1.47879,-0.459842) (0.490458,0.545539) (1.19309,-0.792573) ]
  [ (2.22926,-3.41237) (-2.06763,1.01224) (-2.15526,-0.777298) ]
@@ -80,7 +80,7 @@ breaks equivariance.
 
 .. code-block:: python
 
- >>> A=SO3part.gaussian(2,3)
+ >>> A=gelib.SO3part.gaussian(2,3)
  >>> A(2,3)
  (1.4733880758285522+0.1949467808008194j)
  >>> A[2,3]
@@ -93,6 +93,31 @@ breaks equivariance.
  [ (-0.688081,-0.546571) (0.0757219,-0.0384917) (1,0) ]
  [ (0.097221,-0.485144) (-0.89237,-0.370271) (-0.228782,-1.12408) ]
 
+============
+Group action
+============
+
+SO(3) acts on an ``SO3part`` :math:`A` of index :math:`\ell` by :math:`A\mapsto D^{(l)}(r) A` 
+for any :math:`r\in\mathrm{SO}(3)`. This action is implemented via the ``apply`` method.  
+
+.. code-block:: python
+
+  >>> A=gelib.SO3part.gaussian(2,2)
+  [ (-1.23974,0.0757219) (-0.407472,1.47339) ]
+  [ (1.61201,0.097221) (0.399771,-0.89237) ]
+  [ (1.3828,-0.228782) (0.0523187,1.16493) ]
+  [ (-0.904146,0.584898) (1.87065,-0.660558) ]
+  [ (-1.66043,0.534755) (-0.688081,-0.607787) ]
+  >>>
+  >>> r=gelib.SO3element.uniform()
+  >>> Ar=A.apply(r)
+  >>> print(Ar)
+  [ (-1.11709,0.147657) (-1.11769,1.24745) ]
+  [ (-1.60924,0.32233) (1.23518,1.00509) ]
+  [ (0.618006,-0.476802) (-0.583183,-0.775842) ]
+  [ (2.06776,-0.517233) (0.637578,0.790121) ]
+  [ (-1.09639,0.00411239) (0.878735,-1.1598) ]
+
 
 ======================
 Functions of SO3-parts
@@ -102,12 +127,11 @@ Similarly to tensors, it is possible to take the inner products and norms of ``S
 
 .. code-block:: python
 
- >>> from GElib import *
- >>> A=SO3part.gaussian(2,3)
- >>> B=SO3part.gaussian(2,3)
- >>> inp(A,B)
+ >>> A=gelib.SO3part.gaussian(2,3)
+ >>> B=gelib.SO3part.gaussian(2,3)
+ >>> gelib.inp(A,B)
  (1.5953152179718018+5.115486145019531j)
- >>> norm2(A)
+ >>> gelib.norm2(A)
  7.411661148071289
 
 
@@ -122,9 +146,8 @@ Note that to construct ``cnine`` tensors, first the ``cnine`` module must be loa
 
 .. code-block:: python
 
- >>> from GElib import *
- >>> A=SO3part.gaussian(2,3)
  >>> from cnine import *
+ >>> A=gelib.SO3part.gaussian(2,3)
  >>> M=ctensor.gaussian([3,3])
  >>> B=A*M
  >>> print(B)
@@ -144,7 +167,7 @@ correspnding to a given :math:`\ell`.
 
 .. code-block:: python
 
- >>> A=SO3part.spharm(2,[0.12,0.31,-0.55])
+ >>> A=gelib.SO3part.spharm(2,[0.12,0.31,-0.55])
  >>> print(A)
  [ (-0.0764131,-0.0695855) ]
  [ (-0.123458,0.318933) ]
@@ -162,9 +185,9 @@ of the part of Clebsch--Gordan product of two SO3-parts.
 
 .. code-block:: python
 
- >>> A=SO3part.gaussian(2,2)
- >>> B=SO3part.gaussian(2,2)
- >>> C=CGproduct(A,B,3)
+ >>> A=gelib.SO3part.gaussian(2,2)
+ >>> B=gelib.SO3part.gaussian(2,2)
+ >>> C=gelib.CGproduct(A,B,3)
  >>> print(C)
  [ (-1.99979,-0.121461) (-3.58782,2.10019) (-1.34679,-1.51318) (-2.83808,-0.352546) ]
  [ (1.14425,0.901388) (2.9222,0.910338) (-0.409205,0.741729) (-1.40359,1.8079) ]
@@ -174,6 +197,31 @@ of the part of Clebsch--Gordan product of two SO3-parts.
  [ (-0.995215,0.783116) (0.885221,-0.726837) (-0.404905,-0.579419) (0.149155,0.764922) ]
  [ (-0.387969,-1.5089) (-0.163056,1.1043) (0.628268,-0.465748) (-0.576328,0.309953) ]
  
+The Clebsch-Gordan product is an equivariant operation. This can be verified as follows:
+
+.. code-block:: python
+
+  >>> A=gelib.SO3part.gaussian(2,2)
+  >>> r=gelib.SO3element.uniform()
+  >>>
+  >>> B=gelib.CGproduct(A,A,2)
+  >>> Br=B.rotate(r)
+  >>> print(Br)
+  [ (-2.29009,1.34611) (1.87151,1.91239) (1.87151,1.91239) (1.39403,-1.47615) ]
+  [ (-2.4749,0.63966) (-2.28298,1.25885) (-2.28298,1.25885) (-2.25532,0.710633) ]
+  [ (-0.46347,0.938204) (1.08875,0.235826) (1.08875,0.235826) (0.633137,2.93817) ]
+  [ (1.75711,0.22648) (-1.34673,0.988074) (-1.34673,0.988074) (2.81846,-0.208569) ]
+  [ (-3.34617,1.96189) (-0.792441,-1.00736) (-0.792441,-1.00736) (-1.36723,-0.665336) ]
+  >>>
+  >>> Ar=A.apply(r)
+  >>> Br2=gelib.CGproduct(Ar,Ar,2)  # by equiariance should be the same as Br
+  >>> print(Br2)
+  [ (-2.29009,1.34611) (1.87151,1.91239) (1.87151,1.91239) (1.39403,-1.47615) ]
+  [ (-2.4749,0.639659) (-2.28298,1.25885) (-2.28298,1.25885) (-2.25532,0.710633) ]
+  [ (-0.46347,0.938204) (1.08875,0.235827) (1.08875,0.235826) (0.633138,2.93817) ]
+  [ (1.75711,0.22648) (-1.34673,0.988074) (-1.34673,0.988074) (2.81846,-0.20857) ]
+  [ (-3.34617,1.96189) (-0.792441,-1.00736) (-0.792441,-1.00736) (-1.36723,-0.665336) ]
+
 
 ==============
 GPU operations
@@ -188,7 +236,7 @@ the operation will be performed on the GPU and the result will be placed on the 
 
 .. code-block:: python
 
-  >>> A=SO3part.gaussian(4,4)
+  >>> A=gelib.SO3part.gaussian(4,4)
   >>> B=A.to(1) # Create a copy of A on the first GPU (GPU0)
   >>> B.device() # Return whether the SO3part is resident on the CPU or GPU
   1   
