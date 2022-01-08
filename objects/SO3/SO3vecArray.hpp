@@ -67,6 +67,10 @@ namespace GElib{
     // ---- Constructors -------------------------------------------------------------------------------------
 
 
+    SO3vecArray(const Gdims& _adims, const SO3type& _tau):
+      ArrayPack(_adims), tau(_tau){
+    }
+
     template<typename FILLTYPE, typename = typename 
 	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
     SO3vecArray(const Gdims& _adims, const SO3type& _tau, const FILLTYPE& fill, const int _dev=0):
@@ -181,6 +185,11 @@ namespace GElib{
 
 
     int get_dev() const{
+      if(array.size()==0) return 0;
+      return array[0]->get_dev();
+    }
+    
+    int get_device() const{
       if(array.size()==0) return 0;
       return array[0]->get_dev();
     }
@@ -327,6 +336,7 @@ namespace GElib{
 
     void add_CGproduct(const SO3vec& x, const SO3vecArray& y, const int maxL=-1){
       assert(tau==GElib::CGproduct(x.tau,y.tau,maxL));
+      GELIB_UNIMPL();
 
       int L1=x.getL(); 
       int L2=y.getL();
@@ -346,6 +356,7 @@ namespace GElib{
 
     void add_CGproduct(const SO3vecArray& x, const SO3vec& y, const int maxL=-1){
       assert(tau==GElib::CGproduct(x.tau,y.tau,maxL));
+      GELIB_UNIMPL();
 
       int L1=x.getL(); 
       int L2=y.getL();
@@ -362,7 +373,6 @@ namespace GElib{
 	}
       }
     }
-
 
 
   public: // ---- Spherical harmonics -----------------------------------------------------------------------
@@ -431,14 +441,13 @@ namespace GElib{
     //return GELIB_SO3PARTARRAY_IMPL::chunk(1,i,n);
     //}
 
-    /*
     SO3vecArray rotate(const SO3element& r){
-      GELIB_SO3PARTARRAY_IMPL D(WignerMatrix<float>(l,r),dev);
-      SO3vecArray R(l,n,cnine::fill::zero,dev);
-      R.add_prod(D,*this);
+      SO3vecArray R(adims,tau);
+      R.array.resize(array.size(),nullptr);
+      for(int l=0; l<array.size(); l++)
+	if(array[l]) R.array[l]=new SO3partArray(array[l]->rotate(r));
       return R;
     }
-    */
 
     /*
     GELIB_SO3PARTARRAY_IMPL fragment_norms() const{

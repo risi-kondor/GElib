@@ -24,6 +24,7 @@ namespace GElib{
 
 
     GElibSession(){
+      cout<<endl<<"Starting GElib."<<endl;
       cnine_session=new cnine::cnine_session();
     }
 

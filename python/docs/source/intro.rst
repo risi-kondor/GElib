@@ -10,6 +10,8 @@ This document provides documentation for GElib's Python interface. Not all featu
 are available through this interface. The documentation of the C++ API can be found in pdf format 
 in the package's ``doc`` directory.
 
+GElib is currently in alpha. Some features described in the following may still be incomplete or untested. 
+
 ########
 Features
 ########
@@ -102,13 +104,15 @@ GElib has two distinct interfaces implemented in two different modules:
 #. To use the library *without* PyTorch's autodiff functionality, load the library with ``import gelib_base as gelib``. 
 #. To use the library *with* automatic differentiation, load the library with ``import gelib_torch as gelib``. 
 
-The two modules use identical syntax, therefore the following description of their usage applies to both. 
+The two modules use identical syntax, therefore the following documentation applies to both. 
 The backend implementation of the two modules however is quite different. 
 ``gelib_base`` is just a wrapper for the underlying C++ classes. 
 In contrast, for interoperability with ``torch.autodiff``, 
 ``gelib_torch`` 's core classes are Python classes derived from ``torch.tensor``. 
 These Python classes, in turn, call the wrappers implemented in ``gelib_base``.  
-Inevitably, the latter approach incurs some performance overhead.  
-Since ``gelib_torch`` is built on ``gelib_base``, the two modules can also be used together.   
+Inevitably, this incurs some performance overhead.  
+
+.. 
+  Since ``gelib_torch`` is built on ``gelib_base``, the two modules can also be used together.   
 
 

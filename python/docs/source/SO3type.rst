@@ -7,7 +7,7 @@ representation :math:`D^{(0)},D^{(1)},\ldots,D^{(L)}` in an SO3-vector.
 
 .. code-block:: python
 
- >>> tau=SO3type([3,4,1]) # Define tau=(3,4,1)
+ >>> tau=gelib.SO3type([3,4,1]) # Define tau=(3,4,1)
  >>> tau
  <GElib::SO3type(3,4,1)>
  >>> print(tau)
@@ -25,8 +25,8 @@ of given types.
 
 .. code-block:: python
 
- >>> tau=SO3type([2,2])
- >>> mu=CGproduct(tau,tau)
+ >>> tau=gelib.SO3type([2,2])
+ >>> mu=gelib.CGproduct(tau,tau)
  >>> print(mu)
  (8,12,4)
 
@@ -34,9 +34,9 @@ The optional argument `maxl` limits the product to a given maximal :math:`\ell`.
 
 .. code-block:: python
 
- >>> tau=SO3type([1,1,1])
- >>> print(CGproduct(tau,tau))
+ >>> tau=gelib.SO3type([1,1,1])
+ >>> print(gelib.CGproduct(tau,tau))
  (3,6,6,3,1)
- >>> print(CGproduct(tau,tau,2))
+ >>> print(gelib.CGproduct(tau,tau,2))
  (3,6,6)
 

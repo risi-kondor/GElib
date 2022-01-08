@@ -230,6 +230,14 @@ namespace GElib{
       //cnine::CellwiseBiCmap map(op,*this,x,y);
     }
 
+    void add_CGproduct_back0(const SO3partArrayA& g, const SO3partArrayA& y, const int offs){
+      cnine::add_cellwise<SO3partA_CGproduct_back0_cop>(*this,g,y,offs);
+    }
+
+    void add_CGproduct_back1(const SO3partArrayA& x, const SO3partArrayA& g, const int offs){
+      cnine::add_cellwise<SO3partA_CGproduct_back1_cop>(*this,x,g,offs);
+    }
+
     /*
     void add_inner_CGproduct(const SO3partArrayA& x, const SO3partArrayA& y, const int offs){
       SO3partA_add_CGproduct_cop op(offs);
