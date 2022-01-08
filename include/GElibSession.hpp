@@ -24,13 +24,13 @@ namespace GElib{
 
 
     GElibSession(){
-      cout<<endl<<"Starting GElib."<<endl;
+      cout<<"Starting GElib."<<endl;
       cnine_session=new cnine::cnine_session();
     }
 
 
     ~GElibSession(){
-      cout<<endl<<"Shutting down GElib."<<endl;
+      cout<<"Shutting down GElib."<<endl;
       delete cnine_session;
     }
     

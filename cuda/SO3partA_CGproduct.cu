@@ -830,7 +830,7 @@ namespace GElib{
 
   
   void SO3partA_CGproduct_cu(SO3partA& r, const SO3partA& x, const SO3partA& y,  const int offs, 
-    const cudaStream_t& stream,const int mode=0){
+    const cudaStream_t& stream,const int mode){
 
     const int xl=x.getl();
     const int yl=y.getl();
@@ -839,23 +839,25 @@ namespace GElib{
     assert(x.nbu==r.nbu);
     assert(y.nbu==r.nbu);
     int _nbu=1; if(_nbu<0) _nbu=1;
-    cnine::CellwiseBinaryCmap cmap()
+    cnine::CellwiseBinaryCmap map;
 
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
-    int nlines=x.cellstride/16+y.cellstride/16+cnine::roundup(x.getn()*y.getn()*_nch*(2*l+1),32)/16;
+    int nlines=cnine::roundup(x.memsize,32)/32+cnine::roundup(y.memsize,32)/32+
+      cnine::roundup(x.getn()*y.getn()*_nch*(2*l+1),32)/16;
 
-    cout<<"nlines="<<nlines<<endl;
+    //cout<<"nlines="<<nlines<<endl;
 
-    if(nlines<=0*384){
+    if(nlines<=384){
 
       SO3partA_CGproduct_kernel<<<map.blockdims(),cnine::roundup(x.getn()*y.getn(),32),nlines*128,stream>>>
 	(r.arrg,r.arrgc,x.arrg,x.arrgc,y.arrg,y.arrgc,
-	  r.cellstride,x.cellstride,y.cellstride,map,
+	  0,0,0,map,
 	  x.getn(),y.getn(),r.getn(),xl,yl,l,offs,_nch,Cptr,mode);
 
     }else{
       
-      int nlines=x.cellstride/16+cnine::roundup(_nch*(2*yl+1),32)/16+cnine::roundup(x.getn()*_nch*(2*l+1),32)/16;
+      int nlines=cnine::roundup(x.memsize,32)/32+cnine::roundup(y.memsize,32)/32+
+        cnine::roundup(x.getn()*_nch*(2*l+1),32)/16;
 
       cout<<"GElib: large CGproduct"<<endl; 
 
@@ -864,7 +866,7 @@ namespace GElib{
       }else{
 	SO3partA_CGproduct_kernel_L<<<map.blockdims(),cnine::roundup(x.getn(),32),nlines*128,stream>>>
 	  (r.arrg,r.arrgc,x.arrg,x.arrgc,y.arrg,y.arrgc,
-	    r.cellstride,x.cellstride,y.cellstride,map,
+	    0,0,0,map,
 	    x.getn(),y.getn(),r.getn(),xl,yl,l,offs,_nch,Cptr,mode);
       }
     }
