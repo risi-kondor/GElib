@@ -22,7 +22,13 @@ extern GElib::SO3_CGbank SO3_cgbank;
 extern GElib::SO3_SPHgen SO3_sphGen;
 
 
+
 namespace GElib{
+
+  class SO3partA;
+
+  void SO3partA_CGproduct_cu(SO3partA& r, const SO3partA& x, const SO3partA& y, const int offs, 
+    const cudaStream_t& stream, const int mode=0);
 
 
   class SO3partA: public cnine::CtensorA{
@@ -163,6 +169,8 @@ namespace GElib{
   public: // ---- Cumulative Operations ----------------------------------------------------------------------
 
 
+    //void add_CGproduct_cu(const SO3partA& x, const SO3partA& y, int offs, const cudaStream_t& stream);
+
     void add_CGproduct(const SO3partA& x, const SO3partA& y, int offs=0){
 
       if(dev==1){
@@ -171,7 +179,7 @@ namespace GElib{
 	assert(y.dev==1);
 	cudaStream_t stream;
 	CUDA_SAFE(cudaStreamCreate(&stream));
-	CGproduct_cu(x,y,offs,stream);
+	SO3partA_CGproduct_cu(*this,x,y,offs,stream);
 	CUDA_SAFE(cudaStreamSynchronize(stream));
 	CUDA_SAFE(cudaStreamDestroy(stream));
 #else
