@@ -10,7 +10,7 @@ import time
 
 # --- User settings ------------------------------------------------------------------------------------------
 
-compile_with_cuda=False
+compile_with_cuda=True
 
 copy_warnings=True
 torch_convert_warnings=True 
@@ -39,11 +39,18 @@ _cxx_compile_args=['-std=c++14',
                   '-Wno-unused-but-set-variable',
                   '-Wno-reorder',
                   '-Wno-reorder-ctor',
+                  '-Wno-overloaded-virtual',
                   '-D_WITH_ATEN',
                   '-DCNINE_RANGE_CHECKING',
                   '-DCNINE_SIZE_CHECKING',
                   '-DCNINE_DEVICE_CHECKING'
                   ]
+
+_nvcc_compile_args=['-D_WITH_CUDA',
+                   '-D_WITH_CUBLAS',
+                   '-D_DEF_CGCMEM'
+                   ]
+
 
 if copy_warnings:
     _cxx_compile_args.extend([
@@ -76,7 +83,11 @@ _depends=['setup.py',
 
 if compile_with_cuda:
     setup(name='gelib_base',
-          ext_modules=[CUDAExtension('gelib_base', ['GElib_py.cpp'],
+          ext_modules=[CUDAExtension('gelib_base', ['GElib_py.cpp', 
+          '../../cnine/include/Cnine_base.cu',
+          '../cuda/SO3partA_CGproduct.cu',
+          '../cuda/SO3partA_DiagCGproduct.cu'
+          ],
                                      include_dirs=_include_dirs,
                                      extra_compile_args={
                                          'nvcc': _nvcc_compile_args,

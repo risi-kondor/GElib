@@ -171,7 +171,7 @@ namespace GElib{
 	assert(y.dev==1);
 	cudaStream_t stream;
 	CUDA_SAFE(cudaStreamCreate(&stream));
-	//CGproduct_cu(x,y,offs,stream);
+	CGproduct_cu(x,y,offs,stream);
 	CUDA_SAFE(cudaStreamSynchronize(stream));
 	CUDA_SAFE(cudaStreamDestroy(stream));
 #else
