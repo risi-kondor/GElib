@@ -27,9 +27,10 @@ namespace GElib{
 
   class SO3partA;
 
+#ifdef _WITH_CUDA
   void SO3partA_CGproduct_cu(SO3partA& r, const SO3partA& x, const SO3partA& y, const int offs, 
     const cudaStream_t& stream, const int mode=0);
-
+#endif
 
   class SO3partA: public cnine::CtensorA{
   public:
