@@ -838,7 +838,6 @@ namespace GElib{
 
       if(fmt==1) 
 	vec->add_CGproduct(*x.vec,*y.vec,maxL);
-
     }
 
 

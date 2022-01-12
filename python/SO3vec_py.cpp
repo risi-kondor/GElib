@@ -38,6 +38,19 @@ py::class_<SO3vec>(m,"SO3vec",
   .def("__iadd__",[](SO3vec& x, const SO3vec& y){x+=y; return x;})
   .def("__isub__",[](SO3vec& x, const SO3vec& y){x+=y; return x;})
   
+  .def_static("view",[](vector<at::Tensor>& v){
+      SO3vec r;
+      r.nbu=-1;
+      r.dev=0;
+      r.fmt=0;
+      for(auto& p: v)
+	r.parts.push_back(new SO3part(cnine::CtensorObj::view(p)));
+      for(auto p: r.parts)
+	r.tau.push_back(p->getn());
+      return r;
+    })
+
+
   .def("apply",&SO3vec::rotate)
 
   .def("addCGproduct",&SO3vec::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("maxl")=-1)

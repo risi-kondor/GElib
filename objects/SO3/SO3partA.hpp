@@ -107,6 +107,7 @@ namespace GElib{
     
     explicit SO3partA(CtensorA&& x):
       CtensorA(std::move(x)){
+      //cout<<getl()<<getn()<<endl;
       //cout<<"move CtensorA -> SO3partA"<<endl;
     }
     
@@ -198,12 +199,18 @@ namespace GElib{
 
       if(nbu==-1){
 	for(int n1=0; n1<N1; n1++){
-	  for(int n2=0; n2<N2; n2++)
-	    for(int m1=-l1; m1<=l1; m1++)
+	  //cout<<n1<<endl;
+	  for(int n2=0; n2<N2; n2++){
+	    //cout<<"  "<<n1<<endl;
+	    for(int m1=-l1; m1<=l1; m1++){
+	      //cout<<"    "<<m1<<endl;
 	      for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+		//cout<<"      "<<m2<<endl;
 		//cout<<x(n1,m1+l1)<<y(n2,m2+l2)<<endl;
 		inc(offs+n2,m1+m2+l,C(m1+l1,m2+l2)*x(n1,m1+l1)*y(n2,m2+l2));
 	      }
+	    }
+	  }
 	  offs+=N2;
 	}
 	return;

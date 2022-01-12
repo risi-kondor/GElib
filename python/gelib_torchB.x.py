@@ -491,3 +491,30 @@ def CGproductType(x,y,maxl=-1):
             for l in range(abs(l1-l2),min(l1+l2,maxl)+1):
                 r[l]+=x[l1]*y[l2]
     return r
+
+
+class SO3part_addFullCGproductFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,r,x,y,offs):
+        ctx.mark_dirty(r)
+        ctx.save_for_backward(x,y)
+        print("forward")
+        r.requires_grad_()
+        return r
+        #return SO3part(GElib.SO3partCGproduct(_SO3part.view(x),_SO3part.view(y)).torch())
+
+    @staticmethod
+    def backward(ctx, grad):
+        x,y=ctx.saved_tensors
+        grad_x=grad_y=None
+        print("back")
+        if ctx.needs_input_grad[0]:
+            grad_x=torch.zeros_like(x)
+            print("backward to x")
+            #grad_x.cview().SO3partCGproduct0(grad.cview(),y.cview())
+        if ctx.needs_input_grad[1]:
+            grad_y=torch.zeros_like(y)
+            print("backward to y")
+            #grad_y.cview().SO3partCGproduct1(grad.cview(),x.cview())
+        return grad_x, grad_x, grad_y, None
