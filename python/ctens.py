@@ -17,13 +17,15 @@ class ctens(torch.Tensor):
 
     @staticmethod
     def zeros(_dims,_bsize=1):
-        a=ctens(torch.zeros([2]+_dims,requires_grad=True)) # TODO
+        a=ctens(torch.zeros([2]+_dims)) # TODO
+        #a=ctens(torch.zeros([2]+_dims,requires_grad=True)) # TODO
         a.bsize=_bsize
         return a
     
     @staticmethod
     def randn(_dims,_bsize=1):
-        a=ctens(torch.randn([2]+_dims,requires_grad=True))
+        a=ctens(torch.randn([2]+_dims))
+        #a=ctens(torch.randn([2]+_dims,requires_grad=True))
         a.bsize=_bsize
         return a
 
