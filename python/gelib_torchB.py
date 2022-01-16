@@ -17,7 +17,8 @@ class SO3part(ctens):
     
     def __init__(self,_T):
         self=_T
-
+        self.bsize=_T.bsize # doesn't work
+        
 
     ## ---- Static constructors -----------------------------------------------------------------------------
 
@@ -26,7 +27,7 @@ class SO3part(ctens):
     def zeros(l,n):
         """
         Create an SO(3)-part consisting of n vectors transforming according to the l'th irrep of SO(3).
-        The vectors are initialized to zero, resulting in (2+l+1)*n dimensional complex matrix of zeros
+        The vectors are initialized to zero, resulting in an (2+l+1)*n dimensional complex matrix of zeros
         stored as a ctens object.
         """        
         return SO3part(ctens.zeros([2*l+1,n]))
@@ -35,7 +36,7 @@ class SO3part(ctens):
     def randn(l,n):
         """
         Create an SO(3)-part consisting of n vectors transforming according to the l'th irrep of SO(3).
-        The vectors are initialized as random gaussian vectors, resulting in (2+l+1)*n dimensional
+        The vectors are initialized as random gaussian vectors, resulting in an (2+l+1)*n dimensional
         random complex matrix stored as a ctens object.
         """        
         return SO3part(ctens.randn([2*l+1,n]))
@@ -46,9 +47,11 @@ class SO3part(ctens):
         """
         Create an SO(3)-part consisting of n blocks of (2l+1) vectors each transforming according to the
         l'th irrep of SO(3). The vectors are initialized to zero, giving a (2+l+1)*(2l+1)*n dimensional
-        complex matrix of zeros stored as a ctens object.
+        complex matrix of zeros stored as a ctens object. 
         """        
-        return SO3part(ctens.zeros([2*l+1,(2*l+1)*n],2*l+1))
+        r=SO3part(ctens.zeros([2*l+1,(2*l+1)*n],2*l+1))
+        r.bsize=2*l+1 # why need this??
+        return r
 
     @staticmethod
     def Frandn(l,n):
@@ -57,7 +60,9 @@ class SO3part(ctens):
         l'th irrep of SO(3). The vectors are initialized as random Gaussian vectors, giving a
         (2+l+1)*(2l+1)*n dimensional random complex matrix of stored as a ctens object.
         """        
-        return SO3part(ctens.randn([2*l+1,(2*l+1)*n],2*l+1))
+        r= SO3part(ctens.randn([2*l+1,(2*l+1)*n],2*l+1))
+        r.bsize=2*l+1 # why need this??
+        return r
 
 
     ## ---- Access ------------------------------------------------------------------------------------------
@@ -75,29 +80,41 @@ class SO3part(ctens):
     ## ---- Operations ---------------------------------------------------------------------------------------
 
 
-    def __mul__(self,y):
+    def __mul__(self,W):
+        """
+        Multiply this SO3part with a  matrix W from the right. There is no distincition between columns
+        belonging to the same block or not.
+        """
         return SO3part(self.matmul(y))
 
     def mix(self,W):
-        "Multiply this SO3Fpart with a weight matrix along the 3rd dimension"
+        """
+        Multiply this SO3part with a weight matrix along the channel dimension, i.e., mix the blocks
+        of the SO3part with W.
+        """
         return SO3part(self.mix_blocks(2,W))
 
     def convolve(self,y):
-        "Convolve this SO3Fpart with another SO3Fpart"
+        "Convolve this SO3part with another SO3part. Each block will be convolved with the same block of y."
         return SO3Fpart(self.matmul_each_block_by_corresponding_block(y))
 
     def FullCGproduct(self,y,l,offs=0):
+        "Compute the CG product of each vector in x with each vector in y."
         assert l>0, "Output l must be specified."
         assert abs(self.getl()-y.getl())<=l<=(self.getl()+y.getl()), "l out of range"
         return SO3part_FullCGproductFn.apply(self,y,l,offs)
 
-    # inplace operations won't work
-    #def addFullCGproduct(self,x,y,offs=0):
-    #    "Add CGproduct(x,y) with offset offs"
-    #    if (isinstance(x,SO3part) and isinstance(y,SO3part)):
-    #        SO3part_addFullCGproductFn.apply(self,x,y,offs)
-    #    else:
-    #        raise TypeError('Type of each argument in addFullCGproduct(SO3part,SO3part) must be SO3part.')
+    def BlockwiseCGproduct(self,y,l,offs=0):
+        "Compute the CG product of each vector in x in a given block with each vector in y in the same block."
+        assert l>0, "Output l must be specified."
+        assert abs(self.getl()-y.getl())<=l<=(self.getl()+y.getl()), "l out of range"
+        return SO3part_BlockwiseCGproductFn.apply(self,y,l,offs)
+
+    def DiagCGproduct(self,y,l,offs=0):
+        "Compute the CG product of each vector in x with the corresponding vector in y."
+        assert l>0, "Output l must be specified."
+        assert abs(self.getl()-y.getl())<=l<=(self.getl()+y.getl()), "l out of range"
+        return SO3part_DiagCGproductFn.apply(self,y,l,offs)
 
 
     ## ---- I/O ----------------------------------------------------------------------------------------------
@@ -191,11 +208,8 @@ class SO3vec:
         """
         Compute the full Clesbsch--Gordan product of this SO3vec with another SO3vec y.
         """
-        #tau=CGproductType(self.tau(),y.tau())
-        #r=SO3vec.zeros(tau)
         r=SO3vec()
-        r.parts=list(SO3vec_FullCGproductFn.apply(3,3,maxl,*(self.parts+y.parts)))
-        #r.parts=list(SO3vec_FullCGproductFn(len(self.parts),len(y.parts)).apply(*(self.parts+y.parts)))
+        r.parts=list(SO3vec_FullCGproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
         return r
 
 
@@ -214,14 +228,23 @@ class SO3vec:
         return r
 
 
-    def DiagCGproduct(self,y,maxl):
+    def DiagCGproduct(self,y,maxl,dummy=0):
         """
-        Compute the diagonal Clesbsch--Gordan product of this SO3Fvec with another SO3Fvec y.
+        Compute the diagonal Clesbsch--Gordan product of this SO3vec with another SO3vec y.
         """
-        r=SO3vec.zeros(tau)
-        for l1 in range(0,len(self.parts)):
-            r.parts[l].addDiagCGproduct(self.parts[l1],y.parts[l2]) 
+        r=SO3vec()
+        r.parts=list(SO3vec_DiagCGproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
         return r
+
+
+    def BlockwiseCGproduct(self,y,maxl,dummy=0):
+        """
+        Compute the blockwise Clesbsch--Gordan product of this SO3vec with another SO3vec y.
+        """
+        r=SO3vec()
+        r.parts=list(SO3vec_BlockwiseCGproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
+        return r
+
 
     ## ---- I/O ----------------------------------------------------------------------------------------------
 
@@ -247,6 +270,12 @@ def tau_type(x):
         r.append(t.getn())
     return r
 
+def tau_type_blocked(x):
+    r=[]
+    for t in x:
+        r.append(t.get_bsize())
+    return r
+
 
 def CGproductType(x,y,maxl=-1):
     if maxl==-1:
@@ -258,14 +287,41 @@ def CGproductType(x,y,maxl=-1):
                 r[l]+=x[l1]*y[l2]
     return r
 
+def DiagCGproductType(x,maxl=-1):
+    if maxl==-1:
+        maxl=2*len(x)-2
+    r=[0]*(maxl+1)
+    for l1 in range(0,len(x)):
+        for l2 in range(0,len(x)):
+            for l in range(abs(l1-l2),min(l1+l2,maxl)+1):
+                r[l]+=1
+    return r
+
+
 def MakeZeroSO3parts(tau):
     R=[]
     for l in range(0,len(tau)):
         R.append(SO3part.zeros(l,tau[l]))
     return R
 
+def MakeZeroBlockedSO3parts(tau,nb):
+    R=[]
+    for l in range(0,len(tau)):
+        R.append(SO3part.zeros(l,tau[l]*nb))
+        R[len(R)-1].bsize=tau[l]
+    return R
+
+
+
 def FullCGproduct(x,y,a=-1,b=0):
     return x.FullCGproduct(y,a,b)
+
+def DiagCGproduct(x,y,a=-1,b=0):
+    return x.DiagCGproduct(y,a,b)
+
+def BlockwiseCGproduct(x,y,a=-1,b=0):
+    return x.BlockwiseCGproduct(y,a,b)
+
 
 
 ## ---- Autograd functions -----------------------------------------------------------------------------------
@@ -277,25 +333,72 @@ class SO3part_FullCGproductFn(torch.autograd.Function):
     def forward(ctx,x,y,l,offs=0):
         ctx.save_for_backward(x,y)
         r=SO3part.zeros(l,x.getn()*y.getn())
-        #print("forward")
-        #r.requires_grad_()
-        #x.retain_grad()
+        _SO3part.view(r).addFullCGproduct(_SO3part.view(x),_SO3part.view(y),offs)
         return r
 
     @staticmethod
     def backward(ctx, grad):
         x,y=ctx.saved_tensors
         grad_x=grad_y=None
-        print("backward")
+        #print("backward")
         if ctx.needs_input_grad[0]:
             grad_x=torch.zeros_like(x)
-            print("backward to x")
+            #print("backward to x")
             print(grad_x)
-            #grad_x.cview().SO3partCGproduct0(grad.cview(),y.cview())
+            _SO3part.view(grad_x).addFullCGproduct_back0(_SO3part.view(grad),_SO3part.view(y),offs)
         if ctx.needs_input_grad[1]:
             grad_y=torch.zeros_like(y)
-            print("backward to y")
-            #grad_y.cview().SO3partCGproduct1(grad.cview(),x.cview())
+            #print("backward to y")
+            _SO3part.view(grad_y).addFullCGproduct_back1(_SO3part.view(grad),_SO3part.view(x),offs)
+        return grad_x, grad_y, None, None
+
+
+class SO3part_BlockwiseCGproductFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,x,y,l,offs=0):
+        ctx.save_for_backward(x,y)
+        nb=x.get_nblocks()
+        assert(y.get_nblocks()==nb)
+        r=SO3part.zeros(l,nb*x.get_bsize()*y.get_bsize())
+        _SO3part.view(r).addBlockwiseCGproduct(_SO3part.view(x),_SO3part.view(y),nb,offs)
+        return r
+
+    @staticmethod
+    def backward(ctx, grad):
+        x,y=ctx.saved_tensors
+        grad_x=grad_y=None
+        if ctx.needs_input_grad[0]:
+            grad_x=torch.zeros_like(x)
+            _SO3part.view(grad_x).addBlockwiseCGproduct_back0(_SO3part.view(grad),_SO3part.view(y),nb,offs)
+        if ctx.needs_input_grad[1]:
+            grad_y=torch.zeros_like(y)
+            _SO3part.view(grad_y).addBlockwiseCGproduct_back1(_SO3part.view(grad),_SO3part.view(x),nb,offs)
+        return grad_x, grad_y, None, None
+
+
+class SO3part_DiagCGproductFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,x,y,l,offs=0):
+        ctx.save_for_backward(x,y)
+        assert(x.getn()==y.getn())
+        r=SO3part.zeros(l,x.getn())
+        _SO3part.view(r).addBlockwiseCGproduct(_SO3part.view(x),_SO3part.view(y),offs)
+        return r
+
+    @staticmethod
+    def backward(ctx, grad):
+        x,y=ctx.saved_tensors
+        grad_x=grad_y=None
+        if ctx.needs_input_grad[0]:
+            assert(grad.getn()==y.getn())
+            grad_x=torch.zeros_like(x)
+            _SO3part.view(grad_x).addDiagCGproduct_back0(_SO3part.view(grad),_SO3part.view(y),offs)
+        if ctx.needs_input_grad[1]:
+            assert(grad.getn()==y.getn())
+            grad_y=torch.zeros_like(y)
+            _SO3part.view(grad_y).addDiagCGproduct_back1(_SO3part.view(grad),_SO3part.view(x),offs)
         return grad_x, grad_y, None, None
 
 
@@ -348,6 +451,117 @@ class SO3vec_FullCGproductFn(torch.autograd.Function):
 
 
 
+class SO3vec_BlockwiseCGproductFn(torch.autograd.Function):
 
+    @staticmethod
+    def forward(ctx,k1,k2,maxl,*args):
+        ctx.k1=k1
+        ctx.k2=k2
+        ctx.maxl=maxl
+        ctx.save_for_backward(*args)
+
+        nb=args[0].get_nblocks()
+        tau=CGproductType(tau_type_blocked(args[0:k1]),tau_type_blocked(args[k1:k1+k2]),maxl)
+        r=MakeZeroBlockedSO3parts(tau,nb)
+
+        _x=_SO3vec.view(args[0:k1]);
+        _y=_SO3vec.view(args[k1:k1+k2]);
+        _r=_SO3vec.view(r)
+        _r.addBlockwiseCGproduct(_x,_y,nb,maxl)
+
+        return tuple(r)
+
+    @staticmethod
+    def backward(ctx,*args):
+        print("backward")
+
+        k1=ctx.k1
+        k2=ctx.k2
+        maxl=ctx.maxl
+
+        inputs=ctx.saved_tensors
+        assert len(inputs)==k1+k2, "Wrong number of saved tensors."
+
+        grads=[None,None,None]
+        for i in range(k1+k2):
+            grads.append(torch.zeros_like(inputs[i]))
+
+        _x=_SO3vec.view(inputs[0:k1]);
+        _y=_SO3vec.view(inputs[k1:k1+k2]);
+
+        _g=_SO3vec.view(args);
+        _xg=_SO3vec.view(grads[3:k1+3]);
+        _yg=_SO3vec.view(grads[k1+3:k1+k2+3]);
+
+        _xg.addBlockwiseCGproduct_back0(_g,_y,nb,maxl)
+        _yg.addBlockwiseCGproduct_back1(_g,_x,nb,maxl)
+
+        return tuple(grads)
+
+
+
+class SO3vec_DiagCGproductFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,k1,k2,maxl,*args):
+        ctx.k1=k1
+        ctx.k2=k2
+        assert(k1==k2)
+        ctx.maxl=maxl
+        ctx.save_for_backward(*args)
+
+        _tau=tau_type(args[0:k1])
+        assert _tau==tau_type(args[k1:k1+k2])
+        tau=DiagCGproductType(_tau,maxl)
+        r=MakeZeroSO3parts(tau)
+
+        _x=_SO3vec.view(args[0:k1]);
+        _y=_SO3vec.view(args[k1:k1+k2]);
+        _r=_SO3vec.view(r)
+        _r.addDiagCGproduct(_x,_y,maxl)
+
+        return tuple(r)
+
+    @staticmethod
+    def backward(ctx,*args):
+
+        k1=ctx.k1
+        k2=ctx.k2
+        maxl=ctx.maxl
+
+        inputs=ctx.saved_tensors
+        assert len(inputs)==k1+k2, "Wrong number of saved tensors."
+
+        grads=[None,None,None]
+        for i in range(k1+k2):
+            grads.append(torch.zeros_like(inputs[i]))
+
+        _x=_SO3vec.view(inputs[0:k1]);
+        _y=_SO3vec.view(inputs[k1:k1+k2]);
+
+        _g=_SO3vec.view(args);
+        _xg=_SO3vec.view(grads[3:k1+3]);
+        _yg=_SO3vec.view(grads[k1+3:k1+k2+3]);
+
+        _xg.addDiagCGproduct_back0(_g,_y,maxl)
+        _yg.addDiagCGproduct_back1(_g,_x,maxl)
+
+        return tuple(grads)
+
+
+
+
+        #r.requires_grad_()
+        #x.retain_grad()
+    # inplace operations won't work
+    #def addFullCGproduct(self,x,y,offs=0):
+    #    "Add CGproduct(x,y) with offset offs"
+    #    if (isinstance(x,SO3part) and isinstance(y,SO3part)):
+    #        SO3part_addFullCGproductFn.apply(self,x,y,offs)
+    #    else:
+    #        raise TypeError('Type of each argument in addFullCGproduct(SO3part,SO3part) must be SO3part.')
+
+
+        #print("forward")
         #r.requires_grad_()
         #x.retain_grad()

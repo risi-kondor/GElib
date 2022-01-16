@@ -216,22 +216,6 @@ namespace GElib{
 	return;
       }
 
-      assert(x.nbu==nbu);
-      assert(y.nbu==nbu);
-
-      /*
-      for(int b=0; b<nbu; b++){
-	int _offs=offs;
-	for(int n1=0; n1<N1; n1++){
-	  for(int n2=0; n2<N2; n2++)
-	    for(int m1=-l1; m1<=l1; m1++)
-	      for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++)
-		incb(b,_offs+n2,m1+m2+l,C(m1+l1,m2+l2)*x.getb(b,n1,m1+l1)*y.getb(b,n2,m2+l2));
-	  _offs+=N2;
-	}
-      }
-      */
-
     }
 
 
@@ -321,6 +305,7 @@ namespace GElib{
 	assert(y.dev==1);
 	cudaStream_t stream;
 	CUDA_SAFE(cudaStreamCreate(&stream));
+	GELIB_CPUONLY();
 	//DiagCGproduct_cu(x,y,offs,stream);
 	CUDA_SAFE(cudaStreamSynchronize(stream));
 	CUDA_SAFE(cudaStreamDestroy(stream));
@@ -336,35 +321,215 @@ namespace GElib{
       const int N1=x.getn();
       const int N2=y.getn();
       assert(N1==N2);
-      assert(N1==getn());
       auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
 
-      if(nbu==-1){
-	for(int n=0; n<N1; n++){
-	  for(int m1=-l1; m1<=l1; m1++)
-	    for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++)
-	      inc(offs+n,m1+m2+l,C(m1+l1,m2+l2)*x(n,m1+l1)*y(n,m2+l2));
-	}
-	return;
+      for(int n=0; n<N1; n++){
+	for(int m1=-l1; m1<=l1; m1++)
+	  for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++)
+	    inc(offs+n,m1+m2+l,C(m1+l1,m2+l2)*x(n,m1+l1)*y(n,m2+l2));
+      }
+    }
+
+
+    void add_DiagCGproduct_back0(const SO3partA& g, const SO3partA& y, int offs=0){
+
+      if(dev==1){
+#ifdef _WITH_CUDA
+	assert(g.dev==1);
+	assert(y.dev==1);
+	cudaStream_t stream;
+	CUDA_SAFE(cudaStreamCreate(&stream));
+	GELIB_CPUONLY();
+	//g.CGproduct_g1cu(*this,y,offs,stream);
+	CUDA_SAFE(cudaStreamSynchronize(stream));
+	CUDA_SAFE(cudaStreamDestroy(stream));
+#else
+	CNINE_NOCUDA_ERROR;
+#endif
+	return; 
       }
 
-      assert(x.nbu==nbu);
-      assert(y.nbu==nbu);
+      const int l=g.getl(); 
+      const int l1=getl(); 
+      const int l2=y.getl(); 
+      const int N1=getn();
+      const int N2=y.getn();
+      assert(N1==N2);
+      const SO3_CGcoeffs<float>& C=SO3_cgbank.getf(CGindex(l1,l2,l));
 
-      /*
-      for(int b=0; b<nbu; b++){
-	int _offs=offs;
+      for(int n1=0; n1<N1; n1++){
+	for(int m1=-l1; m1<=l1; m1++)
+	  for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+	    inc(n1,m1+l1,C(m1+l1,m2+l2)*std::conj(y(n1,m2+l2))*g(offs+n1,m1+m2+l));
+	  }
+	}
+      
+    }
+
+
+    void add_DiagCGproduct_back1(const SO3partA& g, const SO3partA& x, int offs=0){
+
+      if(dev==1){
+#ifdef _WITH_CUDA
+	assert(g.dev==1);
+	assert(x.dev==1);
+	cudaStream_t stream;
+	CUDA_SAFE(cudaStreamCreate(&stream));
+	GELIB_CPUONLY()
+	//g.CGproduct_g2cu(x,*this,offs,stream);
+	CUDA_SAFE(cudaStreamSynchronize(stream));
+	CUDA_SAFE(cudaStreamDestroy(stream));
+#else
+	CNINE_NOCUDA_ERROR;
+#endif
+	return; 
+      }
+
+      const int l=g.getl();
+      const int l1=x.getl(); 
+      const int l2=getl(); 
+      const int N1=x.getn();
+      const int N2=getn();
+      assert(N1==N2);
+      const SO3_CGcoeffs<float>& C=SO3_cgbank.getf(CGindex(l1,l2,l));
+
+	for(int n1=0; n1<N1; n1++){
+	  for(int m1=-l1; m1<=l1; m1++)
+	    for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++)
+	      inc(n1,m2+l2,C(m1+l1,m2+l2)*std::conj(x(n1,m1+l1))*g(offs+n1,m1+m2+l));
+	}
+
+    }
+
+
+  public: // ---- Blocked CG-products ------------------------------------------------------------------------
+
+
+    void add_BlockwiseCGproduct(const SO3partA& x, const SO3partA& y, const int nblocks, int offs=0){
+
+      if(dev==1){
+#ifdef _WITH_CUDA
+	assert(x.dev==1);
+	assert(y.dev==1);
+	cudaStream_t stream;
+	CUDA_SAFE(cudaStreamCreate(&stream));
+	GELIB_CPUONLY();
+	CUDA_SAFE(cudaStreamSynchronize(stream));
+	CUDA_SAFE(cudaStreamDestroy(stream));
+#else
+	CNINE_NOCUDA_ERROR;
+#endif
+	return; 
+      }
+      
+      const int l=getl(); 
+      const int l1=x.getl(); 
+      const int l2=y.getl(); 
+      const int N1=x.getn()/nblocks;
+      const int N2=y.getn()/nblocks;
+      auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
+
+      for(int bl=0; bl<nblocks; bl++){
+	for(int n1=0; n1<N1; n1++){
+	  for(int n2=0; n2<N2; n2++){
+	    for(int m1=-l1; m1<=l1; m1++){
+	      for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+		inc(offs+n2,m1+m2+l,C(m1+l1,m2+l2)*x(n1+bl*N1,m1+l1)*y(n2+bl*N2,m2+l2));
+	      }
+	    }
+	  }
+	  offs+=N2;
+	}
+	//offs+=N1*N2;
+      }
+
+    }
+
+
+    void add_BlockwiseCGproduct_back0(const SO3partA& g, const SO3partA& y, const int nblocks, int offs=0){
+
+      if(dev==1){
+#ifdef _WITH_CUDA
+	assert(g.dev==1);
+	assert(y.dev==1);
+	cudaStream_t stream;
+	CUDA_SAFE(cudaStreamCreate(&stream));
+	GELIB_CPUONLY();
+	//g.CGproduct_g1cu(*this,y,offs,stream);
+	CUDA_SAFE(cudaStreamSynchronize(stream));
+	CUDA_SAFE(cudaStreamDestroy(stream));
+#else
+	CNINE_NOCUDA_ERROR;
+#endif
+	return; 
+      }
+
+      const int l=g.getl(); 
+      const int l1=getl(); 
+      const int l2=y.getl(); 
+      const int N1=getn()/nblocks;
+      const int N2=y.getn()/nblocks;
+      const SO3_CGcoeffs<float>& C=SO3_cgbank.getf(CGindex(l1,l2,l));
+
+      for(int bl=0; bl<nblocks; bl++){
+	for(int n1=0; n1<N1; n1++){
+	  for(int n2=0; n2<N2; n2++){
+	    for(int m1=-l1; m1<=l1; m1++)
+	      for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+		inc(n1+bl*N1,m1+l1,C(m1+l1,m2+l2)*std::conj(y(n2+bl*N2,m2+l2))*g(offs+n2,m1+m2+l));
+	      }
+	  }
+	  offs+=N2;
+	}
+	//offs+=N1*N2;
+      }
+            
+    }
+
+
+    void add_BlockwiseCGproduct_back1(const SO3partA& g, const SO3partA& x, const int nblocks, int offs=0){
+
+      if(dev==1){
+#ifdef _WITH_CUDA
+	assert(g.dev==1);
+	assert(x.dev==1);
+	cudaStream_t stream;
+	CUDA_SAFE(cudaStreamCreate(&stream));
+	GELIB_CPUONLY();
+	//g.CGproduct_g2cu(x,*this,offs,stream);
+	CUDA_SAFE(cudaStreamSynchronize(stream));
+	CUDA_SAFE(cudaStreamDestroy(stream));
+#else
+	CNINE_NOCUDA_ERROR;
+#endif
+	return; 
+      }
+
+      const int l=g.getl();
+      const int l1=x.getl(); 
+      const int l2=getl(); 
+      const int N1=x.getn()/nblocks;
+      const int N2=getn()/nblocks;
+      const SO3_CGcoeffs<float>& C=SO3_cgbank.getf(CGindex(l1,l2,l));
+
+      for(int bl=0; bl<nblocks; bl++){
 	for(int n1=0; n1<N1; n1++){
 	  for(int n2=0; n2<N2; n2++)
 	    for(int m1=-l1; m1<=l1; m1++)
 	      for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++)
-		incb(b,_offs+n2,m1+m2+l,C(m1+l1,m2+l2)*x.getb(b,n1,m1+l1)*y.getb(b,n2,m2+l2));
-	  _offs+=N2;
+		inc(n2+N2*bl,m2+l2,C(m1+l1,m2+l2)*std::conj(x(n1+N1*bl,m1+l1))*g(offs+n2,m1+m2+l));
+	  offs+=N2;
 	}
+	//offs+=N1*N2;
       }
-      */
 
     }
+
+
+
+
+
+
 
 
   public: // ---- Spherical harmonics -----------------------------------------------------------------------
