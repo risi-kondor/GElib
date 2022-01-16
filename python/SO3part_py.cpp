@@ -68,9 +68,17 @@ py::class_<SO3part>(m,"SO3part",
 
   .def("apply",&SO3part::rotate)
 
-  .def("addCGproduct",&SO3part::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
-  .def("addCGproduct_back0",&SO3part::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
-  .def("addCGproduct_back1",&SO3part::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
+  .def("addFullCGproduct",&SO3part::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
+  .def("addFullCGproduct_back0",&SO3part::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
+  .def("addFullCGproduct_back1",&SO3part::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
+
+  .def("addDiagCGproduct",&SO3part::add_DiagCGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
+  .def("addDiagCGproduct_back0",&SO3part::add_DiagCGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
+  .def("addDiagCGproduct_back1",&SO3part::add_DiagCGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
+
+  .def("addBlockwiseCGproduct",&SO3part::add_BlockwiseCGproduct,py::arg("x"),py::arg("y"),py::arg("nblocks"),py::arg("offs")=0)
+  .def("addBlockwiseCGproduct_back0",&SO3part::add_BlockwiseCGproduct_back0,py::arg("g"),py::arg("y"),py::arg("nblocks"),py::arg("offs")=0)
+  .def("addBlockwiseCGproduct_back1",&SO3part::add_BlockwiseCGproduct_back1,py::arg("g"),py::arg("x"),py::arg("nblocks"),py::arg("offs")=0)
 
   .def("device",&SO3part::get_device)
   .def("to",&SO3part::to_device)

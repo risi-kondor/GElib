@@ -897,6 +897,178 @@ namespace GElib{
     }
 
     
+  public: // ---- Diagonal CG-products -----------------------------------------------------------------------
+
+
+    void add_DiagCGproduct(const SO3vec& x, const SO3vec& y, const int maxL=-1){
+      GELIB_CHECK_NBU3(nbu,x.nbu,y.nbu);
+      GELIB_CHECK_SO3FORMAT3(fmt,x.fmt,y.fmt);
+      assert(tau==GElib::CGproduct(x.tau,y.tau,maxL));
+
+      if(fmt==0){
+	int L1=x.getL(); 
+	int L2=y.getL();
+	vector<int> offs(tau.size(),0);
+	
+	for(int l1=0; l1<=L1; l1++){
+	  if(x.tau[l1]==0) continue;
+	  for(int l2=0; l2<=L2; l2++){
+	    if(y.tau[l2]==0) continue;
+	    for(int l=std::abs(l2-l1); l<=l1+l2 && (maxL<0 || l<=maxL); l++){
+	      parts[l]->add_DiagCGproduct(*x.parts[l1],*y.parts[l2],offs[l]);
+	      offs[l]+=(x.parts[l1]->getn());
+	    }
+	  }
+	}
+      }
+
+      if(fmt==1) 
+	vec->add_CGproduct(*x.vec,*y.vec,maxL);
+    }
+
+
+    void add_DiagCGproduct_back0(const SO3vec& g, const SO3vec& y, const int maxL=-1){
+      GELIB_CHECK_NBU3(nbu,g.nbu,y.nbu);
+      GELIB_CHECK_SO3FORMAT3(fmt,g.fmt,y.fmt);
+
+      if(fmt==0){
+	int L1=getL(); 
+	int L2=y.getL();
+	int L=g.getL();
+	vector<int> offs(g.tau.size(),0);
+	
+	for(int l1=0; l1<=L1; l1++){
+	  if(tau[l1]==0) continue;
+	  for(int l2=0; l2<=L2; l2++){
+	    if(y.tau[l2]==0) continue;
+	    for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	      parts[l1]->add_DiagCGproduct_back0(*g.parts[l],*y.parts[l2],offs[l]);
+	      offs[l]+=(this->parts[l1]->getn());
+	    }
+	  }
+	}
+      }
+
+      if(fmt==1) 
+	vec->add_CGproduct_back0(*g.vec,*y.vec,maxL);
+
+    }
+
+
+    void add_DiagCGproduct_back1(const SO3vec& g, const SO3vec& x, const int maxL=-1){
+      GELIB_CHECK_NBU3(nbu,x.nbu,g.nbu);
+      GELIB_CHECK_SO3FORMAT3(fmt,x.fmt,g.fmt);
+
+      if(fmt==0){
+	int L1=x.getL(); 
+	int L2=getL();
+	int L=g.getL();
+	vector<int> offs(g.tau.size(),0);
+	
+	for(int l1=0; l1<=L1; l1++){
+	  if(x.tau[l1]==0) continue;
+	  for(int l2=0; l2<=L2; l2++){
+	    if(tau[l2]==0) continue;
+	    for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	      parts[l2]->add_DiagCGproduct_back1(*g.parts[l],*x.parts[l1],offs[l]);
+	      offs[l]+=(x.parts[l1]->getn());
+	    }
+	  }
+	}
+      }
+
+      if(fmt==1) 
+	vec->add_CGproduct_back1(*g.vec,*x.vec,maxL);
+
+    }
+
+    
+  public: // ---- Blocked CG-products -----------------------------------------------------------------------
+
+
+    void add_BlockwiseCGproduct(const SO3vec& x, const SO3vec& y, const int nblocks, const int maxL=-1){
+      GELIB_CHECK_NBU3(nbu,x.nbu,y.nbu);
+      GELIB_CHECK_SO3FORMAT3(fmt,x.fmt,y.fmt);
+      assert(tau==GElib::CGproduct(x.tau,y.tau,maxL));
+
+      if(fmt==0){
+	int L1=x.getL(); 
+	int L2=y.getL();
+	vector<int> offs(tau.size(),0);
+	
+	for(int l1=0; l1<=L1; l1++){
+	  if(x.tau[l1]==0) continue;
+	  for(int l2=0; l2<=L2; l2++){
+	    if(y.tau[l2]==0) continue;
+	    for(int l=std::abs(l2-l1); l<=l1+l2 && (maxL<0 || l<=maxL); l++){
+	      parts[l]->add_BlockwiseCGproduct(*x.parts[l1],*y.parts[l2],nblocks,offs[l]);
+	      offs[l]+=(x.parts[l1]->getn()*y.parts[l2]->getn()/nblocks);
+	    }
+	  }
+	}
+      }
+
+      if(fmt==1) 
+	vec->add_CGproduct(*x.vec,*y.vec,maxL);
+    }
+
+
+    void add_BlockwiseCGproduct_back0(const SO3vec& g, const SO3vec& y, const int nblocks, const int maxL=-1){
+      GELIB_CHECK_NBU3(nbu,g.nbu,y.nbu);
+      GELIB_CHECK_SO3FORMAT3(fmt,g.fmt,y.fmt);
+
+      if(fmt==0){
+	int L1=getL(); 
+	int L2=y.getL();
+	int L=g.getL();
+	vector<int> offs(g.tau.size(),0);
+	
+	for(int l1=0; l1<=L1; l1++){
+	  if(tau[l1]==0) continue;
+	  for(int l2=0; l2<=L2; l2++){
+	    if(y.tau[l2]==0) continue;
+	    for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	      parts[l1]->add_BlockwiseCGproduct_back0(*g.parts[l],*y.parts[l2],nblocks,offs[l]);
+	      offs[l]+=(this->parts[l1]->getn()*y.parts[l2]->getn()/nblocks);
+	    }
+	  }
+	}
+      }
+
+      if(fmt==1) 
+	vec->add_CGproduct_back0(*g.vec,*y.vec,maxL);
+
+    }
+
+
+    void add_BlockwiseCGproduct_back1(const SO3vec& g, const SO3vec& x, const int nblocks, const int maxL=-1){
+      GELIB_CHECK_NBU3(nbu,x.nbu,g.nbu);
+      GELIB_CHECK_SO3FORMAT3(fmt,x.fmt,g.fmt);
+
+      if(fmt==0){
+	int L1=x.getL(); 
+	int L2=getL();
+	int L=g.getL();
+	vector<int> offs(g.tau.size(),0);
+	
+	for(int l1=0; l1<=L1; l1++){
+	  if(x.tau[l1]==0) continue;
+	  for(int l2=0; l2<=L2; l2++){
+	    if(tau[l2]==0) continue;
+	    for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	      parts[l2]->add_BlockwiseCGproduct_back1(*g.parts[l],*x.parts[l1],nblocks,offs[l]);
+	      offs[l]+=(x.parts[l1]->getn()*this->parts[l2]->getn()/nblocks);
+	    }
+	  }
+	}
+      }
+
+      if(fmt==1) 
+	vec->add_CGproduct_back1(*g.vec,*x.vec,maxL);
+
+    }
+
+    
   public: // ---- Normalization ------------------------------------------------------------------------------
 
     /*

@@ -20,7 +20,8 @@ using namespace std;
 
 #define GELIB_ASSERT(condition, message) if (!(condition)) {cout<<message<<endl; assert ((condition)); exit(-1); }
 #define GELIB_UNIMPL() printf("GElib error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
-#define GELIB_ERROR(cmd) {CoutLock lk; cerr<<"GEnet error in function '"<<__PRETTY_FUNCTION__<<"' : "<<cmd<<endl;} exit(1);
+//#define GELIB_CPUONLY() if(dev!=0) {printf("GElib error: CUDA code for \"%s\" not implemented.\n",__PRETTY_FUNCTION__); exit(-1);}
+#define GELIB_ERROR(cmd) {CoutLock lk; cerr<<"GElib error in function '"<<__PRETTY_FUNCTION__<<"' : "<<cmd<<endl;} exit(1);
 
 
 

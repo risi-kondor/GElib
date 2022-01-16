@@ -2,17 +2,12 @@ import torch
 
 class ctens(torch.Tensor):
 
-    #def __new__(cls,T,_bsize=1):
-     #   a=super.__new__(cls)
-      #  a.bsize=_bsize
-       # return a
 
     def __init__(self,_T):
         self=_T
-        #self.bsize=_bsize
 
 
-    ## ---- Static constructors
+    ## ---- Static constructors ------------------------------------------------------------------------------
 
 
     @staticmethod
@@ -30,10 +25,23 @@ class ctens(torch.Tensor):
         return a
 
 
+    ## ---- Access -------------------------------------------------------------------------------------------
+
+
+    def get_nblocks(self):
+        "Return the number of blocks."
+        return int(self.size(2)/self.bsize)
+
+    def get_bsize(self):
+        "Return the size of each block."
+        return self.bsize
+
+
     ## ---- Operations ---------------------------------------------------------------------------------------
 
 
     def matmul(self,y):
+        "Multiply this matrix by y."
         assert self.dim()==3, "Must be a matrix"
         assert y.dim()==3, "Must be a ctens matrix"
 
@@ -51,7 +59,7 @@ class ctens(torch.Tensor):
 
  
     def mix_blocks(self,M):
-        "Mix blocks with each other by M"
+        "Mix blocks with each other by M."
         assert self.dim()==3, "Must be a matrix"
         assert M.dim()==3,"M must be a ctens matrix"
 
@@ -75,7 +83,7 @@ class ctens(torch.Tensor):
 
 
     def matmul_each_block(M):
-        "Multiply each block by the same ctens matrix M"
+        "Multiply each block by the same ctens matrix M."
         assert self.dim()==3, "Must be a matrix"
         assert M.dim()==3, "Must be a matrix"
 
@@ -96,7 +104,7 @@ class ctens(torch.Tensor):
             
         
     def matmul_each_block_by_corresponding_block(M):
-        "Multiply each block by the corresponding block in MM"
+        "Multiply each block by the corresponding block in M."
         assert self.dim()==3, "Must be a matrix"
         assert M.dim()==3, "Must be a matrix"
 

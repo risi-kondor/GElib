@@ -57,6 +57,18 @@ py::class_<SO3vec>(m,"SO3vec",
   .def("addCGproduct_back0",&SO3vec::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("maxl")=-1)
   .def("addCGproduct_back1",&SO3vec::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("maxl")=-1)
 
+  .def("addFullCGproduct",&SO3vec::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("maxl")=-1)
+  .def("addFullCGproduct_back0",&SO3vec::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("maxl")=-1)
+  .def("addFullCGproduct_back1",&SO3vec::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("maxl")=-1)
+
+  .def("addDiagCGproduct",&SO3vec::add_DiagCGproduct,py::arg("x"),py::arg("y"),py::arg("maxl")=-1)
+  .def("addDiagCGproduct_back0",&SO3vec::add_DiagCGproduct_back0,py::arg("g"),py::arg("y"),py::arg("maxl")=-1)
+  .def("addDiagCGproduct_back1",&SO3vec::add_DiagCGproduct_back1,py::arg("g"),py::arg("x"),py::arg("maxl")=-1)
+
+  .def("addBlockwiseCGproduct",&SO3vec::add_BlockwiseCGproduct,py::arg("x"),py::arg("y"),py::arg("nblocks"),py::arg("maxl")=-1)
+  .def("addBlockwiseCGproduct_back0",&SO3vec::add_BlockwiseCGproduct_back0,py::arg("g"),py::arg("y"),py::arg("nblocks"),py::arg("maxl")=-1)
+  .def("addBlockwiseCGproduct_back1",&SO3vec::add_BlockwiseCGproduct_back1,py::arg("g"),py::arg("x"),py::arg("nblocks"),py::arg("maxl")=-1)
+
   .def("device",&SO3vec::get_device)
   .def("to",&SO3vec::to_device)
   .def("to_device",&SO3vec::to_device)
