@@ -11,11 +11,17 @@ tau=[1,1]
 # Define two random SO3vec objects  
 x=gelib.SO3vec.randn(tau)
 y=gelib.SO3vec.randn(tau)
+x.parts[1].requires_grad_()
 
 # Compute the CG-product
 z=gelib.FullCGproduct(x,y)
 
+print("Full CG-product:")
 print(z)
+
+z.parts[2].backward(z.parts[2])
+print(x.parts[1].grad)
+
 print("\n\n")
 
 # ---- Diagonal CG-product -----------------------------------------------------------------------------------
@@ -27,11 +33,17 @@ tau=[1,1]
 # Define two random SO3vec objects  
 x=gelib.SO3vec.randn(tau)
 y=gelib.SO3vec.randn(tau)
+x.parts[1].requires_grad_()
 
 # Compute the CG-product
 z=gelib.DiagCGproduct(x,y)
 
+print("Diagonal CG-product:")
 print(z)
+
+z.parts[2].backward(z.parts[2])
+print(x.parts[1].grad)
+
 print("\n\n")
 
 
@@ -46,11 +58,17 @@ maxl=1
 # each consisting of 2l+1 fragments 
 x=gelib.SO3vec.Frandn(maxl,2)
 y=gelib.SO3vec.Frandn(maxl,2)
+x.parts[1].requires_grad_()
 
 # Compute the CG-product
 z=gelib.BlockwiseCGproduct(x,y)
 
+print("Blockwise CG-product:")
 print(z)
+
+z.parts[2].backward(z.parts[2])
+print(x.parts[1].grad)
+
 print("\n\n")
 
 
