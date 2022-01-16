@@ -424,7 +424,6 @@ class SO3vec_FullCGproductFn(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx,*args):
-        print("backward")
 
         k1=ctx.k1
         k2=ctx.k2
@@ -455,12 +454,14 @@ class SO3vec_BlockwiseCGproductFn(torch.autograd.Function):
 
     @staticmethod
     def forward(ctx,k1,k2,maxl,*args):
+
+        nb=args[0].get_nblocks()
         ctx.k1=k1
         ctx.k2=k2
         ctx.maxl=maxl
+        ctx.nb=nb
         ctx.save_for_backward(*args)
 
-        nb=args[0].get_nblocks()
         tau=CGproductType(tau_type_blocked(args[0:k1]),tau_type_blocked(args[k1:k1+k2]),maxl)
         r=MakeZeroBlockedSO3parts(tau,nb)
 
@@ -481,6 +482,7 @@ class SO3vec_BlockwiseCGproductFn(torch.autograd.Function):
 
         inputs=ctx.saved_tensors
         assert len(inputs)==k1+k2, "Wrong number of saved tensors."
+        #nb=inputs[0].get_nblocks()
 
         grads=[None,None,None]
         for i in range(k1+k2):
@@ -493,8 +495,8 @@ class SO3vec_BlockwiseCGproductFn(torch.autograd.Function):
         _xg=_SO3vec.view(grads[3:k1+3]);
         _yg=_SO3vec.view(grads[k1+3:k1+k2+3]);
 
-        _xg.addBlockwiseCGproduct_back0(_g,_y,nb,maxl)
-        _yg.addBlockwiseCGproduct_back1(_g,_x,nb,maxl)
+        _xg.addBlockwiseCGproduct_back0(_g,_y,ctx.nb,maxl)
+        _yg.addBlockwiseCGproduct_back1(_g,_x,ctx.nb,maxl)
 
         return tuple(grads)
 
