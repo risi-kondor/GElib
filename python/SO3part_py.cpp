@@ -68,6 +68,8 @@ py::class_<SO3part>(m,"SO3part",
 
   .def("apply",&SO3part::rotate)
 
+  .def("addFourierConjugate",&SO3part::add_FourierConjugate)
+  
   .def("addFullCGproduct",&SO3part::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
   .def("addFullCGproduct_back0",&SO3part::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
   .def("addFullCGproduct_back1",&SO3part::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
