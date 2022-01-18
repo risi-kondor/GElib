@@ -98,6 +98,14 @@ class SO3part(ctens):
         "Convolve this SO3part with another SO3part. Each block will be convolved with the same block of y."
         return SO3Fpart(self.matmul_each_block_by_corresponding_block(y))
 
+    def FourierConjugate(self):
+        "Given a Fourier matrix of a function f, compute the corresponding Fourier matrix of conj(f)."
+        return SO3part_FourierConjugateFn.apply(self)
+
+
+    ## ---- CG-products --------------------------------------------------------------------------------------
+
+
     def FullCGproduct(self,y,l,offs=0):
         "Compute the CG product of each vector in x with each vector in y."
         assert l>0, "Output l must be specified."
@@ -179,7 +187,15 @@ class SO3vec:
             R.parts.append(SO3part.Frandn(l,_n))
         return R
 
-
+    @staticmethod
+    def Fzeros_like(x):
+        R=SO3vec()
+        for l in range(0,len(x.parts)):
+            R.parts.append(SO3part.Frandn(l,x.parts[l].get_nblocks()))
+        return R;
+                           
+                       
+    
     ## ---- Access -----------------------------------------------------------------------------------------
 
 
@@ -202,6 +218,17 @@ class SO3vec:
         for l in range(0,maxl):
             R.parts.append(self.parts[l]*W.parts[l])
         return R
+
+
+    def FourierConjugate(self):
+        "Given the Fourier transform of a function f, return the Fourier transform of conj(f)."
+        r=SO3vec()
+        for p in self.parts:
+            r.parts.append(p.FourierConjugate())
+        return r
+
+        
+    ## ---- CG-products --------------------------------------------------------------------------------------
 
 
     def FullCGproduct(self,y,maxl=-1,dummy=0):
@@ -243,6 +270,15 @@ class SO3vec:
         """
         r=SO3vec()
         r.parts=list(SO3vec_BlockwiseCGproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
+        return r
+
+
+    def FourierProduct(self,y,maxl):
+        """
+        Given the Fourier transforms of f and g, compute the Fourier transform of fg.
+        """
+        r=SO3vec()
+        r.parts=list(SO3vec_FourierProductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
         return r
 
 
@@ -322,10 +358,27 @@ def DiagCGproduct(x,y,a=-1,b=0):
 def BlockwiseCGproduct(x,y,a=-1,b=0):
     return x.BlockwiseCGproduct(y,a,b)
 
+def FourierConjugate(x):
+    return x.FourierConjugate()
 
 
 ## ---- Autograd functions -----------------------------------------------------------------------------------
 
+
+class SO3part_FourierConjugateFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,x):
+        r=SO3part.Fzeros(x.getl(), x.getn())
+        _SO3part.view(r).addFourierConjugate(_SO3part.view(x))
+        return r
+
+    @staticmethod
+    def backward(ctx,x):
+        r=SO3part.Fzeros(x.getl(), x.getn())
+        _SO3part.view(r).addFourierConjugate(_SO3part.view(x))
+        return r
+        
 
 class SO3part_FullCGproductFn(torch.autograd.Function):
 
@@ -402,6 +455,54 @@ class SO3part_DiagCGproductFn(torch.autograd.Function):
         return grad_x, grad_y, None, None
 
 
+class SO3vec_FourierProductFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,k1,k2,maxl,*args):
+
+        nb=args[0].get_nblocks()
+        ctx.k1=k1
+        ctx.k2=k2
+        ctx.maxl=maxl
+        ctx.nb=nb
+        ctx.save_for_backward(*args)
+
+        tau=CGproductType(tau_type_blocked(args[0:k1]),tau_type_blocked(args[k1:k1+k2]),maxl)
+        r=MakeZeroBlockedSO3parts(tau,nb)
+
+        _x=_SO3vec.view(args[0:k1]);
+        _y=_SO3vec.view(args[k1:k1+k2]);
+        _r=_SO3vec.view(r)
+        _r.addFourierProduct(_x,_y,nb,maxl)
+
+        return tuple(r)
+
+    @staticmethod
+    def backward(ctx,*args):
+
+        k1=ctx.k1
+        k2=ctx.k2
+        maxl=ctx.maxl
+
+        inputs=ctx.saved_tensors
+        assert len(inputs)==k1+k2, "Wrong number of saved tensors."
+
+        grads=[None,None,None]
+        for i in range(k1+k2):
+            grads.append(torch.zeros_like(inputs[i]))
+
+        _x=_SO3vec.view(inputs[0:k1]);
+        _y=_SO3vec.view(inputs[k1:k1+k2]);
+
+        _g=_SO3vec.view(args);
+        _xg=_SO3vec.view(grads[3:k1+3]);
+        _yg=_SO3vec.view(grads[k1+3:k1+k2+3]);
+
+        _xg.addFourierProduct_back0(_g,_y,ctx.nb,maxl)
+        _yg.addFourierProduct_back1(_g,_x,ctx.nb,maxl)
+
+        return tuple(grads)
+
 
 class SO3vec_FullCGproductFn(torch.autograd.Function):
 
@@ -447,7 +548,6 @@ class SO3vec_FullCGproductFn(torch.autograd.Function):
         _yg.addCGproduct_back1(_g,_x,maxl)
 
         return tuple(grads)
-
 
 
 class SO3vec_BlockwiseCGproductFn(torch.autograd.Function):

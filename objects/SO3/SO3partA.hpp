@@ -171,6 +171,36 @@ namespace GElib{
   public: // ---- Cumulative Operations ----------------------------------------------------------------------
 
 
+    void add_FourierConjugate(const SO3partA& x){
+
+      if(dev==1){
+#ifdef _WITH_CUDA
+	assert(x.dev==1);
+	assert(y.dev==1);
+	cudaStream_t stream;
+	CUDA_SAFE(cudaStreamCreate(&stream));
+	GELIB_CPUONLY();
+	//add_FourierConjugate_cu(x,y,offs,stream);
+	CUDA_SAFE(cudaStreamSynchronize(stream));
+	CUDA_SAFE(cudaStreamDestroy(stream));
+#else
+	CNINE_NOCUDA_ERROR;
+#endif
+	return; 
+      }
+
+      int I=dims(0);
+      int J=dims(0);
+      assert(x.dims(0)==I);
+      assert(x.dims(1)==J);
+      for(int i=0; i<I; i++)
+	for(int j=0; j<J; j++)
+	  inc(i,j,std::conj(x(I-i-1,J-j-1)));
+    }
+
+
+  public: // ---- CG-products --------------------------------------------------------------------------------
+
     //void add_CGproduct_cu(const SO3partA& x, const SO3partA& y, int offs, const cudaStream_t& stream);
 
     void add_CGproduct(const SO3partA& x, const SO3partA& y, int offs=0){
@@ -402,7 +432,7 @@ namespace GElib{
     }
 
 
-  public: // ---- Blocked CG-products ------------------------------------------------------------------------
+  public: // ---- Blockwise CG-products ----------------------------------------------------------------------
 
 
     void add_BlockwiseCGproduct(const SO3partA& x, const SO3partA& y, const int nblocks, int offs=0){
@@ -526,6 +556,73 @@ namespace GElib{
     }
 
 
+  public: // ---- FourierProduct -----------------------------------------------------------------------------
+
+
+    void add_FourierProduct(const SO3partA& x, const SO3partA& y){
+
+      if(dev==1){
+#ifdef _WITH_CUDA
+	assert(x.dev==1);
+	assert(y.dev==1);
+	cudaStream_t stream;
+	CUDA_SAFE(cudaStreamCreate(&stream));
+	GELIB_CPUONLY();
+	CUDA_SAFE(cudaStreamSynchronize(stream));
+	CUDA_SAFE(cudaStreamDestroy(stream));
+#else
+	CNINE_NOCUDA_ERROR;
+#endif
+	return; 
+      }
+      
+      const int l=getl(); 
+      const int l1=x.getl(); 
+      const int l2=y.getl(); 
+      const int N1=2*l1+1;
+      const int N2=2*l2+1;
+      const int nblocks=getn()/(2*getl()+1);
+      auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
+
+      int offs=0;
+      SO3partA buf(l,N1*N2,cnine::fill::zero);
+      for(int bl=0; bl<nblocks; bl++){
+	for(int n1=0; n1<N1; n1++){
+	  for(int n2=0; n2<N2; n2++){
+	    for(int m1=-l1; m1<=l1; m1++){
+	      for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+		buf.inc(offs+n2,m1+m2+l,C(m1+l1,m2+l2)*x(n1+bl*N1,m1+l1)*y(n2+bl*N2,m2+l2));
+	      }
+	    }
+	  }
+	  offs+=N2;
+	}
+      }
+
+      int mult=2*l2+1;
+      float fact=(float)((2*l1+1)*(2*l2+1))/(2*l+1);
+      for(int bl=0; bl<nblocks; bl++){
+	for(int n=0; n<2*l+1; n++){
+	  for(int m1=-l1; m1<=l1; m1++){
+	    for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+	      inc(m1+m2+l,n,C(m1+l1,m2+l2)*buf((m1+l1)*mult+m2+l2,n)*fact);
+	    }
+	  }
+	}
+      }
+
+
+
+    }
+
+
+    void add_FourierProduct_back0(const SO3partA& g, const SO3partA& y){
+	GELIB_CPUONLY();
+    }
+
+    void add_FourierProduct_back1(const SO3partA& g, const SO3partA& x){
+	GELIB_CPUONLY();
+    }
 
 
 

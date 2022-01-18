@@ -1008,8 +1008,6 @@ namespace GElib{
 	}
       }
 
-      if(fmt==1) 
-	vec->add_CGproduct(*x.vec,*y.vec,maxL);
     }
 
 
@@ -1034,9 +1032,6 @@ namespace GElib{
 	  }
 	}
       }
-
-      if(fmt==1) 
-	vec->add_CGproduct_back0(*g.vec,*y.vec,maxL);
 
     }
 
@@ -1063,8 +1058,85 @@ namespace GElib{
 	}
       }
 
-      if(fmt==1) 
-	vec->add_CGproduct_back1(*g.vec,*x.vec,maxL);
+    }
+
+    
+  public: // ---- Fourier Products ---------------------------------------------------------------------------
+
+
+    void add_FourierProduct(const SO3vec& x, const SO3vec& y, const int nblocks, const int maxL=-1){
+      GELIB_CHECK_NBU3(nbu,x.nbu,y.nbu);
+      GELIB_CHECK_SO3FORMAT3(fmt,x.fmt,y.fmt);
+      assert(tau==x.tau);
+      assert(tau==y.tau);
+
+      if(fmt==0){
+	int L1=x.getL(); 
+	int L2=y.getL();
+	//SO3vec buffer=SO3vec.zero(tau);
+	
+	for(int l1=0; l1<=L1; l1++){
+	  if(x.tau[l1]==0) continue;
+	  for(int l2=0; l2<=L2; l2++){
+	    if(y.tau[l2]==0) continue;
+	    for(int l=std::abs(l2-l1); l<=l1+l2 && (maxL<0 || l<=maxL); l++){
+	      parts[l]->add_FourierProduct(*x.parts[l1],*y.parts[l2]);
+	    }
+	  }
+	}
+      }
+
+    }
+
+
+    void add_FourierProduct_back0(const SO3vec& g, const SO3vec& y, const int nblocks, const int maxL=-1){
+      GELIB_CHECK_NBU3(nbu,g.nbu,y.nbu);
+      GELIB_CHECK_SO3FORMAT3(fmt,g.fmt,y.fmt);
+      assert(tau==g.tau);
+      assert(tau==y.tau);
+
+      if(fmt==0){
+	int L1=getL(); 
+	int L2=y.getL();
+	int L=g.getL();
+	//SO3vec buffer=SO3vec.zero(tau);
+
+	for(int l1=0; l1<=L1; l1++){
+	  if(tau[l1]==0) continue;
+	  for(int l2=0; l2<=L2; l2++){
+	    if(y.tau[l2]==0) continue;
+	    for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	      parts[l1]->add_FourierProduct_back0(*g.parts[l],*y.parts[l2]);
+	    }
+	  }
+	}
+      }
+
+    }
+
+
+    void add_FourierProduct_back1(const SO3vec& g, const SO3vec& x, const int nblocks, const int maxL=-1){
+      GELIB_CHECK_NBU3(nbu,x.nbu,g.nbu);
+      GELIB_CHECK_SO3FORMAT3(fmt,x.fmt,g.fmt);
+      assert(tau==g.tau);
+      assert(tau==x.tau);
+
+      if(fmt==0){
+	int L1=x.getL(); 
+	int L2=getL();
+	int L=g.getL();
+	//SO3vec buffer=SO3vec.zero(tau);
+
+	for(int l1=0; l1<=L1; l1++){
+	  if(x.tau[l1]==0) continue;
+	  for(int l2=0; l2<=L2; l2++){
+	    if(tau[l2]==0) continue;
+	    for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	      parts[l2]->add_FourierProduct_back1(*g.parts[l],*x.parts[l1]);
+	    }
+	  }
+	}
+      }
 
     }
 

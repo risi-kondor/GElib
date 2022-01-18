@@ -72,6 +72,26 @@ print(x.parts[1].grad)
 print("\n\n")
 
 
+# ---- Fourier conjugate -------------------------------------------------------------------------------------
+# Given the Fourier transform of f, return the Fourier transform of conj(f)
+
+x=gelib.SO3vec.Frandn(maxl,2)
+x.parts[1].requires_grad_()
+
+# Compute the Fourier conjugate
+z=gelib.FourierConjugate(x)
+
+print("Fourier conjugate:")
+print(z)
+
+z.parts[2].backward(z.parts[2])
+print(x.parts[1].grad)
+
+print("\n\n")
+
+
+
+
 # exec(open("test2.py").read())
 
 

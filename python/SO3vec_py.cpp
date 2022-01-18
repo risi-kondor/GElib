@@ -69,6 +69,11 @@ py::class_<SO3vec>(m,"SO3vec",
   .def("addBlockwiseCGproduct_back0",&SO3vec::add_BlockwiseCGproduct_back0,py::arg("g"),py::arg("y"),py::arg("nblocks"),py::arg("maxl")=-1)
   .def("addBlockwiseCGproduct_back1",&SO3vec::add_BlockwiseCGproduct_back1,py::arg("g"),py::arg("x"),py::arg("nblocks"),py::arg("maxl")=-1)
 
+  .def("addFourieProduct",&SO3vec::add_FourierProduct,py::arg("x"),py::arg("y"),py::arg("nblocks"),py::arg("maxl")=-1)
+  .def("addFourierProduct_back0",&SO3vec::add_FourierProduct_back0,py::arg("g"),py::arg("y"),py::arg("nblocks"),py::arg("maxl")=-1)
+  .def("addFourierProduct_back1",&SO3vec::add_FourierProduct_back1,py::arg("g"),py::arg("x"),py::arg("nblocks"),py::arg("maxl")=-1)
+
+
   .def("device",&SO3vec::get_device)
   .def("to",&SO3vec::to_device)
   .def("to_device",&SO3vec::to_device)

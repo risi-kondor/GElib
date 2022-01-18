@@ -77,7 +77,7 @@ namespace GElib{
 // ---- CUDA STUFF ------------------------------------------------------------------------------------------
 
 
-#define GELIB_CPUONLY() if(device>0) {printf("Cengine error: CUDA code for \"%s\" not implemented.\n",__PRETTY_FUNCTION__); exit(-1);}
+#define GELIB_CPUONLY() if(dev>0) {printf("Cengine error: CUDA code for \"%s\" not implemented.\n",__PRETTY_FUNCTION__); exit(-1);}
 
 
 #ifdef _WITH_CENGINE
