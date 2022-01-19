@@ -12,7 +12,8 @@ testSO3partArray_CGproduct testSO3partArray_CGproduct_back0 testSO3partArray_CGp
 testSO3partArray_CGproduct_big testSO3partArray_CGproduct_back0_big testSO3partArray_CGproduct_back1_big \
 testSO3partArray_CGproduct_cmaps testSO3partArray_CGproduct_covariance \
 testSO3partArray_DiagCGproduct \
-testSO3vecArray testSO3vecArray2 testSO3vecArray_constructors testSO3vecArray_broadcast #testSO3vecArray_CGproduct
+testSO3vecArray testSO3vecArray2 testSO3vecArray_constructors testSO3vecArray_broadcast \
+testSO3partB
 
 
 ifdef WITH_CUDA
@@ -302,6 +303,19 @@ else
 	$(CC) -o testSO3vecArray_CGproduct testSO3vecArray_CGproduct.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
 endif
 
+
+# -------------------------------------------------------------------------------------------------------------
+
+
+testSO3partB: testSO3partB.cpp $(DEPS) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o testSO3partB testSO3partB.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o testSO3partB testSO3partB.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+endif
+
+
+# -------------------------------------------------------------------------------------------------------------
 
 
 
