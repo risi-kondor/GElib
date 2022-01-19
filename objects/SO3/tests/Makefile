@@ -315,6 +315,14 @@ else
 endif
 
 
+testSO3partB_covariance: testSO3partB_covariance.cpp $(DEPS) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o testSO3partB_covariance testSO3partB_covariance.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o testSO3partB_covariance testSO3partB_covariance.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+endif
+
+
 # -------------------------------------------------------------------------------------------------------------
 
 

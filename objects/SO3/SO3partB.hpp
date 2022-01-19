@@ -19,7 +19,7 @@
 //#include "SO3_CGbank.hpp"
 //#include "SO3_SPHgen.hpp"
 #include "SO3element.hpp"
-//#include "WignerMatrix.hpp"
+#include "WignerMatrix.hpp"
 
 extern GElib::SO3_CGbank SO3_cgbank;
 extern GElib::SO3_SPHgen SO3_sphGen;
@@ -91,6 +91,27 @@ namespace GElib{
 
     operator SO3part3_view() const{
       return SO3part3_view(arr,dims,strides,coffs);
+    }
+
+
+  public: // ---- Rotations ----------------------------------------------------------------------------------
+
+
+    SO3partB rotate(const SO3element& r){
+      CtensorB D(WignerMatrix<float>(getl(),r),dev);
+      SO3partB R=SO3partB::zero(getb(),getl(),getn(),dev);
+
+      int B=getb();
+      auto dv=D.view2D();
+      auto xv=this->view3D();
+      auto rv=R.view3D();
+      
+      for(int b=0; b<B; b++){
+	auto v=rv.slice0(b);
+	cnine::Ctensor_add_mprod_AA()(v,dv,xv.slice0(b));
+      }
+
+      return R;
     }
 
 
