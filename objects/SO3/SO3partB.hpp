@@ -133,7 +133,7 @@ namespace GElib{
 
     void add_CGproduct_back0(const SO3partB& g, const SO3partB& y, const int _offs=0){
       auto v=this->view();
-      SO3part_addCGproduct_back1Fn()(v,g,y,_offs);
+      SO3part_addCGproduct_back0Fn()(v,g,y,_offs);
     }
 
     void add_CGproduct_back1(const SO3partB& g, const SO3partB& x, const int _offs=0){

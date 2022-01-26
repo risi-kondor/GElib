@@ -13,7 +13,7 @@ testSO3partArray_CGproduct_big testSO3partArray_CGproduct_back0_big testSO3partA
 testSO3partArray_CGproduct_cmaps testSO3partArray_CGproduct_covariance \
 testSO3partArray_DiagCGproduct \
 testSO3vecArray testSO3vecArray2 testSO3vecArray_constructors testSO3vecArray_broadcast \
-testSO3partB
+testSO3partB testSO3partB_covariance testSO3vecB testSO3vecBcovariance testSO3Fvec
 
 
 ifdef WITH_CUDA
@@ -321,6 +321,32 @@ ifdef WITH_CUDA
 else
 	$(CC) -o testSO3partB_covariance testSO3partB_covariance.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
 endif
+
+
+testSO3vecB: testSO3vecB.cpp $(DEPS) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o testSO3vecB testSO3vecB.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o testSO3vecB testSO3vecB.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+endif
+
+
+testSO3vecB_covariance: testSO3vecB_covariance.cpp $(DEPS) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o testSO3vecB_covariance testSO3vecB_covariance.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o testSO3vecB_covariance testSO3vecB_covariance.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+endif
+
+
+testSO3Fvec: testSO3Fvec.cpp $(DEPS) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o testSO3Fvec testSO3Fvec.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o testSO3Fvec testSO3Fvec.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+endif
+
+
 
 
 # -------------------------------------------------------------------------------------------------------------

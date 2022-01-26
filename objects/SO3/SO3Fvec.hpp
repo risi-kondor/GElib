@@ -13,16 +13,14 @@
 #define _SO3Fvec
 
 #include "GElib_base.hpp"
-#include "SO3type.hpp"
 #include "SO3Fpart.hpp"
-#include "SO3element.hpp"
-#include "CtensorPackObj.hpp"
+#include "SO3vecB.hpp"
 
 
 namespace GElib{
 
 
-  class SO3Fvec:: SO3vecB{
+  class SO3Fvec: public SO3vecB{
   public:
 
     typedef cnine::device device;
@@ -34,7 +32,6 @@ namespace GElib{
     typedef cnine::CtensorObj ctensor;
     typedef cnine::CtensorPackObj ctensorpack;
 
-    typedef GELIB_SO3VEC_IMPL SO3veci;
 
 
     //vector<SO3Fpart*> parts;
@@ -61,11 +58,11 @@ namespace GElib{
 
     
     static SO3Fvec zero(const int b, const int maxl, const int _dev=0){
-      return SO3Fvec(b,maxl,fill_zero(),_dev);
+      return SO3Fvec(b,maxl,cnine::fill_zero(),_dev);
     }
 
     static SO3Fvec gaussian(const int b, const int maxl, const int _dev=0){
-      return SO3Fvec(b,maxl,fill_gaussian(),_dev);
+      return SO3Fvec(b,maxl,cnine::fill_gaussian(),_dev);
     }
 
     
@@ -76,7 +73,7 @@ namespace GElib{
     SO3Fvec(const SO3Fvec& x):
       SO3vecB(x){}
 
-    SO3Fvec(const SO3Fvec& x):
+    SO3Fvec(SO3Fvec&& x):
       SO3vecB(std::move(x)){}
 
     /*
@@ -111,28 +108,28 @@ namespace GElib{
     //return parts.size();
     //}
 
-    int get_dev() const{
-      if(parts.size()>0) return parts[0].get_dev();
-      return 0;
-    }
+    //int get_dev() const{
+    //if(parts.size()>0) return parts[0].get_dev();
+    //return 0;
+    //}
 
 
 
     // ---- CG-products ---------------------------------------------------------------------------------------
 
 
-    SO3Fvec FourierSpaceProduct(const SO3Fvec& x, const SO3Fvec& y, const int _maxl=-1){
-      assert(x.getb()==getb())
-      assert(y.getb()==getb())
+    SO3Fvec Fproduct(const SO3Fvec& x, const SO3Fvec& y, int maxl=-1){
+      assert(x.getb()==getb());
+      assert(y.getb()==getb());
 
-      if(_maxl<0) _maxl=x.get_maxl()+y.get_maxl();
-      SO3Fvec R=SO3Fvec::zero(getb(),_maxl,get_dev());
-      R.add_FourierSpaceProduct(x,y);
+      if(maxl<0) maxl=x.get_maxl()+y.get_maxl();
+      SO3Fvec R=SO3Fvec::zero(getb(),maxl,get_dev());
+      R.add_Fproduct(x,y);
       return R;
     }
 
 
-    void add_FourierSpaceProduct(const SO3Fvec& x, const SO3Fvec& y){
+    void add_Fproduct(const SO3Fvec& x, const SO3Fvec& y){
       assert(x.getb()==getb());
       assert(y.getb()==getb());
       
@@ -141,11 +138,45 @@ namespace GElib{
       int L=get_maxl();
 	
       for(int l1=0; l1<=L1; l1++){
-	if(x.tau[l1]==0) continue;
 	for(int l2=0; l2<=L2; l2++){
-	  if(y.tau[l2]==0) continue;
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
-	    as_SO3Fpart(*parts[l]).add_FourierSpaceProduct(as_SO3Fpart(*x.parts[l1]),as_SO3Fpart(*y.parts[l2]));
+	    as_SO3Fpart(*parts[l]).add_Fproduct(as_SO3Fpart(*x.parts[l1]),as_SO3Fpart(*y.parts[l2]));
+	  }
+	}
+      }
+    }
+
+
+    void add_Fproduct_back0(const SO3Fvec& g, const SO3Fvec& y){
+      assert(g.getb()==getb());
+      assert(y.getb()==getb());
+      
+      int L1=get_maxl(); 
+      int L2=y.get_maxl();
+      int L=g.get_maxl();
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    as_SO3Fpart(*parts[l1]).add_Fproduct_back0(as_SO3Fpart(*g.parts[l]),as_SO3Fpart(*y.parts[l2]));
+	  }
+	}
+      }
+    }
+
+
+    void add_Fproduct_back1(const SO3Fvec& g, const SO3Fvec& x){
+      assert(g.getb()==getb());
+      assert(x.getb()==getb());
+      
+      int L1=x.get_maxl(); 
+      int L2=get_maxl();
+      int L=get_maxl();
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    as_SO3Fpart(*parts[l2]).add_Fproduct(as_SO3Fpart(*g.parts[l]),as_SO3Fpart(*x.parts[l1]));
 	  }
 	}
       }
