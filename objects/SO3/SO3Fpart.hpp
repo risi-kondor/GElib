@@ -12,10 +12,15 @@
 #define _SO3Fpart
 
 #include "CtensorB.hpp"
-#include "SO3_CGbank.hpp"
-#include "SO3_SPHgen.hpp"
-#include "SO3element.hpp"
-#include "WignerMatrix.hpp"
+#include "SO3partB.hpp"
+#include "SO3Fpart3_view.hpp"
+#include "SO3Fpart_addFproductFn.hpp"
+#include "SO3Fpart_addFproduct_back0Fn.hpp"
+#include "SO3Fpart_addFproduct_back1Fn.hpp"
+//#include "SO3_CGbank.hpp"
+//#include "SO3_SPHgen.hpp"
+//#include "SO3element.hpp"
+//#include "WignerMatrix.hpp"
 
 extern GElib::SO3_CGbank SO3_cgbank;
 extern GElib::SO3_SPHgen SO3_sphGen;
@@ -34,18 +39,18 @@ namespace GElib{
     typedef cnine::device device;
     typedef cnine::fill_pattern fill_pattern;
 
-    using CtensorB::CtensorB;
+    //using CtensorB::CtensorB;
 
 
   public: // ---- Constructors -------------------------------------------------------------------------------
     
 
     SO3Fpart(const int b, const int l, const int _dev=0):
-      SO3partB(b,l,2*_l+1,_dev){}
+      SO3partB(b,l,2*l+1,_dev){}
     
     template<typename FILLTYPE, typename = typename std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
     SO3Fpart(const int b, const int l, const FILLTYPE& dummy, const int _dev=0):
-      SO3partB(b,l,2*_l+1,dummy,_dev){}
+      SO3partB(b,l,2*l+1,dummy,_dev){}
 
     
   public: // ---- Named constructors -------------------------------------------------------------------------
@@ -74,6 +79,7 @@ namespace GElib{
 
     void add_FourierSpaceProduct(const SO3Fpart& x, const SO3Fpart& y){
 
+      /*
       SO3part buf=SO3Fpart::CGproduct(x,y,getl());
 
       const int l=getl(); 
@@ -110,8 +116,27 @@ namespace GElib{
 	  }
 	}
       }
+      */
+
     }
-    
+
+
+    void add_Fproduct(const SO3Fpart& x, const SO3Fpart& y){
+      auto v=this->view();
+      SO3Fpart_addFproductFn()(v,x,y);
+    }
+
+    void add_Fproduct_back0(const SO3Fpart& g, const SO3Fpart& y){
+      auto v=this->view();
+      SO3Fpart_addFproduct_back0Fn()(v,g,y);
+    }
+
+    void add_Fproduct_back1(const SO3Fpart& g, const SO3Fpart& x){
+      auto v=this->view();
+      SO3part_addFproduct_back0Fn()(v,g,x);
+    }
+
+
   };
 
 

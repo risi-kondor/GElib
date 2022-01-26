@@ -33,15 +33,13 @@ namespace GElib{
     typedef cnine::CtensorObj ctensor;
     typedef cnine::CtensorPackObj ctensorpack;
 
-    typedef GELIB_SO3VEC_IMPL SO3veci;
-
 
     vector<SO3partB*> parts;
 
 
-    SO3vec(){}
+    SO3vecB(){}
 
-    ~SO3vec(){
+    ~SO3vecB(){
       for(auto p: parts) delete p;  
     }
 
@@ -56,7 +54,7 @@ namespace GElib{
     template<typename FILLTYPE, typename = typename 
 	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
     SO3vecB(const int b, const SO3type& tau, const FILLTYPE fill, const int _dev){
-      for(int l=0; l<=maxl; l++)
+      for(int l=0; l<tau.size(); l++)
 	parts.push_back(new SO3partB(b,l,tau[l],fill,_dev));
     }
 
@@ -65,11 +63,11 @@ namespace GElib{
 
     
     static SO3vecB zero(const int b, const SO3type& tau, const int _dev=0){
-      return SO3vecB(b,tau,fill_zero(),_dev);
+      return SO3vecB(b,tau,cnine::fill_zero(),_dev);
     }
     
     static SO3vecB gaussian(const int b, const SO3type& tau, const int _dev=0){
-      return SO3vecB(b,tau,fill_gaussian(),_dev);
+      return SO3vecB(b,tau,cnine::fill_gaussian(),_dev);
     }
     
     
@@ -78,7 +76,7 @@ namespace GElib{
 
     SO3vecB(const SO3vecB& x){
       for(auto& p:x.parts)
-	parts.push_back(p)
+	parts.push_back(p);
     }
 
     SO3vecB(SO3vecB&& x){
@@ -92,55 +90,104 @@ namespace GElib{
 
 
     int getb() const{
-      if(parts.size()>0) return parts[0].getb();
+      if(parts.size()>0) return parts[0]->getb();
       return 0;
     }
 
     SO3type get_tau() const{
       SO3type tau;
-      for(auto& p:parts)
-	tau.push_back(p.getn());
+      for(auto p:parts)
+	tau.push_back(p->getn());
       return tau;
     }
 
     int get_maxl() const{
-      return parts.size();
+      return parts.size()-1;
     }
 
     int get_dev() const{
-      if(parts.size()>0) return parts[0].get_dev();
+      if(parts.size()>0) return parts[0]->get_dev();
       return 0;
     }
 
 
+    // ---- Rotations ----------------------------------------------------------------------------------------
 
+
+    SO3vecB rotate(const SO3element& r){
+      SO3vecB R;
+      for(int l=0; l<parts.size(); l++)
+	if(parts[l]) R.parts.push_back(new SO3partB(parts[l]->rotate(r)));
+	else R.parts.push_back(nullptr);
+      return R;
+    }
+
+    
     // ---- CG-products ---------------------------------------------------------------------------------------
 
 
-    SO3vecB CGProduct(const SO3vecB& x, const SO3vecB& y, const int maxl=-1){
-      assert(getb()==x.getb());
+    SO3vecB CGproduct(const SO3vecB& y, const int maxl=-1){
       assert(getb()==y.getb());
 
-      SO3vecB R=SO3vecB::zero(getb(),GElib::CGproduct(x.get_tau(),y.get_tau(),maxl),get_dev());
-      R.add_FourierSpaceProduct(x,y);
+      SO3vecB R=SO3vecB::zero(getb(),GElib::CGproduct(get_tau(),y.get_tau(),maxl),get_dev());
+      R.add_CGproduct(*this,y,maxl);
       return R;
     }
 
 
-    void add_CGproduct(const SO3vec& x, const SO3vec& y, const int maxl=-1){
+    void add_CGproduct(const SO3vecB& x, const SO3vecB& y, const int maxl=-1){
       assert(get_tau()==GElib::CGproduct(x.get_tau(),y.get_tau(),maxl));
 
       int L1=x.get_maxl(); 
       int L2=y.get_maxl();
-      vector<int> offs(tau.size(),0);
+      vector<int> offs(parts.size(),0);
 	
       for(int l1=0; l1<=L1; l1++){
-	if(x.tau[l1]==0) continue;
+	//if(x.tau[l1]==0) continue;
 	for(int l2=0; l2<=L2; l2++){
-	  if(y.tau[l2]==0) continue;
+	  //if(y.tau[l2]==0) continue;
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && (maxl<0 || l<=maxl); l++){
+	    //cout<<l1<<l2<<l<<endl;
 	    parts[l]->add_CGproduct(*x.parts[l1],*y.parts[l2],offs[l]);
 	    offs[l]+=(x.parts[l1]->getn())*(y.parts[l2]->getn());
+	  }
+	}
+      }
+    }
+
+      
+    void add_CGproduct_back0(const SO3vecB& g, const SO3vecB& y, const int maxl=-1){
+      assert(g.get_tau()==GElib::CGproduct(get_tau(),y.get_tau(),maxl));
+
+      int L1=get_maxl(); 
+      int L2=y.get_maxl();
+      int L=g.get_maxl();
+      vector<int> offs(parts.size(),0);
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    parts[l1]->add_CGproduct_back0(*g.parts[l],*y.parts[l2],offs[l]);
+	    offs[l]+=(parts[l1]->getn())*(y.parts[l2]->getn());
+	  }
+	}
+      }
+    }
+
+      
+    void add_CGproduct_back1(const SO3vecB& g, const SO3vecB& x, const int maxl=-1){
+      assert(g.get_tau()==GElib::CGproduct(x.get_tau(),get_tau(),maxl));
+
+      int L1=x.get_maxl(); 
+      int L2=get_maxl();
+      int L=g.get_maxl();
+      vector<int> offs(parts.size(),0);
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    parts[l2]->add_CGproduct_back1(*g.parts[l],*x.parts[l1],offs[l]);
+	    offs[l]+=(x.parts[l1]->getn())*(parts[l2]->getn());
 	  }
 	}
       }
@@ -162,7 +209,7 @@ namespace GElib{
     }
 
     string repr(const string indent="") const{
-      return "<GElib::SO3vecB of type"+get_tau.str()+">";
+      return "<GElib::SO3vecB of type"+get_tau().str()+">";
     }
     
     friend ostream& operator<<(ostream& stream, const SO3vecB& x){
