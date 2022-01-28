@@ -21,7 +21,7 @@ int main(int argc, char** argv){
   printl("u",u)<<endl;
   printl("v",v)<<endl;
 
-  SO3vecB w=u.CGproduct(v,2);
+  SO3vecB w=u.Fproduct(v,2);
   cout<<w<<endl;
 
   cout<<endl; 

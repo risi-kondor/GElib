@@ -13,7 +13,7 @@ testSO3partArray_CGproduct_big testSO3partArray_CGproduct_back0_big testSO3partA
 testSO3partArray_CGproduct_cmaps testSO3partArray_CGproduct_covariance \
 testSO3partArray_DiagCGproduct \
 testSO3vecArray testSO3vecArray2 testSO3vecArray_constructors testSO3vecArray_broadcast \
-testSO3partB testSO3partB_covariance testSO3vecB testSO3vecBcovariance testSO3Fvec
+testSO3partB testSO3partB_covariance testSO3vecB testSO3vecB_covariance testSO3Fvec
 
 
 ifdef WITH_CUDA

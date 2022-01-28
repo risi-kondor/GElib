@@ -1,15 +1,15 @@
 // This file is part of GElib, a C++/CUDA library for group
 // equivariant tensor operations. 
 // 
-// Copyright (c) 2022, Imre Risi Kondor and Erik H Thiede
+// Copyright (c) 2022, Imre Risi Kondor 
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _SO3Fpart_addFproductFn
-#define _SO3Fpart_addFproductFn
+#ifndef _SO3Fpart_addFproduct_back1Fn
+#define _SO3Fpart_addFproduct_back1Fn
 
 #include "GElib_base.hpp"
 #include "CtensorB.hpp"
@@ -23,51 +23,44 @@ extern GElib::SO3_SPHgen SO3_sphGen;
 
 namespace GElib{
 
-  class SO3Fpart_addFproductFn{
+  class SO3Fpart_addFproduct_back1Fn{
   public:
 
 
-    void operator()(SO3Fpart3_view& _r, const SO3Fpart3_view& _x, const SO3Fpart3_view& _y){
+    void operator()(SO3Fpart3_view& _yg, const SO3Fpart3_view& _g, const SO3Fpart3_view& _x){
 
-      const int l=_r.getl(); 
+      const int l=_g.getl(); 
       const int l1=_x.getl(); 
-      const int l2=_y.getl();
- 
-      const int N1=_x.n2;
-      const int N2=_y.n2;
-      const int B=_x.n0;
-
-      assert(_y.n0==B);
-      assert(_r.n0==B);
-      assert(_offs+N1*N2<=_r.n2);
+      const int l2=_yg.getl();
       assert(l>=abs(l1-l2) && l<=l1+l2);
 
+      const int B=_x.n0;
+      assert(_yg.n0==B);
+      assert(_g.n0==B);
+
       auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
+      const float c=((2.0*l1+1)+(2.0*l2+1))/(2.0*l+1);
 
       for(int b=0; b<B; b++){
 
-	SO3Fpart2_view r=_r.slice0(b);
+	SO3Fpart2_view g=_g.slice0(b);
 	SO3Fpart2_view x=_x.slice0(b);
-	SO3Fpart2_view y=_y.slice0(b);
-	int offs=_offs;
+	SO3Fpart2_view yg=_yg.slice0(b);
 
-	for(int n1=0; n1<N1; n1++){
-	  for(int n2=0; n2<N2; n2++){
+	for(int M1=-l1; M1<=l1; M1++){
+	  for(int M2=std::max(-l2,-l-M1); M2<=std::min(l2,l-M1); M2++){
+	    float t=C(M1+l1,M2+l2)*c;
 	    for(int m1=-l1; m1<=l1; m1++){
 	      for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
-		//cout<<"   "<<n1<<" "<<n2<<" "<<m1<<" "<<m2<<endl;
-		r.inc(m1+m2,offs+n2,C(m1+l1,m2+l2)*x(m1,n1)*y(m2,n2));
+		yg.inc(M2,m2,t*C(m1+l1,m2+l2)*g(M1+M2,m1+m2)*std::conj(x(M1,m1)));
 	      }
 	    }
 	  }
-	  offs+=N2;
 	}
       }
 
     }
     
-
-
   };
 
 
