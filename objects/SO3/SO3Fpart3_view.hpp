@@ -2,7 +2,7 @@
 // This file is part of GElib, a C++/CUDA library for group
 // equivariant tensor operations. 
 // 
-// Copyright (c) 2022, Imre Risi Kondor and Erik H Thiede
+// Copyright (c) 2022, Imre Risi Kondor
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -14,7 +14,7 @@
 
 //#include "CtensorB.hpp"
 #include "Ctensor3_view.hpp"
-//#include "SO3part2_view.hpp"
+#include "SO3Fpart2_view.hpp"
 //#include "SO3_CGbank.hpp"
 //#include "SO3_SPHgen.hpp"
 //#include "SO3element.hpp"
@@ -54,7 +54,7 @@ namespace GElib{
     SO3Fpart3_view(float* _arr, float* _arrc, const int _n0, const int _n1, const int _n2, 
       const int _s0, const int _s1, const int _s2): 
       arr(_arr), arrc(_arrc), n0(_n0), n1(_n1), n2(_n2), s0(_s0), s1(_s1), s2(_s2){
-      assert(n0%2==1);
+      assert(n1%2==1);
       l=(n1-1)/2;
       ar=arr+l*s1;
       ac=arrc+l*s1;
@@ -109,9 +109,9 @@ namespace GElib{
   public: // ---- Other views -------------------------------------------------------------------------------
 
     
-    //SO3part2_view slice0(const int i) const{
-    //return SO3part2_view(arr+i*s0,arrc+i*s0,n1,n2,s1,s2);
-    //}
+    SO3Fpart2_view slice0(const int i) const{
+      return SO3Fpart2_view(arr+i*s0,arrc+i*s0,n1,n2,s1,s2);
+    }
   
 
   };

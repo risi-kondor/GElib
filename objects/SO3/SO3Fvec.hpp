@@ -2,7 +2,7 @@
 // This file is part of GElib, a C++/CUDA library for group
 // equivariant tensor operations. 
 // 
-// Copyright (c) 2022, Imre Risi Kondor and Erik H Thiede
+// Copyright (c) 2022, Imre Risi Kondor
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -118,13 +118,12 @@ namespace GElib{
     // ---- CG-products ---------------------------------------------------------------------------------------
 
 
-    SO3Fvec Fproduct(const SO3Fvec& x, const SO3Fvec& y, int maxl=-1){
-      assert(x.getb()==getb());
+    SO3Fvec Fproduct(const SO3Fvec& y, int maxl=-1){
       assert(y.getb()==getb());
 
-      if(maxl<0) maxl=x.get_maxl()+y.get_maxl();
+      if(maxl<0) maxl=get_maxl()+y.get_maxl();
       SO3Fvec R=SO3Fvec::zero(getb(),maxl,get_dev());
-      R.add_Fproduct(x,y);
+      R.add_Fproduct(*this,y);
       return R;
     }
 

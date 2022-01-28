@@ -1,7 +1,7 @@
 // This file is part of GElib, a C++/CUDA library for group
 // equivariant tensor operations. 
 // 
-// Copyright (c) 2022, Imre Risi Kondor and Erik H Thiede
+// Copyright (c) 2022, Imre Risi Kondor
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -14,7 +14,7 @@
 #include "CtensorB.hpp"
 #include "SO3partB.hpp"
 #include "SO3Fpart3_view.hpp"
-#include "SO3Fpart_addFproductFn.hpp"
+#include "SO3Fpart_addFproduct_Fn.hpp"
 #include "SO3Fpart_addFproduct_back0Fn.hpp"
 #include "SO3Fpart_addFproduct_back1Fn.hpp"
 //#include "SO3_CGbank.hpp"
@@ -72,6 +72,17 @@ namespace GElib{
     //return (dims(1)-1)/2;
     //}
 
+
+  public: // ---- Access views --------------------------------------------------------------------------------
+
+
+    SO3Fpart3_view view() const{
+      return SO3Fpart3_view(arr,dims,strides,coffs);
+    }
+
+    operator SO3Fpart3_view() const{
+      return SO3Fpart3_view(arr,dims,strides,coffs);
+    }
     
 
   public: // ---- CG-products --------------------------------------------------------------------------------
@@ -123,7 +134,7 @@ namespace GElib{
 
     void add_Fproduct(const SO3Fpart& x, const SO3Fpart& y){
       auto v=this->view();
-      SO3Fpart_addFproductFn()(v,x,y);
+      SO3Fpart_addFproduct_Fn()(v,x,y);
     }
 
     void add_Fproduct_back0(const SO3Fpart& g, const SO3Fpart& y){
@@ -133,7 +144,7 @@ namespace GElib{
 
     void add_Fproduct_back1(const SO3Fpart& g, const SO3Fpart& x){
       auto v=this->view();
-      SO3part_addFproduct_back0Fn()(v,g,x);
+      SO3Fpart_addFproduct_back0Fn()(v,g,x);
     }
 
 
