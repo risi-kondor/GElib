@@ -1,4 +1,5 @@
 import torch
+import gelib_base
 import gelib_torchC as gelib
 
 
@@ -47,5 +48,32 @@ print(z)
 z.parts[2].backward(z.parts[2])
 print("Backpropagated gradient:")
 print(x.parts[1].grad)
+
+print("\n\n")
+
+
+
+# ---- CG-product covariance test ----------------------------------------------------------------------------
+
+b=2
+tau=[1,1]
+R=gelib_base.SO3element.uniform()
+x=gelib.SO3vec.randn(b,tau)
+y=gelib.SO3vec.randn(b,tau)
+
+z=gelib.CGproduct(x,y)
+print("CG-product:")
+print(z.rotate(R))
+
+xr=x.rotate(R)
+yr=y.rotate(R)
+
+zr=gelib.CGproduct(xr,yr)
+print("CG-product:")
+print(zr)
+
+#z.parts[2].backward(z.parts[2])
+#print("dd")
+#print(x.parts[1].grad)
 
 print("\n\n")
