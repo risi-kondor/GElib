@@ -102,6 +102,19 @@ namespace GElib{
     }
 
 
+  public: // ---- ATen --------------------------------------------------------------------------------------
+
+
+#ifdef _WITH_ATEN
+
+    SO3vecB(vector<at::Tensor>& v){
+      for(auto& p: v)
+	parts.push_back(new SO3partB(p));
+    }
+
+#endif
+
+ 
     // ---- Access --------------------------------------------------------------------------------------------
 
 
@@ -152,23 +165,24 @@ namespace GElib{
       assert(getb()==y.getb());
 
       SO3vecB R=SO3vecB::zero(getb(),GElib::CGproduct(get_tau(),y.get_tau(),maxl),get_dev());
-      R.add_CGproduct(*this,y,maxl);
+      R.add_CGproduct(*this,y);
       return R;
     }
 
 
-    void add_CGproduct(const SO3vecB& x, const SO3vecB& y, const int maxl=-1){
-      assert(get_tau()==GElib::CGproduct(x.get_tau(),y.get_tau(),maxl));
+    void add_CGproduct(const SO3vecB& x, const SO3vecB& y){
+      assert(get_tau()==GElib::CGproduct(x.get_tau(),y.get_tau(),get_maxl()));
 
       int L1=x.get_maxl(); 
       int L2=y.get_maxl();
+      int L=get_maxl();
       vector<int> offs(parts.size(),0);
 	
       for(int l1=0; l1<=L1; l1++){
 	//if(x.tau[l1]==0) continue;
 	for(int l2=0; l2<=L2; l2++){
 	  //if(y.tau[l2]==0) continue;
-	  for(int l=std::abs(l2-l1); l<=l1+l2 && (maxl<0 || l<=maxl); l++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
 	    //cout<<l1<<l2<<l<<endl;
 	    parts[l]->add_CGproduct(*x.parts[l1],*y.parts[l2],offs[l]);
 	    offs[l]+=(x.parts[l1]->getn())*(y.parts[l2]->getn());
@@ -178,8 +192,8 @@ namespace GElib{
     }
 
       
-    void add_CGproduct_back0(const SO3vecB& g, const SO3vecB& y, const int maxl=-1){
-      assert(g.get_tau()==GElib::CGproduct(get_tau(),y.get_tau(),maxl));
+    void add_CGproduct_back0(const SO3vecB& g, const SO3vecB& y){
+      assert(g.get_tau()==GElib::CGproduct(get_tau(),y.get_tau(),g.get_maxl()));
 
       int L1=get_maxl(); 
       int L2=y.get_maxl();
@@ -197,8 +211,8 @@ namespace GElib{
     }
 
       
-    void add_CGproduct_back1(const SO3vecB& g, const SO3vecB& x, const int maxl=-1){
-      assert(g.get_tau()==GElib::CGproduct(x.get_tau(),get_tau(),maxl));
+    void add_CGproduct_back1(const SO3vecB& g, const SO3vecB& x){
+      assert(g.get_tau()==GElib::CGproduct(x.get_tau(),get_tau(),g.get_maxl()));
 
       int L1=x.get_maxl(); 
       int L2=get_maxl();
