@@ -89,6 +89,34 @@ namespace GElib{
     */
 
 
+    // ---- Transport -----------------------------------------------------------------------------------------
+
+
+    SO3Fvec& move_to_device(const int _dev){
+      for(auto p:parts)
+	p->move_to_device(_dev);
+      return *this;
+    }
+    
+    SO3Fvec to_device(const int _dev) const{
+      SO3Fvec R;
+      for(auto p:parts)
+	R.parts.push_back(new SO3Fpart(p->to_device(_dev)));
+      return R;
+    }
+
+
+  public: // ---- ATen --------------------------------------------------------------------------------------
+
+#ifdef _WITH_ATEN
+
+    SO3Fvec(vector<at::Tensor>& v){
+      for(auto& p: v)
+	parts.push_back(new SO3Fpart(p));
+    }
+
+#endif
+ 
     // ---- Access --------------------------------------------------------------------------------------------
 
 
@@ -113,9 +141,21 @@ namespace GElib{
     //return 0;
     //}
 
+    
+
+    // ---- Rotations ----------------------------------------------------------------------------------------
 
 
-    // ---- CG-products ---------------------------------------------------------------------------------------
+    SO3Fvec rotate(const SO3element& r){
+      SO3Fvec R;
+      for(int l=0; l<parts.size(); l++)
+	if(parts[l]) R.parts.push_back(new SO3partB(parts[l]->rotate(r)));
+	else R.parts.push_back(nullptr);
+      return R;
+    }
+
+    
+    // ---- Fproducts ---------------------------------------------------------------------------------------
 
 
     SO3Fvec Fproduct(const SO3Fvec& y, int maxl=-1){

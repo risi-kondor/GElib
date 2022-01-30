@@ -85,6 +85,22 @@ namespace GElib{
     }
 
 
+    // ---- Transport -----------------------------------------------------------------------------------------
+
+
+    SO3vecB& move_to_device(const int _dev){
+      for(auto p:parts)
+	p->move_to_device(_dev);
+      return *this;
+    }
+    
+    SO3vecB to_device(const int _dev) const{
+      SO3vecB R;
+      for(auto p:parts)
+	R.parts.push_back(new SO3partB(p->to_device(_dev)));
+      return R;
+    }
+
 
     // ---- Access --------------------------------------------------------------------------------------------
 
@@ -110,6 +126,12 @@ namespace GElib{
       return 0;
     }
 
+    int get_device() const{
+      if(parts.size()>0) return parts[0]->get_dev();
+      return 0;
+    }
+
+    
 
     // ---- Rotations ----------------------------------------------------------------------------------------
 
@@ -126,7 +148,7 @@ namespace GElib{
     // ---- CG-products ---------------------------------------------------------------------------------------
 
 
-    SO3vecB CGproduct(const SO3vecB& y, const int maxl=-1){
+    SO3vecB CGproduct(const SO3vecB& y, const int maxl=-1) const{
       assert(getb()==y.getb());
 
       SO3vecB R=SO3vecB::zero(getb(),GElib::CGproduct(get_tau(),y.get_tau(),maxl),get_dev());
