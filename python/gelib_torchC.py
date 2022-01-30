@@ -46,7 +46,7 @@ class SO3part(torch.Tensor):
         Create an SO(3)-part corresponding to the l'th matrix in the Fourier transform of a function on SO(3).
         This gives a b*(2+l+1)*(2l+1) dimensional complex tensor. 
         """        
-        return SO3part(torch.zeros([2*l+1,2*l+1,2*l+1,2]))
+        return SO3part(torch.zeros([b,2*l+1,2*l+1,2]))
 
     @staticmethod
     def Frandn(b,l,_dev=0):
