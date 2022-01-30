@@ -33,9 +33,9 @@ py::class_<SO3partB>(m,"SO3partB",
 //    return SO3part::spharm(l,1,v.gtensor());})
 
 //.def(pybind11::init([](const at::Tensor& x){return SO3partB(cnine::CtensorB(x));}))
-//.def_static("view",[](at::Tensor& x){return SO3part(cnine::CtensorB::view(x));})
+  .def_static("view",[](at::Tensor& x){return SO3partB(cnine::CtensorB::view(x));})
 //.def("torch",&cnine::CtensorObj::torch)
-//.def("torch",[](const SO3partB& x){return x.torch();})
+  .def("torch",[](const SO3partB& x){return x.torch();})
 
   .def("__len__",[](const SO3partB& obj){cout<<"111"<<endl;return 1;})
 
