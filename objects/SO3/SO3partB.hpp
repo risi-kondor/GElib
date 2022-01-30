@@ -67,6 +67,22 @@ namespace GElib{
     }
 
 
+  public: // ---- Conversions --------------------------------------------------------------------------------
+
+
+    SO3partB(const CtensorB& x):
+      CtensorB(x){
+      assert(dims.size()==3);
+      assert(dims(1)%2==1);
+    }
+      
+    SO3partB(CtensorB&& x):
+      CtensorB(std::move(x)){
+      assert(dims.size()==3);
+      assert(dims(1)%2==1);
+    }
+      
+
   public: // ---- Access -------------------------------------------------------------------------------------
 
     int getb() const{
@@ -118,7 +134,7 @@ namespace GElib{
   public: // ---- CG-products --------------------------------------------------------------------------------
 
     
-    SO3partB CGproduct(const SO3partB& y, const int l){
+    SO3partB CGproduct(const SO3partB& y, const int l) const{
       assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
       SO3partB R=SO3partB::zero(getb(),l,getn()*y.getn());
       R.add_CGproduct(*this,y);

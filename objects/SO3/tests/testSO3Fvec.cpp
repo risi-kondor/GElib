@@ -15,14 +15,16 @@ int main(int argc, char** argv){
 
   int b=1;
   int L=2;
+  int maxl=2;
 
   SO3Fvec u=SO3Fvec::gaussian(b,L);
   SO3Fvec v=SO3Fvec::gaussian(b,L);
   printl("u",u)<<endl;
   printl("v",v)<<endl;
 
-  SO3vecB w=u.Fproduct(v,2);
-  cout<<w<<endl;
+  SO3Fvec w=u.Fproduct(v,maxl);
+  printl("w",w);
+  cout<<endl;
 
   cout<<endl; 
 }
