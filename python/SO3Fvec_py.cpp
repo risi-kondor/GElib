@@ -27,7 +27,7 @@ py::class_<SO3Fvec>(m,"SO3Fvec",
 //      obj.set_part(l,x);})
 
   
-  .def(pybind11::init<vector<at::Tensor>&>())
+.def(pybind11::init<vector<at::Tensor>&>())
 //,[](vector<at::Tensor>& v){
 //      SO3Fvec r;
 //      for(auto& p: v)
@@ -55,6 +55,6 @@ py::class_<SO3Fvec>(m,"SO3Fvec",
 
   .def("str",&SO3Fvec::str,py::arg("indent")="")
   .def("__str__",&SO3Fvec::str,py::arg("indent")="")
-//.def("__repr__",&SO3Fvec::repr,py::arg("indent")="")
+  .def("__repr__",&SO3Fvec::repr,py::arg("indent")="")
 ;
 

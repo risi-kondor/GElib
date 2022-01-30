@@ -26,6 +26,7 @@
 #include "SO3vecArray.hpp"
 
 #include "SO3partB.hpp"
+#include "SO3vecB.hpp"
 #include "SO3Fvec.hpp"
 
 
@@ -101,6 +102,7 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   #include "SO3vecArray_py.cpp"
 
   #include "SO3partB_py.cpp"
+  #include "SO3vecB_py.cpp"
   #include "SO3Fvec_py.cpp"
 
 
