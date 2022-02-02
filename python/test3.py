@@ -75,6 +75,7 @@ print("\n\n")
 
 
 # ---- CG-product covariance test ----------------------------------------------------------------------------
+print("CG-product covariance test\n")
 
 b=2
 tau=[1,1]
@@ -89,7 +90,6 @@ print(999)
 
 xr=x.rotate(R)
 yr=y.rotate(R)
-print(333)
 
 zr=gelib.CGproduct(xr,yr)
 print("CG-product:")
@@ -99,8 +99,8 @@ print(zr)
 print("\n\n")
 
 
-# ---- Fproduct covariance-----------------------------------------------------------------------------------------------
-# Given the Fourier transform of two functions u and v on SO(3), compute the Fourier transform of uv
+# ---- Fproduct covariance test ------------------------------------------------------------------------------
+print("Fproduct covariance test\n")
 
 b=2
 maxl=2
@@ -118,6 +118,29 @@ yr=y.rotate(R)
 
 zr=gelib.Fproduct(xr,yr,2)
 print("Fproduct:")
+print(zr)
+
+
+print("\n\n")
+
+
+# ---- Fmodsq covariance test ------------------------------------------------------------------------------
+print("Fmodsq covariance test\n")
+
+b=2
+maxl=2
+
+x=gelib.SO3vec.Frandn(b,maxl)
+R=gelib_base.SO3element.uniform()
+
+z=gelib.Fmodsq(x,2)
+print("Fmodsq:")
+print(z.rotate(R))
+
+xr=x.rotate(R)
+
+zr=gelib.Fmodsq(xr,2)
+print("Fmodsq:")
 print(zr)
 
 
