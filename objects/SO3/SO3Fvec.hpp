@@ -160,7 +160,6 @@ namespace GElib{
 
     SO3Fvec Fproduct(const SO3Fvec& y, int maxl=-1){
       assert(y.getb()==getb());
-
       if(maxl<0) maxl=get_maxl()+y.get_maxl();
       SO3Fvec R=SO3Fvec::zero(getb(),maxl,get_dev());
       R.add_Fproduct(*this,y);
@@ -179,7 +178,9 @@ namespace GElib{
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
-	    as_SO3Fpart(*parts[l]).add_Fproduct(as_SO3Fpart(*x.parts[l1]),as_SO3Fpart(*y.parts[l2]));
+	    auto v=parts[l]->Fview();
+	    SO3Fpart_addFproduct_Fn()(v,x.parts[l1]->Fview(),y.parts[l2]->Fview());
+	    //as_SO3Fpart(*parts[l]).add_Fproduct(as_SO3Fpart(*x.parts[l1]),as_SO3Fpart(*y.parts[l2]));
 	  }
 	}
       }
@@ -197,7 +198,9 @@ namespace GElib{
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
-	    as_SO3Fpart(*parts[l1]).add_Fproduct_back0(as_SO3Fpart(*g.parts[l]),as_SO3Fpart(*y.parts[l2]));
+	    auto v=parts[l1]->Fview();
+	    SO3Fpart_addFproduct_back0Fn()(v,g.parts[l]->Fview(),y.parts[l2]->Fview());
+	    //as_SO3Fpart(*parts[l1]).add_Fproduct_back0(as_SO3Fpart(*g.parts[l]),as_SO3Fpart(*y.parts[l2]));
 	  }
 	}
       }
@@ -215,7 +218,75 @@ namespace GElib{
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
-	    as_SO3Fpart(*parts[l2]).add_Fproduct(as_SO3Fpart(*g.parts[l]),as_SO3Fpart(*x.parts[l1]));
+	    auto v=parts[l2]->Fview();
+	    SO3Fpart_addFproduct_back1Fn()(v,g.parts[l]->Fview(),x.parts[l1]->Fview());
+	    //as_SO3Fpart(*parts[l2]).add_Fproduct(as_SO3Fpart(*g.parts[l]),as_SO3Fpart(*x.parts[l1]));
+	  }
+	}
+      }
+    }
+    
+    
+    // ---- Fmodsq -------------------------------------------------------------------------------------------
+
+
+    SO3Fvec Fmodsq(int maxl=-1){
+      if(maxl<0) maxl=2*get_maxl();
+      SO3Fvec R=SO3Fvec::zero(getb(),maxl,get_dev());
+      R.add_Fmodsq(*this,*this);
+      return R;
+    }
+
+
+    void add_Fmodsq(const SO3Fvec& x, const SO3Fvec& y){
+      assert(x.getb()==getb());
+      
+      int L1=x.get_maxl(); 
+      int L2=y.get_maxl();
+      int L=get_maxl();
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
+	    auto v=parts[l]->Fview();
+	    SO3Fpart_addFproduct_Fn(1)(v,x.parts[l1]->Fview(),y.parts[l2]->Fview().flip());
+	  }
+	}
+      }
+    }
+
+
+    void add_Fmodsq_back0(const SO3Fvec& g, const SO3Fvec& y){
+      assert(g.getb()==getb());
+      assert(y.getb()==getb());
+      
+      int L1=get_maxl(); 
+      int L2=y.get_maxl();
+      int L=g.get_maxl();
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    auto v=parts[l1]->Fview();
+	    SO3Fpart_addFproduct_back0Fn(1)(v,g.parts[l]->Fview(),y.parts[l2]->Fview().flip());
+	  }
+	}
+      }
+    }
+
+    void add_Fmodsq_back1(const SO3Fvec& g, const SO3Fvec& x){
+      assert(g.getb()==getb());
+      assert(x.getb()==getb());
+      
+      int L1=x.get_maxl(); 
+      int L2=get_maxl();
+      int L=g.get_maxl();
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    auto v=parts[l1]->Fview().flip();
+	    SO3Fpart_addFproduct_back1Fn(1)(v,g.parts[l]->Fview(),x.parts[l2]->Fview());
 	  }
 	}
       }

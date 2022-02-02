@@ -112,6 +112,21 @@ namespace GElib{
     SO3Fpart2_view slice0(const int i) const{
       return SO3Fpart2_view(arr+i*s0,arrc+i*s0,n1,n2,s1,s2);
     }
+
+
+  public: // ---- Operations ---------------------------------------------------------------------------------
+
+
+    SO3Fpart3_view& flip(){
+      arr=arr+(n1-1)*s1+(n2-1)*s2;
+      arrc=arrc+(n1-1)*s1+(n2-1)*s2;
+      ar=arr-l*s1-l*s2;
+      ac=arrc-l*s1-l*s2;
+      s1=-s2;
+      s2=-s2;
+      return *this;
+    }
+
   
 
   };

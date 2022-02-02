@@ -181,6 +181,15 @@ class SO3vec:
         return r
 
 
+    def Fmodsq(self,maxl=-1):
+        """
+        Compute the Fourier transform of the squared modulus of f. 
+        """
+        r=SO3vec()
+        r.parts=list(SO3vec_FmodsqFn.apply(len(self.parts),maxl,*(self.parts)))
+        return r
+
+
     ## ---- I/O ----------------------------------------------------------------------------------------------
 
         
@@ -199,6 +208,9 @@ def CGproduct(x,y,maxl=-1):
     
 def Fproduct(x,y,a=-1):
     return x.Fproduct(y,a)
+
+def Fmodsq(x,a=-1):
+    return x.Fmodsq(a)
 
 
 def tau_type(x):
@@ -331,6 +343,55 @@ class SO3vec_FproductFn(torch.autograd.Function):
 
         _xg.addFproduct_back0(_g,_y)
         _yg.addFproduct_back1(_g,_x)
+
+        return tuple(grads)
+
+
+class SO3vec_FmodsqFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,k1,_maxl,*args):
+        ctx.k1=k1
+        #ctx.k2=k1
+        ctx.save_for_backward(*args)
+
+        b=args[0].size(0)
+        if _maxl==-1:
+            maxl=k1+k1-2
+        else:
+            maxl=_maxl
+
+        r=makeZeroSO3Fparts(b,maxl)
+
+        _x=_SO3Fvec.view(args[0:k1]);
+        #_y=_SO3Fvec.view(args[k1:k1+k2]);
+        _r=_SO3Fvec.view(r)
+        _r.addFproduct(_x,_x)
+
+        return tuple(r)
+
+    @staticmethod
+    def backward(ctx,*args):
+
+        k1=ctx.k1
+        #k2=ctx.k2
+
+        inputs=ctx.saved_tensors
+        assert len(inputs)==k1, "Wrong number of saved tensors."
+
+        grads=[None,None]
+        for i in range(k1):
+            grads.append(torch.zeros_like(inputs[i]))
+
+        _x=_SO3Fvec.view(inputs[0:k1]);
+        #_y=_SO3Fvec.view(inputs[k1:k1+k2]);
+
+        _g=_SO3Fvec.view(args);
+        _xg=_SO3Fvec.view(grads[2:k1+2]);
+        #_yg=_SO3Fvec.view(grads[k1+3:k1+k2+3]);
+
+        _xg.addFproduct_back0(_g,_x)
+        _xg.addFproduct_back1(_g,_x)
 
         return tuple(grads)
 

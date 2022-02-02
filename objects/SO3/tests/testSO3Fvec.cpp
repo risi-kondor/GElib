@@ -26,6 +26,11 @@ int main(int argc, char** argv){
   printl("w",w);
   cout<<endl;
 
-  cout<<endl; 
+  cout<<"---------------"<<endl; 
+
+  SO3Fvec z=u.Fmodsq(maxl);
+  printl("z",z);
+  cout<<endl;
+
 }
 

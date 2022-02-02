@@ -26,6 +26,14 @@ namespace GElib{
   class SO3Fpart_addFproduct_back0Fn{
   public:
 
+    int conj=0;
+
+    SO3Fpart_addFproduct_back0Fn(){}
+
+    SO3Fpart_addFproduct_back0Fn(const int _conj): conj(_conj){}
+
+
+  public:
 
     void operator()(SO3Fpart3_view& _xg, const SO3Fpart3_view& _g, const SO3Fpart3_view& _y){
 
@@ -47,12 +55,25 @@ namespace GElib{
 	SO3Fpart2_view xg=_xg.slice0(b);
 	SO3Fpart2_view y=_y.slice0(b);
 
-	for(int M1=-l1; M1<=l1; M1++){
-	  for(int M2=std::max(-l2,-l-M1); M2<=std::min(l2,l-M1); M2++){
-	    float t=C(M1+l1,M2+l2)*c;
-	    for(int m1=-l1; m1<=l1; m1++){
-	      for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
-		xg.inc(M1,m1,t*C(m1+l1,m2+l2)*g(M1+M2,m1+m2)*std::conj(y(M2,m2)));
+	if(conj%2==0){
+	  for(int M1=-l1; M1<=l1; M1++){
+	    for(int M2=std::max(-l2,-l-M1); M2<=std::min(l2,l-M1); M2++){
+	      float t=C(M1+l1,M2+l2)*c;
+	      for(int m1=-l1; m1<=l1; m1++){
+		for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+		  xg.inc(M1,m1,t*C(m1+l1,m2+l2)*g(M1+M2,m1+m2)*std::conj(y(M2,m2)));
+		}
+	      }
+	    }
+	  }
+	}else{
+	  for(int M1=-l1; M1<=l1; M1++){
+	    for(int M2=std::max(-l2,-l-M1); M2<=std::min(l2,l-M1); M2++){
+	      float t=C(M1+l1,M2+l2)*c;
+	      for(int m1=-l1; m1<=l1; m1++){
+		for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+		  xg.inc(M1,m1,t*C(m1+l1,m2+l2)*g(M1+M2,m1+m2)*y(M2,m2));
+		}
 	      }
 	    }
 	  }

@@ -13,6 +13,7 @@
 
 #include "CtensorB.hpp"
 #include "SO3part3_view.hpp"
+#include "SO3Fpart3_view.hpp"
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
 #include "SO3part_addCGproduct_back1Fn.hpp"
@@ -107,6 +108,11 @@ namespace GElib{
 
     operator SO3part3_view() const{
       return SO3part3_view(arr,dims,strides,coffs);
+    }
+
+
+    SO3Fpart3_view Fview() const{
+      return SO3Fpart3_view(arr,dims,strides,coffs);
     }
 
 
