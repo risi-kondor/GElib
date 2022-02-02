@@ -198,7 +198,7 @@ namespace GElib{
       int L1=get_maxl(); 
       int L2=y.get_maxl();
       int L=g.get_maxl();
-      vector<int> offs(parts.size(),0);
+      vector<int> offs(g.parts.size(),0);
 	
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
@@ -217,7 +217,7 @@ namespace GElib{
       int L1=x.get_maxl(); 
       int L2=get_maxl();
       int L=g.get_maxl();
-      vector<int> offs(parts.size(),0);
+      vector<int> offs(g.parts.size(),0);
 	
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){

@@ -35,7 +35,8 @@ py::class_<SO3vecB>(m,"SO3vecB",
   .def_static("view",[](vector<at::Tensor>& v){
       SO3vecB r;
       for(auto& p: v)
-	r.parts.push_back(new SO3partB(cnine::CtensorB::view(p)));
+	r.parts.push_back(static_cast<SO3partB*>(cnine::CtensorB::viewp(p)));
+      //r.parts.push_back(new SO3partB(cnine::CtensorB::view(p)));
       return r;
     })
 

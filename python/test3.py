@@ -21,9 +21,9 @@ z=gelib.CGproduct(x,y)
 print("CG-product:")
 print(z)
 
-#z.parts[2].backward(z.parts[2])
+z.parts[2].backward(z.parts[2])
 #print("dd")
-#print(x.parts[1].grad)
+print(x.parts[1].grad)
 
 print("\n\n")
 
@@ -52,6 +52,27 @@ print(x.parts[1].grad)
 print("\n\n")
 
 
+# ---- Fmodsq ----------------------------------------------------------------------------------------------------
+# Given the Fourier transform of a function u on SO(3), compute the Fourier transform of the squared modulus of u
+
+b=2
+maxl=2
+
+x=gelib.SO3vec.Frandn(b,maxl)
+x.parts[1].requires_grad_()
+
+# Compute Fmodsq
+z=gelib.Fmodsq(x)
+
+print("Fmodsq:")
+print(z)
+
+z.parts[2].backward(z.parts[2])
+print("Backpropagated gradient:")
+print(x.parts[1].grad)
+
+print("\n\n")
+
 
 # ---- CG-product covariance test ----------------------------------------------------------------------------
 
@@ -63,11 +84,12 @@ y=gelib.SO3vec.randn(b,tau)
 
 z=gelib.CGproduct(x,y)
 print("CG-product:")
-print(z)
 print(z.rotate(R))
+print(999)
 
 xr=x.rotate(R)
 yr=y.rotate(R)
+print(333)
 
 zr=gelib.CGproduct(xr,yr)
 print("CG-product:")

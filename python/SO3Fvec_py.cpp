@@ -38,7 +38,8 @@ py::class_<SO3Fvec>(m,"SO3Fvec",
   .def_static("view",[](vector<at::Tensor>& v){
       SO3Fvec r;
       for(auto& p: v)
-	r.parts.push_back(new SO3Fpart(cnine::CtensorB::view(p)));
+	r.parts.push_back(static_cast<SO3Fpart*>(cnine::CtensorB::viewp(p)));
+      //r.parts.push_back(new SO3Fpart(cnine::CtensorB::view(p)));
       return r;
     })
 
@@ -47,6 +48,10 @@ py::class_<SO3Fvec>(m,"SO3Fvec",
   .def("addFproduct",&SO3Fvec::add_Fproduct,py::arg("x"),py::arg("y"))
   .def("addFproduct_back0",&SO3Fvec::add_Fproduct_back0,py::arg("g"),py::arg("y"))
   .def("addFproduct_back1",&SO3Fvec::add_Fproduct_back1,py::arg("g"),py::arg("x"))
+
+  .def("addFmodsq",&SO3Fvec::add_Fproduct,py::arg("x"),py::arg("y"))
+  .def("addFmodsq_back0",&SO3Fvec::add_Fproduct_back0,py::arg("g"),py::arg("y"))
+  .def("addFmodsq_back1",&SO3Fvec::add_Fproduct_back1,py::arg("g"),py::arg("x"))
 
   .def("device",&SO3Fvec::get_device)
   .def("to",&SO3Fvec::to_device)
