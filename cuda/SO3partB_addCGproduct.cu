@@ -16,12 +16,15 @@
 //#include <thrust/complex.h>
 //#include <thrust/tuple.h>
 
+#include "SO3_CGbank.hpp"
 #include "Ctensor2_view.hpp"
 
 //__device__ __constant__ unsigned char cg_cmem[32276]; 
 
+extern GElib::SO3_CGbank SO3_cgbank;
 
-__device__ int loadg(const Ctensor2_view& x, float* dest, const int t){
+
+__device__ int loadg(const cnine::Ctensor2_view& x, float* dest, const int t){
   int I=x.n0;
   int J=x.n1;
   int s0=x.s0;
@@ -34,10 +37,11 @@ __device__ int loadg(const Ctensor2_view& x, float* dest, const int t){
     for(int i=0; i<I; i++)
       destc[i*J+t]=x.arrc[i*s0+t*s1];
   }
+  return offs;
 }
 
 
-__device__ int saveg(Ctensor2_view& x, float* source, const int t){
+__device__ int saveg(const cnine::Ctensor2_view& x, float* source, const int t){
   int I=x.n0;
   int J=x.n1;
   int s0=x.s0;
@@ -46,15 +50,16 @@ __device__ int saveg(Ctensor2_view& x, float* source, const int t){
   float* sourcec=source+offs;
   if(t<J){
     for(int i=0; i<I; i++)
-      x.arr[i*s0+t*s1]=dest[i*J+t];
+      x.arr[i*s0+t*s1]=source[i*J+t];
     for(int i=0; i<I; i++)
-      x.arrc[i*s0+t*s1]=destc[i*J+t];
+      x.arrc[i*s0+t*s1]=sourcec[i*J+t];
   }
+  return offs;
 }
 
 
-__global__ void SO3partB_addCGproduct_kernel(const Ctensor2_view& rview, const Ctensor2_view& xview, 
-  const Ctensor2_view& yview, const int Cptr){
+__global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor2_view& r, const cnine::Ctensor2_view& x, 
+  const cnine::Ctensor2_view& y, const int Cptr){
 
   extern __shared__ unsigned char _shared[]; 
 
@@ -70,13 +75,13 @@ __global__ void SO3partB_addCGproduct_kernel(const Ctensor2_view& rview, const C
   int L2=y.n0;
 
   float* xpr=reinterpret_cast<float*>(_shared);
-  float* xpi=xpr+loadg(xview,xpr,t);
+  float* xpi=xpr+loadg(x,xpr,t);
 
   float* ypr=xpr+((2*x.n0*xn-1)/32+1)*32;
-  float* ypi=ypr+loadg(yview,ypr,t);
+  float* ypi=ypr+loadg(y,ypr,t);
 
   float* rpr=ypr+((2*y.n0*yn-1)/32+1)*32;
-  float* rpi=rpr+loadg(rview,rpr,t);
+  float* rpi=rpr+loadg(r,rpr,t);
 
   __syncthreads();
 
@@ -92,8 +97,8 @@ __global__ void SO3partB_addCGproduct_kernel(const Ctensor2_view& rview, const C
     rpi=rpi+t;
 
     for(int m1=-l1; m1<=l1; m1++){
-      const float x_r=xpr[xr*(m1+l1)];
-      const float x_i=xpi[xr*(m1+l1)];
+      const float x_r=xpr[xn*(m1+l1)];
+      const float x_i=xpi[xn*(m1+l1)];
       int lower=-l-m1; if(lower<-l2) lower=-l2;
       int upper=l-m1; if(upper>l2) upper=l2;
       for(int m2=lower; m2<=upper; m2++){
@@ -108,18 +113,18 @@ __global__ void SO3partB_addCGproduct_kernel(const Ctensor2_view& rview, const C
 
   __syncthreads();
   
-  saveg(rview,rpr,t);
+  saveg(r,rpr,t);
 
 }
 
 namespace GElib{
 
-  void SO3partB_addCGproduct_cu(SO3part2_view& r, const SO3part2_view& x, const SO3part2_view& y, 
+  void SO3partB_addCGproduct_cu(cnine::Ctensor2_view& r, const cnine::Ctensor2_view& x, const cnine::Ctensor2_view& y, 
     const cudaStream_t& stream, const int offs=0){
 
-    const int xl=x.getl();
-    const int yl=y.getl();
-    const int l=r.getl();
+    const int xl=(x.n0-1)/2;
+    const int yl=(y.n0-1)/2;
+    const int l=(r.n0-1)/2;
     r.arr+=r.s0*offs;
     r.arrc+=r.s0*offs;
 

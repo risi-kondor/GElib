@@ -104,12 +104,12 @@ namespace GElib{
 
     SO3part3_view view() const{
       if(dev==0) return SO3part3_view(arr,dims,strides,coffs);
-      else return SO3part3_view(arrg,dims,strides,coffs);
+      else return SO3part3_view(arrg,dims,strides,coffs,dev);
     }
 
     operator SO3part3_view() const{
       if(dev==0) return SO3part3_view(arr,dims,strides,coffs);
-      else return SO3part3_view(arrg,dims,strides,coffs);
+      else return SO3part3_view(arrg,dims,strides,coffs,dev);
     }
 
 
