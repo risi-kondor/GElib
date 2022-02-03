@@ -19,6 +19,7 @@ CUDA_EXTERNS=
 ifdef WITH_CUDA
 INCLUDE+=-I$(CUDA_HOME)/include
 CUDA_OBJECTS+=SO3partA_CGproduct.o SO3partA_DiagCGproduct.o
+CUDA_OBJECTS+=SO3partB_addCGproduct.o 
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
 endif 
 
@@ -33,6 +34,11 @@ SO3partA_CGproduct.o: SO3partA_CGproduct.cu Makefile
 
 SO3partA_DiagCGproduct.o: SO3partA_DiagCGproduct.cu Makefile  
 	$(NVCC) $(NVCCFLAGS) -c SO3partA_DiagCGproduct.cu -D_DEF_CGCMEM $(CFLAGS) $(MACROS) $(INCLUDE) 
+
+
+SO3partB_addCGproduct.o: SO3partB_addCGproduct.cu Makefile  
+	$(NVCC) $(NVCCFLAGS) -c SO3partB_addCGproduct.cu -D_DEF_CGCMEM $(CFLAGS) $(MACROS) $(INCLUDE) 
+
 
 
 objects: $(OBJECTS) $(CUDA_OBJECTS)
