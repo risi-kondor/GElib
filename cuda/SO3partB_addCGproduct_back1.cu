@@ -119,7 +119,7 @@ __global__ void SO3partB_addCGproduct_back1_kernel(const cnine::Ctensor3_view y,
 	  const float g_r=_rpr[rn*(m1+m2+l)];
 	  const float g_i=_rpi[rn*(m1+m2+l)];
 	  _ypr[yn*(m2+l2)]+=c*(g_r*x_r+g_i*x_i);
-	  _ypi[yn*(m2+l2)]+=c*(-g_r*x_i+g_i*x_i);
+	  _ypi[yn*(m2+l2)]+=c*(-g_r*x_i+g_i*x_r);
 	}
       }
     }
