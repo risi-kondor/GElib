@@ -119,7 +119,7 @@ if(t<xn){
 	  const float g_i=_rpi[rn*(m1+m2+l)];
     //if(t==0) printf("%f %f %f %d\n",y_r,g_r,c,(m1+l1)*L2+m2+l2);
 	  _xpr[xn*(m1+l1)]+=c*(g_r*y_r+g_i*y_i);
-	  _xpi[xn*(m1+l1)]+=c*(-g_r*y_i+g_i*y_i);
+	  _xpi[xn*(m1+l1)]+=c*(-g_r*y_i+g_i*y_r);
   }
       }
 }

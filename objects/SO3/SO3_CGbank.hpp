@@ -18,11 +18,11 @@
 #define CG_CMEM_DATA_OFFS 4096
 
 #ifdef _WITH_CUDA
-#ifdef _DEF_CGCMEM
-__device__ __constant__ unsigned char cg_cmem[CNINE_CONST_MEM_SIZE];
-#else
+//#ifdef _DEF_CGCMEM
+//__device__ __constant__ unsigned char cg_cmem[CNINE_CONST_MEM_SIZE];
+//#else
 extern __device__ __constant__ unsigned char cg_cmem[]; 
-#endif
+//#endif
 #endif
 
 namespace GElib{
