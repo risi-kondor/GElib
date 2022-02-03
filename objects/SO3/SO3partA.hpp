@@ -176,7 +176,6 @@ namespace GElib{
       if(dev==1){
 #ifdef _WITH_CUDA
 	assert(x.dev==1);
-	assert(y.dev==1);
 	cudaStream_t stream;
 	CUDA_SAFE(cudaStreamCreate(&stream));
 	GELIB_CPUONLY();
