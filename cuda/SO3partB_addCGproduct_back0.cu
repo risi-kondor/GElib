@@ -24,7 +24,7 @@
 extern GElib::SO3_CGbank SO3_cgbank;
 
 
-__device__ int loadg(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
+__device__ int loadg1(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
   int s1=x.s1;
@@ -43,7 +43,7 @@ __device__ int loadg(const cnine::Ctensor3_view& x, float* dest, const int b, co
 }
 
 
-__device__ int saveg(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
+__device__ int saveg1(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
   int s1=x.s1;
@@ -80,22 +80,27 @@ __global__ void SO3partB_addCGproduct_back0_kernel(const cnine::Ctensor3_view x,
   int rn=xn*yn;
   int L2=y.n1;
 
+//for(int i=0; i<x.n1; i++)
+//for(int j=0; j<y.n1; j++)
+//if(t==0)printf("%f\n",C_ptr[i*L2+j]);
+
   float* xpr=reinterpret_cast<float*>(_shared);
-  float* xpi=xpr+loadg(x,xpr,b,t);
+  float* xpi=xpr+loadg1(x,xpr,b,t);
 
   float* ypr=xpr+((2*x.n1*xn-1)/32+1)*32;
-  float* ypi=ypr+loadg(y,ypr,b,t);
+  float* ypi=ypr+loadg1(y,ypr,b,t);
 
   float* rpr=ypr+((2*y.n1*yn-1)/32+1)*32;
-  float* rpi=rpr+loadg(r,rpr,b,t);
+  float* rpi=rpr+loadg1(r,rpr,b,t);
 
   __syncthreads();
 
-  xpr=xpr+t;
-  xpi=xpi+t;
+
+  float* _xpr=xpr+t;
+  float* _xpi=xpi+t;
 
   for(int ycol=0; ycol<yn; ycol++){
-    if(t<xn){
+if(t<xn){
 
       float* _ypr=ypr+ycol;
       float* _ypi=ypi+ycol;
@@ -112,17 +117,19 @@ __global__ void SO3partB_addCGproduct_back0_kernel(const cnine::Ctensor3_view x,
 	  const float y_i=_ypi[yn*(m2+l2)];
 	  const float g_r=_rpr[rn*(m1+m2+l)];
 	  const float g_i=_rpi[rn*(m1+m2+l)];
-	  xpr[xn*(m1+l1)]+=c*(g_r*y_r+g_i*y_i);
-	  xpi[xn*(m1+l1)]+=c*(-g_r*y_i+g_i*y_i);
-	}
-      }
-      __syncthreads();
-    }
+    //if(t==0) printf("%f %f %f %d\n",y_r,g_r,c,(m1+l1)*L2+m2+l2);
+	  _xpr[xn*(m1+l1)]+=c*(g_r*y_r+g_i*y_i);
+	  _xpi[xn*(m1+l1)]+=c*(-g_r*y_i+g_i*y_i);
   }
+      }
+}
+      __syncthreads();
+  }
+  
 
   __syncthreads();
   
-  saveg(r,rpr,b,t);
+  saveg1(x,xpr,b,t);
 
 }
 
@@ -131,7 +138,7 @@ __global__ void SO3partB_addCGproduct_back0_kernel(const cnine::Ctensor3_view x,
 namespace GElib{
 
 
-  void SO3partB_addCGproduct_back0_cu(const cnine::Ctensor3_view xg, cnine::Ctensor3_view& rg, const cnine::Ctensor3_view& y, 
+  void SO3partB_addCGproduct_back0_cu(const cnine::Ctensor3_view& xg, cnine::Ctensor3_view rg, const cnine::Ctensor3_view& y, 
     const int offs, const cudaStream_t& stream){
 
     const int xl=(xg.n1-1)/2;
@@ -151,7 +158,6 @@ namespace GElib{
     int nlines=cnine::roundup(xg.n1*xg.n2*2,32)/32+
       cnine::roundup(y.n1*y.n2*2,32)/32+
       cnine::roundup(rg.n1*xg.n2*y.n2*2,32)/32;
-
 
     if(nlines<=384){
 
