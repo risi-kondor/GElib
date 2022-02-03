@@ -58,13 +58,16 @@ __device__ int saveg(const cnine::Ctensor2_view& x, float* source, const int t){
 }
 
 
-__global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor2_view& r, const cnine::Ctensor2_view& x, 
-  const cnine::Ctensor2_view& y, const int Cptr){
+__global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor2_view r, const cnine::Ctensor2_view x, 
+  const cnine::Ctensor2_view y, const int Cptr){
+
 
   extern __shared__ unsigned char _shared[]; 
 
   const float* C_ptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
   const int t=threadIdx.x;
+
+//printf("%d",t);
 
   int l1=(x.n0-1)/2;
   int l2=(y.n0-1)/2;
@@ -93,8 +96,8 @@ __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor2_view& r, cons
     ypr=ypr+t%yn;
     ypi=ypi+t%yn;
     
-    rpr=rpr+t;
-    rpi=rpi+t;
+    float* _rpr=rpr+t;
+    float* _rpi=rpi+t;
 
     for(int m1=-l1; m1<=l1; m1++){
       const float x_r=xpr[xn*(m1+l1)];
@@ -105,8 +108,8 @@ __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor2_view& r, cons
 	float c=C_ptr[(m1+l1)*L2+m2+l2];
 	const float y_r=ypr[yn*(m2+l2)];
 	const float y_i=ypi[yn*(m2+l2)];
-	rpr[rn*(m1+m2+l)]+=c*(x_r*y_r-x_i*y_i); 
-	rpi[rn*(m1+m2+l)]+=c*(x_r*y_i+x_i*y_r);
+	_rpr[rn*(m1+m2+l)]+=c*(x_r*y_r-x_i*y_i); 
+	_rpi[rn*(m1+m2+l)]+=c*(x_r*y_i+x_i*y_r);
       }
     }
   }
@@ -119,14 +122,16 @@ __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor2_view& r, cons
 
 namespace GElib{
 
-  void SO3partB_addCGproduct_cu(cnine::Ctensor2_view& r, const cnine::Ctensor2_view& x, const cnine::Ctensor2_view& y, 
+  void SO3partB_addCGproduct_cu(cnine::Ctensor2_view r, const cnine::Ctensor2_view& x, const cnine::Ctensor2_view& y, 
     const cudaStream_t& stream, const int offs=0){
 
     const int xl=(x.n0-1)/2;
     const int yl=(y.n0-1)/2;
     const int l=(r.n0-1)/2;
-    r.arr+=r.s0*offs;
-    r.arrc+=r.s0*offs;
+    r.arr+=r.s1*offs;
+    r.arrc+=r.s1*offs;
+    int rn1=r.n1;
+    r.n1=x.n1*y.n1;
 
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
 
@@ -144,8 +149,9 @@ namespace GElib{
       cout<<"error"<<endl;
     }
 
-    r.arr-=r.s0*offs;
-    r.arrc-=r.s0*offs;
+    //r.arr-=r.s1*offs;
+    //r.arrc-=r.s1*offs;
+    //r.n1=rn1;
 
   }    
 
