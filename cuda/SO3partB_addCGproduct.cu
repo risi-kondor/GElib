@@ -18,6 +18,7 @@
 
 #include "SO3_CGbank.hpp"
 #include "Ctensor2_view.hpp"
+#include "Ctensor3_view.hpp"
 
 //__device__ __constant__ unsigned char cg_cmem[32276]; 
 
@@ -88,9 +89,9 @@ __device__ int saveg(const cnine::Ctensor3_view& x, float* source, const int b, 
   float* destc=x.arrc+x.s0*b;
   if(t<J){
     for(int i=0; i<I; i++)
-      dest[i*s0+t*s1]=source[i*J+t];
+      dest[i*s1+t*s2]=source[i*J+t];
     for(int i=0; i<I; i++)
-      destc[i*s0+t*s1]=sourcec[i*J+t];
+      destc[i*s1+t*s2]=sourcec[i*J+t];
   }
   return offs;
 }
@@ -181,10 +182,10 @@ __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor3_view r, const
   float* xpr=reinterpret_cast<float*>(_shared);
   float* xpi=xpr+loadg(x,xpr,b,t);
 
-  float* ypr=xpr+((2*x.n0*xn-1)/32+1)*32;
+  float* ypr=xpr+((2*x.n1*xn-1)/32+1)*32;
   float* ypi=ypr+loadg(y,ypr,b,t);
 
-  float* rpr=ypr+((2*y.n0*yn-1)/32+1)*32;
+  float* rpr=ypr+((2*y.n1*yn-1)/32+1)*32;
   float* rpi=rpr+loadg(r,rpr,b,t);
 
   __syncthreads();
@@ -233,7 +234,7 @@ namespace GElib{
     const int l=(r.n0-1)/2;
     r.arr+=r.s1*offs;
     r.arrc+=r.s1*offs;
-    int rn1=r.n1;
+    //int rn1=r.n1;
     r.n1=x.n1*y.n1;
 
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
@@ -260,7 +261,7 @@ namespace GElib{
 
 
   void SO3partB_addCGproduct_cu(cnine::Ctensor3_view r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
-    const int offs=0, const cudaStream_t& stream){
+    const int offs, const cudaStream_t& stream){
 
     const int xl=(x.n1-1)/2;
     const int yl=(y.n1-1)/2;
@@ -272,7 +273,7 @@ namespace GElib{
 
     r.arr+=r.s2*offs;
     r.arrc+=r.s2*offs;
-    r.n2=x.n1*y.n1;
+    r.n2=x.n2*y.n2;
 
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
 
