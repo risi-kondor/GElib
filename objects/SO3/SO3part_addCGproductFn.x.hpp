@@ -1,7 +1,7 @@
 // This file is part of GElib, a C++/CUDA library for group
 // equivariant tensor operations. 
 // 
-// Copyright (c) 2022, Imre Risi Kondor
+// Copyright (c) 2022, Imre Risi Kondor and Erik H Thiede
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -24,10 +24,10 @@ extern GElib::SO3_SPHgen SO3_sphGen;
 namespace GElib{
 
 #ifdef _WITH_CUDA
-  void SO3partB_addCGproduct_cu(cnine::Ctensor2_view r, const cnine::Ctensor2_view& x, const cnine::Ctensor2_view& y, 
+  void SO3partB_addCGproduct_cu(cnine::Ctensor2_view& r, const cnine::Ctensor2_view& x, const cnine::Ctensor2_view& y, 
     const cudaStream_t& stream, const int offs=0);
-  void SO3partB_addCGproduct_cu(cnine::Ctensor3_view r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
-    const int offs, const cudaStream_t& stream);
+  void SO3partB_addCGproduct_cu(cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
+    const int offs=0, const cudaStream_t& stream);
 #endif
 
 
@@ -88,7 +88,7 @@ namespace GElib{
 	//SO3part2_view r=_r.slice0(b);
 	//SO3part2_view x=_x.slice0(b);
 	//SO3part2_view y=_y.slice0(b);
-	//SO3partB_addCGproduct_cu(r,x,y,stream,_offs);
+	//SO3partB_addCGproduct_cu(_r,_x,_y,stream,_offs);
         //}
 	CUDA_SAFE(cudaStreamSynchronize(stream));
 	CUDA_SAFE(cudaStreamDestroy(stream));
