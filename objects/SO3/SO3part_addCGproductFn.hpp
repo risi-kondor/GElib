@@ -23,6 +23,12 @@ extern GElib::SO3_SPHgen SO3_sphGen;
 
 namespace GElib{
 
+#ifdef _WITH_CUDA
+  void SO3partB_addCGproduct_cu(cnine::Ctensor2_view& r, const cnine::Ctensor2_view& x, const cnine::Ctensor2_view& y, 
+    const cudaStream_t& stream, const int offs=0);
+#endif
+
+
   class SO3part_addCGproductFn{
   public:
 
@@ -39,7 +45,7 @@ namespace GElib{
 
       const int dev=_r.dev;
       assert(_x.dev==dev);
-      assert(_y.dev=dev);
+      assert(_y.dev==dev);
 
       assert(_y.n0==B);
       assert(_r.n0==B);
@@ -51,33 +57,43 @@ namespace GElib{
       if(dev==0){
         for(int b=0; b<B; b++){
 
-	        SO3part2_view r=_r.slice0(b);
-	        SO3part2_view x=_x.slice0(b);
-	        SO3part2_view y=_y.slice0(b);
-	        int offs=_offs;
+	  SO3part2_view r=_r.slice0(b);
+	  SO3part2_view x=_x.slice0(b);
+	  SO3part2_view y=_y.slice0(b);
+	  int offs=_offs;
 
-	for(int n1=0; n1<N1; n1++){
-	  for(int n2=0; n2<N2; n2++){
-	    for(int m1=-l1; m1<=l1; m1++){
-	      for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
-		//cout<<"   "<<n1<<" "<<n2<<" "<<m1<<" "<<m2<<endl;
-		r.inc(m1+m2,offs+n2,C(m1+l1,m2+l2)*x(m1,n1)*y(m2,n2));
+	  for(int n1=0; n1<N1; n1++){
+	    for(int n2=0; n2<N2; n2++){
+	      for(int m1=-l1; m1<=l1; m1++){
+		for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+		  //cout<<"   "<<n1<<" "<<n2<<" "<<m1<<" "<<m2<<endl;
+		  r.inc(m1+m2,offs+n2,C(m1+l1,m2+l2)*x(m1,n1)*y(m2,n2));
+		}
 	      }
 	    }
+	    offs+=N2;
 	  }
-	  offs+=N2;
-	}
         }
       }else{
+
+#ifdef _WITH_CUDA
+	assert(_x.dev==1);
+	assert(_y.dev==1);
+	cudaStream_t stream;
+	CUDA_SAFE(cudaStreamCreate(&stream));
         for(int b=0; b<B; b++){
-
-	        SO3part2_view r=_r.slice0(b);
-	        SO3part2_view x=_x.slice0(b);
-	        SO3part2_view y=_y.slice0(b);
-
-
-          SO3partB_addCGproduct_cu(r,x,y,_offs);
+	  SO3part2_view r=_r.slice0(b);
+	  SO3part2_view x=_x.slice0(b);
+	  SO3part2_view y=_y.slice0(b);
+	  SO3partB_addCGproduct_cu(_r,_x,_y,stream,_offs);
         }
+	CUDA_SAFE(cudaStreamSynchronize(stream));
+	CUDA_SAFE(cudaStreamDestroy(stream));
+#else
+	CNINE_NOCUDA_ERROR;
+#endif
+
+
       }
 
     }

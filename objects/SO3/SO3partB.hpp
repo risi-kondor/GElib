@@ -144,7 +144,7 @@ namespace GElib{
     
     SO3partB CGproduct(const SO3partB& y, const int l) const{
       assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
-      SO3partB R=SO3partB::zero(getb(),l,getn()*y.getn());
+      SO3partB R=SO3partB::zero(getb(),l,getn()*y.getn(),get_dev());
       R.add_CGproduct(*this,y);
       return R;
     }
