@@ -79,8 +79,6 @@ namespace GElib{
       }else{
 
 #ifdef _WITH_CUDA
-	assert(_x.dev==1);
-	assert(_y.dev==1);
 	cudaStream_t stream;
 	CUDA_SAFE(cudaStreamCreate(&stream));
 	SO3partB_addCGproduct_cu(_r,_x,_y,_offs,stream);
