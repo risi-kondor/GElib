@@ -43,7 +43,7 @@ namespace GElib{
       const int B=_xg.n0;
 
       const int dev=_g.dev;
-      assert(_x.dev==dev);
+      assert(_xg.dev==dev);
       assert(_y.dev==dev);
 
       assert(_y.n0==B);

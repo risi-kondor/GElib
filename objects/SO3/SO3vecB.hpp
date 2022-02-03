@@ -70,7 +70,16 @@ namespace GElib{
       return SO3vecB(b,tau,cnine::fill_gaussian(),_dev);
     }
     
-    
+
+    static SO3vecB zeros_like(const SO3vecB& x){
+      return SO3vecB::zero(x.getb(),x.get_tau(),x.get_dev());
+    }
+
+    static SO3vecB gaussian_like(const SO3vecB& x){
+      return SO3vecB::gaussian(x.getb(),x.get_tau(),x.get_dev());
+    }
+
+
     // ---- Copying -------------------------------------------------------------------------------------------
 
 
