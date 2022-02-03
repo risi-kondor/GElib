@@ -29,8 +29,8 @@ int main(int argc, char** argv){
   SO3vecB ug=u.to_device(1);
   SO3vecB vg=v.to_device(1);
 
-  printl("ug",u)<<endl;
-  printl("vg",v)<<endl;
+  printl("ug",ug)<<endl;
+  printl("vg",vg)<<endl;
 
   SO3vecB wg=ug.CGproduct(vg,2);
   cout<<wg<<endl;

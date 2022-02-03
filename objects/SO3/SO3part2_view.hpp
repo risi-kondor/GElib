@@ -50,24 +50,24 @@ namespace GElib{
     //SO3part2_view(float* _arr, float* _arrc): 
     //arr(_arr), arrc(_arrc){}
 
-    SO3part2_view(float* _arr, float* _arrc, const int _n0, const int _n1, const int _s0, const int _s1): 
-      Ctensor2_view(_arr,_arrc,_n0,_n1,_s0,_s1){
+    SO3part2_view(float* _arr, float* _arrc, const int _n0, const int _n1, const int _s0, const int _s1, const int _dev=0): 
+      Ctensor2_view(_arr,_arrc,_n0,_n1,_s0,_s1,_dev){
       assert(n0%2==1);
       l=(n0-1)/2;
       ar=arr+l*s0;
       ac=arrc+l*s0;
     }
 
-    SO3part2_view(float* _arr, const int _n0, const int _n1, const int _s0, const int _s1, const int _coffs=1): 
-      Ctensor2_view(_arr,_n0,_n1,_s0,_s1,_coffs){
+    SO3part2_view(float* _arr, const int _n0, const int _n1, const int _s0, const int _s1, const int _coffs=1, const int _dev=0): 
+      Ctensor2_view(_arr,_n0,_n1,_s0,_s1,_coffs,_dev){
       assert(n0%2==1);
       l=(n0-1)/2;
       ar=arr+l*s0;
       ac=arrc+l*s0;
     }
 
-    SO3part2_view(float* _arr,  const Gdims& _dims, const Gstrides& _strides, const int _coffs=1):
-      Ctensor2_view(_arr,_dims,_strides,_coffs){
+    SO3part2_view(float* _arr,  const Gdims& _dims, const Gstrides& _strides, const int _coffs=1, const int _dev=0):
+      Ctensor2_view(_arr,_dims,_strides,_coffs,_dev){
       l=(n0-1)/2;
       ar=arr+l*s0;
       ac=arrc+l*s0;
