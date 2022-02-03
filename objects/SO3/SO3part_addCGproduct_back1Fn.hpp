@@ -23,6 +23,12 @@ extern GElib::SO3_SPHgen SO3_sphGen;
 
 namespace GElib{
 
+#ifdef _WITH_CUDA
+  void SO3partB_addCGproduct_back1_cu(const cnine::Ctensor3_view& yg, cnine::Ctensor3_view g, const cnine::Ctensor3_view& x, 
+    const int offs, const cudaStream_t& stream);
+#endif
+
+
   class SO3part_addCGproduct_back1Fn{
   public:
 
@@ -44,6 +50,7 @@ namespace GElib{
 
       auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
 
+      if(dev==0){
       for(int b=0; b<B; b++){
 
 	SO3part2_view g=_g.slice0(b);
@@ -61,6 +68,17 @@ namespace GElib{
 	  }
 	  offs+=N2;
 	}
+      }
+      }else{
+#ifdef _WITH_CUDA
+	cudaStream_t stream;
+	CUDA_SAFE(cudaStreamCreate(&stream));
+	SO3partB_addCGproduct_back1_cu(_yg,_g,_x,_offs,stream);
+	CUDA_SAFE(cudaStreamSynchronize(stream));
+	CUDA_SAFE(cudaStreamDestroy(stream));
+#else
+	CNINE_NOCUDA_ERROR;
+#endif
       }
 
     }

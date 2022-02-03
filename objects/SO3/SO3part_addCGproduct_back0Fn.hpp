@@ -28,6 +28,7 @@ namespace GElib{
     const int offs, const cudaStream_t& stream);
 #endif
 
+
   class SO3part_addCGproduct_back0Fn{
   public:
 
@@ -80,7 +81,6 @@ namespace GElib{
 #else
 	CNINE_NOCUDA_ERROR;
 #endif
-
       }
 
     }
