@@ -22,7 +22,6 @@ print("CG-product:")
 print(z)
 
 z.parts[2].backward(z.parts[2])
-#print("dd")
 print(x.parts[1].grad)
 
 print("\n\n")
