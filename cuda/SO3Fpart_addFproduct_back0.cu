@@ -78,13 +78,13 @@ __global__ void SO3Fpart_addFproduct_back0_kernel(const cnine::Ctensor3_view r, 
   int rn=r.n2;
 
   float* xpr=reinterpret_cast<float*>(_shared);
-  float* xpi=xpr+loadg3(x,xpr,b,t);
+  float* xpi=xpr+loadg4(x,xpr,b,t);
 
   float* ypr=xpr+((2*xn*xn-1)/32+1)*32;
-  float* ypi=ypr+loadg3(y,ypr,b,t);
+  float* ypi=ypr+loadg4(y,ypr,b,t);
 
   float* rpr=ypr+((2*yn*yn-1)/32+1)*32;
-  float* rpi=rpr+loadg3(r,rpr,b,t);
+  float* rpi=rpr+loadg4(r,rpr,b,t);
 
   __syncthreads();
 
@@ -114,9 +114,10 @@ __global__ void SO3Fpart_addFproduct_back0_kernel(const cnine::Ctensor3_view r, 
 	  const float y_i=ypi[yn*(m2+l2)];
 	  const float g_r=_rpr[rn*(m1+m2+l)];
 	  const float g_i=_rpi[rn*(m1+m2+l)];
-	  _xpr[xn*(m1+l1)]+=c0*c*(g_r*y_r+g_i*y_i);
-	  _xpi[xn*(m1+l1)]+=c0*c*(-g_r*y_i+g_i*y_r);
-
+	  //_xpr[xn*(m1+l1)]+=c0*c*(g_r*y_r+g_i*y_i);
+	  //_xpi[xn*(m1+l1)]+=c0*c*(-g_r*y_i+g_i*y_r);
+atomicAdd(_xpr+xn*(m1+l1),c0*c*(g_r*y_r+g_i*y_i));
+atomicAdd(_xpi+xn*(m1+l1),c0*c*(-g_r*y_i+g_i*y_r));
 	}
  
       }
@@ -125,7 +126,7 @@ __global__ void SO3Fpart_addFproduct_back0_kernel(const cnine::Ctensor3_view r, 
 
   __syncthreads();
   
-  saveg3(x,xpr,b,t);
+  saveg4(x,xpr,b,t);
 
 }
 
@@ -134,8 +135,8 @@ __global__ void SO3Fpart_addFproduct_back0_kernel(const cnine::Ctensor3_view r, 
 namespace GElib{
 
 
-  void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& g, const cnine::Ctensor3_view& y, 
-    const cudaStream_t& stream){
+  void SO3Fpart_addFproduct_back0_cu(const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& g, const cnine::Ctensor3_view& y, 
+    const int conj, const cudaStream_t& stream){
 
     const int xl=(x.n1-1)/2;
     const int yl=(y.n1-1)/2;

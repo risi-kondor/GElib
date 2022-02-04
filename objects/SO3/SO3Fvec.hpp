@@ -65,6 +65,14 @@ namespace GElib{
       return SO3Fvec(b,maxl,cnine::fill_gaussian(),_dev);
     }
 
+    static SO3Fvec zeros_like(const SO3Fvec& x){
+      return SO3Fvec::zero(x.getb(),x.get_maxl(),x.get_dev());
+    }
+
+    static SO3Fvec gaussian_like(const SO3Fvec& x){
+      return SO3Fvec::gaussian(x.getb(),x.get_maxl(),x.get_dev());
+    }
+
     
     // ---- Copying -------------------------------------------------------------------------------------------
 
@@ -249,14 +257,14 @@ namespace GElib{
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
 	    auto v=parts[l]->Fview();
-	    SO3Fpart_addFproduct_Fn(1)(v,x.parts[l1]->Fview(),y.parts[l2]->Fview().flip());
+	    SO3Fpart_addFproduct_Fn(0)(v,x.parts[l1]->Fview(),y.parts[l2]->Fview().flip());
 	  }
 	}
       }
     }
 
     void add_Fmodsq_back(const SO3Fvec& g, const SO3Fvec& x){
-      add_Fmodsq_back0(g,x);
+      //add_Fmodsq_back0(g,x);
       add_Fmodsq_back1(g,x);
     }
 
@@ -272,7 +280,7 @@ namespace GElib{
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
 	    auto v=parts[l1]->Fview();
-	    SO3Fpart_addFproduct_back0Fn(1)(v,g.parts[l]->Fview(),y.parts[l2]->Fview().flip());
+	    SO3Fpart_addFproduct_back0Fn(0)(v,g.parts[l]->Fview(),y.parts[l2]->Fview().flip());
 	  }
 	}
       }
@@ -290,7 +298,7 @@ namespace GElib{
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
 	    auto v=parts[l1]->Fview().flip();
-	    SO3Fpart_addFproduct_back1Fn(1)(v,g.parts[l]->Fview(),x.parts[l2]->Fview());
+	    SO3Fpart_addFproduct_back1Fn(0)(v,g.parts[l]->Fview(),x.parts[l2]->Fview());
 	  }
 	}
       }

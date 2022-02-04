@@ -25,7 +25,7 @@ int main(int argc, char** argv){
 #ifdef _WITH_CUDA
   SO3Fvec xc=x.to_device(1);
   SO3Fvec zc=xc.Fmodsq(maxl);
-  printl("zc",z);
+  printl("zc",zc);
   cout<<endl;
 #endif
 
@@ -34,7 +34,7 @@ int main(int argc, char** argv){
 
 #ifdef _WITH_CUDA
   SO3Fvec xgc=xg.to_device(1);
-  SO3vecB zgc=zg.to_device(1);
+  SO3Fvec zgc=zg.to_device(1);
 #endif
 
   xg.add_Fmodsq_back(zg,x);
