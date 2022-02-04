@@ -8,8 +8,8 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _SO3Fpart_addFmodsq_cu
-#define _SO3Fpart_addFmodsq_cu
+#ifndef _SO3Fpart_addFproduct_cu
+#define _SO3Fpart_addFproduct_cu
 
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -66,7 +66,7 @@ __device__ int saveg3(const cnine::Ctensor3_view& x, float* source, const int b,
 
 
 
-__global__ void SO3Fpart_addFmodsq_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
+__global__ void SO3Fpart_addFproduct_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
   const cnine::Ctensor3_view y, const int Cptr){
 
   extern __shared__ unsigned char _shared[]; 
@@ -140,7 +140,7 @@ __global__ void SO3Fpart_addFmodsq_kernel(const cnine::Ctensor3_view r, const cn
 namespace GElib{
 
 
-  void SO3Fpart_addFmodsq_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
+  void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
     const cudaStream_t& stream){
 
     const int xl=(x.n1-1)/2;
@@ -160,7 +160,7 @@ namespace GElib{
 
     if(nlines<=384){
 
-      SO3Fpart_addFmodsq_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
+      SO3Fpart_addFproduct_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
 	(r,x,y,Cptr);
 
     }else{
