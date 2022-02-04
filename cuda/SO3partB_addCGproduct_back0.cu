@@ -100,7 +100,7 @@ __global__ void SO3partB_addCGproduct_back0_kernel(const cnine::Ctensor3_view x,
   float* _xpi=xpi+t;
 
   for(int ycol=0; ycol<yn; ycol++){
-if(t<xn){
+    if(t<xn){
 
       float* _ypr=ypr+ycol;
       float* _ypi=ypi+ycol;
@@ -117,13 +117,12 @@ if(t<xn){
 	  const float y_i=_ypi[yn*(m2+l2)];
 	  const float g_r=_rpr[rn*(m1+m2+l)];
 	  const float g_i=_rpi[rn*(m1+m2+l)];
-    //if(t==0) printf("%f %f %f %d\n",y_r,g_r,c,(m1+l1)*L2+m2+l2);
 	  _xpr[xn*(m1+l1)]+=c*(g_r*y_r+g_i*y_i);
 	  _xpi[xn*(m1+l1)]+=c*(-g_r*y_i+g_i*y_r);
-  }
+	}
       }
-}
-      __syncthreads();
+    }
+    __syncthreads();
   }
   
 

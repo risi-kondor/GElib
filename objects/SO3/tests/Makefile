@@ -33,7 +33,7 @@ CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partA_CGproduct.o $(GELIB_CUDADIR)/SO3partA_Di
 $(CNINE_ROOT)/cuda/CtensorA_add.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/GElib_base.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partB_addCGproduct.o $(GELIB_CUDADIR)/SO3partB_addCGproduct_back0.o $(GELIB_CUDADIR)/SO3partB_addCGproduct_back1.o 
-CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3Fpart_addFproduct.o #$(GELIB_CUDADIR)/SO3Fpart_addFproduct_back0.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back1.o 
+CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3Fpart_addFproduct.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back0.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back1.o 
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
 endif 
 

@@ -24,8 +24,8 @@ extern GElib::SO3_SPHgen SO3_sphGen;
 namespace GElib{
 
 #ifdef _WITH_CUDA
-  //  void SO3Fpart_addFproduct_back0_cu(const cnine::Ctensor3_view& xg, const cnine::Ctensor3_view& g, const cnine::Ctensor3_view& y, 
-  //const cudaStream_t& stream);
+  void SO3Fpart_addFproduct_back0_cu(const cnine::Ctensor3_view& xg, const cnine::Ctensor3_view& g, const cnine::Ctensor3_view& y, 
+    const cudaStream_t& stream);
 #endif
 
 
@@ -93,7 +93,7 @@ namespace GElib{
 #ifdef _WITH_CUDA
 	cudaStream_t stream;
 	CUDA_SAFE(cudaStreamCreate(&stream));
-	//SO3Fpart_addFproduct__back0_cu(_xg,_g,_y,stream);
+	SO3Fpart_addFproduct__back0_cu(_xg,_g,_y,stream);
 	CUDA_SAFE(cudaStreamSynchronize(stream));
 	CUDA_SAFE(cudaStreamDestroy(stream));
 #else

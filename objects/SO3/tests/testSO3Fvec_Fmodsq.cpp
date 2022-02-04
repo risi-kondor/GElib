@@ -29,4 +29,21 @@ int main(int argc, char** argv){
   cout<<endl;
 #endif
 
+  SO3Fvec xg=SO3Fvec::zeros_like(x);
+  SO3Fvec zg=SO3Fvec::gaussian_like(z);
+
+#ifdef _WITH_CUDA
+  SO3Fvec xgc=xg.to_device(1);
+  SO3vecB zgc=zg.to_device(1);
+#endif
+
+  xg.add_Fmodsq_back(zg,x);
+  printl("xg",xg);
+
+#ifdef _WITH_CUDA
+  xgc.add_Fmodsq_back(zgc,xc);
+  printl("xgc",xgc);
+#endif
+
+
 }
