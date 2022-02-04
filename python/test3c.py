@@ -28,20 +28,22 @@ print(x.parts[1].grad)
 print("\n\n")
 
 
-xc=x.to_device(1)
-yc=y.to_device(1)
+xc=x.to(device="cuda")
+yc=y.to(device="cuda")
 
 xc.parts[1].requires_grad_()
+print("1")
 
 # Compute the CG-product
-zc=gelib.CGproduct(xc,yc)
+#zc=gelib.CGproduct(xc,yc)
+#print("2")
 
-print("CG-product:")
-print(zc)
+#print("CG-product:")
+#print(zc)
 
-zc.parts[2].backward(zc.parts[2])
+#zc.parts[2].backward(zc.parts[2])
 #print("dd")
-print(xc.parts[1].grad)
+#print(xc.parts[1].grad)
 
 print("\n\n")
 
@@ -68,18 +70,18 @@ print(x.parts[1].grad)
 print("\n\n")
 
 
-xc=x.to_device(1)
+xc=x.to(device="cuda")
 xc.parts[1].requires_grad_()
 
 # Compute Fmodsq
-zc=gelib.Fmodsq(xc)
+#zc=gelib.Fmodsq(xc)
 
-print("Fmodsq:")
-print(zc)
+#print("Fmodsq:")
+#print(zc)
 
-zc.parts[2].backward(zc.parts[2])
-print("Backpropagated gradient:")
-print(xc.parts[1].grad)
+#zc.parts[2].backward(zc.parts[2])
+#print("Backpropagated gradient:")
+#print(xc.parts[1].grad)
 
 print("\n\n")
 

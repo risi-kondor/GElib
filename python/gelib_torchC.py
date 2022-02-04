@@ -105,7 +105,7 @@ class SO3vec:
     @staticmethod
     def Fzeros(b,maxl,_dev=0):
         "Construct an SO3vec corresponding the to the Forier matrices 0,1,...maxl of b functions on SO(3)."
-        R=SO3Fvec()
+        R=SO3vec()
         for l in range(0,maxl+1):
             R.parts.append(SO3part.Fzeros(b,l,_dev))
             #if device==0:
@@ -146,6 +146,16 @@ class SO3vec:
         for l in range(0,len(self.parts)):
             r.append(self.parts[l].size(2))
             #r.append(self.parts[l].getn())
+        return r
+
+
+    ## ---- Transport ---------------------------------------------------------------------------------------
+
+
+    def to(self,device):
+        r=SO3vec()
+        for p in self.parts:
+            r.parts.append(p.to(device))
         return r
 
 
@@ -266,7 +276,7 @@ class SO3vec_CGproductFn(torch.autograd.Function):
         _x=_SO3vecB.view(args[0:k1]);
         _y=_SO3vecB.view(args[k1:k1+k2]);
         _r=_SO3vecB.view(r)
-        _r.addCGproduct(_x,_y)
+        #_r.addCGproduct(_x,_y)
 
         return tuple(r)
 
@@ -291,8 +301,8 @@ class SO3vec_CGproductFn(torch.autograd.Function):
         _xg=_SO3vecB.view(grads[3:k1+3]);
         _yg=_SO3vecB.view(grads[k1+3:k1+k2+3]);
 
-        _xg.addCGproduct_back0(_g,_y)
-        _yg.addCGproduct_back1(_g,_x)
+        #_xg.addCGproduct_back0(_g,_y)
+        #_yg.addCGproduct_back1(_g,_x)
 
         return tuple(grads)
 

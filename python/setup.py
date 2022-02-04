@@ -86,7 +86,13 @@ if compile_with_cuda:
           ext_modules=[CUDAExtension('gelib_base', ['GElib_py.cpp', 
           '../../cnine/include/Cnine_base.cu',
           '../cuda/SO3partA_CGproduct.cu',
-          '../cuda/SO3partA_DiagCGproduct.cu'
+          '../cuda/SO3partA_DiagCGproduct.cu',
+          '../cuda/SO3partB_addCGproduct.cu',
+          '../cuda/SO3partB_addCGproduct_back0.cu',
+          '../cuda/SO3partB_addCGproduct_back1.cu',
+          '../cuda/SO3Fpart_addFproduct.cu',
+          '../cuda/SO3Fpart_addFproduct_back0.cu',
+          '../cuda/SO3Fpart_addFproduct_back1.cu'
           ],
                                      include_dirs=_include_dirs,
                                      extra_compile_args={
