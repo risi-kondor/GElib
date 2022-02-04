@@ -248,6 +248,7 @@ namespace GElib{
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
+      cout<<"q"<<l1<<l2<<l<<endl;
 	    auto v=parts[l]->Fview();
 	    SO3Fpart_addFproduct_Fn(1)(v,x.parts[l1]->Fview(),y.parts[l2]->Fview().flip());
 	  }

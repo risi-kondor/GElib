@@ -8,8 +8,8 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _SO3Fpart_addModsq_cu
-#define _SO3Fpart_addModsq_cu
+#ifndef _SO3Fpart_addFmodsq_cu
+#define _SO3Fpart_addFmodsq_cu
 
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -66,7 +66,7 @@ __device__ int saveg3(const cnine::Ctensor3_view& x, float* source, const int b,
 
 
 
-__global__ void SO3Fpart_addModsq_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
+__global__ void SO3Fpart_addFmodsq_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
   const cnine::Ctensor3_view y, const int Cptr){
 
   extern __shared__ unsigned char _shared[]; 
@@ -84,13 +84,13 @@ __global__ void SO3Fpart_addModsq_kernel(const cnine::Ctensor3_view r, const cni
   int rn=r.n2;
 
   float* xpr=reinterpret_cast<float*>(_shared);
-  float* xpi=xpr+loadg(x,xpr,b,t);
+  float* xpi=xpr+loadg3(x,xpr,b,t);
 
   float* ypr=xpr+((2*xn*xn-1)/32+1)*32;
-  float* ypi=ypr+loadg(y,ypr,b,t);
+  float* ypi=ypr+loadg3(y,ypr,b,t);
 
   float* rpr=ypr+((2*yn*yn-1)/32+1)*32;
-  float* rpi=rpr+loadg(r,rpr,b,t);
+  float* rpi=rpr+loadg3(r,rpr,b,t);
 
   __syncthreads();
 
@@ -110,7 +110,7 @@ __global__ void SO3Fpart_addModsq_kernel(const cnine::Ctensor3_view r, const cni
 
     if(i>=0 && i<rn){
 
-      float c0=C_ptr[i1*n2+i2]*nx*yn/rn;
+      float c0=C_ptr[i1*yn+i2]*xn*yn/rn;
       
       for(int m1=-l1; m1<=l1; m1++){
 	const float x_r=xpr[xn*(m1+l1)];
@@ -118,7 +118,7 @@ __global__ void SO3Fpart_addModsq_kernel(const cnine::Ctensor3_view r, const cni
 	int lower=-l-m1; if(lower<-l2) lower=-l2;
 	int upper=l-m1; if(upper>l2) upper=l2;
 	for(int m2=lower; m2<=upper; m2++){
-	  float c=C_ptr[(m1+l1)*L2+m2+l2];
+	  float c=C_ptr[(m1+l1)*yn+m2+l2];
 	  const float y_r=ypr[yn*(m2+l2)];
 	  const float y_i=ypi[yn*(m2+l2)];
 	  _rpr[rn*(m1+m2+l)]+=c0*c*(x_r*y_r-x_i*y_i); 
@@ -131,7 +131,7 @@ __global__ void SO3Fpart_addModsq_kernel(const cnine::Ctensor3_view r, const cni
 
   __syncthreads();
   
-  saveg(r,rpr,b,t);
+  saveg3(r,rpr,b,t);
 
 }
 
@@ -140,7 +140,7 @@ __global__ void SO3Fpart_addModsq_kernel(const cnine::Ctensor3_view r, const cni
 namespace GElib{
 
 
-  void SO3Fpart_addModsq_cu(cnine::Ctensor3_view r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
+  void SO3Fpart_addFmodsq_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
     const cudaStream_t& stream){
 
     const int xl=(x.n1-1)/2;
@@ -151,10 +151,6 @@ namespace GElib{
     assert(x.n0==b);
     assert(y.n0==b);
 
-    r.arr+=r.s2*offs;
-    r.arrc+=r.s2*offs;
-    r.n2=x.n2*y.n2;
-
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
 
     int nlines=cnine::roundup(x.n1*x.n2*2,32)/32+
@@ -164,7 +160,7 @@ namespace GElib{
 
     if(nlines<=384){
 
-      SO3Fpart_addModsq_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
+      SO3Fpart_addFmodsq_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
 	(r,x,y,Cptr);
 
     }else{

@@ -21,7 +21,7 @@ INCLUDE+=-I$(CUDA_HOME)/include
 CUDA_OBJECTS+=GElib_base.o
 CUDA_OBJECTS+=SO3partA_CGproduct.o SO3partA_DiagCGproduct.o
 CUDA_OBJECTS+=SO3partB_addCGproduct.o SO3partB_addCGproduct_back0.o SO3partB_addCGproduct_back1.o 
-CUDA_OBJECTS+=SO3Fpart_addFmodsq.o SO3Fpart_addFmodsq_back0.o SO3Fpart_addFmodsq_back1.o 
+CUDA_OBJECTS+=SO3Fpart_addFmodsq.o #SO3Fpart_addFmodsq_back0.o SO3Fpart_addFmodsq_back1.o 
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
 endif 
 
