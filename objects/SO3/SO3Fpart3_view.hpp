@@ -123,7 +123,7 @@ namespace GElib{
       arrc=arrc+(n1-1)*s1+(n2-1)*s2;
       ar=arr-l*s1-l*s2;
       ac=arrc-l*s1-l*s2;
-      s1=-s2;
+      s1=-s1;
       s2=-s2;
       return *this;
     }

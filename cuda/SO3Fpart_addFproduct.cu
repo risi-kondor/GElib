@@ -121,8 +121,10 @@ __global__ void SO3Fpart_addFproduct_kernel(const cnine::Ctensor3_view r, const 
 	  float c=C_ptr[(m1+l1)*yn+m2+l2];
 	  const float y_r=ypr[yn*(m2+l2)];
 	  const float y_i=ypi[yn*(m2+l2)];
-	  _rpr[rn*(m1+m2+l)]+=c0*c*(x_r*y_r-x_i*y_i); 
-	  _rpi[rn*(m1+m2+l)]+=c0*c*(x_r*y_i+x_i*y_r);
+	//  _rpr[rn*(m1+m2+l)]+=c0*c*(x_r*y_r-x_i*y_i); 
+	  //_rpi[rn*(m1+m2+l)]+=c0*c*(x_r*y_i+x_i*y_r);
+	 atomicAdd(_rpr+rn*(m1+m2+l),c0*c*(x_r*y_r-x_i*y_i)); 
+	 atomicAdd(_rpi+rn*(m1+m2+l),c0*c*(x_r*y_i+x_i*y_r));
 	}
  
       }
@@ -141,7 +143,7 @@ namespace GElib{
 
 
   void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
-    const cudaStream_t& stream){
+    const int conj,const cudaStream_t& stream){
 
     const int xl=(x.n1-1)/2;
     const int yl=(y.n1-1)/2;
