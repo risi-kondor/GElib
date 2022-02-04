@@ -255,6 +255,10 @@ namespace GElib{
       }
     }
 
+    void add_Fmodsq_back(const SO3Fvec& g, const SO3Fvec& x){
+      add_Fmodsq_back0(g,x);
+      add_Fmodsq_back1(g,x);
+    }
 
     void add_Fmodsq_back0(const SO3Fvec& g, const SO3Fvec& y){
       assert(g.getb()==getb());

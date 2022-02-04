@@ -8,8 +8,8 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _SO3Fpart_addFproduct_cu
-#define _SO3Fpart_addFproduct_cu
+#ifndef _SO3Fpart_addFproduct_back1_cu
+#define _SO3Fpart_addFproduct_back1_cu
 
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -17,17 +17,13 @@
 //#include <thrust/tuple.h>
 
 #include "SO3_CGbank.hpp"
-#include "Ctensor2_view.hpp"
 #include "Ctensor3_view.hpp"
 
-//__device__ __constant__ unsigned char cg_cmem[32276]; 
 
 extern GElib::SO3_CGbank SO3_cgbank;
 
 
-
-
-__device__ int loadg3(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
+__device__ int loadg5(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
   int s1=x.s1;
@@ -46,7 +42,7 @@ __device__ int loadg3(const cnine::Ctensor3_view& x, float* dest, const int b, c
 }
 
 
-__device__ int saveg3(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
+__device__ int saveg5(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
   int s1=x.s1;
@@ -66,15 +62,13 @@ __device__ int saveg3(const cnine::Ctensor3_view& x, float* source, const int b,
 
 
 
-__global__ void SO3Fpart_addFproduct_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
+__global__ void SO3Fpart_addFproduct_back1_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
   const cnine::Ctensor3_view y, const int Cptr){
 
   extern __shared__ unsigned char _shared[]; 
   const float* C_ptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
   const int b=blockIdx.x;
   const int t=threadIdx.x;
-
-//printf("%d",t);
 
   int l1=(x.n1-1)/2;
   int l2=(y.n1-1)/2;
@@ -97,32 +91,33 @@ __global__ void SO3Fpart_addFproduct_kernel(const cnine::Ctensor3_view r, const 
   if(t<xn*yn){
 
     int i1=t/yn;
-    xpr=xpr+i1;
-    xpi=xpi+i1;
+    float* _xpr=xpr+i1;
+    float* _xpi=xpi+i1;
     
     int i2=t%yn;
-    ypr=ypr+i2;
-    ypi=ypi+i2;
+    float* _ypr=ypr+i2;
+    float* _ypi=ypi+i2;
     
     int i=i1+i2-l1-l2+l;
     float* _rpr=rpr+i;
     float* _rpi=rpi+i;
 
     if(i>=0 && i<rn){
-
       float c0=C_ptr[i1*yn+i2]*xn*yn/rn;
       
       for(int m1=-l1; m1<=l1; m1++){
-	const float x_r=xpr[xn*(m1+l1)];
-	const float x_i=xpi[xn*(m1+l1)];
+	const float x_r=_xpr[xn*(m1+l1)];
+	const float x_i=_xpi[xn*(m1+l1)];
 	int lower=-l-m1; if(lower<-l2) lower=-l2;
 	int upper=l-m1; if(upper>l2) upper=l2;
 	for(int m2=lower; m2<=upper; m2++){
 	  float c=C_ptr[(m1+l1)*yn+m2+l2];
 	  const float y_r=ypr[yn*(m2+l2)];
 	  const float y_i=ypi[yn*(m2+l2)];
-	  _rpr[rn*(m1+m2+l)]+=c0*c*(x_r*y_r-x_i*y_i); 
-	  _rpi[rn*(m1+m2+l)]+=c0*c*(x_r*y_i+x_i*y_r);
+	  const float g_r=_rpr[rn*(m1+m2+l)];
+	  const float g_i=_rpi[rn*(m1+m2+l)];
+	  _ypr[yn*(m2+l2)]+=c*(g_r*x_r+g_i*x_i);
+	  _ypi[yn*(m2+l2)]+=c*(-g_r*x_i+g_i*x_r);
 	}
  
       }
@@ -131,7 +126,7 @@ __global__ void SO3Fpart_addFproduct_kernel(const cnine::Ctensor3_view r, const 
 
   __syncthreads();
   
-  saveg3(r,rpr,b,t);
+  saveg3(y,ypr,b,t);
 
 }
 
@@ -140,14 +135,14 @@ __global__ void SO3Fpart_addFproduct_kernel(const cnine::Ctensor3_view r, const 
 namespace GElib{
 
 
-  void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
+  void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& y, const cnine::Ctensor3_view& g, const cnine::Ctensor3_view& x, 
     const cudaStream_t& stream){
 
     const int xl=(x.n1-1)/2;
     const int yl=(y.n1-1)/2;
-    const int l=(r.n1-1)/2;
+    const int l=(g.n1-1)/2;
 
-    const int b=r.n0;
+    const int b=g.n0;
     assert(x.n0==b);
     assert(y.n0==b);
 
@@ -155,13 +150,13 @@ namespace GElib{
 
     int nlines=cnine::roundup(x.n1*x.n2*2,32)/32+
       cnine::roundup(y.n1*y.n2*2,32)/32+
-      cnine::roundup(r.n1*r.n2*2,32)/32;
+      cnine::roundup(g.n1*g.n2*2,32)/32;
 
 
     if(nlines<=384){
 
-      SO3Fpart_addFproduct_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
-	(r,x,y,Cptr);
+      SO3Fpart_addFproduct_back1_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
+	(g,x,y,Cptr);
 
     }else{
       cout<<"error"<<endl;
