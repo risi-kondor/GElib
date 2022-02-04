@@ -64,10 +64,48 @@ __device__ int saveg3(const cnine::Ctensor3_view& x, float* source, const int b,
   return offs;
 }
 
+__device__ int loadg3c(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
+  int I=x.n1;
+  int J=x.n2;
+  int s1=x.s1;
+  int s2=x.s2;
+  int offs=I*J; //((I*J-1)/32+1)*32;
+  float* destc=dest+offs;
+  float* source=x.arr+x.s0*b;
+  float* sourcec=x.arrc+x.s0*b;
+  if(t<J){
+    for(int i=0; i<I; i++)
+      dest[i*J+t]=source[i*s1+t*s2];
+    for(int i=0; i<I; i++)
+      destc[i*J+t]=-sourcec[i*s1+t*s2];
+  }
+  return offs;
+}
+
+
+/*
+__device__ int saveg3c(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
+  int I=x.n1;
+  int J=x.n2;
+  int s1=x.s1;
+  int s2=x.s2;
+  int offs=I*J; //((I*J-1)/32+1)*32;
+  float* sourcec=source+offs;
+  float* dest=x.arr+x.s0*b;
+  float* destc=x.arrc+x.s0*b;
+  if(t<J){
+    for(int i=0; i<I; i++)
+      dest[i*s1+t*s2]=source[i*J+t];
+    for(int i=0; i<I; i++)
+      destc[i*s1+t*s2]=-sourcec[i*J+t];
+  }
+  return offs;
+}
+*/
 
 
 __global__ void SO3Fpart_addFproduct_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
-  const cnine::Ctensor3_view y, const int Cptr){
+  const cnine::Ctensor3_view y, const int Cptr, const int conj){
 
   extern __shared__ unsigned char _shared[]; 
   const float* C_ptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
@@ -87,7 +125,9 @@ __global__ void SO3Fpart_addFproduct_kernel(const cnine::Ctensor3_view r, const 
   float* xpi=xpr+loadg3(x,xpr,b,t);
 
   float* ypr=xpr+((2*xn*xn-1)/32+1)*32;
-  float* ypi=ypr+loadg3(y,ypr,b,t);
+  float* ypi;
+  if(conj==0) ypi=ypr+loadg3(y,ypr,b,t);
+  else ypi=ypr+loadg3c(y,ypr,b,t);
 
   float* rpr=ypr+((2*yn*yn-1)/32+1)*32;
   float* rpi=rpr+loadg3(r,rpr,b,t);
@@ -163,7 +203,7 @@ namespace GElib{
     if(nlines<=384){
 
       SO3Fpart_addFproduct_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
-	(r,x,y,Cptr);
+	(r,x,y,Cptr,conj);
 
     }else{
       cout<<"error"<<endl;
