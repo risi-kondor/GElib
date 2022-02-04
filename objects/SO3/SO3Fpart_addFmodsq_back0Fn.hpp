@@ -23,6 +23,12 @@ extern GElib::SO3_SPHgen SO3_sphGen;
 
 namespace GElib{
 
+#ifdef _WITH_CUDA
+  //  void SO3Fpart_addFmodsq_back0_cu(const cnine::Ctensor3_view& xg, cnine::Ctensor3_view g, const cnine::Ctensor3_view& y, 
+  //const cudaStream_t& stream);
+#endif
+
+
   class SO3Fpart_addFmodsq_back0Fn{
   public:
 
@@ -41,22 +47,32 @@ namespace GElib{
       auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
       const float c=((2.0*l1+1)+(2.0*l2+1))/(2.0*l+1);
 
-      for(int b=0; b<B; b++){
-
-	SO3Fpart2_view g=_g.slice0(b);
-	SO3Fpart2_view xg=_xg.slice0(b);
-	SO3Fpart2_view y=_y.slice0(b);
-
-	for(int M1=-l1; M1<=l1; M1++){
-	  for(int M2=std::max(-l2,-l-M1); M2<=std::min(l2,l-M1); M2++){
-	    float t=C(M1+l1,M2+l2)*c;
-	    for(int m1=-l1; m1<=l1; m1++){
-	      for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
-		xg.inc(M1,m1,t*C(m1+l1,m2+l2)*g(M1+M2,m1+m2)*std::conj(y(M2,m2)));
+      if(dev==0){
+	for(int b=0; b<B; b++){
+	  SO3Fpart2_view g=_g.slice0(b);
+	  SO3Fpart2_view xg=_xg.slice0(b);
+	  SO3Fpart2_view y=_y.slice0(b);
+	  for(int M1=-l1; M1<=l1; M1++){
+	    for(int M2=std::max(-l2,-l-M1); M2<=std::min(l2,l-M1); M2++){
+	      float t=C(M1+l1,M2+l2)*c;
+	      for(int m1=-l1; m1<=l1; m1++){
+		for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+		  xg.inc(M1,m1,t*C(m1+l1,m2+l2)*g(M1+M2,m1+m2)*std::conj(y(M2,m2)));
+		}
 	      }
 	    }
 	  }
 	}
+      }else{
+#ifdef _WITH_CUDA
+	cudaStream_t stream;
+	CUDA_SAFE(cudaStreamCreate(&stream));
+	//SO3Fpart_addFmodsq__back0_cu(_xg,_g,_y,stream);
+	CUDA_SAFE(cudaStreamSynchronize(stream));
+	CUDA_SAFE(cudaStreamDestroy(stream));
+#else
+	CNINE_NOCUDA_ERROR;
+#endif
       }
 
     }
