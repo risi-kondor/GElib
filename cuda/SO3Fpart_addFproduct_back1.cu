@@ -61,9 +61,47 @@ __device__ int saveg5(const cnine::Ctensor3_view& x, float* source, const int b,
 }
 
 
+__device__ int loadg5c(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
+  int I=x.n1;
+  int J=x.n2;
+  int s1=x.s1;
+  int s2=x.s2;
+  int offs=I*J; //((I*J-1)/32+1)*32;
+  float* destc=dest+offs;
+  float* source=x.arr+x.s0*b;
+  float* sourcec=x.arrc+x.s0*b;
+  if(t<J){
+    for(int i=0; i<I; i++)
+      dest[i*J+t]=source[i*s1+t*s2];
+    for(int i=0; i<I; i++)
+      destc[i*J+t]=sourcec[i*s1+t*s2];
+  }
+  return offs;
+}
+
+
+__device__ int saveg5c(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
+  int I=x.n1;
+  int J=x.n2;
+  int s1=x.s1;
+  int s2=x.s2;
+  int offs=I*J; //((I*J-1)/32+1)*32;
+  float* sourcec=source+offs;
+  float* dest=x.arr+x.s0*b;
+  float* destc=x.arrc+x.s0*b;
+  if(t<J){
+    for(int i=0; i<I; i++)
+      dest[i*s1+t*s2]=source[i*J+t];
+    for(int i=0; i<I; i++)
+      destc[i*s1+t*s2]=sourcec[i*J+t];
+  }
+  return offs;
+}
+
+
 
 __global__ void SO3Fpart_addFproduct_back1_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
-  const cnine::Ctensor3_view y, const int Cptr){
+  const cnine::Ctensor3_view y, const int Cptr, const int conj){
 
   extern __shared__ unsigned char _shared[]; 
   const float* C_ptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
@@ -81,7 +119,9 @@ __global__ void SO3Fpart_addFproduct_back1_kernel(const cnine::Ctensor3_view r, 
   float* xpi=xpr+loadg5(x,xpr,b,t);
 
   float* ypr=xpr+((2*xn*xn-1)/32+1)*32;
-  float* ypi=ypr+loadg5(y,ypr,b,t);
+  float* ypi;
+  if(conj==0) ypi=ypr+loadg5(y,ypr,b,t);
+  else ypi=ypr+loadg5c(y,ypr,b,t);
 
   float* rpr=ypr+((2*yn*yn-1)/32+1)*32;
   float* rpi=rpr+loadg5(r,rpr,b,t);
@@ -116,8 +156,8 @@ __global__ void SO3Fpart_addFproduct_back1_kernel(const cnine::Ctensor3_view r, 
 	  const float g_i=_rpi[rn*(m1+m2+l)];
 	  //_ypr[yn*(m2+l2)]+=c*(g_r*x_r+g_i*x_i);
 	  //_ypi[yn*(m2+l2)]+=c*(-g_r*x_i+g_i*x_r);
-  atomicAdd(_ypr+yn*(m2+l2),c*(g_r*x_r+g_i*x_i));
-	atomicAdd(_ypi+yn*(m2+l2),c*(-g_r*x_i+g_i*x_r));
+	  atomicAdd(_ypr+yn*(m2+l2),c*(g_r*x_r+g_i*x_i));
+	  atomicAdd(_ypi+yn*(m2+l2),c*(-g_r*x_i+g_i*x_r));
 	}
  
       }
@@ -126,7 +166,8 @@ __global__ void SO3Fpart_addFproduct_back1_kernel(const cnine::Ctensor3_view r, 
 
   __syncthreads();
   
-  saveg5(y,ypr,b,t);
+  if(conj==0) saveg5(y,ypr,b,t);
+  else saveg5c(y,ypr,b,t);
 
 }
 
@@ -156,7 +197,7 @@ namespace GElib{
     if(nlines<=384){
 
       SO3Fpart_addFproduct_back1_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
-	(g,x,y,Cptr);
+	(g,x,y,Cptr,conj);
 
     }else{
       cout<<"error"<<endl;
