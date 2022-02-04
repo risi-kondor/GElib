@@ -62,8 +62,8 @@ namespace GElib{
     */
 
     SO3Fpart3_view(float* _arr, const int _n0, const int _n1, const int _n2, 
-      const int _s0, const int _s1, const int _s2, const int _coffs=1): 
-      Ctensor3_view(_arr,_n0,_n1,_n2,_s0,_s1,_s2,_coffs){
+      const int _s0, const int _s1, const int _s2, const int _coffs=1, const int _dev=0): 
+      Ctensor3_view(_arr,_n0,_n1,_n2,_s0,_s1,_s2,_coffs,_dev){
       assert(n2==n1);
       assert(n1%2==1);
       l=(n1-1)/2;
@@ -71,8 +71,9 @@ namespace GElib{
       ac=arrc+l*s1+l*s2;
     }
 
-    SO3Fpart3_view(float* _arr,  const Gdims& _dims, const Gstrides& _strides, const int _coffs=1):
-      Ctensor3_view(_arr,_dims,_strides,_coffs){
+    SO3Fpart3_view(float* _arr,  const Gdims& _dims, const Gstrides& _strides, const int _coffs=1, 
+    const int _dev=0):
+      Ctensor3_view(_arr,_dims,_strides,_coffs,_dev){
       assert(n2==n1);
       assert(n1%2==1);
       l=(n1-1)/2;

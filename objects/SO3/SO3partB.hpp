@@ -114,7 +114,8 @@ namespace GElib{
 
 
     SO3Fpart3_view Fview() const{
-      return SO3Fpart3_view(arr,dims,strides,coffs);
+      if(dev==0) return SO3Fpart3_view(arr,dims,strides,coffs);
+      else return SO3Fpart3_view(arrg,dims,strides,coffs,dev);
     }
 
 

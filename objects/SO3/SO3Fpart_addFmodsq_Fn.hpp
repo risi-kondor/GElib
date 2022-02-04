@@ -39,6 +39,7 @@ namespace GElib{
       const int l2=_y.getl();
       assert(l>=abs(l1-l2) && l<=l1+l2);
 
+cout<<l1<<l2<<l<<endl;
       const int B=_r.n0;
       assert(_x.n0==B);
       assert(_y.n0==B);
@@ -69,6 +70,7 @@ namespace GElib{
 	}
       }else{
 #ifdef _WITH_CUDA
+cout<<">>"<<l1<<l2<<l<<endl;
 	cudaStream_t stream;
 	CUDA_SAFE(cudaStreamCreate(&stream));
 	SO3Fpart_addFmodsq_cu(_r,_x,_y,stream);
