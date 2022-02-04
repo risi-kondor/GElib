@@ -24,9 +24,7 @@ int main(int argc, char** argv){
 
 #ifdef _WITH_CUDA
   SO3Fvec xc=x.to_device(1);
-  cout<<1<<endl;
   SO3Fvec zc=xc.Fmodsq(maxl);
-  cout<<2<<endl;
   printl("zc",z);
   cout<<endl;
 #endif
