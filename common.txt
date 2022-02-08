@@ -1,7 +1,7 @@
 include $(ROOTDIR)/config.txt
 
 CNINE_INCLUDES=-I$(CNINE_ROOT)/include -I$(CNINE_ROOT)/include/cmaps \
--I$(CNINE_ROOT)/objects/scalar -I$(CNINE_ROOT)/objects/tensor \
+-I$(CNINE_ROOT)/objects/scalar -I$(CNINE_ROOT)/objects/tensor -I$(CNINE_ROOT)/objects/tensor_views \
 -I$(CNINE_ROOT)/objects/tensor_array -I$(CNINE_ROOT)/objects/tensor_array/cell_ops 
 
 GELIB_INCLUDEDIR=$(ROOTDIR)/include
