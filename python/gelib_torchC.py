@@ -276,7 +276,7 @@ class SO3vec_CGproductFn(torch.autograd.Function):
         _x=_SO3vecB.view(args[0:k1]);
         _y=_SO3vecB.view(args[k1:k1+k2]);
         _r=_SO3vecB.view(r)
-        #_r.addCGproduct(_x,_y)
+        _r.addCGproduct(_x,_y)
 
         return tuple(r)
 
@@ -301,8 +301,8 @@ class SO3vec_CGproductFn(torch.autograd.Function):
         _xg=_SO3vecB.view(grads[3:k1+3]);
         _yg=_SO3vecB.view(grads[k1+3:k1+k2+3]);
 
-        #_xg.addCGproduct_back0(_g,_y)
-        #_yg.addCGproduct_back1(_g,_x)
+        _xg.addCGproduct_back0(_g,_y)
+        _yg.addCGproduct_back1(_g,_x)
 
         return tuple(grads)
 
