@@ -166,7 +166,6 @@ namespace GElib{
       SO3part_addCGproduct_back1Fn()(v,g,x,_offs);
     }
 
-
   };
 
 }
