@@ -74,7 +74,7 @@ __device__ int loadg5c(const cnine::Ctensor3_view& x, float* dest, const int b, 
     for(int i=0; i<I; i++)
       dest[i*J+t]=source[i*s1+t*s2];
     for(int i=0; i<I; i++)
-      destc[i*J+t]=sourcec[i*s1+t*s2];
+      destc[i*J+t]=-sourcec[i*s1+t*s2];
   }
   return offs;
 }
@@ -93,7 +93,7 @@ __device__ int saveg5c(const cnine::Ctensor3_view& x, float* source, const int b
     for(int i=0; i<I; i++)
       dest[i*s1+t*s2]=source[i*J+t];
     for(int i=0; i<I; i++)
-      destc[i*s1+t*s2]=sourcec[i*J+t];
+      destc[i*s1+t*s2]=-sourcec[i*J+t];
   }
   return offs;
 }
@@ -156,8 +156,8 @@ __global__ void SO3Fpart_addFproduct_back1_kernel(const cnine::Ctensor3_view r, 
 	  const float g_i=_rpi[rn*(m1+m2+l)];
 	  //_ypr[yn*(m2+l2)]+=c*(g_r*x_r+g_i*x_i);
 	  //_ypi[yn*(m2+l2)]+=c*(-g_r*x_i+g_i*x_r);
-	  atomicAdd(_ypr+yn*(m2+l2),c*(g_r*x_r+g_i*x_i));
-	  atomicAdd(_ypi+yn*(m2+l2),c*(-g_r*x_i+g_i*x_r));
+	  atomicAdd(_ypr+yn*(m2+l2),c0*c*(g_r*x_r+g_i*x_i));
+	  atomicAdd(_ypi+yn*(m2+l2),c0*c*(-g_r*x_i+g_i*x_r));
 	}
  
       }
