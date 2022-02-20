@@ -192,7 +192,9 @@ namespace GElib{
 	for(int l2=0; l2<=L2; l2++){
 	  //if(y.tau[l2]==0) continue;
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
-	    //cout<<l1<<l2<<l<<endl;
+	    cout<<l1<<l2<<l<<endl;
+      cout<<parts.size()<<endl;
+      cout<<*parts[l]<<endl;
 	    parts[l]->add_CGproduct(*x.parts[l1],*y.parts[l2],offs[l]);
 	    offs[l]+=(x.parts[l1]->getn())*(y.parts[l2]->getn());
 	  }
