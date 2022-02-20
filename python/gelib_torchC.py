@@ -56,7 +56,7 @@ class SO3part(torch.Tensor):
         if _dev==0:        
             return SO3part(torch.zeros([b,2*l+1,2*l+1,2]))
         else:
-            return SO3part(torch.zeros([b,2*l+1,2*l+1,2],device='cuda'))
+            return SO3part(torch.zeros([b,2*l+1,2*l+1,2])).cuda() # why doesn't device='cuda' work?
 
     @staticmethod
     def Frandn(b,l,_dev=0):
