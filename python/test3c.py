@@ -34,19 +34,23 @@ yc=y.to(device="cuda")
 xc.parts[1].requires_grad_()
 print("1")
 
-# Compute the CG-product
-#zc=gelib.CGproduct(xc,yc)
-#print("2")
 
-#print("CG-product:")
-#print(zc)
+#Compute the CG-product
+zc=gelib.CGproduct(xc,yc)
+print("2")
 
-#zc.parts[2].backward(zc.parts[2])
+exit(0)
+
+print("CG-product on GPU:")
+print(zc)
+
+zc.parts[2].backward(zc.parts[2])
 #print("dd")
-#print(xc.parts[1].grad)
+print(xc.parts[1].grad)
 
 print("\n\n")
 
+exit(0)
 
 # ---- Fmodsq ----------------------------------------------------------------------------------------------------
 # Given the Fourier transform of a function u on SO(3), compute the Fourier transform of the squared modulus of u

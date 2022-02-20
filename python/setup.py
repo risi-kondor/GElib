@@ -10,7 +10,7 @@ import time
 
 # --- User settings ------------------------------------------------------------------------------------------
 
-compile_with_cuda=False
+compile_with_cuda=True
 
 copy_warnings=True
 torch_convert_warnings=True 
@@ -49,7 +49,8 @@ _cxx_compile_args=['-std=c++14',
 
 _nvcc_compile_args=['-D_WITH_CUDA',
                    '-D_WITH_CUBLAS',
-                   '-D_DEF_CGCMEM'
+                   '-D_DEF_CGCMEM',
+                   #'-rdc=true'
                    ]
 
 
@@ -84,8 +85,9 @@ _depends=['setup.py',
 
 if compile_with_cuda:
     setup(name='gelib_base',
-          ext_modules=[CUDAExtension('gelib_base', ['GElib_py.cpp', 
+          ext_modules=[CUDAExtension('gelib_base', [ 
           '../../cnine/include/Cnine_base.cu',
+          '../cuda/GElib_base.cu',
           '../cuda/SO3partA_CGproduct.cu',
           '../cuda/SO3partA_DiagCGproduct.cu',
           '../cuda/SO3partB_addCGproduct.cu',
@@ -93,7 +95,8 @@ if compile_with_cuda:
           '../cuda/SO3partB_addCGproduct_back1.cu',
           '../cuda/SO3Fpart_addFproduct.cu',
           '../cuda/SO3Fpart_addFproduct_back0.cu',
-          '../cuda/SO3Fpart_addFproduct_back1.cu'
+          '../cuda/SO3Fpart_addFproduct_back1.cu',
+          'GElib_py.cpp'
           ],
                                      include_dirs=_include_dirs,
                                      extra_compile_args={
