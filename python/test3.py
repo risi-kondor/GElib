@@ -7,7 +7,7 @@ import gelib_torchC as gelib
 # In a full CG-product each fragment in each part of x is multiplied with each fragment of each part in y 
 
 # Define the type 
-b=2
+b=1
 tau=[1,1]
 
 # Define two random SO3vec objects  
