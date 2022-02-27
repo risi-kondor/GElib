@@ -14,12 +14,12 @@ int main(int argc, char** argv){
   cout<<endl;
 
   int b=1;
-  SO3type tau({2,2,2});
+  SO3type tau({2,2});
 
   SO3vecB u=SO3vecB::gaussian(1,tau);
   SO3vecB v=SO3vecB::gaussian(1,tau);
-  printl("u",u)<<endl;
-  printl("v",v)<<endl;
+  //printl("u",u)<<endl;
+  //printl("v",v)<<endl;
 
   SO3vecB w=u.CGproduct(v,2);
   cout<<w<<endl;
@@ -30,8 +30,8 @@ int main(int argc, char** argv){
   SO3vecB uc=u.to_device(1);
   SO3vecB vc=v.to_device(1);
 
-  printl("uc",uc)<<endl;
-  printl("vc",vc)<<endl;
+  //printl("uc",uc)<<endl;
+  //printl("vc",vc)<<endl;
 
   SO3vecB wc=uc.CGproduct(vc,2);
   cout<<wc<<endl;

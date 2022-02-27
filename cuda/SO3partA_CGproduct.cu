@@ -19,6 +19,7 @@
 
 //__device__ __constant__ unsigned char cg_cmem[32276]; 
 
+
 #include "SO3partArrayA.hpp"
 #include "SO3_CGbank.hpp"
 
@@ -30,6 +31,9 @@
 #include "VMprodCmap.hpp"
 //#include "convolve1_cmap.hpp"
 #include "Convolve2Cmap.hpp"
+
+extern GElib::SO3_CGbank SO3_cgbank;
+
 
 __device__ void SO3part_load_lines(float* dest, const float* source, const int nlines, const int t){
   if(t<32){

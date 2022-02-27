@@ -32,18 +32,17 @@ xc=x.to(device="cuda")
 yc=y.to(device="cuda")
 
 xc.parts[1].requires_grad_()
-print("1")
+xc.parts[1].retain_grad() # why do we need this?
 
-# Compute the CG-product
-#zc=gelib.CGproduct(xc,yc)
-#print("2")
+#Compute the CG-product
+zc=gelib.CGproduct(xc,yc)
 
-#print("CG-product:")
-#print(zc)
+print("CG-product on GPU:")
+print(zc)
 
-#zc.parts[2].backward(zc.parts[2])
+zc.parts[2].backward(zc.parts[2])
 #print("dd")
-#print(xc.parts[1].grad)
+print(xc.parts[1].grad)
 
 print("\n\n")
 
@@ -58,7 +57,7 @@ x=gelib.SO3vec.Frandn(b,maxl)
 x.parts[1].requires_grad_()
 
 # Compute Fmodsq
-z=gelib.Fmodsq(x)
+z=gelib.Fmodsq(x,maxl)
 
 print("Fmodsq:")
 print(z)
@@ -72,16 +71,17 @@ print("\n\n")
 
 xc=x.to(device="cuda")
 xc.parts[1].requires_grad_()
+xc.parts[1].retain_grad()
 
 # Compute Fmodsq
-#zc=gelib.Fmodsq(xc)
+zc=gelib.Fmodsq(xc,maxl)
 
-#print("Fmodsq:")
-#print(zc)
+print("Fmodsq on GPU:")
+print(zc)
 
-#zc.parts[2].backward(zc.parts[2])
-#print("Backpropagated gradient:")
-#print(xc.parts[1].grad)
+zc.parts[2].backward(zc.parts[2])
+print("Backpropagated gradient:")
+print(xc.parts[1].grad)
 
 print("\n\n")
 
