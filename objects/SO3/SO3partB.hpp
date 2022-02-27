@@ -8,8 +8,8 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _SO3Gpart
-#define _SO3Gpart
+#ifndef _SO3partB
+#define _SO3partB
 
 #include "CtensorB.hpp"
 #include "SO3part3_view.hpp"

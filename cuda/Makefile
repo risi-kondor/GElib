@@ -18,7 +18,7 @@ CUDA_EXTERNS=
 
 ifdef WITH_CUDA
 INCLUDE+=-I$(CUDA_HOME)/include
-CUDA_OBJECTS+=GElib_base.o
+#CUDA_OBJECTS+=GElib_base.o
 CUDA_OBJECTS+=SO3partA_CGproduct.o SO3partA_DiagCGproduct.o
 CUDA_OBJECTS+=SO3partB_addCGproduct.o SO3partB_addCGproduct_back0.o SO3partB_addCGproduct_back1.o 
 CUDA_OBJECTS+=SO3Fpart_addFproduct.o SO3Fpart_addFproduct_back0.o SO3Fpart_addFproduct_back1.o 

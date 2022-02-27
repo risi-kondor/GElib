@@ -112,7 +112,20 @@ namespace GElib{
     SO3part2_view slice0(const int i) const{
       return SO3part2_view(arr+i*s0,arrc+i*s0,n1,n2,s1,s2,dev);
     }
-  
+
+
+  public: // ---- I/O ----------------------------------------------------------------------------------------
+
+
+    string str(const string indent="") const{
+      ostringstream oss;
+      for(int i=0; i<n0; i++){
+	oss<<indent<<"b="<<i<<":"<<endl;
+	oss<<slice0(i).str(indent)<<endl;
+      }
+      return oss.str();
+    }
+
 
   };
 
