@@ -55,6 +55,7 @@ namespace GElib{
       assert(l>=abs(l1-l2) && l<=l1+l2);
 
       auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
+      //cout<<l1<<l2<<l<<endl;
 
       if(dev==0){
         for(int b=0; b<B; b++){

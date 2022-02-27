@@ -155,6 +155,18 @@ namespace GElib{
 
     
 
+    // ---- Operations ---------------------------------------------------------------------------------------
+
+
+    SO3vecB operator-(const SO3vecB& y) const{
+      SO3vecB R;
+      for(int l=0; l<parts.size(); l++){
+	R.parts.push_back(new SO3partB((*parts[l])-(*y.parts[l])));
+      }
+      return R;
+    }
+
+
     // ---- Rotations ----------------------------------------------------------------------------------------
 
 

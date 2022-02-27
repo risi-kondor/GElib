@@ -53,6 +53,7 @@ namespace GElib{
       assert(l>=abs(l1-l2) && l<=l1+l2);
 
       auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
+      //cout<<l1<<l2<<l<<B<<endl;
 
       if(dev==0){
 	for(int b=0; b<B; b++){
@@ -65,6 +66,7 @@ namespace GElib{
 	      for(int m1=-l1; m1<=l1; m1++){
 		for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
 		  xg.inc(m1,n1,C(m1+l1,m2+l2)*g(m1+m2,offs+n2)*std::conj(y(m2,n2)));
+		  //xg.inc(m1,n1,g(m1+m2,offs+n2)); //*std::conj(y(m2,n2)));
 		}
 	      }
 	    }
