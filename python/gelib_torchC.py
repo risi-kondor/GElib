@@ -28,7 +28,11 @@ class SO3part(torch.Tensor):
         Create an SO(3)-part consisting of b lots of n vectors transforming according to the l'th irrep of SO(3).
         The vectors are initialized to zero, resulting in an b*(2+l+1)*n dimensional complex tensor of zeros.
         """        
-        return SO3part(torch.zeros([b,2*l+1,n,2]))
+        if _dev==0:
+            return SO3part(torch.zeros([b,2*l+1,n,2]))
+        else:
+            return SO3part(torch.zeros([b,2*l+1,n,2])).cuda()
+
 
     @staticmethod
     def randn(b,l,n,_dev=0):
@@ -36,8 +40,11 @@ class SO3part(torch.Tensor):
         Create an SO(3)-part consisting of b lots of n vectors transforming according to the l'th irrep of SO(3).
         The vectors are initialized as random gaussian vectors, resulting in an b*(2+l+1)*n dimensional random
         complex tensor.
-        """        
-        return SO3part(torch.randn([b,2*l+1,n,2]))
+        """
+        if _dev==0:        
+            return SO3part(torch.randn([b,2*l+1,n,2]))
+        else:
+            return SO3part(torch.randn([b,2*l+1,n,2],device='cuda'))
 
 
     @staticmethod
@@ -45,16 +52,22 @@ class SO3part(torch.Tensor):
         """
         Create an SO(3)-part corresponding to the l'th matrix in the Fourier transform of a function on SO(3).
         This gives a b*(2+l+1)*(2l+1) dimensional complex tensor. 
-        """        
-        return SO3part(torch.zeros([b,2*l+1,2*l+1,2]))
+        """
+        if _dev==0:        
+            return SO3part(torch.zeros([b,2*l+1,2*l+1,2]))
+        else:
+            return SO3part(torch.zeros([b,2*l+1,2*l+1,2])).cuda() # why doesn't device='cuda' work?
 
     @staticmethod
     def Frandn(b,l,_dev=0):
         """
         Create an SO(3)-part corresponding to the l'th matrix in the Fourier transform of a function on SO(3).
         This gives a b*(2+l+1)*(2l+1) dimensional complex random tensor. 
-        """        
-        return SO3part(torch.randn([b,2*l+1,2*l+1,2]))
+        """
+        if _dev==0:        
+            return SO3part(torch.randn([b,2*l+1,2*l+1,2]))
+        else:
+            return SO3part(torch.randn([b,2*l+1,2*l+1,2],device='cuda'))
 
 
     ## ---- Access ------------------------------------------------------------------------------------------
@@ -271,7 +284,8 @@ class SO3vec_CGproductFn(torch.autograd.Function):
 
         b=args[0].size(0)
         tau=CGproductType(tau_type(args[0:k1]),tau_type(args[k1:k1+k2]),maxl)
-        r=MakeZeroSO3parts(b,tau)
+        dev=int(args[0].is_cuda)
+        r=MakeZeroSO3parts(b,tau,dev)
 
         _x=_SO3vecB.view(args[0:k1]);
         _y=_SO3vecB.view(args[k1:k1+k2]);
@@ -320,8 +334,9 @@ class SO3vec_FproductFn(torch.autograd.Function):
             maxl=k1+k2-2
         else:
             maxl=_maxl
+        dev=int(args[0].is_cuda)
 
-        r=makeZeroSO3Fparts(b,maxl)
+        r=makeZeroSO3Fparts(b,maxl,dev)
 
         _x=_SO3Fvec.view(args[0:k1]);
         _y=_SO3Fvec.view(args[k1:k1+k2]);
@@ -370,8 +385,9 @@ class SO3vec_FmodsqFn(torch.autograd.Function):
             maxl=k1+k1-2
         else:
             maxl=_maxl
+        dev=int(args[0].is_cuda)
 
-        r=makeZeroSO3Fparts(b,maxl)
+        r=makeZeroSO3Fparts(b,maxl,dev)
 
         _x=_SO3Fvec.view(args[0:k1]);
         #_y=_SO3Fvec.view(args[k1:k1+k2]);
