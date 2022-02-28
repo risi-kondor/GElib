@@ -128,6 +128,13 @@ namespace GElib{
 	Gstrides({strides[1],strides[2],strides[3]}),coffs,dev);
     }
 
+    SO3part3_view pview() const{
+      if(dev==0) return SO3part3_view(arr,Gdims({dims(0)*dims(1),dims(2),dims(3)}),
+	Gstrides({strides[1],strides[2],strides[3]}),coffs);
+      else return SO3part3_view(arrg,Gdims({dims(0)*dims(1),dims(2),dims(3)}),
+	Gstrides({strides[1],strides[2],strides[3]}),coffs,dev);
+    }
+
     SO3part3_view cell_view(const int i) const{
       return SO3part3_view(arr+strides[0]*i,{dims(1),dims(2),dims(3)},{strides[1],strides[2],strides[3]},coffs,dev);
     }
@@ -159,12 +166,13 @@ namespace GElib{
     SO3partD rotate(const SO3element& r){
       CtensorB D(WignerMatrix<float>(getl(),r),dev);
       SO3partD R=SO3partD::zero(getN(),getb(),getl(),getn(),dev);
+      cout<<R.repr()<<endl;
 
-      int B=getb();
       auto dv=D.view2D();
-      auto xv=this->view3D();
-      auto rv=R.view3D();
+      auto xv=this->pview();
+      auto rv=R.pview();
       
+      int B=rv.n0;
       for(int b=0; b<B; b++){
 	auto v=rv.slice0(b);
 	cnine::Ctensor_add_mprod_AA()(v,dv,xv.slice0(b));

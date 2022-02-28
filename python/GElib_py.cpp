@@ -28,6 +28,8 @@
 #include "SO3partB.hpp"
 #include "SO3vecB.hpp"
 #include "SO3Fvec.hpp"
+#include "SO3partD.hpp"
+#include "SO3vecD.hpp"
 
 
 //std::default_random_engine rndGen;
@@ -105,6 +107,8 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   #include "SO3vecB_py.cpp"
   #include "SO3Fvec_py.cpp"
 
+  #include "SO3partD_py.cpp"
+  #include "SO3vecD_py.cpp"
 
 }
 
