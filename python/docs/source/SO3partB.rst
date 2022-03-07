@@ -7,7 +7,7 @@ irreducible representation :math:`D^{(\ell)}` of SO(3).
 Given that :math:`D^{(\ell)}` is a :math:`2\ell\!+\!1` dimensional representation, this would 
 correspond to a complex matrix :math:`A\in\mathbb{C}^{(2\ell+1)\times n}`.  
 However, following PyTorch convention, ``SO3part`` objects can also have a "batch dimension" 
-the significance of which is that GPU operations are automatically parallelized across this dimension. 
+that GPU operations are automatically parallelized over . 
   
 ``SO3part`` is thus implemented as a  
 :math:`b\times (2\ell+1)\times n\times 2` dimensional single precision 
@@ -41,7 +41,8 @@ The order ``l`` and multiplicity ``n`` of an ``A`` are read out as follows.
  3
  
 Since ``SO3part`` is derived from ``torch.Tensor``, it supports all the usual  
-arithmetic operations that can be applied to tensors.  
+arithmetic operations that can be applied to tensors and its elements can be 
+accessed directly, just like for any PyTorch tensor. 
 
 ============
 Group action

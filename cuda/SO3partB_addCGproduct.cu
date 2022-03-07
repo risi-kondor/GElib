@@ -276,7 +276,7 @@ namespace GElib{
     r.n2=x.n2*y.n2;
 
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
-cout<<"Cptr="<<Cptr<<endl;
+    //cout<<"Cptr="<<Cptr<<endl;
 
 
     int nlines=cnine::roundup(x.n1*x.n2*2,32)/32+
