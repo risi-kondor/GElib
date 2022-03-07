@@ -1,0 +1,315 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
+
+    <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
+        <title>SO3part - GElib documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=0254c309f5cadf746f1a613e7677379ac9c8cdcd" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=16fb25fabf47304eee183a5e9af80b1ba98259b1" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  body[data-theme="dark"] {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    body:not([data-theme="light"]) {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+</style></head>
+  <body>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" />
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">GElib  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">GElib  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="so3part">
+<h1>SO3part<a class="headerlink" href="#so3part" title="Permalink to this headline">¶</a></h1>
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is a collection of <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg"/> different complex valued vectors transforming according to the same
+irreducible representation <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> of SO(3).
+Given that <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> is a <img alt="2\ell\!+\!1" class="math" src="_images/math/9d92fcb93216b22d3ad1507285348f8058a2f8d5.svg"/> dimensional representation, this would
+correspond to a complex matrix <img alt="A\in\mathbb{C}^{(2\ell+1)\times n}" class="math" src="_images/math/92fd1081fb377760424d0459e55de5c23a882190.svg"/>.
+However, following PyTorch convention, <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can also have a “batch dimension”
+the significance of which is that GPU operations are automatically parallelized across this dimension.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is thus implemented as a
+<img alt="b\times (2\ell+1)\times n\times 2" class="math" src="_images/math/a2202ef475a155bde94c05b5d32bed966ff3b88a.svg"/> dimensional single precision
+PyTorch tensor, where <code class="docutils literal notranslate"><span class="pre">b</span></code> is the batch dimension and the last dimension corresponds to the real/imaginary parts.
+This format may be converted to PyTorch’s new complex tensor format with
+<code class="docutils literal notranslate"><span class="pre">torch.view_as_complex()</span></code>, while <code class="docutils literal notranslate"><span class="pre">torch.view_as_real()</span></code> converts in the opposite direction.</p>
+<p>The following code constructs an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> object holding <code class="docutils literal notranslate"><span class="pre">n=3</span></code> Gaussian distributed random vectors corresponding
+to the <code class="docutils literal notranslate"><span class="pre">l=2</span></code> irrep of SO(3) (batch size 1) and prints it out in GElib’s own compact format.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="go">[ (-0.254751,1.06977) (-0.0920261,0.568582) (0.61119,0.145976) ]</span>
+<span class="go">[ (-2.08142,-1.54979) (1.86277,0.739985) (-0.347901,-1.85592) ]</span>
+<span class="go">[ (0.537095,-1.018) (0.164219,-0.0593679) (-0.238732,0.50693) ]</span>
+<span class="go">[ (1.17258,-0.634835) (-0.649356,-0.0877365) (1.00715,-0.304671) ]</span>
+<span class="go">[ (-1.8357,-1.70148) (-0.851959,-1.31661) (0.824596,-0.197399) ]</span>
+</pre></div>
+</div>
+<p>A zero <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> would be constructed similarly using the <code class="docutils literal notranslate"><span class="pre">gelib.SO3part.zeros(b,l,n)</span></code> constructor.
+In both cases the optional <code class="docutils literal notranslate"><span class="pre">dev</span></code> argument selects whether the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is
+placed on the CPU (<code class="docutils literal notranslate"><span class="pre">dev=0</span></code>) or the GPU (<code class="docutils literal notranslate"><span class="pre">dev=1</span></code>).
+The order <code class="docutils literal notranslate"><span class="pre">l</span></code> and multiplicity <code class="docutils literal notranslate"><span class="pre">n</span></code> of an <code class="docutils literal notranslate"><span class="pre">A</span></code> are read out as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">getl</span><span class="p">()</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">getn</span><span class="p">()</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+<p>Since <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is derived from <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, it supports all the usual
+arithmetic operations that can be applied to tensors.</p>
+<section id="group-action">
+<h2>Group action<a class="headerlink" href="#group-action" title="Permalink to this headline">¶</a></h2>
+<p>The group SO(3) acts on an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> <img alt="A" class="math" src="_images/math/565db5272a70df8fe06f163b6a0deedd44272896.svg"/> by <img alt="A\mapsto D^{(l)}(r) A" class="math" src="_images/math/b43a1e571ba5d1089f447e192a0a1221854bc8cc.svg"/>
+for any <img alt="r\in\mathrm{SO}(3)" class="math" src="_images/math/677eba826091fc7b207ccba72931a97a27f2505b.svg"/>. This is implemented in the <code class="docutils literal notranslate"><span class="pre">apply</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3element</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Ar</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">Ar</span><span class="p">)</span>
+<span class="go">[ (-1.11709,0.147657) (-1.11769,1.24745) ]</span>
+<span class="go">[ (-1.60924,0.32233) (1.23518,1.00509) ]</span>
+<span class="go">[ (0.618006,-0.476802) (-0.583183,-0.775842) ]</span>
+<span class="go">[ (2.06776,-0.517233) (0.637578,0.790121) ]</span>
+<span class="go">[ (-1.09639,0.00411239) (0.878735,-1.1598) ]</span>
+</pre></div>
+</div>
+</section>
+<section id="spherical-harmonics">
+<h2>Spherical harmonics<a class="headerlink" href="#spherical-harmonics" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can be initialized as spherical harmonic coefficients of a three dimensional vector
+corresponding to a given <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">spharm</span><span class="p">(</span><span class="mi">2</span><span class="p">,[</span><span class="mf">0.12</span><span class="p">,</span><span class="mf">0.31</span><span class="p">,</span><span class="o">-</span><span class="mf">0.55</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="go">[ (-0.0764131,-0.0695855) ]</span>
+<span class="go">[ (-0.123458,0.318933) ]</span>
+<span class="go">[ (0.37763,0) ]</span>
+<span class="go">[ (0.123458,0.318933) ]</span>
+<span class="go">[ (-0.0764131,0.0695855) ]</span>
+</pre></div>
+</div>
+</section>
+<section id="gpu-operations">
+<h2>GPU operations<a class="headerlink" href="#gpu-operations" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can be moved to the GPU or moved back to the host (CPU) just like any PyTorch tensor.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span><span class="p">)</span> <span class="c1"># Create a copy of A on the first GPU (GPU0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">B</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="s1">'cpu'</span><span class="p">)</span> <span class="c1"># Move B back to the host</span>
+</pre></div>
+</div>
+<p>In general, when all operands of a given operation are on the GPU, the computation will be performed on
+the GPU and the result placed on the same GPU.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2021, Risi Kondor |
+            Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
+              and
+              <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+              <a href="https://github.com/pradyunsg/furo">Furo theme</a>. |
+            <a class="muted-link" href="_sources/SO3partB.rst.txt"
+               rel="nofollow">
+              Show Source
+            </a>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">SO3part</a><ul>
+<li><a class="reference internal" href="#group-action">Group action</a></li>
+<li><a class="reference internal" href="#spherical-harmonics">Spherical harmonics</a></li>
+<li><a class="reference internal" href="#gpu-operations">GPU operations</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/main.js"></script>
+    </body>
+</html>
