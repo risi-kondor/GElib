@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
-        <title>SO3vec - GElib documentation</title>
+        <title>SO3vecArr - GElib documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=0254c309f5cadf746f1a613e7677379ac9c8cdcd" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=16fb25fabf47304eee183a5e9af80b1ba98259b1" />
@@ -134,7 +134,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -173,84 +173,60 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="so3vec">
-<h1>SO3vec<a class="headerlink" href="#so3vec" title="Permalink to this headline">¶</a></h1>
-<p>An <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> object represents a general SO(3)-covariant vector and is stored
-as a sequence of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects. Once again, <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> also has an additional batch dimension.</p>
-<p>The <cite>type</cite> of an <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> is a list specifying the multiplicity of each of its parts.
-For example, the following creates a random <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> of type (2,3,1).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span>
-<span class="go">&lt;gelib_torchC.SO3vec object at 0x7f974337bb70&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+          <section id="so3vecarr">
+<h1>SO3vecArr<a class="headerlink" href="#so3vecarr" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> is the arrayed counterpart of the <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> class, and is implemented
+as a container for <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code>s.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">V</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="go">Part l=0:</span>
-<span class="go">  [ (0.289356,1.54426) (-1.34567,1.53707) ]</span>
+<span class="go">  Cell 0:</span>
+<span class="go">    b=0:</span>
+<span class="go">    [ (-1.54773,0.791761) (-1.30844,-0.842669) ]</span>
 
+<span class="go">  Cell 1:</span>
+<span class="go">    b=0:</span>
+<span class="go">    [ (1.23984,-0.0471318) (1.53683,1.60954) ]</span>
 
 <span class="go">Part l=1:</span>
-<span class="go">  [ (-1.01328,-0.592903) (-1.11794,0.749696) (-0.734772,1.43901) ]</span>
-<span class="go">  [ (0.541032,1.58891) (-1.55468,-0.30842) (-0.937764,0.634763) ]</span>
-<span class="go">  [ (0.871103,-0.726917) (0.787215,-1.39109) (2.66829,0.85663) ]</span>
+<span class="go">  Cell 0:</span>
+<span class="go">    b=0:</span>
+<span class="go">    [ (0.189773,-0.604681) (-2.03147,-0.375967) (0.619353,0.56575) ]</span>
+<span class="go">    [ (1.27548,-0.779701) (0.629226,0.97066) (0.976206,-0.80736) ]</span>
+<span class="go">    [ (1.40571,-1.66759) (1.32376,1.10554) (0.52586,-1.21399) ]</span>
 
-
-<span class="go">Part l=2:</span>
-<span class="go">  [ (-0.440433,-0.919034) (-0.700111,-0.901544) (1.29377,-0.482789) (-1.26476,-1.61195) (-1.42624,-0.967444) ]</span>
-</pre></div>
-</div>
-<p>The type of an SO(3)-vector can be accessed as follows.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">tau</span><span class="p">()</span>
-<span class="go">[2, 3, 1]</span>
-</pre></div>
-</div>
-<p>The invidual parts are stored in the <code class="docutils literal notranslate"><span class="pre">parts</span></code> member variable</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="go">  [ (-1.01328,-0.592903) (-1.11794,0.749696) (-0.734772,1.43901) ]</span>
-<span class="go">  [ (0.541032,1.58891) (-1.55468,-0.30842) (-0.937764,0.634763) ]</span>
-<span class="go">  [ (0.871103,-0.726917) (0.787215,-1.39109) (2.66829,0.85663) ]</span>
-</pre></div>
-</div>
-<section id="clebsch-gordan-products">
-<h2>Clebsch-Gordan products<a class="headerlink" href="#clebsch-gordan-products" title="Permalink to this headline">¶</a></h2>
-<p>The Clebsch-Gordan product of two SO3-vectors is computed as follows.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
-<span class="go">Part l=0:</span>
-<span class="go">  [ (0.800454,-2.72231) (0.387997,-2.21325) ]</span>
-
-<span class="go">Part l=1:</span>
-<span class="go">  [ (-1.08378,0.166964) (-1.13947,1.02458) (-0.979756,-0.170846) ]</span>
-<span class="go">  [ (-3.14667,-0.020229) (-1.60544,-0.595765) (-0.658927,1.13758) ]</span>
-<span class="go">  [ (0.573493,3.50629) (0.609701,-0.290724) (-1.86063,-0.256204) ]</span>
+<span class="go">  Cell 1:</span>
+<span class="go">    b=0:</span>
+<span class="go">    [ (0.389455,-0.318111) (0.016479,-1.42888) (-1.47148,-1.87724) ]</span>
+<span class="go">    [ (0.192823,-0.0554222) (-0.0672602,1.65099) (-0.494491,0.653922) ]</span>
+<span class="go">    [ (-0.249746,-0.046428) (0.594792,1.33931) (-0.517978,1.09566) ]</span>
 
 <span class="go">Part l=2:</span>
-<span class="go">  [ (0.545523,0.23039) ]</span>
-<span class="go">  [ (1.0578,1.10345) ]</span>
-<span class="go">  [ (0.098245,0.754121) ]</span>
-<span class="go">  [ (1.15855,-0.537074) ]</span>
-<span class="go">  [ (-0.530323,0.658823) ]</span>
+<span class="go">  Cell 0:</span>
+<span class="go">    b=0:</span>
+<span class="go">    [ (-0.113617,1.37542) ]</span>
+<span class="go">    [ (-1.16449,0.77675) ]</span>
+<span class="go">    [ (1.50886,-0.464856) ]</span>
+<span class="go">    [ (-0.419393,-0.0931594) ]</span>
+<span class="go">    [ (-0.891478,-1.27052) ]</span>
+
+<span class="go">  Cell 1:</span>
+<span class="go">    b=0:</span>
+<span class="go">    [ (0.918377,1.77636) ]</span>
+<span class="go">    [ (0.504464,-0.312943) ]</span>
+<span class="go">    [ (-0.653111,0.369633) ]</span>
+<span class="go">    [ (2.10631,-1.49437) ]</span>
+<span class="go">    [ (1.05195,-1.24125) ]</span>
 </pre></div>
 </div>
-</section>
-<section id="gpu-operations">
-<h2>GPU operations<a class="headerlink" href="#gpu-operations" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects can be can moved back and forth between the host (CPU) and the GPU
-the same way as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span><span class="p">)</span> <span class="c1"># Create a copy of A on the first GPU (GPU0)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">B</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="s1">'cpu'</span><span class="p">)</span> <span class="c1"># Move B back to the host</span>
-</pre></div>
-</div>
-<p>Similarly to the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> case, operations between GPU-resident <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> s are executed
-on the GPU and the result is placed on the same device.</p>
-</section>
+<p>Similarly to <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code>, <code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> supports the same operations as <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code>, plus some efficient
+reductions and broadcast operations.</p>
 </section>
 
         </article>
@@ -268,7 +244,7 @@ on the GPU and the result is placed on the same device.</p>
               and
               <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
               <a href="https://github.com/pradyunsg/furo">Furo theme</a>. |
-            <a class="muted-link" href="_sources/SO3vecB.rst.txt"
+            <a class="muted-link" href="_sources/SO3vecArr.rst.txt"
                rel="nofollow">
               Show Source
             </a>
@@ -276,28 +252,8 @@ on the GPU and the result is placed on the same device.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            Contents
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">SO3vec</a><ul>
-<li><a class="reference internal" href="#clebsch-gordan-products">Clebsch-Gordan products</a></li>
-<li><a class="reference internal" href="#gpu-operations">GPU operations</a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
