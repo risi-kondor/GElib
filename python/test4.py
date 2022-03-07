@@ -1,6 +1,7 @@
 import torch
 import gelib_base
-import gelib_torchD as gelib
+#import gelib_torchD as gelib
+import gelib 
 
 
 # ---- CG-product ---------------------------------------------------------------------------------------------

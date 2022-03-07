@@ -12,30 +12,18 @@ GElib
 
 .. include:: intro.rst
 
-|
+###########
+SO3 classes
+###########
 
-.. include:: SO3classes.rst
+..
+   include:: SO3classesB.rst
 
-|
+.. include:: SO3elementB.rst
 
-.. include:: SO3element.rst
+.. include:: SO3partB.rst
 
-|
-
-.. include:: SO3type.rst
-
-
-|
-
-.. include:: SO3part.rst
-
-|
-
-.. include:: SO3vec.rst
-
-.. include:: SO3partArray.rst
-
-.. include:: SO3vecArray.rst
+.. include:: SO3vecB.rst
 
 
 
