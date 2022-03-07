@@ -97,7 +97,9 @@ GPU functionality is not fully tested.
 Usage 
 #####
 
-To load the ``gelib`` module in Python, use the command ``import gelib``.
+To load the ``gelib`` module in Python, use the command ``import gelib``. 
+The message ``Starting GElib.`` confirms that `gelib` has successfully started and initialized its 
+static data objects. 
 
 ..
   GElib has two distinct interfaces implemented in two different modules:

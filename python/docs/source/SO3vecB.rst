@@ -4,7 +4,7 @@ SO3vec
 
 
 An ``SO3vec`` object represents a general SO(3)-covariant vector and is stored 
-as a sequence of ``SO3part`` objects. Once again, the ``SO3vec`` class has an additional batch dimension. 
+as a sequence of ``SO3part`` objects. Once again, ``SO3vec`` also has an additional batch dimension. 
 
 The `type` of an ``SO3vec`` is a list specifying the multiplicity of each of its parts. 
 For example, the following creates a random ``SO3vec`` of type (2,3,1). 

@@ -25,6 +25,10 @@ SO3 classes
 
 .. include:: SO3vecB.rst
 
+.. include:: SO3partArr.rst
+
+.. include:: SO3vecArr.rst
+
 
 
 Indices and tables
