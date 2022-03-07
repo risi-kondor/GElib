@@ -6,29 +6,27 @@ GElib is released under the
 `Mozilla public license v.2.0 <https://www.mozilla.org/en-US/MPL/2.0/>`_ 
 and can be downloaded from `https://github.com/risi-kondor/GElib <https://github.com/risi-kondor/GElib>`_.
 
-This document provides documentation for GElib's Python interface. Not all features in the C++ library 
-are available through this interface. The documentation of the C++ API can be found in pdf format 
-in the package's ``doc`` directory.
+This document provides documentation for GElib's PyTorch interface. 
+The PyTorch interface only provides access to a subset of the C++ library's functionality. 
 
-GElib is currently in alpha. Some features described in the following may still be incomplete or untested. 
+GElib is currently in alpha. Some features described below may still be incomplete or untested. 
 
 ########
 Features
 ########
 
 #. Classes to store and manipulate SO(3)-equivariant vectors.
-#. Fast implementation of the Clebsch-Gordan transform on both the CPU and the GPU.
+#. Fast implementation of the Clebsch-Gordan transform for both the CPU and the GPU.
 #. Facilities for operating on arrays of SO(3)-equivariant vectors in parallel, 
-   even in irregular patterns (graphs).
-#. Support for automatic differentiation.
-#. Interoperability with PyTorch. 
+   including in irregular patterns (graphs).
+#. Interoperability with PyTorch's ``autograd`` functionality. 
 
  
 ############
 Installation
 ############
 
-GElib is installed as a PyTorch C++ (or CUDA) extension. Installation requires the following: 
+GElib is installed as a PyTorch C++ (or CUDA) extension and requires the following: 
 
 #. C++14 or higher
 #. PyTorch
@@ -99,18 +97,21 @@ GPU functionality is not fully tested.
 Usage 
 #####
 
-GElib has two distinct interfaces implemented in two different modules:
+To load the ``gelib`` module in Python, use the command ``import gelib``.
 
-#. To use the library *without* PyTorch's autodiff functionality, load the library with ``import gelib_base as gelib``. 
-#. To use the library *with* automatic differentiation, load the library with ``import gelib_torch as gelib``. 
+..
+  GElib has two distinct interfaces implemented in two different modules:
 
-The two modules use identical syntax, therefore the following documentation applies to both. 
-The backend implementation of the two modules however is quite different. 
-``gelib_base`` is just a wrapper for the underlying C++ classes. 
-In contrast, for interoperability with ``torch.autodiff``, 
-``gelib_torch`` 's core classes are Python classes derived from ``torch.tensor``. 
-These Python classes, in turn, call the wrappers implemented in ``gelib_base``.  
-Inevitably, this incurs some performance overhead.  
+  #. To use the library *without* PyTorch's autodiff functionality, load the library with ``import gelib_base as gelib``. 
+  #. To use the library *with* automatic differentiation, load the library with ``import gelib_torch as gelib``. 
+
+  The two modules use identical syntax, therefore the following documentation applies to both. 
+  The backend implementation of the two modules however is quite different. 
+  ``gelib_base`` is just a wrapper for the underlying C++ classes. 
+  In contrast, for interoperability with ``torch.autodiff``, 
+  ``gelib_torch`` 's core classes are Python classes derived from ``torch.tensor``. 
+  These Python classes, in turn, call the wrappers implemented in ``gelib_base``.  
+  Inevitably, this incurs some performance overhead.  
 
 .. 
   Since ``gelib_torch`` is built on ``gelib_base``, the two modules can also be used together.   

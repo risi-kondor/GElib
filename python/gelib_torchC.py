@@ -73,11 +73,32 @@ class SO3part(torch.Tensor):
     ## ---- Access ------------------------------------------------------------------------------------------
 
 
+    def getb(self):
+        return self.size(2)
+
+    def getl(self):
+        return (self.size(1)-1)/2
+
+    def getn(self):
+        return self.size(3)
+
+
     ## ---- Operations --------------------------------------------------------------------------------------
 
 
     def rotate(self,R):
         return SO3part(_SO3partB.view(self).apply(R).torch())
+
+    def apply(self,R):
+        return SO3part(_SO3partB.view(self).apply(R).torch())
+
+
+    ## ---- I/O ----------------------------------------------------------------------------------------------
+
+        
+    def __str__(self):
+        u=_SO3partB.view(self)
+        return u.__str__()
 
 
 
