@@ -1,0 +1,412 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
+
+    <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
+        <title>SO3vecArr - GElib documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=0254c309f5cadf746f1a613e7677379ac9c8cdcd" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=16fb25fabf47304eee183a5e9af80b1ba98259b1" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  body[data-theme="dark"] {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    body:not([data-theme="light"]) {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+</style></head>
+  <body>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" />
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">GElib  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">GElib  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="so3vecarr">
+<h1>SO3vecArr<a class="headerlink" href="#so3vecarr" title="Permalink to this headline">¶</a></h1>
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> is a multidimensional array of <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects.
+On the backend, the <code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> is stored as a list of <code class="docutils literal notranslate"><span class="pre">GElib::SO3partArray</span></code>
+objects, however logically it is accessible as a single array of <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="go">Cell (0,0)</span>
+<span class="go">[ (-1.23974,-0.653697) (-0.407472,-0.645572) ]</span>
+
+
+<span class="go">Cell (0,1)</span>
+<span class="go">[ (-1.50279,0.0436305) (0.570759,-1.11315) ]</span>
+
+
+<span class="go">Cell (1,0)</span>
+<span class="go">[ (-1.13769,0.682072) (-1.22027,-0.711608) ]</span>
+
+
+<span class="go">Cell (1,1)</span>
+<span class="go">[ (-1.20183,0.967431) (-0.399454,-0.438438) ]</span>
+
+
+
+<span class="go">Cell (0,0)</span>
+<span class="go">[ (-0.056168,0.275777) (0.806889,0.904426) ]</span>
+<span class="go">[ (-0.219183,-0.0361725) (0.89997,-0.709382) ]</span>
+<span class="go">[ (0.842292,-0.53226) (-1.56131,-0.502227) ]</span>
+
+
+<span class="go">Cell (0,1)</span>
+<span class="go">[ (0.208035,0.584081) (-1.56208,0.93446) ]</span>
+<span class="go">[ (-0.580622,-0.584194) (-1.7287,-0.410793) ]</span>
+<span class="go">[ (0.612628,-1.36454) (0.183707,-0.0820907) ]</span>
+
+
+<span class="go">Cell (1,0)</span>
+<span class="go">[ (0.961059,-1.04125) (0.759261,-0.580733) ]</span>
+<span class="go">[ (-0.14398,0.778008) (-1.72331,0.775277) ]</span>
+<span class="go">[ (-1.3533,1.23033) (0.766929,-0.253007) ]</span>
+
+
+<span class="go">Cell (1,1)</span>
+<span class="go">[ (-0.815133,0.185932) (0.798354,1.65059) ]</span>
+<span class="go">[ (1.77056,0.611322) (1.05485,-1.55657) ]</span>
+<span class="go">[ (-1.71069,0.500273) (-0.460123,1.38648) ]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">adims</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">get_adims</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">adims</span><span class="p">)</span>
+<span class="go">(2,2)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">type</span><span class="p">())</span>
+<span class="go">(2,2)</span>
+</pre></div>
+</div>
+<section id="access-and-arithmetic">
+<h2>Access and arithmetic<a class="headerlink" href="#access-and-arithmetic" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">A</span><span class="o">+</span><span class="mf">3.0</span><span class="o">*</span><span class="n">B</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">get_cell</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">Part l=0:</span>
+<span class="go">  [ (-1.50279,0.0436305) (0.570759,-1.11315) ]</span>
+
+<span class="go">Part l=1:</span>
+<span class="go">  [ (0.208035,0.584081) (-1.56208,0.93446) ]</span>
+<span class="go">  [ (-0.580622,-0.584194) (-1.7287,-0.410793) ]</span>
+<span class="go">  [ (0.612628,-1.36454) (0.183707,-0.0820907) ]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">v</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="go">Cell (0,0)</span>
+<span class="go">[ (-1.23974,-0.653697) (-0.407472,-0.645572) ]</span>
+
+
+<span class="go">Cell (0,1)</span>
+<span class="go">[ (1,0) (1,0) ]</span>
+
+
+<span class="go">Cell (1,0)</span>
+<span class="go">[ (-1.13769,0.682072) (-1.22027,-0.711608) ]</span>
+
+
+<span class="go">Cell (1,1)</span>
+<span class="go">[ (-1.20183,0.967431) (-0.399454,-0.438438) ]</span>
+
+
+
+<span class="go">Cell (0,0)</span>
+<span class="go">[ (-0.056168,0.275777) (0.806889,0.904426) ]</span>
+<span class="go">[ (-0.219183,-0.0361725) (0.89997,-0.709382) ]</span>
+<span class="go">[ (0.842292,-0.53226) (-1.56131,-0.502227) ]</span>
+
+
+<span class="go">Cell (0,1)</span>
+<span class="go">[ (1,0) (1,0) ]</span>
+<span class="go">[ (1,0) (1,0) ]</span>
+<span class="go">[ (1,0) (1,0) ]</span>
+
+
+<span class="go">Cell (1,0)</span>
+<span class="go">[ (0.961059,-1.04125) (0.759261,-0.580733) ]</span>
+<span class="go">[ (-0.14398,0.778008) (-1.72331,0.775277) ]</span>
+<span class="go">[ (-1.3533,1.23033) (0.766929,-0.253007) ]</span>
+
+
+<span class="go">Cell (1,1)</span>
+<span class="go">[ (-0.815133,0.185932) (0.798354,1.65059) ]</span>
+<span class="go">[ (1.77056,0.611322) (1.05485,-1.55657) ]</span>
+<span class="go">[ (-1.71069,0.500273) (-0.460123,1.38648) ]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">V</span><span class="o">.</span><span class="n">set_part</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="clebsch-gordan-products">
+<h2>Clebsch-Gordan products<a class="headerlink" href="#clebsch-gordan-products" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">U</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">V</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">W</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">U</span><span class="p">,</span><span class="n">V</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+<span class="go">Cell (0)</span>
+<span class="go">[ (-2.53487,-2.85716) (-0.842041,0.952523) ]</span>
+
+
+<span class="go">Cell (1)</span>
+<span class="go">[ (1.23612,0.973937) (-1.97727,3.92508) ]</span>
+
+
+
+<span class="go">Cell (0)</span>
+<span class="go">[ (1.48004,1.58554) (-1.34735,2.85829) (-0.699849,0.153202) ]</span>
+<span class="go">[ (-0.486202,1.5264) (-0.575991,-0.1719) (1.31258,-3.03451) ]</span>
+<span class="go">[ (-2.66264,-3.27904) (-0.45774,2.09977) (1.04869,-0.0477999) ]</span>
+
+
+<span class="go">Cell (1)</span>
+<span class="go">[ (1.41485,-1.10451) (0.168792,0.217207) (2.42314,1.24571) ]</span>
+<span class="go">[ (-1.62579,-3.80459) (-0.200385,3.03817) (0.562456,0.123351) ]</span>
+<span class="go">[ (0.099497,-0.421702) (0.0822673,0.729146) (-0.0375059,-1.04887) ]</span>
+
+
+
+<span class="go">Cell (0)</span>
+<span class="go">[ (0.723803,-1.64195) ]</span>
+<span class="go">[ (1.16576,-0.0268992) ]</span>
+<span class="go">[ (-0.520009,0.972953) ]</span>
+<span class="go">[ (0.160464,-0.355712) ]</span>
+<span class="go">[ (-0.607096,2.29778) ]</span>
+
+
+<span class="go">Cell (1)</span>
+<span class="go">[ (0.286484,-0.127928) ]</span>
+<span class="go">[ (2.2592,0.236154) ]</span>
+<span class="go">[ (3.85525,-5.50227) ]</span>
+<span class="go">[ (1.06791,-1.4773) ]</span>
+<span class="go">[ (0.172447,-0.105246) ]</span>
+</pre></div>
+</div>
+</section>
+<section id="gpu-operations">
+<h2>GPU operations<a class="headerlink" href="#gpu-operations" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> objects can be moved to/from the GPU the same way as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects.
+Similarly to <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code>, operations on <code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> objects are parallelized across cells.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2021, Risi Kondor |
+            Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
+              and
+              <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+              <a href="https://github.com/pradyunsg/furo">Furo theme</a>. |
+            <a class="muted-link" href="_sources/SO3vecArray.rst.txt"
+               rel="nofollow">
+              Show Source
+            </a>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">SO3vecArr</a><ul>
+<li><a class="reference internal" href="#access-and-arithmetic">Access and arithmetic</a></li>
+<li><a class="reference internal" href="#clebsch-gordan-products">Clebsch-Gordan products</a></li>
+<li><a class="reference internal" href="#gpu-operations">GPU operations</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/main.js"></script>
+    </body>
+</html>
