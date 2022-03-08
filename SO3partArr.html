@@ -134,7 +134,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -173,7 +173,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -210,7 +210,30 @@ dimensional PyTorch tensor and supports the same operations as <code class="docu
 natural syntax.
 In some ways, the array dimension can be regarded as an extra batch index.
 The fundamental difference however is that <cite>cnine</cite>’s cell operator functionality allows
-GElib to perform efficient reductions and broadcasting along the array dimension.</p>
+GElib to perform efficient reductions and broadcasting along the array dimension.
+The simplest of these operations is <code class="docutils literal notranslate"><span class="pre">gather</span></code>.</p>
+<section id="gather">
+<h2>Gather<a class="headerlink" href="#gather" title="Permalink to this headline">¶</a></h2>
+<p>Given an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object <code class="docutils literal notranslate"><span class="pre">X</span></code> with array dimension <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg"/> and an <img alt="N\times N" class="math" src="_images/math/49ce981f1e286e4ca0005ce3f441d955c08c30b7.svg"/>
+real matrix <img alt="C" class="math" src="_images/math/e86c6a238f03820c341bcabb7ffb67131f8d38ac.svg"/>, <code class="docutils literal notranslate"><span class="pre">gather</span></code> return an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> in which the <img alt="i" class="math" src="_images/math/4beb4858fd47cbeee3a992f0d65c3bd7dc1464de.svg"/>’th cell is</p>
+<div class="math-wrapper"><div class="math">
+<p><img alt="Y^{(i)}=\sum_{j\::\:c_{i,j}\neq 0} c_{i,j}\,X^{(j)}." src="_images/math/a2d94487361f51adfc63eee840fea45d1b4f8a8b.svg"/></p>
+</div></div><p>Using cnine’s array functionality, GElib can efficiently parallelize this operation on the GPU,
+even when the number of terms in the sum for different values of <img alt="i" class="math" src="_images/math/4beb4858fd47cbeee3a992f0d65c3bd7dc1464de.svg"/> is different.</p>
+<p>Invoking this functionality requires defining <code class="docutils literal notranslate"><span class="pre">C</span></code> as a single precision PyTorch tensor
+and constructing the corresponding <code class="docutils literal notranslate"><span class="pre">cnine.Rmask1</span></code> object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cnine</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">);</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span><span class="o">=</span><span class="n">cnine</span><span class="o">.</span><span class="n">Rmask1</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The gather operation is then called as</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Y</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Naturally, <code class="docutils literal notranslate"><span class="pre">gather</span></code> is a differentiable operation.</p>
+</section>
 </section>
 
         </article>
@@ -236,8 +259,27 @@ GElib to perform efficient reductions and broadcasting along the array dimension
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">SO3partArr</a><ul>
+<li><a class="reference internal" href="#gather">Gather</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
