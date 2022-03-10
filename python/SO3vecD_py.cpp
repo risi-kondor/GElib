@@ -46,6 +46,8 @@ py::class_<SO3vecD>(m,"SO3vecD",
   .def("addCGproduct_back0",&SO3vecD::add_CGproduct_back0,py::arg("g"),py::arg("y"))
   .def("addCGproduct_back1",&SO3vecD::add_CGproduct_back1,py::arg("g"),py::arg("x"))
 
+  .def("gather",&SO3vecD::add_gather,py::arg("x"),py::arg("mask"))
+
   .def("device",&SO3vecD::get_device)
   .def("to",&SO3vecD::to_device)
   .def("to_device",&SO3vecD::to_device)

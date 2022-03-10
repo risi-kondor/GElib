@@ -138,7 +138,7 @@ namespace GElib{
 
   public: // ---- Operations ---------------------------------------------------------------------------------
 
-k
+
     //SO3partC operator-(const SO3partC& y) const{
     //return (*this)-y;
     //}

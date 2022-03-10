@@ -1,7 +1,8 @@
+
 // This file is part of GElib, a C++/CUDA library for group
 // equivariant tensor operations. 
 // 
-// Copyright (c) 2022s, Imre Risi Kondor
+// Copyright (c) 2022, Imre Risi Kondor
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -13,14 +14,10 @@
 
 #include <cuda.h>
 #include <cuda_runtime.h>
-//#include <thrust/complex.h>
-//#include <thrust/tuple.h>
 
 #include "SO3_CGbank.hpp"
 #include "Ctensor2_view.hpp"
 #include "Ctensor3_view.hpp"
-
-//__device__ __constant__ unsigned char cg_cmem[32276]; 
 
 extern GElib::SO3_CGbank SO3_cgbank;
 
@@ -226,39 +223,6 @@ __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor3_view r, const
 
 namespace GElib{
 
-  void SO3partB_addCGproduct_cu(cnine::Ctensor2_view r, const cnine::Ctensor2_view& x, const cnine::Ctensor2_view& y, 
-    const cudaStream_t& stream, const int offs=0){
-
-    const int xl=(x.n0-1)/2;
-    const int yl=(y.n0-1)/2;
-    const int l=(r.n0-1)/2;
-    r.arr+=r.s1*offs;
-    r.arrc+=r.s1*offs;
-    //int rn1=r.n1;
-    r.n1=x.n1*y.n1;
-
-    int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
-
-    int nlines=cnine::roundup(x.n0*x.n1*2,32)/32+
-      cnine::roundup(y.n0*y.n1*2,32)/32+
-      cnine::roundup(r.n0*x.n1*y.n1*2,32)/32;
-
-
-    if(nlines<=384){
-
-      SO3partB_addCGproduct_kernel<<<1,cnine::roundup(x.n1*y.n1,32),nlines*128,stream>>>
-	(r,x,y,Cptr);
-
-    }else{
-      cout<<"error"<<endl;
-    }
-
-    //r.arr-=r.s1*offs;
-    //r.arrc-=r.s1*offs;
-    //r.n1=rn1;
-
-  }    
-
 
   void SO3partB_addCGproduct_cu(cnine::Ctensor3_view r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
     const int offs, const cudaStream_t& stream){
@@ -292,10 +256,6 @@ namespace GElib{
     }else{
       cout<<"error"<<endl;
     }
-
-    //r.arr-=r.s1*offs;
-    //r.arrc-=r.s1*offs;
-    //r.n1=rn1;
 
   }    
 
@@ -351,4 +311,33 @@ namespace GElib{
       }
     }
   }
+  */
+  /*
+  void SO3partB_addCGproduct_cu(cnine::Ctensor2_view r, const cnine::Ctensor2_view& x, const cnine::Ctensor2_view& y, 
+    const cudaStream_t& stream, const int offs=0){
+
+    const int xl=(x.n0-1)/2;
+    const int yl=(y.n0-1)/2;
+    const int l=(r.n0-1)/2;
+    r.arr+=r.s1*offs;
+    r.arrc+=r.s1*offs;
+    //int rn1=r.n1;
+    r.n1=x.n1*y.n1;
+
+    int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
+
+    int nlines=cnine::roundup(x.n0*x.n1*2,32)/32+
+      cnine::roundup(y.n0*y.n1*2,32)/32+
+      cnine::roundup(r.n0*x.n1*y.n1*2,32)/32;
+
+
+    if(nlines<=384){
+
+      SO3partB_addCGproduct_kernel<<<1,cnine::roundup(x.n1*y.n1,32),nlines*128,stream>>>
+	(r,x,y,Cptr);
+
+    }else{
+      cout<<"error"<<endl;
+    }
+  }    
   */

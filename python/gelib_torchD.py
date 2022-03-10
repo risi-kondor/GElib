@@ -81,6 +81,14 @@ class SO3partArr(torch.Tensor):
     def rotate(self,R):
         return SO3partArr(_SO3partD.view(self).apply(R).torch())
 
+
+    def gather(self,_mask):
+        """
+        Gather the elements of this SO3partArr into a new SO3partArr according to the mask
+        """
+        return SO3partArr(SO3partArr_GatherFn.apply(_mask,self))
+
+
     ## ---- I/O ----------------------------------------------------------------------------------------------
 
         
@@ -182,6 +190,15 @@ class SO3vecArr:
             r.parts.append(self.parts[l].rotate(R))
         return r
 
+
+    def gather(self,_mask):
+        """
+        Gather the elements of this SO3vecArr into a new SO3vecArr according to the mask
+        """
+        r=SO3vecArr()
+        r.parts=list(SO3vecArr_GatherFn.apply(_mask,*(self.parts)))
+        return r
+        
         
     ## ---- Products -----------------------------------------------------------------------------------------
 
@@ -421,5 +438,76 @@ class SO3vec_FmodsqFn(torch.autograd.Function): #todo
         _xg.addFproduct_back1(_g,_x)
 
         return tuple(grads)
+
+
+
+class SO3partArr_GatherFn(torch.autograd.Function): 
+
+    @staticmethod
+    def forward(ctx,_mask,x):
+
+        ctx.mask=_mask
+        N=x.size(0)
+        b=x.size(1)
+        l=int((x.size(2)-1)/2)
+        n=x.size(3)
+        dev=int(x.is_cuda)
+        r=SO3partArr.zeros(N,b,l,n,dev)
+        
+        _x=_SO3partD.view(x)
+        _r=_SO3partD.view(r)
+        _r.gather(_x,_mask)
+
+        return r
+
+    @staticmethod
+    def backward(ctx,yg):
+
+        N=yg.size(0)
+        b=yg.size(1)
+        l=int((y.size(2)-1)/2)
+        n=y.size(3)
+        dev=int(y.is_cuda)
+        r=MakeZeroSO3partArrs(N,b,l,n,dev)
+
+        _x=_SO3partD.view(args)
+        _r=_SO3partD.view(r)
+        _r.gather(_x,ctx.mask.inv())
+
+        return tuple([None]+r)
+
+
+class SO3vecArr_GatherFn(torch.autograd.Function): 
+
+    @staticmethod
+    def forward(ctx,*args):
+
+        ctx.mask=args[0]
+        N=args[1].size(0)
+        b=args[1].size(1)
+        tau=tau_type(args[1:])
+        dev=int(args[1].is_cuda)
+        r=MakeZeroSO3partArrs(N,b,tau,dev)
+        
+        _x=_SO3vecD.view(args[1:])
+        _r=_SO3vecD.view(r)
+        _r.gather(_x,args[0])
+
+        return tuple(r)
+
+    @staticmethod
+    def backward(ctx,*args):
+
+        N=args[0].size(0)
+        b=args[0].size(1)
+        tau=tau_type(args)
+        dev=int(args[0].is_cuda)
+        r=MakeZeroSO3partArrs(N,b,tau,dev)
+
+        _x=_SO3vecD.view(args)
+        _r=_SO3vecD.view(r)
+        _r.gather(_x,ctx.mask.inv())
+
+        return tuple([None]+r)
 
 

@@ -172,6 +172,7 @@ namespace GElib{
     }
 
 
+
     // ---- Rotations ----------------------------------------------------------------------------------------
 
 
@@ -184,6 +185,16 @@ namespace GElib{
     }
 
     
+    // ---- Cumulative Operations -----------------------------------------------------------------------------
+
+
+    void add_gather(const SO3vecD& x, const cnine::Rmask1& mask){
+      assert(parts.size()==x.parts.size());
+      for(int l=0; l<parts.size(); l++)
+	parts[l]->add_gather(*x.parts[l],mask);
+    }
+
+
     // ---- CG-products ---------------------------------------------------------------------------------------
 
 

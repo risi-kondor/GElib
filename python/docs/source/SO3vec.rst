@@ -145,6 +145,8 @@ The Clebsch-Gordan product of two SO3-vectors is computed as follows.
    [ (-0.530323,0.658823) ]
 
 
+The Clebsch--Gordan product is a differentiable operation and GElib supports backpropagating 
+gradients through it. 
 
 
 ==============

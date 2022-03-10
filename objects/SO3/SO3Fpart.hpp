@@ -17,13 +17,6 @@
 #include "SO3Fpart_addFproduct_Fn.hpp"
 #include "SO3Fpart_addFproduct_back0Fn.hpp"
 #include "SO3Fpart_addFproduct_back1Fn.hpp"
-//#include "SO3Fpart_addFmodsq_Fn.hpp"
-//#include "SO3Fpart_addFmodsq_back0Fn.hpp"
-//#include "SO3Fpart_addFmodsq_back1Fn.hpp"
-//#include "SO3_CGbank.hpp"
-//#include "SO3_SPHgen.hpp"
-//#include "SO3element.hpp"
-//#include "WignerMatrix.hpp"
 
 extern GElib::SO3_CGbank SO3_cgbank;
 extern GElib::SO3_SPHgen SO3_sphGen;
@@ -105,7 +98,41 @@ namespace GElib{
   public: // ---- CG-products --------------------------------------------------------------------------------
 
 
-    void add_FourierSpaceProduct(const SO3Fpart& x, const SO3Fpart& y){
+
+
+    void add_Fproduct(const SO3Fpart& x, const SO3Fpart& y){
+      SO3Fpart_addFproduct_Fn()(*this,v,x,y);
+    }
+
+    void add_Fproduct_back0(const SO3Fpart& g, const SO3Fpart& y){
+      SO3Fpart_addFproduct_back0Fn()(*this,v,g,y);
+    }
+
+    void add_Fproduct_back1(const SO3Fpart& g, const SO3Fpart& x){
+      SO3Fpart_addFproduct_back0Fn()(*this,v,g,x);
+    }
+
+
+  };
+
+
+  // ---------------------------------------------------------------------------------------------------------
+
+
+  const SO3Fpart& as_SO3Fpart(const SO3partB& x){
+    return static_cast<const SO3Fpart&>(x);
+  }
+
+  SO3Fpart& as_SO3Fpart(SO3partB& x){
+    return static_cast<SO3Fpart&>(x);
+  }
+
+}
+
+#endif
+
+
+    //void add_FourierSpaceProduct(const SO3Fpart& x, const SO3Fpart& y){
 
       /*
       SO3part buf=SO3Fpart::CGproduct(x,y,getl());
@@ -146,36 +173,4 @@ namespace GElib{
       }
       */
 
-    }
-
-
-    void add_Fproduct(const SO3Fpart& x, const SO3Fpart& y){
-      auto v=this->view();
-      SO3Fpart_addFproduct_Fn()(v,x,y);
-    }
-
-    void add_Fproduct_back0(const SO3Fpart& g, const SO3Fpart& y){
-      auto v=this->view();
-      SO3Fpart_addFproduct_back0Fn()(v,g,y);
-    }
-
-    void add_Fproduct_back1(const SO3Fpart& g, const SO3Fpart& x){
-      auto v=this->view();
-      SO3Fpart_addFproduct_back0Fn()(v,g,x);
-    }
-
-
-  };
-
-
-  const SO3Fpart& as_SO3Fpart(const SO3partB& x){
-    return static_cast<const SO3Fpart&>(x);
-  }
-
-  SO3Fpart& as_SO3Fpart(SO3partB& x){
-    return static_cast<SO3Fpart&>(x);
-  }
-
-}
-
-#endif
+    //}
