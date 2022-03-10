@@ -160,18 +160,15 @@ namespace GElib{
 
 
     void add_CGproduct(const SO3partB& x, const SO3partB& y, const int _offs=0){
-      auto v=this->view();
-      SO3part_addCGproductFn()(v,x,y,_offs);
+      SO3part_addCGproductFn()(*this,x,y,_offs);
     }
 
     void add_CGproduct_back0(const SO3partB& g, const SO3partB& y, const int _offs=0){
-      auto v=this->view();
-      SO3part_addCGproduct_back0Fn()(v,g,y,_offs);
+      SO3part_addCGproduct_back0Fn()(*this,g,y,_offs);
     }
 
     void add_CGproduct_back1(const SO3partB& g, const SO3partB& x, const int _offs=0){
-      auto v=this->view();
-      SO3part_addCGproduct_back1Fn()(v,g,x,_offs);
+      SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
     }
 
   };

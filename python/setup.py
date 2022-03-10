@@ -10,7 +10,7 @@ import time
 
 # --- User settings ------------------------------------------------------------------------------------------
 
-compile_with_cuda=True
+compile_with_cuda=False 
 
 copy_warnings=True
 torch_convert_warnings=True 
@@ -31,13 +31,14 @@ _include_dirs=[cwd+'/../../cnine/include',
                cwd+'/../combinatorial',
                cwd+'/../objects/SO3',
                cwd+'/../objects/SO3/cell_ops'
+               cwd+'/../objects/SO3/functions'
                ]
 
 _cxx_compile_args=['-std=c++14',
                   '-Wno-sign-compare',
                   '-Wno-deprecated-declarations',
                   '-Wno-unused-variable',
-                  '-Wno-unused-but-set-variable',
+                  #'-Wno-unused-but-set-variable',
                   '-Wno-reorder',
                   '-Wno-reorder-ctor',
                   '-Wno-overloaded-virtual',
@@ -87,6 +88,7 @@ if compile_with_cuda:
     setup(name='gelib_base',
           ext_modules=[CUDAExtension('gelib_base', [ 
           '../../cnine/include/Cnine_base.cu',
+          '../../cnine/cuda/TensorView_accumulators.cu',
           '../cuda/SO3CGproducts_combined.cu',
           #'../cuda/GElib_base.cu',
           #'../cuda/SO3partA_CGproduct.cu',

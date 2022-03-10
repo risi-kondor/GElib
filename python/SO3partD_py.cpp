@@ -51,6 +51,8 @@ py::class_<SO3partD>(m,"SO3partD",
 
   .def("apply",&SO3partD::rotate)
 
+  .def("gather",&SO3partD::add_gather,py::arg("x"),py::arg("mask"))
+
   .def("device",&SO3partD::get_device)
   .def("to",&SO3partD::to_device)
   .def("to_device",&SO3partD::to_device)

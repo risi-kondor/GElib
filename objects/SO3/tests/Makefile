@@ -1,7 +1,7 @@
 ROOTDIR=../../..
 include $(ROOTDIR)/common.txt
 
-INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops  
+INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions   
 
 TESTS= testSO3part testSO3part2 testSO3part_CGproduct_covariance\
 testSO3vec testSO3vec2 testSO3vec3 \

@@ -10,12 +10,13 @@ typedef CtensorB ctensor;
 
 
 int main(int argc, char** argv){
-  GElibSession session;
+  GElibSession session(4);
   cout<<endl;
 
+  const int B=2;
 
-  SO3partB u=SO3partB::gaussian(1,2,2);
-  SO3partB v=SO3partB::gaussian(1,2,2);
+  SO3partB u=SO3partB::gaussian(B,2,2);
+  SO3partB v=SO3partB::gaussian(B,2,2);
   printl("u",u)<<endl;
   printl("v",v)<<endl;
 

@@ -17,8 +17,6 @@
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
 #include "SO3part_addCGproduct_back1Fn.hpp"
-//#include "SO3_CGbank.hpp"
-//#include "SO3_SPHgen.hpp"
 #include "SO3element.hpp"
 #include "WignerMatrix.hpp"
 
@@ -179,6 +177,15 @@ namespace GElib{
       }
 
       return R;
+    }
+
+
+
+  public: // ---- Cumulative Operations ----------------------------------------------------------------------
+
+
+    void add_gather(const SO3partD& x, const cnine::Rmask1& mask){
+      CtensorB::add_gather(x,mask);
     }
 
 
