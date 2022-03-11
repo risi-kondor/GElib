@@ -101,15 +101,15 @@ namespace GElib{
 
 
     void add_Fproduct(const SO3Fpart& x, const SO3Fpart& y){
-      SO3Fpart_addFproduct_Fn()(*this,v,x,y);
+      SO3Fpart_addFproduct_Fn()(*this,x,y);
     }
 
     void add_Fproduct_back0(const SO3Fpart& g, const SO3Fpart& y){
-      SO3Fpart_addFproduct_back0Fn()(*this,v,g,y);
+      SO3Fpart_addFproduct_back0Fn()(*this,g,y);
     }
 
     void add_Fproduct_back1(const SO3Fpart& g, const SO3Fpart& x){
-      SO3Fpart_addFproduct_back0Fn()(*this,v,g,x);
+      SO3Fpart_addFproduct_back0Fn()(*this,g,x);
     }
 
 
