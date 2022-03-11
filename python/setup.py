@@ -30,7 +30,7 @@ _include_dirs=[cwd+'/../../cnine/include',
                cwd+'/../include',
                cwd+'/../combinatorial',
                cwd+'/../objects/SO3',
-               cwd+'/../objects/SO3/cell_ops'
+               cwd+'/../objects/SO3/cell_ops',
                cwd+'/../objects/SO3/functions'
                ]
 

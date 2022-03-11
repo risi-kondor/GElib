@@ -41,17 +41,15 @@ namespace GElib{
       const int N1=_xg.n2;
       const int N2=_y.n2;
       const int B=_xg.n0;
-
       const int dev=_g.dev;
-      assert(_xg.dev==dev);
-      assert(_y.dev==dev);
 
-      assert(_y.n0==B);
-      assert(_g.n0==B);
+      CNINE_CHECK_DEV3(_xg,_g,_y);
+      CNINE_CHECK_BATCH3(_xg,_g,_y);
+      GELIB_CHECK(_offs+N1*N2<=_g.n2,"channel index out of range");
+      GELIB_CHECK((l>=abs(l1-l2) && l<=l1+l2),"l index out of range");
+	
       assert(_offs+N1*N2<=_g.n2);
       assert(l>=abs(l1-l2) && l<=l1+l2);
-
-      //cout<<l1<<l2<<l<<B<<endl;
 
       if(dev==0){
 	
