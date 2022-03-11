@@ -40,13 +40,11 @@ namespace GElib{
       const int N1=_x.n2;
       const int N2=_yg.n2;
       const int B=_x.n0;
-
       const int dev=_g.dev;
-      assert(_x.dev==dev);
-      assert(_yg.dev==dev);
 
-      assert(_yg.n0==B);
-      assert(_g.n0==B);
+      CNINE_CHECK_DEV3(_yg,_g,_x);
+      CNINE_CHECK_BATCH3(_yg,_g,_x);
+
       assert(_offs+N1*N2<=_g.n2);
       assert(l>=abs(l1-l2) && l<=l1+l2);
 

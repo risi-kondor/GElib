@@ -37,7 +37,7 @@ To install GElib follow these steps:
 #. Download the `cnine <https://github.com/risi-kondor/cnine>`_  library and install it on your system. 
 #. Download `GElib <https://github.com/risi-kondor/GElib>`_. 
 #. Edit the user configurable variables in ``python/setup.py`` as necessary. 
-#. Run ``python setup.sty install`` in the ``python`` directory to compile the package and install it on your system.
+#. Run ``python setup.py install`` in the ``python`` directory to compile the package and install it on your system.
 
 #############
 Configuration
