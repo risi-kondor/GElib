@@ -50,8 +50,7 @@ __device__ int loadg(const cnine::Ctensor3_view& x, float* dest, const int b, co
   int J=x.n2;
   int s1=x.s1;
   int s2=x.s2;
-  int offs=I*J;
-  float* destc=dest+offs;
+  float* destc=dest+I*J;
   float* source=x.arr+x.s0*b;
   float* sourcec=x.arrc+x.s0*b;
   if(t<J){
@@ -60,26 +59,27 @@ __device__ int loadg(const cnine::Ctensor3_view& x, float* dest, const int b, co
     for(int i=0; i<I; i++)
       destc[i*J+t]=sourcec[i*s1+t*s2];
   }
-  return offs;
+  return I*J;
 }
 
 
 // Load n fragments from x to dest 
 // assumption: number of threads is at least n
-__device__ int loadg_tile(float* dest, const cnine::Ctensor4_view& x, const int n, const int b, const int tile){
+__device__ int loadg(float* dest, const cnine::Ctensor4_view& x, const int b, const int i, const int n){
   int I=x.n1;
+  int J=x.n3;
   int s1=x.s1;
   int s3=x.s3;
-  float* destc=dest+I*n;
-  float* source=x.arr+x.s0*b+tile*x.s2;
-  float* sourcec=x.arrc+x.s0*b+tile*x.s2;
+  float* destc=dest+I*J;
+  float* source=x.arr+x.s0*b+i*x.s2;
+  float* sourcec=x.arrc+x.s0*b+i*x.s2;
   if(tix<n){
     for(int i=0; i<I; i++)
-      dest[i*n+tix]=source[i*s1+tix*s3];
+      dest[i*J+tix]=source[i*s1+tix*s3];
     for(int i=0; i<I; i++)
-      destc[i*n+tix]=sourcec[i*s1+tix*s3];
+      destc[i*J+tix]=sourcec[i*s1+tix*s3];
   }
-  return I*n;
+  return I*J;
 }
 
 

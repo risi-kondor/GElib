@@ -4,6 +4,8 @@ include $(ROOTDIR)/common.txt
 INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions   
 
 TESTS= testSO3partB testSO3partB_covariance testSO3vecB testSO3vecB_covariance testSO3vecB_gradient \
+timeSO3CG
+
 #testSO3Fvec testSO3Fvec_covariance testSO3Fvec_Fmodsq
 
 ifdef WITH_CUDA
@@ -70,6 +72,16 @@ ifdef WITH_CUDA
 else
 	$(CC) -o testSO3vecB_gradient testSO3vecB_gradient.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
 endif
+
+timeSO3CG: timeSO3CG.cpp $(DEPS) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o timeSO3CG timeSO3CG.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o timeSO3CG timeSO3CG.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+endif
+
+
+
 
 
 testSO3Fvec: testSO3Fvec.cpp $(DEPS) 
