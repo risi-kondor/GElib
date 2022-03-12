@@ -27,8 +27,8 @@ py::class_<SO3partB>(m,"SO3partB",
       return SO3partB::gaussian(b,l,n,dev);}, 
     py::arg("b"), py::arg("l"), py::arg("n")=1, py::arg("device")=0)
 
-//.def_static("spharm",[](const int l, const vector<float> v){
-//    return SO3part::spharm(l,1,cnine::Gtensor<float>(v));})
+//  .def_static("spharm",[](const int l, const vector<float> v){
+//      return SO3partB::spharm(l,1,cnine::Gtensor<float>(v));})
 //  .def_static("spharm",[](const int l, const cnine::RtensorObj v){
 //    return SO3part::spharm(l,1,v.gtensor());})
 
@@ -47,6 +47,8 @@ py::class_<SO3partB>(m,"SO3partB",
 //      return obj.get_value(v[0],v[1]);})
 //  .def("__setitem__",[](SO3part& obj, const vector<int> v, const complex<float> x){
 //      obj.set_value(v[0],v[1],x);})
+
+  .def("add_spharm",&SO3partB::add_spharm)
 
   .def("apply",&SO3partB::rotate)
 
