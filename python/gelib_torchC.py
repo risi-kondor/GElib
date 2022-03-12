@@ -48,11 +48,11 @@ class SO3part(torch.Tensor):
 
 
     @staticmethod
-    def spharm(b,l,n,x,y,z,_dev=0):
+    def spharm(l,x,y,z,_dev=0):
         """
         Return the spherical harmonics of the vector (x,y,z)
         """
-        R=SO3part.zeros(b,l,n)
+        R=SO3part.zeros(1,l,1)
         _SO3partB.view(R).add_spharm(x,y,z)
         if _dev>0: return R.cuda()
         return R
