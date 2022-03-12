@@ -45,7 +45,7 @@ namespace GElib{
 
       CNINE_CHECK_DEV3(_xg,_g,_y);
       CNINE_CHECK_BATCH3(_xg,_g,_y);
-      GELIB_CHECK(_offs+N1*N2<=_g.n2,"channel index out of range");
+      GELIB_CHECK((_offs+N1*N2<=_g.n2),"channel index out of range");
       GELIB_CHECK((l>=abs(l1-l2) && l<=l1+l2),"l index out of range");
 	
       assert(_offs+N1*N2<=_g.n2);
