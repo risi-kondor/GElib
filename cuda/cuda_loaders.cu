@@ -15,13 +15,13 @@
 #include <cuda_runtime.h>
 #include "Ctensor3_view.hpp"
 
-
-__forceinline__ __device__ unsigned dynamic_smem_size()
-{
+/*
+__forceinline__ __device__ unsigned dynamic_smem_size(){
     unsigned ret; 
     asm volatile ("mov.u32 %0, %dynamic_smem_size;" : "=r"(ret));
     return ret;
-
+}
+*/
 
 __device__ void loadf(float* dest, const float* src, const int n, const int t){
   int nthreads=blockDims.x;

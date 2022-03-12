@@ -88,6 +88,85 @@ __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor3_view r, const
 }
 
 
+__global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r, const cnine::Ctensor4_view x, 
+  const cnine::Ctensor4_view y, const int Cptr, const bool preloadCG){
+
+  extern __shared__ unsigned char _shared[]; 
+  const int b=blockIdx.x;
+  //const int I=blockIdx.y;
+  //const int J=blockIdx.z;
+  const int t=threadIdx.x;
+
+  int l1=(x.n1-1)/2;
+  int l2=(y.n1-1)/2;
+  int l=(r.n1-1)/2;
+  int xn=x.n3;
+  int yn=y.n3;
+  int rn=xn*yn;
+  int L2=y.n1;
+
+  float* cptr;
+  float* xpr;
+  if(preloadCG){
+    cptr=reinterpret_cast<float*>(_shared);
+    xptr=cptr+((x.n1*y.n1-1)/32+1)*32;
+    loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n1*y.n1,t);
+  }else{
+    cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
+    xpr=reinterpret_cast<float*>(_shared);
+  }
+  float* xpi=xpr+x.n1*x.n3;
+  float* ypr=xpr+((2*x.n1*x.n3-1)/32+1)*32;
+  float* ypi=ypr+y.n2*y.n3;
+
+  int xs1=x.s1;
+  int ys1=y.s1;
+  int rs1=r.s1;
+
+  for(int i=0; i<x.n2; i++){
+    loadg_tile(xpr,x,b,i);
+
+    for(int j=0; i<y.n2; j++){
+      loadg_tile(ypr,y,b,j);
+
+      __syncthreads();
+
+      if(t<xn*yn){
+
+	float* _xpr=xpr+t/yn;
+	float* _xpi=xpi+t/yn;
+    
+	float* _ypr=ypr+t%yn;
+	float* _ypi=ypi+t%yn;
+    
+	float* _rpr=r.arr+r.s0*b+r.s2*(i*y.n2+j)+r.s3*t;
+	float* _rpi=r.arrc+r.s0*b+r.s2*(i*y.n2+j)+r.s3*t;
+
+	for(int m=-l; m<=l; m++){
+	  float r_r=0;
+	  float r_i=0;
+	  int lower=max(-l1,m-l2);
+	  int upper=min(l1,m+l2);
+	  for(int m1=lower; m1<=upper; m1++){
+	    float m2=m-m1;
+	    float c=cptr[(m1+l1)*L2+m2+l2];
+	    const float x_r=xpr[xs1*(m1+l1)];
+	    const float x_i=xpi[xs1*(m1+l1)];
+	    const float y_r=ypr[ys1*(m2+l2)];
+	    const float y_i=ypi[ys1*(m2+l2)];
+	    r_r+=c*(x_r*y_r-x_i*y_i); 
+	    r_i+=c*(x_r*y_i+x_i*y_r);
+	  }
+	  _rpr[rs1*(m1+m2+l)]+=r_r;
+	  _rpi[rs1*(m1+m2+l)]+=r_i;
+	}
+      }
+    }
+  }
+
+}
+
+
 namespace GElib{
 
 
@@ -102,8 +181,7 @@ namespace GElib{
     r.arr+=r.s2*offs;
     r.arrc+=r.s2*offs;
     r.n2=x.n2*y.n2;
-
-    GELIB_CHECK(x.n2*y.n2<=1024,"Number of ouput channels can be at most 1024.")
+    //GELIB_CHECK(x.n2*y.n2<=1024,"Number of ouput channels can be at most 1024.")
 
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
     int nlines=cnine::roundup(x.n1*x.n2*2,32)/32+
@@ -111,12 +189,25 @@ namespace GElib{
       cnine::roundup(r.n1*x.n2*y.n2*2,32)/32;
     int clines=cnine::roundup(x.n1*y.n1,32)/32;
 
-    if(nlines<=384){
-      SO3partB_addCGproduct_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
-	(r,x,y,Cptr,nlines+clines<384);
-      return;
-    }
+    //if(nlines<=384){
+    //bool preloadCG=(nlines+clines<=384);
+    //SO3partB_addCGproduct_kernel<<<b,cnine::roundup(x.n2*y.n2,32),(nlines+preloadC*clines)*128,stream>>>
+    //(r,x,y,Cptr,preloadCG);
+    //return;
+    //}
 
+    const int xn=std::min(x.n2,32);
+    const int yn=std::min(y.n2,32);
+
+    cnine::Ctensor3_view xtiled=split2(x,xn);
+    cnine::Ctensor3_view ytiled=split2(y,yn);
+    cnine::Ctensor3_view rtiled=split2(y,xn*yn);
+
+
+    SO3partB_addCGproduct_tiled_kernel<<<b,cnine::roundup(x.n2*y.n2,32),(nlines+preloadC*clines)*128,stream>>>
+      (r,x,y,Cptr,preloadCG);
+
+    //make CtensorView4
     cout<<"error"<<endl;
 
   }    
