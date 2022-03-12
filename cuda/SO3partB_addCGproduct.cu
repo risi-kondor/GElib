@@ -49,7 +49,6 @@ __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor3_view r, const
 
   float* cptr;
   const float C_ptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
-  //if((2*x.n1*xn-1)/32+1)+(2*y.n1*yn-1)/32+1)+((2*r.n1*rn-1)/32+1)+((x.n1*y.n1)/32+1)<=384){
   if(preloadCG){
     cptr=rpr+((2*r.n1*rn-1)/32+1)*32;
     loadf(cptr,C_ptr,x.n1*y.n1,t);
@@ -88,21 +87,16 @@ __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor3_view r, const
 }
 
 
-/*
-__global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r, const cnine::Ctensor4_view x, 
-  const cnine::Ctensor4_view y, const int Cptr, const bool preloadCG){
+__global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor3_view_t2 r, const cnine::Ctensor3_view_t2 x, 
+  const cnine::Ctensor3_view_t2 y, const int Cptr, const bool preloadCG){
 
   extern __shared__ unsigned char _shared[]; 
   const int b=blockIdx.x;
-  //const int I=blockIdx.y;
-  //const int J=blockIdx.z;
   const int t=threadIdx.x;
 
   int l1=(x.n1-1)/2;
   int l2=(y.n1-1)/2;
   int l=(r.n1-1)/2;
-  int xn=x.n3;
-  int yn=y.n3;
   int rn=xn*yn;
   int L2=y.n1;
 
@@ -111,11 +105,12 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
   if(preloadCG){
     cptr=reinterpret_cast<float*>(_shared);
     xptr=cptr+((x.n1*y.n1-1)/32+1)*32;
-    loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n1*y.n1,t);
+    loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n1*y.n1);
   }else{
     cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
     xpr=reinterpret_cast<float*>(_shared);
   }
+
   float* xpi=xpr+x.n1*x.n3;
   float* ypr=xpr+((2*x.n1*x.n3-1)/32+1)*32;
   float* ypi=ypr+y.n2*y.n3;
@@ -125,9 +120,11 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
   int rs1=r.s1;
 
   for(int i=0; i<x.n2; i++){
+    int xn=min(x.n3,xtotal-i*x.n3);
     loadg_tile(xpr,x,b,i);
 
-    for(int j=0; i<y.n2; j++){
+    for(int j=0; j<y.n2; j++){
+      int yn=min(y.n3,ytotal-j*y.n3);
       loadg_tile(ypr,y,b,j);
 
       __syncthreads();
@@ -166,7 +163,7 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
   }
 
 }
-*/
+
 
 namespace GElib{
 
@@ -185,30 +182,29 @@ namespace GElib{
     //GELIB_CHECK(x.n2*y.n2<=1024,"Number of ouput channels can be at most 1024.")
 
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
-    int nlines=cnine::roundup(x.n1*x.n2*2,32)/32+
-      cnine::roundup(y.n1*y.n2*2,32)/32+
-      cnine::roundup(r.n1*x.n2*y.n2*2,32)/32;
     int clines=cnine::roundup(x.n1*y.n1,32)/32;
+    //int nlines=cnine::roundup(x.n1*x.n2*2,32)/32+
+    //cnine::roundup(y.n1*y.n2*2,32)/32+
+    //cnine::roundup(r.n1*x.n2*y.n2*2,32)/32;
+
+    // set tile sizes
+    const int xn=std::min(x.n2,32);
+    const int yn=std::min(y.n2,32);
+
+    cnine::Ctensor3_view_t2 xtiled(x,xn);
+    cnine::Ctensor3_view_t2 ytiled(y,yn);
+    cnine::Ctensor3_view_t2 rtiled(r,xn*yn);
+
+    int nlines=cnine::roundup(xtiled.n1*xn*2,32)/32+
+      cnine::roundup(ytiled.n1*yn*2,32)/32;
 
     if(nlines<=384){
       bool preloadCG=(nlines+clines<=384);
-      SO3partB_addCGproduct_kernel<<<b,cnine::roundup(x.n2*y.n2,32),(nlines+preloadC*clines)*128,stream>>>
-	(r,x,y,Cptr,preloadCG);
+      SO3partB_addCGproduct__tiled_kernel<<<b,cnine::roundup(xn*yn,32),(nlines+preloadC*clines)*128,stream>>>
+	(rtiled,xtiled,ytiled,Cptr,preloadCG);
       return;
     }
 
-    //const int xn=std::min(x.n2,32);
-    //const int yn=std::min(y.n2,32);
-
-    //cnine::Ctensor3_view xtiled=split2(x,xn);
-    //cnine::Ctensor3_view ytiled=split2(y,yn);
-    //cnine::Ctensor3_view rtiled=split2(y,xn*yn);
-
-
-    //SO3partB_addCGproduct_tiled_kernel<<<b,cnine::roundup(x.n2*y.n2,32),(nlines+preloadC*clines)*128,stream>>>
-    //(r,x,y,Cptr,preloadCG);
-
-    //make CtensorView4
     cout<<"error"<<endl;
 
   }    
@@ -369,7 +365,7 @@ __device__ int saveg(const cnine::Ctensor3_view& x, float* source, const int b, 
 }
 */
 
-
+/*
 __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor2_view r, const cnine::Ctensor2_view x, 
   const cnine::Ctensor2_view y, const int Cptr){
 
@@ -431,3 +427,4 @@ __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor2_view r, const
   saveg(r,rpr,t);
 
 }
+*/
