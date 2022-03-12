@@ -15,6 +15,8 @@
 #include <cuda_runtime.h>
 #include "Ctensor3_view.hpp"
 
+#define tix threadIdx.x
+
 /*
 __forceinline__ __device__ unsigned dynamic_smem_size(){
     unsigned ret; 
@@ -30,6 +32,16 @@ __device__ void loadf(float* dest, const float* src, const int n, const int t){
     dest[i*nthreads+t]=src[i*nthreads+t];
   if(t<n-I*nthreads)
     dest[I*nthreads+t]=src[I*nthreads+t];
+}
+
+
+__device__ void loadf(float* dest, const float* src, const int n){
+  int nthreads=blockDims.x;
+  int I=n/nthreads;
+  for(int i=0; i<I; i++)
+    dest[i*nthreads+tix]=src[i*nthreads+tix];
+  if(tix<n-I*nthreads)
+    dest[I*nthreads+tix]=src[I*nthreads+tix];
 }
 
 
@@ -52,6 +64,25 @@ __device__ int loadg(const cnine::Ctensor3_view& x, float* dest, const int b, co
 }
 
 
+// Load n fragments from x to dest 
+// assumption: number of threads is at least n
+__device__ int loadg_tile(float* dest, const cnine::Ctensor4_view& x, const int n, const int b, const int tile){
+  int I=x.n1;
+  int s1=x.s1;
+  int s3=x.s3;
+  float* destc=dest+I*n;
+  float* source=x.arr+x.s0*b+tile*x.s2;
+  float* sourcec=x.arrc+x.s0*b+tile*x.s2;
+  if(tix<n){
+    for(int i=0; i<I; i++)
+      dest[i*n+tix]=source[i*s1+tix*s3];
+    for(int i=0; i<I; i++)
+      destc[i*n+tix]=sourcec[i*s1+tix*s3];
+  }
+  return I*n;
+}
+
+
 __device__ int saveg(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
@@ -69,5 +100,8 @@ __device__ int saveg(const cnine::Ctensor3_view& x, float* source, const int b, 
   }
   return offs;
 }
+
+
+#undef tix 
 
 #endif
