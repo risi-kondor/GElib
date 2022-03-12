@@ -18,7 +18,7 @@
 #include "SO3part_addCGproduct_back0Fn.hpp"
 #include "SO3part_addCGproduct_back1Fn.hpp"
 //#include "SO3_CGbank.hpp"
-//#include "SO3_SPHgen.hpp"
+#include "SO3_SPHgen.hpp"
 #include "SO3element.hpp"
 #include "WignerMatrix.hpp"
 
@@ -59,6 +59,10 @@ namespace GElib{
   public: // ---- Named constructors -------------------------------------------------------------------------
 
     
+    static SO3partB raw(const int b, const int l, const int n,  const int _dev=0){
+      return SO3partB(b,l,n,cnine::fill_raw(),_dev);
+    }
+
     static SO3partB zero(const int b, const int l, const int n,  const int _dev=0){
       return SO3partB(b,l,n,cnine::fill_zero(),_dev);
     }
@@ -85,6 +89,7 @@ namespace GElib{
       
 
   public: // ---- Access -------------------------------------------------------------------------------------
+
 
     int getb() const{
       return dims(0);
@@ -145,6 +150,45 @@ namespace GElib{
       }
 
       return R;
+    }
+
+
+  public: // ---- Spherical harmonics -----------------------------------------------------------------------
+
+
+    static SO3partB spharm(const int b, const int l, const int n, const float x, const float y, const float z, const int _dev=0){
+      SO3partB R=SO3partB(b,l,n,cnine::fill_raw(),_dev);
+      R.add_spharm(x,y,z);
+      if(_dev>0) return SO3partB(R,_dev);
+      return R;
+    }
+
+    void add_spharm(const float x, const float y, const float z){
+      int l=getl();
+      int B=getb();
+      int n=getn();
+      cnine::Ctensor3_view v=view3();
+
+      float length=sqrt(x*x+y*y+z*z); 
+      float len2=sqrt(x*x+y*y);
+      complex<float> cphi(x/len2,y/len2);
+
+      cnine::Gtensor<float> P=SO3_sphGen(l,z/length);
+      vector<complex<float> > phase(l+1);
+      phase[0]=complex<float>(1.0,0);
+      for(int m=1; m<=l; m++)
+	phase[m]=cphi*phase[m-1];
+      
+      for(int m=0; m<=l; m++){
+	complex<float> a=phase[m]*complex<float>(P(l,m)); // *(1-2*(m%2))
+	complex<float> b=complex<float>(1-2*(m%2))*std::conj(a);
+	for(int i=0; i<B; i++){
+	  for(int j=0; j<n; j++){
+	    v.inc(i,l+m,j,a);
+	    v.inc(i,l-m,j,b);
+	  }
+	}
+      }
     }
 
 

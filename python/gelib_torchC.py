@@ -48,6 +48,17 @@ class SO3part(torch.Tensor):
 
 
     @staticmethod
+    def spharm(b,l,n,x,y,z,_dev=0):
+        """
+        Return the spherical harmonics of the vector (x,y,z)
+        """
+        R=SO3part.zeros(b,l,n)
+        _SO3partB.view(R).add_spharm(x,y,z)
+        if _dev>0: return R.cuda()
+        return R
+
+
+    @staticmethod
     def Fzeros(b,l,_dev=0):
         """
         Create an SO(3)-part corresponding to the l'th matrix in the Fourier transform of a function on SO(3).
