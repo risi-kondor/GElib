@@ -88,6 +88,7 @@ __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor3_view r, const
 }
 
 
+/*
 __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r, const cnine::Ctensor4_view x, 
   const cnine::Ctensor4_view y, const int Cptr, const bool preloadCG){
 
@@ -165,7 +166,7 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
   }
 
 }
-
+*/
 
 namespace GElib{
 
@@ -189,23 +190,23 @@ namespace GElib{
       cnine::roundup(r.n1*x.n2*y.n2*2,32)/32;
     int clines=cnine::roundup(x.n1*y.n1,32)/32;
 
-    //if(nlines<=384){
-    //bool preloadCG=(nlines+clines<=384);
-    //SO3partB_addCGproduct_kernel<<<b,cnine::roundup(x.n2*y.n2,32),(nlines+preloadC*clines)*128,stream>>>
+    if(nlines<=384){
+      bool preloadCG=(nlines+clines<=384);
+      SO3partB_addCGproduct_kernel<<<b,cnine::roundup(x.n2*y.n2,32),(nlines+preloadC*clines)*128,stream>>>
+	(r,x,y,Cptr,preloadCG);
+      return;
+    }
+
+    //const int xn=std::min(x.n2,32);
+    //const int yn=std::min(y.n2,32);
+
+    //cnine::Ctensor3_view xtiled=split2(x,xn);
+    //cnine::Ctensor3_view ytiled=split2(y,yn);
+    //cnine::Ctensor3_view rtiled=split2(y,xn*yn);
+
+
+    //SO3partB_addCGproduct_tiled_kernel<<<b,cnine::roundup(x.n2*y.n2,32),(nlines+preloadC*clines)*128,stream>>>
     //(r,x,y,Cptr,preloadCG);
-    //return;
-    //}
-
-    const int xn=std::min(x.n2,32);
-    const int yn=std::min(y.n2,32);
-
-    cnine::Ctensor3_view xtiled=split2(x,xn);
-    cnine::Ctensor3_view ytiled=split2(y,yn);
-    cnine::Ctensor3_view rtiled=split2(y,xn*yn);
-
-
-    SO3partB_addCGproduct_tiled_kernel<<<b,cnine::roundup(x.n2*y.n2,32),(nlines+preloadC*clines)*128,stream>>>
-      (r,x,y,Cptr,preloadCG);
 
     //make CtensorView4
     cout<<"error"<<endl;
