@@ -84,6 +84,25 @@ __forceinline__ __device__ int loadg_tile(float* dest, const cnine::Ctensor4_vie
 }
 
 
+// Save n fragments from to x  
+// assumption: number of threads is at least n
+__forceinline__ __device__ void saveg_tile(float* src, const cnine::Ctensor4_view& x, const int b, const int i, const int n){
+  int I=x.n1;
+  int J=x.n3;
+  int s1=x.s1;
+  int s3=x.s3;
+  float* srcc=src+I*J;
+  float* dest=x.arr+x.s0*b+i*x.s2;
+  float* destc=x.arrc+x.s0*b+i*x.s2;
+  if(tix<n){
+    for(int i=0; i<I; i++)
+      dest[i*s1+tix*s3]=src[i*J+tix];
+    for(int i=0; i<I; i++)
+      destc[i*s1+tix*s3]=srcc[i*J+tix];
+  }
+}
+
+
 __forceinline__ __device__ int saveg(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
