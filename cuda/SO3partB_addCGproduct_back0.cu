@@ -105,7 +105,7 @@ __global__ void SO3partB_addCGproduct_back0_tiled_kernel(const cnine::Ctensor4_v
   float* xpr;
   if(preloadCG){
     cptr=reinterpret_cast<float*>(_shared);
-    xptr=cptr+((x.n1*y.n1-1)/32+1)*32;
+    xpr=cptr+((x.n1*y.n1-1)/32+1)*32;
     loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n1*y.n1);
   }else{
     cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
@@ -116,8 +116,8 @@ __global__ void SO3partB_addCGproduct_back0_tiled_kernel(const cnine::Ctensor4_v
   float* ypr=xpr+((2*x.n1*x.n3-1)/32+1)*32;
   float* ypi=ypr+y.n1*y.n3;
 
-  int xs1=x.s1;
-  int ys1=y.s1;
+  int xs1=x.n3;
+  int ys1=y.n3;
   int rs1=r.s1;
   int ytot=(y.n2-1)*y.n3+y.last;
 
@@ -133,8 +133,8 @@ __global__ void SO3partB_addCGproduct_back0_tiled_kernel(const cnine::Ctensor4_v
       __syncthreads();
 
       if(t<xn){
-	float* _xpr=xpr+t/yn;
-	float* _xpi=xpi+t/yn;
+	float* _xpr=xpr+t;
+	float* _xpi=xpi+t;
     
 	for(int m1=-l1; m1<=l1; m1++){
 	  int lower=-l-m1; if(lower<-l2) lower=-l2;
@@ -146,13 +146,13 @@ __global__ void SO3partB_addCGproduct_back0_tiled_kernel(const cnine::Ctensor4_v
 
 	    float* _ypr=ypr+ycol;
 	    float* _ypi=ypi+ycol;
-	    float* _rpr=r.arr+r.s0*b+r.s2*((i*x.n3+t/yn)*ytot+(j*y.n3+t%yn));
-	    float* _rpi=r.arrc+r.s0*b+r.s2*((i*x.n3+t/yn)*ytot+(j*y.n3+t%yn));
+	    float* _rpr=r.arr+r.s0*b+r.s2*((i*x.n3+t)*ytot+(j*y.n3+ycol));
+	    float* _rpi=r.arrc+r.s0*b+r.s2*((i*x.n3+t)*ytot+(j*y.n3+ycol));
 
 	    for(int m2=lower; m2<=upper; m2++){
 	      float c=cptr[(m1+l1)*L2+m2+l2];
-	      const float y_r=_ypr[yn*(m2+l2)];
-	      const float y_i=_ypi[yn*(m2+l2)];
+	      const float y_r=_ypr[ys1*(m2+l2)];
+	      const float y_i=_ypi[ys1*(m2+l2)];
 	      const float g_r=_rpr[rs1*(m1+m2+l)];
 	      const float g_i=_rpi[rs1*(m1+m2+l)];
 	      x_r+=c*(g_r*y_r+g_i*y_i);
@@ -160,8 +160,8 @@ __global__ void SO3partB_addCGproduct_back0_tiled_kernel(const cnine::Ctensor4_v
 	    }
 	  }
 
-	  _xpr[xn*(m1+l1)]+=x_r; 
-	  _xpi[xn*(m1+l1)]+=x_i;
+	  _xpr[xs1*(m1+l1)]+=x_r; 
+	  _xpi[xs1*(m1+l1)]+=x_i;
 	}
 
       }// end t<xn loop
@@ -170,7 +170,7 @@ __global__ void SO3partB_addCGproduct_back0_tiled_kernel(const cnine::Ctensor4_v
     }// end j<y.n2 loop
 
     saveg_tile(xpr,x,b,i,xn);
-  }// end i<x.n1 loop
+  }// end i<x.n2 loop
 
 }
 
@@ -196,7 +196,7 @@ namespace GElib{
     // set tile sizes
     const int xn=std::min(x.n2,32);
     const int yn=std::min(y.n2,32);
-    cnine::Ctensor4_view_t3 xgtiled(x,xn);
+    cnine::Ctensor4_view_t3 xtiled(x,xn);
     cnine::Ctensor4_view_t3 ytiled(y,yn);
 
     int nlines=cnine::roundup(xtiled.n1*xn*2,32)/32+
@@ -208,6 +208,8 @@ namespace GElib{
 	(xtiled,r,ytiled,Cptr,preloadCG);
       return;
     }
+
+    cout<<"error"<<endl;
 
     /*
     if(nlines<=384){

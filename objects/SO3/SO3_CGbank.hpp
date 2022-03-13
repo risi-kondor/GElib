@@ -61,7 +61,7 @@ namespace GElib{
       if(dev.id()==0){
 	auto it=cgcoeffsf.find(ix);
 	if(it!=cgcoeffsf.end()) return *it->second;
-	SO3CG_DEBUG("Computing CG coefficients for "<<ix.str())<<"...";
+	SO3CG_DEBUG("Computing CG coefficients for "<<ix.str()<<"...");
 	SO3_CGcoeffs<float>* r=new SO3_CGcoeffs<float>(ix);
 	//lock_guard<mutex> lock(safety_mx);
 	it=cgcoeffsf.find(ix);
@@ -132,7 +132,7 @@ namespace GElib{
 	  coeffs.asize*sizeof(float),cmem_data_tail,cudaMemcpyHostToDevice));
       int r=cmem_data_tail;
       cmem_data_tail+=sizeof(float)*coeffs.asize;
-      SO3CG_DEBUG("GPU constant memory tail: "<<cmem_data_tail)
+      SO3CG_DEBUG("GPU constant memory tail: "<<cmem_data_tail);
       return r;
     }
 #else
