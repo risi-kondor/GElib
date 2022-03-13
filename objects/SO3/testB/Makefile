@@ -38,7 +38,7 @@ testSO3partB: testSO3partB.cpp $(DEPS)
 ifdef WITH_CUDA
 	$(NVCC) $(NVCCFLAGS) -o testSO3partB testSO3partB.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
-	$(CC) -o testSO3partB testSO3partB.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+	$(CC) -o testSO3partB testSO3partB.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 endif
 
 
@@ -46,7 +46,7 @@ testSO3partB_covariance: testSO3partB_covariance.cpp $(DEPS)
 ifdef WITH_CUDA
 	$(NVCC) $(NVCCFLAGS) -o testSO3partB_covariance testSO3partB_covariance.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
-	$(CC) -o testSO3partB_covariance testSO3partB_covariance.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+	$(CC) -o testSO3partB_covariance testSO3partB_covariance.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 endif
 
 
@@ -54,7 +54,7 @@ testSO3vecB: testSO3vecB.cpp $(DEPS)
 ifdef WITH_CUDA
 	$(NVCC) $(NVCCFLAGS) -o testSO3vecB testSO3vecB.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
-	$(CC) -o testSO3vecB testSO3vecB.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+	$(CC) -o testSO3vecB testSO3vecB.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 endif
 
 
@@ -62,7 +62,7 @@ testSO3vecB_covariance: testSO3vecB_covariance.cpp $(DEPS)
 ifdef WITH_CUDA
 	$(NVCC) $(NVCCFLAGS) -o testSO3vecB_covariance testSO3vecB_covariance.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
-	$(CC) -o testSO3vecB_covariance testSO3vecB_covariance.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+	$(CC) -o testSO3vecB_covariance testSO3vecB_covariance.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 endif
 
 
@@ -70,14 +70,14 @@ testSO3vecB_gradient: testSO3vecB_gradient.cpp $(DEPS)
 ifdef WITH_CUDA
 	$(NVCC) $(NVCCFLAGS) -o testSO3vecB_gradient testSO3vecB_gradient.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
-	$(CC) -o testSO3vecB_gradient testSO3vecB_gradient.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+	$(CC) -o testSO3vecB_gradient testSO3vecB_gradient.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 endif
 
 timeSO3CG: timeSO3CG.cpp $(DEPS) 
 ifdef WITH_CUDA
 	$(NVCC) $(NVCCFLAGS) -o timeSO3CG timeSO3CG.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
-	$(CC) -o timeSO3CG timeSO3CG.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+	$(CC) -o timeSO3CG timeSO3CG.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 endif
 
 

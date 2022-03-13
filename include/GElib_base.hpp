@@ -74,7 +74,11 @@ namespace GElib{
 #define GELIB_CHECK_TAU2(a,b) if(a!=b) {{CoutLock lk; cerr<<"GEnet error in function "<<__PRETTY_FUNCTION__<<": SO3types do not match."<<endl;} exit(1);}
 #define GELIB_CHECK_TAU3(a,b,c) if(a!=b||a!=c) {{CoutLock lk; cerr<<"GEnet error in function "<<__PRETTY_FUNCTION__<<": SO3types do not match."<<endl;} exit(1);}
 
-
+#ifdef _GELIB_SO3CG_DEBUG
+#define SO3CG_DEBUG(msg) ({{cnine::CoutLock lk; cerr<<msg<<endl;}})
+#else 
+#define SO3CG_DEBUG(msg) 
+#endif 
 
 // ---- CUDA STUFF ------------------------------------------------------------------------------------------
 
