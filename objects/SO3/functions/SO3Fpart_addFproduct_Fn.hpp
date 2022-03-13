@@ -86,17 +86,9 @@ namespace GElib{
 	      }
 	    }
 	  });
-      else{
-	#ifdef _WITH_CUDA
-	cudaStream_t stream;
-	CUDA_SAFE(cudaStreamCreate(&stream));
-	SO3Fpart_addFproduct_cu(_r,_x,_y,conj,stream);
-	CUDA_SAFE(cudaStreamSynchronize(stream));
-	CUDA_SAFE(cudaStreamDestroy(stream));
-	#else
-	CNINE_NOCUDA_ERROR;
-	#endif
-      }
+      else 
+	CUDA_STREAM(SO3Fpart_addFproduct_cu(_r,_x,_y,conj,stream));
+
     }
     
   };
