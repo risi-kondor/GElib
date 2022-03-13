@@ -74,6 +74,14 @@ namespace GElib{
       assert(dims(2)==dims(1));
     }
 
+   SO3Fpart(const CtensorB& x):
+      SO3partB(x){
+    }
+      
+    SO3Fpart(CtensorB&& x):
+      SO3partB(std::move(x)){
+    }
+      
 
   public: // ---- Access -------------------------------------------------------------------------------------
 
@@ -87,11 +95,14 @@ namespace GElib{
 
 
     SO3Fpart3_view view() const{
-      return SO3Fpart3_view(arr,dims,strides,coffs);
+      if(dev==0) return SO3Fpart3_view(arr,dims,strides,coffs);
+      else return SO3Fpart3_view(arrg,dims,strides,coffs,dev);
     }
 
     operator SO3Fpart3_view() const{
-      return SO3Fpart3_view(arr,dims,strides,coffs);
+      if(dev==0) return SO3Fpart3_view(arr,dims,strides,coffs);
+      return SO3Fpart3_view(arrg,dims,strides,coffs,dev);
+
     }
     
 

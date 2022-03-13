@@ -112,8 +112,6 @@ __global__ void SO3Fpart_addFproduct_kernel(const cnine::Ctensor3_view r, const 
   const int b=blockIdx.x;
   const int t=threadIdx.x;
 
-//printf("%d",t);
-
   int l1=(x.n1-1)/2;
   int l2=(y.n1-1)/2;
   int l=(r.n1-1)/2;
@@ -122,15 +120,17 @@ __global__ void SO3Fpart_addFproduct_kernel(const cnine::Ctensor3_view r, const 
   int rn=r.n2;
 
   float* xpr=reinterpret_cast<float*>(_shared);
-  float* xpi=xpr+loadg3(x,xpr,b,t);
+  float* xpi=xpr+x.n1*x.n2;
+  loadg3(x,xpr,b,t);
 
   float* ypr=xpr+((2*xn*xn-1)/32+1)*32;
-  float* ypi;
-  if(conj==0) ypi=ypr+loadg3(y,ypr,b,t);
-  else ypi=ypr+loadg3c(y,ypr,b,t);
+  float* ypi=ypr+y.n1*y.n2;
+  if(conj==0) loadg3(y,ypr,b,t);
+  else loadg3c(y,ypr,b,t);
 
   float* rpr=ypr+((2*yn*yn-1)/32+1)*32;
-  float* rpi=rpr+loadg3(r,rpr,b,t);
+  float* rpi=rpr+r.n1*r.n2;
+  loadg3(r,rpr,b,t);
 
   __syncthreads();
 
@@ -188,10 +188,7 @@ namespace GElib{
     const int xl=(x.n1-1)/2;
     const int yl=(y.n1-1)/2;
     const int l=(r.n1-1)/2;
-
     const int b=r.n0;
-    assert(x.n0==b);
-    assert(y.n0==b);
 
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
 
@@ -199,15 +196,13 @@ namespace GElib{
       cnine::roundup(y.n1*y.n2*2,32)/32+
       cnine::roundup(r.n1*r.n2*2,32)/32;
 
-
     if(nlines<=384){
-
       SO3Fpart_addFproduct_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
 	(r,x,y,Cptr,conj);
-
-    }else{
-      cout<<"error"<<endl;
+      return; 
     }
+
+    cout<<"error"<<endl;
 
   }    
 
