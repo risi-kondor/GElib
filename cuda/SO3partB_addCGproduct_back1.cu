@@ -85,37 +85,135 @@ __global__ void SO3partB_addCGproduct_back1_kernel(const cnine::Ctensor3_view y,
 }
 
 
+__global__ void SO3partB_addCGproduct_back1_tiled_kernel(const cnine::Ctensor4_view_t3 y, const cnine::Ctensor3_view r, 
+  const cnine::Ctensor4_view_t3 x, const int Cptr, const bool preloadCG){
+
+  extern __shared__ unsigned char _shared[]; 
+  const int b=blockIdx.x;
+  const int t=threadIdx.x;
+
+  int l1=(x.n1-1)/2;
+  int l2=(y.n1-1)/2;
+  int l=(r.n1-1)/2;
+  int L2=y.n1;
+
+  float* cptr;
+  float* xpr;
+  if(preloadCG){
+    cptr=reinterpret_cast<float*>(_shared);
+    xpr=cptr+((x.n1*y.n1-1)/32+1)*32;
+    loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n1*y.n1);
+  }else{
+    cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
+    xpr=reinterpret_cast<float*>(_shared);
+  }
+
+  float* xpi=xpr+x.n1*x.n3;
+  float* ypr=xpr+((2*x.n1*x.n3-1)/32+1)*32;
+  float* ypi=ypr+y.n1*y.n3;
+
+  int xs1=x.n3;
+  int ys1=y.n3;
+  int rs1=r.s1;
+  int ytot=(y.n2-1)*y.n3+y.last;
+
+
+  for(int j=0; j<y.n2; j++){
+    int yn; if(j<y.n2-1) yn=y.n3; else yn=y.last;
+    loadg_tile(ypr,y,b,j,yn);
+
+    for(int i=0; i<x.n2; i++){
+      int xn; if(i<x.n2-1) xn=x.n3; else xn=x.last; 
+      loadg_tile(xpr,x,b,i,xn);
+      __syncthreads();
+
+      if(t<yn){
+	float* _ypr=ypr+t;
+	float* _ypi=ypi+t;
+    
+	for(int m2=-l2; m2<=l2; m2++){
+	  int lower=-l-m2; if(lower<-l1) lower=-l1;
+	  int upper=l-m2; if(upper>l1) upper=l1;
+	  float y_r=0;
+	  float y_i=0;
+
+	  for(int xcol=0; xcol<xn; xcol++){
+
+	    float* _xpr=xpr+xcol;
+	    float* _xpi=xpi+xcol;
+	    float* _rpr=r.arr+r.s0*b+r.s2*((i*x.n3+xcol)*ytot+(j*y.n3+t));
+	    float* _rpi=r.arrc+r.s0*b+r.s2*((i*x.n3+xcol)*ytot+(j*y.n3+t));
+
+	    for(int m1=lower; m1<=upper; m1++){
+	      float c=cptr[(m1+l1)*L2+m2+l2];
+	      const float x_r=_xpr[xs1*(m1+l1)];
+	      const float x_i=_xpi[xs1*(m1+l1)];
+	      const float g_r=_rpr[rs1*(m1+m2+l)];
+	      const float g_i=_rpi[rs1*(m1+m2+l)];
+	      y_r+=c*(g_r*x_r+g_i*x_i);
+	      y_i+=c*(-g_r*x_i+g_i*x_r);
+	    }
+	  }
+
+	  _ypr[ys1*(m2+l1)]+=y_r; 
+	  _ypi[ys1*(m2+l1)]+=y_i;
+	}
+
+      }// end t<yn loop
+      __syncthreads();
+
+    }// end i<x.n2 loop
+
+    saveg_tile(ypr,y,b,j,yn);
+  }// end j<y.n2 loop
+
+}
+
 
 namespace GElib{
 
 
-  void SO3partB_addCGproduct_back1_cu(const cnine::Ctensor3_view& yg, cnine::Ctensor3_view g, const cnine::Ctensor3_view& x, 
+  void SO3partB_addCGproduct_back1_cu(const cnine::Ctensor3_view& y, cnine::Ctensor3_view r, const cnine::Ctensor3_view& x, 
     const int offs, const cudaStream_t& stream){
 
     const int xl=(x.n1-1)/2;
-    const int yl=(yg.n1-1)/2;
-    const int l=(g.n1-1)/2;
+    const int yl=(y.n1-1)/2;
+    const int l=(r.n1-1)/2;
+    const int b=r.n0;
 
-    const int b=g.n0;
-    assert(x.n0==b);
-    assert(yg.n0==b);
-
-    g.arr+=g.s2*offs;
-    g.arrc+=g.s2*offs;
-    g.n2=x.n2*yg.n2;
+    r.arr+=r.s2*offs;
+    r.arrc+=r.s2*offs;
+    r.n2=x.n2*y.n2;
 
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
+    int clines=cnine::roundup(x.n1*y.n1,32)/32;
 
-    int nlines=cnine::roundup(x.n1*x.n2*2,32)/32+
-      cnine::roundup(yg.n1*yg.n2*2,32)/32+
-      cnine::roundup(g.n1*x.n2*yg.n2*2,32)/32;
+    // set tile sizes
+    const int xn=std::min(x.n2,32);
+    const int yn=std::min(y.n2,32);
+    cnine::Ctensor4_view_t3 xtiled(x,xn);
+    cnine::Ctensor4_view_t3 ytiled(y,yn);
 
+    int nlines=cnine::roundup(xtiled.n1*xn*2,32)/32+
+      cnine::roundup(ytiled.n1*yn*2,32)/32;
+
+    if(nlines<=384){
+      bool preloadCG=(nlines+clines<=384);
+      SO3partB_addCGproduct_back1_tiled_kernel<<<b,cnine::roundup(yn,32),(nlines+preloadCG*clines)*128,stream>>>
+	(ytiled,r,xtiled,Cptr,preloadCG);
+      return;
+    }
+
+    cout<<"error"<<endl;
+
+    /*
     if(nlines<=384){
       SO3partB_addCGproduct_back1_kernel<<<b,cnine::roundup(x.n2*yg.n2,32),nlines*128,stream>>>
 	(yg,g,x,Cptr);
     }else{
       cout<<"error"<<endl;
     }
+    */
 
   }    
 
