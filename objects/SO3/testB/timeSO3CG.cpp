@@ -14,24 +14,26 @@ int main(int argc, char** argv){
   cout<<endl;
 
   int b=1;
-  int l1=3;
-  int l2=3;
-  int l=4;
+  int l1=2;
+  int l2=2;
+  int l=3;
   int n1=2;
   int n2=2;
 
   SO3partB u=SO3partB::gaussian(b,l1,n1);
   SO3partB v=SO3partB::gaussian(b,l2,n2);
-  //printl("u",u)<<endl;
-  //printl("v",v)<<endl;
+  //cout<<u.dims<<endl;
+  //cout<<u.strides(0)<<u.strides(1)<<u.strides(2)<<endl;
+  printl("u",u)<<endl;
+  printl("v",v)<<endl;
 
   SO3partB w=u.CGproduct(v,l);
   cout<<w<<endl;
 
 #ifdef _WITH_CUDA
-  auto ug=u.to_device(1);
-  auto vg=v.to_device(1);
-  auto wg=ug.CGproduct(vg,l);
+  SO3partB ug=u.to_device(1);
+  SO3partB vg=v.to_device(1);
+  SO3partB wg=ug.CGproduct(vg,l);
 
   cout<<wg<<endl;
 #endif 
