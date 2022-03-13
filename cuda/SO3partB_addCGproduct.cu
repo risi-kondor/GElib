@@ -156,8 +156,6 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor3_view r,
 	    const float x_i=_xpi[xs1*(m1+l1)];
 	    const float y_r=_ypr[ys1*(m2+l2)];
 	    const float y_i=_ypi[ys1*(m2+l2)];
-      //if(t==0) printf("%d %d %d %d %d\n",x.s0,x.s1,x.s2,x.s3,xs1);
-      //if(t==0) printf("%d %d %d %f %f %d\n",m1,m2,m,x_r,y_r,xs1);
 	    r_r+=c*(x_r*y_r-x_i*y_i); 
 	    r_i+=c*(x_r*y_i+x_i*y_r);
 	  }
@@ -196,7 +194,6 @@ namespace GElib{
     // set tile sizes
     const int xn=std::min(x.n2,32);
     const int yn=std::min(y.n2,32);
-
     cnine::Ctensor4_view_t3 xtiled(x,xn);
     cnine::Ctensor4_view_t3 ytiled(y,yn);
     //cnine::Ctensor4_view_t3 rtiled(r,xn*yn);
