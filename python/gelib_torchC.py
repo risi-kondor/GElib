@@ -159,7 +159,10 @@ class SO3vec:
 
     @staticmethod
     def spharm(b,_tau,x,y,z,_dev=0):
-        "Construct a random SO3vec object of given type _tau."
+        """
+        Compute a vector of spherical harmonic coefficients. 
+        The values will be duplicated along the batch and channel dimensions.
+        """
         R=SO3vec()
         for l in range(0,len(_tau)):
             R.parts.append(SO3part.spharM(b,l,_tau[l],x,y,z,_dev))
