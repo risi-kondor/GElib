@@ -17,6 +17,7 @@
 
 #include "SO3_CGbank.hpp"
 #include "Ctensor3_view.hpp"
+#include "Ctensor4_view.hpp"
 #include "cuda_loaders.cu"
 
 
@@ -89,7 +90,7 @@ __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor3_view r, const
 */
 
 
-__global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r, const cnine::Ctensor4_view_t3 x, 
+__global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor4_view_t3 x, 
   const cnine::Ctensor4_view_t3 y, const int Cptr, const bool preloadCG){
 
   extern __shared__ unsigned char _shared[]; 
@@ -105,7 +106,7 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
   float* xpr;
   if(preloadCG){
     cptr=reinterpret_cast<float*>(_shared);
-    xptr=cptr+((x.n1*y.n1-1)/32+1)*32;
+    xpr=cptr+((x.n1*y.n1-1)/32+1)*32;
     loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n1*y.n1);
   }else{
     cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
@@ -116,8 +117,8 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
   float* ypr=xpr+((2*x.n1*x.n3-1)/32+1)*32;
   float* ypi=ypr+y.n1*y.n3;
 
-  int xs1=x.s1;
-  int ys1=y.s1;
+  int xs1=x.n3;
+  int ys1=y.n3;
   int rs1=r.s1;
   int ytot=(y.n2-1)*y.n3+y.last;
 
@@ -127,7 +128,7 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
 
     for(int j=0; j<y.n2; j++){
       int yn; if(j<y.n2-1) yn=y.n3; else yn=y.last;
-      int rn=xn*yn;
+      //int rn=xn*yn;
       loadg_tile(ypr,y,b,j,yn);
 
       __syncthreads();
@@ -141,7 +142,7 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
 	float* _ypi=ypi+t%yn;
     
 	float* _rpr=r.arr+r.s0*b+r.s2*((i*x.n3+t/yn)*ytot+(j*y.n3+t%yn));
-	float* _rpi=r.arr+r.s0*b+r.s2*((i*x.n3+t/yn)*ytot+(j*y.n3+t%yn));
+	float* _rpi=r.arrc+r.s0*b+r.s2*((i*x.n3+t/yn)*ytot+(j*y.n3+t%yn));
 
 	for(int m=-l; m<=l; m++){
 	  float r_r=0;
@@ -149,17 +150,19 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
 	  int lower=max(-l1,m-l2);
 	  int upper=min(l1,m+l2);
 	  for(int m1=lower; m1<=upper; m1++){
-	    float m2=m-m1;
+	    int m2=m-m1;
 	    float c=cptr[(m1+l1)*L2+m2+l2];
-	    const float x_r=xpr[xs1*(m1+l1)];
-	    const float x_i=xpi[xs1*(m1+l1)];
-	    const float y_r=ypr[ys1*(m2+l2)];
-	    const float y_i=ypi[ys1*(m2+l2)];
+	    const float x_r=_xpr[xs1*(m1+l1)];
+	    const float x_i=_xpi[xs1*(m1+l1)];
+	    const float y_r=_ypr[ys1*(m2+l2)];
+	    const float y_i=_ypi[ys1*(m2+l2)];
+      //if(t==0) printf("%d %d %d %d %d\n",x.s0,x.s1,x.s2,x.s3,xs1);
+      //if(t==0) printf("%d %d %d %f %f %d\n",m1,m2,m,x_r,y_r,xs1);
 	    r_r+=c*(x_r*y_r-x_i*y_i); 
 	    r_i+=c*(x_r*y_i+x_i*y_r);
 	  }
-	  _rpr[rs1*(m1+m2+l)]+=r_r;
-	  _rpi[rs1*(m1+m2+l)]+=r_i;
+	  _rpr[rs1*(m+l)]+=r_r;
+	  _rpi[rs1*(m+l)]+=r_i;
 	}
       }
     }
@@ -203,7 +206,8 @@ namespace GElib{
 
     if(nlines<=384){
       bool preloadCG=(nlines+clines<=384);
-      SO3partB_addCGproduct_tiled_kernel<<<b,cnine::roundup(xn*yn,32),(nlines+preloadC*clines)*128,stream>>>
+      //preloadCG=false;
+      SO3partB_addCGproduct_tiled_kernel<<<b,cnine::roundup(xn*yn,32),(nlines+preloadCG*clines)*128,stream>>>
 	(r,xtiled,ytiled,Cptr,preloadCG);
       return;
     }

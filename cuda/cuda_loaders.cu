@@ -14,6 +14,7 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "Ctensor3_view.hpp"
+#include "Ctensor4_view.hpp"
 
 #define tix threadIdx.x
 
@@ -25,8 +26,8 @@ __forceinline__ __device__ unsigned dynamic_smem_size(){
 }
 */
 
-__device__ void loadf(float* dest, const float* src, const int n, const int t){
-  int nthreads=blockDims.x;
+__forceinline__ __device__ void loadf(float* dest, const float* src, const int n, const int t){
+  int nthreads=blockDim.x;
   int I=n/nthreads;
   for(int i=0; i<I; i++)
     dest[i*nthreads+t]=src[i*nthreads+t];
@@ -35,8 +36,8 @@ __device__ void loadf(float* dest, const float* src, const int n, const int t){
 }
 
 
-__device__ void loadf(float* dest, const float* src, const int n){
-  int nthreads=blockDims.x;
+__forceinline__ __device__ void loadf(float* dest, const float* src, const int n){
+  int nthreads=blockDim.x;
   int I=n/nthreads;
   for(int i=0; i<I; i++)
     dest[i*nthreads+tix]=src[i*nthreads+tix];
@@ -45,7 +46,7 @@ __device__ void loadf(float* dest, const float* src, const int n){
 }
 
 
-__device__ int loadg(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
+__forceinline__ __device__ int loadg(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
   int s1=x.s1;
@@ -65,7 +66,7 @@ __device__ int loadg(const cnine::Ctensor3_view& x, float* dest, const int b, co
 
 // Load n fragments from x to dest 
 // assumption: number of threads is at least n
-__device__ int loadg(float* dest, const cnine::Ctensor4_view& x, const int b, const int i, const int n){
+__forceinline__ __device__ int loadg_tile(float* dest, const cnine::Ctensor4_view& x, const int b, const int i, const int n){
   int I=x.n1;
   int J=x.n3;
   int s1=x.s1;
@@ -83,7 +84,7 @@ __device__ int loadg(float* dest, const cnine::Ctensor4_view& x, const int b, co
 }
 
 
-__device__ int saveg(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
+__forceinline__ __device__ int saveg(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
   int s1=x.s1;
