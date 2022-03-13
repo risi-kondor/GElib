@@ -13,12 +13,13 @@ int main(int argc, char** argv){
   GElibSession session;
   cout<<endl;
 
-  int b=10;
-  int l1=2;
-  int l2=2;
+  int b=1;
+  int l1=3;
+  int l2=3;
   int l=3;
-  int n1=20;
-  int n2=20;
+  int n1=2;
+  int n2=2;
+  int niter=1;
 
 #ifdef _WITH_CUDA
   SO3partB u0=SO3partB::gaussian(1,l1,1,1);
@@ -30,21 +31,24 @@ int main(int argc, char** argv){
   SO3partB v=SO3partB::gaussian(b,l2,n2);
   //cout<<u.dims<<endl;
   //cout<<u.strides(0)<<u.strides(1)<<u.strides(2)<<endl;
-  printl("u",u)<<endl;
-  printl("v",v)<<endl;
+  //printl("u",u)<<endl;
+  //printl("v",v)<<endl;
 
   cout<<"Starting CPU"<<endl;
-  SO3partB w=u.CGproduct(v,l);
-  //cout<<w<<endl;
+  for(int i=0; i<niter; i++){
+    SO3partB w=u.CGproduct(v,l);
+    cout<<w<<endl;
+  }
   cout<<"."<<endl;
 
 #ifdef _WITH_CUDA
   SO3partB ug=u.to_device(1);
   SO3partB vg=v.to_device(1);
-  cout<<"Starting CPU"<<endl;
-  SO3partB wg=ug.CGproduct(vg,l);
-
-  //cout<<wg<<endl;
+  cout<<"Starting GPU"<<endl;
+  for(int i=0; i<niter; i++){
+    SO3partB wg=ug.CGproduct(vg,l);
+    cout<<wg<<endl;
+  }
   cout<<"."<<endl;
 #endif 
 

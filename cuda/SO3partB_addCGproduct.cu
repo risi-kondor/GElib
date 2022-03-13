@@ -206,7 +206,7 @@ namespace GElib{
 
     if(nlines<=384){
       bool preloadCG=(nlines+clines<=384);
-      preloadCG=false;
+      //preloadCG=false;
       SO3partB_addCGproduct_tiled_kernel<<<b,cnine::roundup(xn*yn,32),(nlines+preloadCG*clines)*128,stream>>>
 	(r,xtiled,ytiled,Cptr,preloadCG);
       return;
