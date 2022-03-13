@@ -57,6 +57,16 @@ class SO3part(torch.Tensor):
         if _dev>0: return R.cuda()
         return R
 
+    @staticmethod
+    def spharM(b,l,n,x,y,z,_dev=0):
+        """
+        Return the spherical harmonics of the vector (x,y,z)
+        """
+        R=SO3part.zeros(b,l,n)
+        _SO3partB.view(R).add_spharm(x,y,z)
+        if _dev>0: return R.cuda()
+        return R
+
 
     @staticmethod
     def Fzeros(b,l,_dev=0):
@@ -145,6 +155,14 @@ class SO3vec:
         R=SO3vec()
         for l in range(0,len(_tau)):
             R.parts.append(SO3part.randn(b,l,_tau[l],_dev))
+        return R
+
+    @staticmethod
+    def spharm(b,_tau,x,y,z,_dev=0):
+        "Construct a random SO3vec object of given type _tau."
+        R=SO3vec()
+        for l in range(0,len(_tau)):
+            R.parts.append(SO3part.spharM(b,l,_tau[l],x,y,z,_dev))
         return R
 
     @staticmethod
