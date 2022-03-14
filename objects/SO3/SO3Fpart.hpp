@@ -14,9 +14,9 @@
 #include "CtensorB.hpp"
 #include "SO3partB.hpp"
 #include "SO3Fpart3_view.hpp"
-#include "SO3Fpart_addFproduct_Fn.hpp"
-#include "SO3Fpart_addFproduct_back0Fn.hpp"
-#include "SO3Fpart_addFproduct_back1Fn.hpp"
+#include "SO3part_addFproduct_Fn.hpp"
+#include "SO3part_addFproduct_back0Fn.hpp"
+#include "SO3part_addFproduct_back1Fn.hpp"
 
 extern GElib::SO3_CGbank SO3_cgbank;
 extern GElib::SO3_SPHgen SO3_sphGen;
@@ -109,18 +109,16 @@ namespace GElib{
   public: // ---- CG-products --------------------------------------------------------------------------------
 
 
-
-
     void add_Fproduct(const SO3Fpart& x, const SO3Fpart& y){
-      SO3Fpart_addFproduct_Fn()(*this,x,y);
+      SO3part_addFproduct_Fn()(view3(),x.view3(),y.view3());
     }
 
     void add_Fproduct_back0(const SO3Fpart& g, const SO3Fpart& y){
-      SO3Fpart_addFproduct_back0Fn()(*this,g,y);
+      SO3part_addFproduct_back0Fn()(view3(),g.view3(),y.view3());
     }
 
     void add_Fproduct_back1(const SO3Fpart& g, const SO3Fpart& x){
-      SO3Fpart_addFproduct_back0Fn()(*this,g,x);
+      SO3part_addFproduct_back1Fn()(view3(),g.view3(),x.view3());
     }
 
 

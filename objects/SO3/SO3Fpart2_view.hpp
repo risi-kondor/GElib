@@ -76,6 +76,19 @@ namespace GElib{
     }
 
 
+  public: // ---- Conversions -------------------------------------------------------------------------------
+
+
+    SO3Fpart2_view(const Ctensor2_view& x):
+      Ctensor2_view(x){
+      assert(n1==n0);
+      assert(n0%2==1);
+      l=(n0-1)/2;
+      ar=arr+l*s0+l*s1;
+      ac=arrc+l*s0+l*s1;
+    }
+
+
   public: // ---- Access ------------------------------------------------------------------------------------
 
 

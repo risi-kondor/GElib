@@ -8,12 +8,13 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _SO3Fpart_addFproduct_Fn
-#define _SO3Fpart_addFproduct_Fn
+#ifndef _SO3part_addFproduct_Fn
+#define _SO3part_addFproduct_Fn
 
 #include "GElib_base.hpp"
 #include "CtensorB.hpp"
-#include "SO3Fpart3_view.hpp"
+//#include "SO3Fpart3_view.hpp"
+#include "Ctensor3_view.hpp"
 
 extern GElib::SO3_CGbank SO3_cgbank;
 extern GElib::SO3_SPHgen SO3_sphGen;
@@ -27,30 +28,27 @@ namespace GElib{
   #endif
 
 
-  class SO3Fpart_addFproduct_Fn{
+  class SO3part_addFproduct_Fn{
   public:
 
     int conj=0;
 
-    SO3Fpart_addFproduct_Fn(){}
-    SO3Fpart_addFproduct_Fn(const int _conj): conj(_conj){}
+    SO3part_addFproduct_Fn(){}
+    SO3part_addFproduct_Fn(const int _conj): conj(_conj){}
 
   public:
 
-    void operator()(const SO3Fpart3_view& _r, const SO3Fpart3_view& _x, const SO3Fpart3_view& _y){
+    void operator()(const cnine::Ctensor3_view& _r, const cnine::Ctensor3_view& _x, const cnine::Ctensor3_view& _y){
 
-      const int l=_r.getl(); 
-      const int l1=_x.getl(); 
-      const int l2=_y.getl();
-      assert(l>=abs(l1-l2) && l<=l1+l2);
-
+      const int l=(_r.n1-1)/2; //_r.getl(); 
+      const int l1=(_x.n1-1)/2; //_x.getl(); 
+      const int l2=(_y.n1-1)/2; //_y.getl();
       const int B=_r.n0;
-      assert(_x.n0==B);
-      assert(_y.n0==B);
-
       const int dev=_r.dev;
-      assert(_x.dev==dev);
-      assert(_y.dev==dev);
+
+      CNINE_CHECK_DEV3(_r,_x,_y)
+      CNINE_CHECK_BATCH3(_r,_x,_y)
+      assert(l>=abs(l1-l2) && l<=l1+l2);
 
       auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
       const float c=((2.0*l1+1)*(2.0*l2+1))/(2.0*l+1);
@@ -97,36 +95,4 @@ namespace GElib{
 }
 
 #endif
-
-
-
-	/*
-	if(conj%2==0){
-	  MMmmLoops(l1,l2,l,[&](const int M1, const int M2){C(M1+l1,M2+l2)*c;},
-	    [&](const int M1, const int M2, const int m1, const int m2, const float t){
-	      return r.inc(M1+M2,m1+m2,t*C(m1+l1,m2+l2)*x(M1,m1)*y(M2,m2));
-	    });
-	}else{
-	  MMmmLoops(l1,l2,l,[&](const int M1, const int M2){C(M1+l1,M2+l2)*c;},
-	    [&](const int M1, const int M2, const int m1, const int m2, const float t){
-	      return r.inc(M1+M2,m1+m2,t*C(m1+l1,m2+l2)*x(M1,m1)*std::conj(y(M2,m2)));
-	    });
-	}
-	*/
-  /*
-  inline void MMmmLoops(const int l1, const int l2, const int l, std::function<float(int,int)> outer, 
-    std::function<void(int,int,int,int,float)>& inner){
-    for(int M1=-l1; M1<=l1; M1++){
-      for(int M2=std::max(-l2,-l-M1); M2<=std::min(l2,l-M1); M2++){
-	float t=outer(M1,M2);
-	for(int m1=-l1; m1<=l1; m1++){
-	  for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
-	    //cout<<"   "<<n1<<" "<<n2<<" "<<m1<<" "<<m2<<endl;
-	    inner(M1,M2,m1,m2,t);
-	  }
-	}
-      }
-    }
-  }
-  */
 
