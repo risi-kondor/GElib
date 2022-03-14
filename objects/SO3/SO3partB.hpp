@@ -14,9 +14,15 @@
 #include "CtensorB.hpp"
 #include "SO3part3_view.hpp"
 #include "SO3Fpart3_view.hpp"
+
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
 #include "SO3part_addCGproduct_back1Fn.hpp"
+
+#include "SO3part_addFproduct_Fn.hpp"
+#include "SO3part_addFproduct_back0Fn.hpp"
+#include "SO3part_addFproduct_back1Fn.hpp"
+
 //#include "SO3_CGbank.hpp"
 //#include "SO3_SPHgen.hpp"
 #include "SO3element.hpp"
@@ -68,6 +74,15 @@ namespace GElib{
     }
 
 
+    static SO3partB Fzero(const int b, const int l, const int _dev=0){
+      return SO3partB(b,l,2*l+1,cnine::fill_zero(),_dev);
+    }
+
+    static SO3partB Fgaussian(const int b, const int l, const int _dev=0){
+      return SO3partB(b,l,2*l+1,cnine::fill_gaussian(),_dev);
+    }
+
+
   public: // ---- Conversions --------------------------------------------------------------------------------
 
 
@@ -86,6 +101,7 @@ namespace GElib{
 
   public: // ---- Access -------------------------------------------------------------------------------------
 
+
     int getb() const{
       return dims(0);
     }
@@ -96,6 +112,10 @@ namespace GElib{
 
     int getn() const{
       return dims(2);
+    }
+
+    bool is_F() const{
+      return (dims(1)==dims(2));
     }
 
         
@@ -170,6 +190,20 @@ namespace GElib{
     void add_CGproduct_back1(const SO3partB& g, const SO3partB& x, const int _offs=0){
       SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
     }
+
+
+    void add_Fproduct(const SO3partB& x, const SO3partB& y){
+      SO3part_addFproduct_Fn()(view3(),x.view3(),y.view3());
+    }
+
+    void add_Fproduct_back0(const SO3partB& g, const SO3partB& y){
+      SO3part_addFproduct_back0Fn()(view3(),g.view3(),y.view3());
+    }
+
+    void add_Fproduct_back1(const SO3partB& g, const SO3partB& x){
+      SO3part_addFproduct_back1Fn()(view3(),g.view3(),x.view3());
+    }
+
 
   };
 

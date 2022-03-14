@@ -59,6 +59,14 @@ namespace GElib{
     }
 
     
+    template<typename FILLTYPE, typename = typename 
+	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
+    SO3vecB(const int b, const int maxl, const FILLTYPE fill, const int _dev){
+      for(int l=0; l<=maxl; l++)
+	parts.push_back(new SO3partB(b,l,2*l+1,fill,_dev));
+    }
+
+    
     // ---- Named constructors --------------------------------------------------------------------------------
 
     
@@ -68,6 +76,15 @@ namespace GElib{
     
     static SO3vecB gaussian(const int b, const SO3type& tau, const int _dev=0){
       return SO3vecB(b,tau,cnine::fill_gaussian(),_dev);
+    }
+    
+
+    static SO3vecB Fzero(const int b, const int maxl, const int _dev=0){
+      return SO3vecB(b,maxl,cnine::fill_zero(),_dev);
+    }
+    
+    static SO3vecB Fgaussian(const int b, const int maxl, const int _dev=0){
+      return SO3vecB(b,maxl,cnine::fill_gaussian(),_dev);
     }
     
 
@@ -200,13 +217,8 @@ namespace GElib{
       vector<int> offs(parts.size(),0);
 	
       for(int l1=0; l1<=L1; l1++){
-	//if(x.tau[l1]==0) continue;
 	for(int l2=0; l2<=L2; l2++){
-	  //if(y.tau[l2]==0) continue;
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
-	    //cout<<l1<<l2<<l<<endl;
-      //cout<<parts.size()<<endl;
-      //cout<<*parts[l]<<endl;
 	    parts[l]->add_CGproduct(*x.parts[l1],*y.parts[l2],offs[l]);
 	    offs[l]+=(x.parts[l1]->getn())*(y.parts[l2]->getn());
 	  }
@@ -253,6 +265,122 @@ namespace GElib{
     }
 
       
+    // ---- Fproducts ---------------------------------------------------------------------------------------
+
+
+    SO3vecB Fproduct(const SO3vecB& y, int maxl=-1){
+      assert(y.getb()==getb());
+      if(maxl<0) maxl=get_maxl()+y.get_maxl();
+      SO3vecB R=SO3vecB::Fzero(getb(),maxl,get_dev());
+      R.add_Fproduct(*this,y);
+      return R;
+    }
+
+
+    void add_Fproduct(const SO3vecB& x, const SO3vecB& y){
+      int L1=x.get_maxl(); 
+      int L2=y.get_maxl();
+      int L=get_maxl();
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
+	    SO3part_addFproduct_Fn()(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3());
+	  }
+	}
+      }
+    }
+
+
+    void add_Fproduct_back0(const SO3vecB& g, const SO3vecB& y){
+      int L1=get_maxl(); 
+      int L2=y.get_maxl();
+      int L=g.get_maxl();
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    SO3part_addFproduct_back0Fn()(parts[l1]->view3(),g.parts[l]->view3(),y.parts[l2]->view3());
+	  }
+	}
+      }
+    }
+
+
+    void add_Fproduct_back1(const SO3vecB& g, const SO3vecB& x){
+      int L1=x.get_maxl(); 
+      int L2=get_maxl();
+      int L=g.get_maxl();
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    SO3part_addFproduct_back1Fn()(parts[l2]->view3(),g.parts[l]->view3(),x.parts[l1]->view3());
+	  }
+	}
+      }
+    }
+
+    
+    // ---- Fmodsq -------------------------------------------------------------------------------------------
+    
+
+    SO3vecB Fmodsq(int maxl=-1){
+      if(maxl<0) maxl=2*get_maxl();
+      SO3vecB R=SO3vecB::Fzero(getb(),maxl,get_dev());
+      R.add_Fmodsq(*this,*this);
+      return R;
+    }
+
+
+    void add_Fmodsq(const SO3vecB& x, const SO3vecB& y){
+      int L1=x.get_maxl(); 
+      int L2=y.get_maxl();
+      int L=get_maxl();
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
+	    SO3part_addFproduct_Fn(1)(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3().flip());
+	  }
+	}
+      }
+    }
+
+    void add_Fmodsq_back(const SO3vecB& g, const SO3vecB& x){
+      add_Fmodsq_back0(g,x);
+      add_Fmodsq_back1(g,x);
+    }
+
+    void add_Fmodsq_back0(const SO3vecB& g, const SO3vecB& y){
+      int L1=get_maxl(); 
+      int L2=y.get_maxl();
+      int L=g.get_maxl();
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    SO3part_addFproduct_back0Fn(1)(parts[l1]->view3(),g.parts[l]->view3(),y.parts[l2]->view3().flip());
+	  }
+	}
+      }
+    }
+
+    void add_Fmodsq_back1(const SO3vecB& g, const SO3vecB& x){
+      int L1=x.get_maxl(); 
+      int L2=get_maxl();
+      int L=g.get_maxl();
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    SO3part_addFproduct_back1Fn(1)(parts[l2]->view3().flip(),g.parts[l]->view3(),x.parts[l1]->view3());
+	  }
+	}
+      }
+    }
+
+
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
 
