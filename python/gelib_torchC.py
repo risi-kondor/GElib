@@ -117,9 +117,9 @@ class SO3part(torch.Tensor):
     ## ---- I/O ----------------------------------------------------------------------------------------------
 
         
-    def __str__(self):
-        u=_SO3partB.view(self)
-        return u.__str__()
+    #def __str__(self):
+    #    u=_SO3partB.view(self)
+    #    return u.__str__()
 
 
 
