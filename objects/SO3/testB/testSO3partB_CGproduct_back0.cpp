@@ -31,14 +31,13 @@ int main(int argc, char** argv){
   SO3partB v=SO3partB::gaussian(b,l2,n2);
   SO3partB w=SO3partB::gaussian(b,l,n1*n2);
   //printl("u",u)<<endl;
-  //printl("w",v)<<endl;
+  //printl("w",w)<<endl;
 
   //cout<<"Starting CPU"<<endl;
   for(int i=0; i<niter; i++){
     u.add_CGproduct_back0(w,v);
     cout<<u<<endl;
   }
-  cout<<"."<<endl;
 
 #ifdef _WITH_CUDA
   SO3partB ug=SO3partB::zero(b,l1,n1,1);
@@ -49,7 +48,6 @@ int main(int argc, char** argv){
     ug.add_CGproduct_back0(wg,vg);
     cout<<ug<<endl;
   }
-  cout<<"."<<endl;
 #endif 
 
   cout<<endl; 

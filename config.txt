@@ -2,7 +2,7 @@
 
 CNINE_ROOT=$(ROOTDIR)/../cnine/
 
-#GELIB_SO3CG_DEBUG=t
+GELIB_SO3CG_DEBUG=t
 
 
 # ---- CUDA OPTIONS ----------------------------------

@@ -52,32 +52,37 @@ namespace GElib{
     ~SO3_CGbank(){
       for(auto p:cgcoeffsf) delete p.second;
       for(auto p:cgcoeffsd) delete p.second;
-      for(auto p:cgcoeffsfG) delete p.second;
+      //for(auto p:cgcoeffsfG) delete p.second; // why is this a problem?
       for(auto p:cgcoeffsdG) delete p.second;
     }
     
-    const SO3_CGcoeffs<float>& getf(const CGindex& ix, const cnine::device& dev=0){
-      lock_guard<mutex> lock(safety_mx);
-      if(dev.id()==0){
+    const SO3_CGcoeffs<float>& getf(const CGindex& ix, const int dev=0){
+      if(dev==0){
+	lock_guard<mutex> lock(safety_mx);
 	auto it=cgcoeffsf.find(ix);
 	if(it!=cgcoeffsf.end()) return *it->second;
 	SO3CG_DEBUG("Computing CG coefficients for "<<ix.str()<<"...");
 	SO3_CGcoeffs<float>* r=new SO3_CGcoeffs<float>(ix);
 	//lock_guard<mutex> lock(safety_mx);
-	it=cgcoeffsf.find(ix);
-	if(it!=cgcoeffsf.end()) return *it->second;
+	//it=cgcoeffsf.find(ix);
+	//if(it!=cgcoeffsf.end()) return *it->second;
 	cgcoeffsf[ix]=r;
 	return *r;
       }else{
-	auto it=cgcoeffsfG.find(ix);
-	if(it!=cgcoeffsfG.end()) return *it->second;
+	{
+	  lock_guard<mutex> lock(safety_mx);
+	  auto it=cgcoeffsfG.find(ix);
+	  if(it!=cgcoeffsfG.end()) return *it->second;
+	}
 	SO3_CGcoeffs<float>* r=new SO3_CGcoeffs<float>(getf(ix));
 	r->to_device(dev);
-	//lock_guard<mutex> lock(safety_mx);
-	it=cgcoeffsfG.find(ix);
-	if(it!=cgcoeffsfG.end()) return *it->second;
-	cgcoeffsfG[ix]=r;
-	return *r;
+	{
+	  lock_guard<mutex> lock(safety_mx);
+	  auto it=cgcoeffsfG.find(ix);
+	  if(it!=cgcoeffsfG.end()) {delete r; return *it->second;}
+	  cgcoeffsfG[ix]=r;
+	  return *r;
+	}
       }
     }
 
@@ -114,6 +119,12 @@ namespace GElib{
       if(it!=cgcoeffsfC.end()) return it->second;
       const SO3_CGcoeffs<float>& coeffs=getf(ix);
       //cout<<cmem_index_tail<<": "<<l1<<" "<<l2<<" "<<l<<endl;
+
+      if(cmem_index_tail+4*sizeof(int)>CG_CMEM_DATA_OFFS || cmem_data_tail+sizeof(float)*coeffs.asize>CNINE_CONST_MEM_SIZE){
+	SO3CG_DEBUG("GPU constant memory full. Reverting to storing CG coefficients in global memory.");
+	return -128;
+      }
+
       if(cmem_index_tail+4*sizeof(int)>CG_CMEM_DATA_OFFS){
 	cerr<<"SO3_CGbank: no room to store index entry in constant memory."<<endl; exit(-1);}
       int ix_entry[4];
@@ -135,13 +146,11 @@ namespace GElib{
       SO3CG_DEBUG("GPU constant memory tail: "<<cmem_data_tail);
       return r;
     }
-#else
-      //      NOCUDA_ERROR;
-      //return 0;
 #endif 
 
 
 #ifdef _WITH_CUDA
+    /*
     int getfC(const int l1, const int l2, const int l, const cudaStream_t& stream){
       lock_guard<mutex> lock(safety_mxC);
       CGindex ix(l1,l2,l);
@@ -169,9 +178,7 @@ namespace GElib{
       cmem_data_tail+=sizeof(float)*coeffs.asize;
       return r;
     }
-#else
-    //      NOCUDA_ERROR;
-    //return 0;
+    */
 #endif 
 
     template<class TYPE>
