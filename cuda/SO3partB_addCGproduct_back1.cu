@@ -155,8 +155,8 @@ __global__ void SO3partB_addCGproduct_back1_tiled_kernel(const cnine::Ctensor4_v
 	    }
 	  }
 
-	  _ypr[ys1*(m2+l1)]+=y_r; 
-	  _ypi[ys1*(m2+l1)]+=y_i;
+	  _ypr[ys1*(m2+l2)]+=y_r; 
+	  _ypi[ys1*(m2+l2)]+=y_i;
 	}
 
       }// end t<yn loop
