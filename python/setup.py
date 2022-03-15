@@ -10,7 +10,7 @@ import time
 
 # --- User settings ------------------------------------------------------------------------------------------
 
-compile_with_cuda=False 
+compile_with_cuda=True
 
 copy_warnings=True
 torch_convert_warnings=True 

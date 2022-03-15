@@ -25,7 +25,7 @@ int main(int argc, char** argv){
   SO3partB v=SO3partB::zero(b,l2,n2);
   SO3partB w=SO3partB::gaussian(b,l,n1*n2);
   //printl("u",u)<<endl;
-  printl("w",w)<<endl;
+  //printl("w",w)<<endl;
 
   //cout<<"Starting CPU"<<endl;
   v.add_CGproduct_back1(w,u);

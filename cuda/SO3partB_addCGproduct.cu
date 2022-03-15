@@ -91,7 +91,7 @@ __global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor3_view r, const
 
 
 __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor4_view_t3 x, 
-  const cnine::Ctensor4_view_t3 y, const int Cptr, const bool preloadCG){
+  const cnine::Ctensor4_view_t3 y, const int Cptr, float* cptr_global, const bool preloadCG){
 
   extern __shared__ unsigned char _shared[]; 
   const int b=blockIdx.x;
@@ -107,9 +107,11 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor3_view r,
   if(preloadCG){
     cptr=reinterpret_cast<float*>(_shared);
     xpr=cptr+((x.n1*y.n1-1)/32+1)*32;
-    loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n1*y.n1);
+    if(Cptr>=0) loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n1*y.n1);
+    else loadf(cptr,cptr_global,x.n1*y.n1);
   }else{
-    cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
+    if(Cptr>=0) cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
+    else cptr=cptr_global;
     xpr=reinterpret_cast<float*>(_shared);
   }
 
@@ -185,11 +187,10 @@ namespace GElib{
     r.n2=x.n2*y.n2;
     //GELIB_CHECK(x.n2*y.n2<=1024,"Number of ouput channels can be at most 1024.")
 
+    float* cptr=nullptr;
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
+    if(Cptr<0) cptr=SO3_cgbank.getf(CGindex(xl,yl,l),r.dev).arrg;
     int clines=cnine::roundup(x.n1*y.n1,32)/32;
-    //int nlines=cnine::roundup(x.n1*x.n2*2,32)/32+
-    //cnine::roundup(y.n1*y.n2*2,32)/32+
-    //cnine::roundup(r.n1*x.n2*y.n2*2,32)/32;
 
     // set tile sizes
     const int xn=std::min(x.n2,32);
@@ -205,7 +206,7 @@ namespace GElib{
       bool preloadCG=(nlines+clines<=384);
       //preloadCG=false;
       SO3partB_addCGproduct_tiled_kernel<<<b,cnine::roundup(xn*yn,32),(nlines+preloadCG*clines)*128,stream>>>
-	(r,xtiled,ytiled,Cptr,preloadCG);
+	(r,xtiled,ytiled,Cptr,cptr,preloadCG);
       return;
     }
 
