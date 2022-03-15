@@ -10,7 +10,7 @@ import time
 
 # --- User settings ------------------------------------------------------------------------------------------
 
-compile_with_cuda=False
+compile_with_cuda=False 
 
 copy_warnings=True
 torch_convert_warnings=True 
@@ -89,7 +89,7 @@ if compile_with_cuda:
           ext_modules=[CUDAExtension('gelib_base', [ 
           '../../cnine/include/Cnine_base.cu',
           '../../cnine/cuda/TensorView_accumulators.cu',
-          '../cuda/SO3CGproducts_combined.cu',
+          '../cuda/SO3CGproducts_combo.cu',
           #'../cuda/GElib_base.cu',
           #'../cuda/SO3partA_CGproduct.cu',
           #'../cuda/SO3partA_DiagCGproduct.cu',
