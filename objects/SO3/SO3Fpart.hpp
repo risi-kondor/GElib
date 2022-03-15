@@ -64,15 +64,15 @@ namespace GElib{
   public: // ---- Conversions -------------------------------------------------------------------------------------
 
 
-    SO3Fpart(const SO3partB& x):
-      SO3partB(x){
-      assert(dims(2)==dims(1));
-    }
+    //SO3Fpart(const SO3partB& x):
+    //SO3partB(x){
+    //assert(dims(2)==dims(1));
+    //}
 
-    SO3Fpart(SO3partB&& x):
-      SO3partB(std::move(x)){
-      assert(dims(2)==dims(1));
-    }
+    //SO3Fpart(SO3partB&& x):
+    //SO3partB(std::move(x)){
+    //assert(dims(2)==dims(1));
+    //}
 
    SO3Fpart(const CtensorB& x):
       SO3partB(x){
