@@ -16,7 +16,13 @@ CFLAGS= -std=c++11 -O3 #-ferror-limit=1
 INCLUDE= -I $(ROOTDIR)/include 
 LIBS= -lstdc++ -lm -lpthread 
 
+
+
 MACROS=
+
+ifdef GELIB_SO3CG_DEBUG
+MACROS+=-D_GELIB_SO3CG_DEBUG
+endif
 
 ifdef WITH_CUDA
 MACROS+=-D_WITH_CUDA

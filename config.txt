@@ -2,11 +2,13 @@
 
 CNINE_ROOT=$(ROOTDIR)/../cnine/
 
+#GELIB_SO3CG_DEBUG=t
+
 
 # ---- CUDA OPTIONS ----------------------------------
 
-#WITH_CUDA=t
-#CUDA_HOME=/usr/local/cuda
+WITH_CUDA=t
+CUDA_HOME=/usr/local/cuda
 
 #WITH_CUBLAS=t
 

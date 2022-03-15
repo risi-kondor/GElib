@@ -14,9 +14,9 @@
 #include "CtensorB.hpp"
 #include "SO3partB.hpp"
 #include "SO3Fpart3_view.hpp"
-#include "SO3Fpart_addFproduct_Fn.hpp"
-#include "SO3Fpart_addFproduct_back0Fn.hpp"
-#include "SO3Fpart_addFproduct_back1Fn.hpp"
+#include "SO3part_addFproduct_Fn.hpp"
+#include "SO3part_addFproduct_back0Fn.hpp"
+#include "SO3part_addFproduct_back1Fn.hpp"
 
 extern GElib::SO3_CGbank SO3_cgbank;
 extern GElib::SO3_SPHgen SO3_sphGen;
@@ -64,16 +64,24 @@ namespace GElib{
   public: // ---- Conversions -------------------------------------------------------------------------------------
 
 
-    SO3Fpart(const SO3partB& x):
+    //SO3Fpart(const SO3partB& x):
+    //SO3partB(x){
+    //assert(dims(2)==dims(1));
+    //}
+
+    //SO3Fpart(SO3partB&& x):
+    //SO3partB(std::move(x)){
+    //assert(dims(2)==dims(1));
+    //}
+
+   SO3Fpart(const CtensorB& x):
       SO3partB(x){
-      assert(dims(2)==dims(1));
     }
-
-    SO3Fpart(SO3partB&& x):
+      
+    SO3Fpart(CtensorB&& x):
       SO3partB(std::move(x)){
-      assert(dims(2)==dims(1));
     }
-
+      
 
   public: // ---- Access -------------------------------------------------------------------------------------
 
@@ -87,29 +95,30 @@ namespace GElib{
 
 
     SO3Fpart3_view view() const{
-      return SO3Fpart3_view(arr,dims,strides,coffs);
+      if(dev==0) return SO3Fpart3_view(arr,dims,strides,coffs);
+      else return SO3Fpart3_view(arrg,dims,strides,coffs,dev);
     }
 
     operator SO3Fpart3_view() const{
-      return SO3Fpart3_view(arr,dims,strides,coffs);
+      if(dev==0) return SO3Fpart3_view(arr,dims,strides,coffs);
+      return SO3Fpart3_view(arrg,dims,strides,coffs,dev);
+
     }
     
 
   public: // ---- CG-products --------------------------------------------------------------------------------
 
 
-
-
     void add_Fproduct(const SO3Fpart& x, const SO3Fpart& y){
-      SO3Fpart_addFproduct_Fn()(*this,x,y);
+      SO3part_addFproduct_Fn()(view3(),x.view3(),y.view3());
     }
 
     void add_Fproduct_back0(const SO3Fpart& g, const SO3Fpart& y){
-      SO3Fpart_addFproduct_back0Fn()(*this,g,y);
+      SO3part_addFproduct_back0Fn()(view3(),g.view3(),y.view3());
     }
 
     void add_Fproduct_back1(const SO3Fpart& g, const SO3Fpart& x){
-      SO3Fpart_addFproduct_back0Fn()(*this,g,x);
+      SO3part_addFproduct_back1Fn()(view3(),g.view3(),x.view3());
     }
 
 

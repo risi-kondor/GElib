@@ -14,6 +14,9 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "Ctensor3_view.hpp"
+#include "Ctensor4_view.hpp"
+
+#define tix threadIdx.x
 
 /*
 __forceinline__ __device__ unsigned dynamic_smem_size(){
@@ -23,8 +26,8 @@ __forceinline__ __device__ unsigned dynamic_smem_size(){
 }
 */
 
-__device__ void loadf(float* dest, const float* src, const int n, const int t){
-  int nthreads=blockDims.x;
+__forceinline__ __device__ void loadf(float* dest, const float* src, const int n, const int t){
+  int nthreads=blockDim.x;
   int I=n/nthreads;
   for(int i=0; i<I; i++)
     dest[i*nthreads+t]=src[i*nthreads+t];
@@ -33,13 +36,22 @@ __device__ void loadf(float* dest, const float* src, const int n, const int t){
 }
 
 
-__device__ int loadg(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
+__forceinline__ __device__ void loadf(float* dest, const float* src, const int n){
+  int nthreads=blockDim.x;
+  int I=n/nthreads;
+  for(int i=0; i<I; i++)
+    dest[i*nthreads+tix]=src[i*nthreads+tix];
+  if(tix<n-I*nthreads)
+    dest[I*nthreads+tix]=src[I*nthreads+tix];
+}
+
+
+__forceinline__ __device__ int loadg(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
   int s1=x.s1;
   int s2=x.s2;
-  int offs=I*J;
-  float* destc=dest+offs;
+  float* destc=dest+I*J;
   float* source=x.arr+x.s0*b;
   float* sourcec=x.arrc+x.s0*b;
   if(t<J){
@@ -48,11 +60,50 @@ __device__ int loadg(const cnine::Ctensor3_view& x, float* dest, const int b, co
     for(int i=0; i<I; i++)
       destc[i*J+t]=sourcec[i*s1+t*s2];
   }
-  return offs;
+  return I*J;
 }
 
 
-__device__ int saveg(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
+// Load n fragments from x to dest 
+// assumption: number of threads is at least n
+__forceinline__ __device__ int loadg_tile(float* dest, const cnine::Ctensor4_view& x, const int b, const int i, const int n){
+  int I=x.n1;
+  int J=x.n3;
+  int s1=x.s1;
+  int s3=x.s3;
+  float* destc=dest+I*J;
+  float* source=x.arr+x.s0*b+i*x.s2;
+  float* sourcec=x.arrc+x.s0*b+i*x.s2;
+  if(tix<n){
+    for(int i=0; i<I; i++)
+      dest[i*J+tix]=source[i*s1+tix*s3];
+    for(int i=0; i<I; i++)
+      destc[i*J+tix]=sourcec[i*s1+tix*s3];
+  }
+  return I*J;
+}
+
+
+// Save n fragments from to x  
+// assumption: number of threads is at least n
+__forceinline__ __device__ void saveg_tile(float* src, const cnine::Ctensor4_view& x, const int b, const int i, const int n){
+  int I=x.n1;
+  int J=x.n3;
+  int s1=x.s1;
+  int s3=x.s3;
+  float* srcc=src+I*J;
+  float* dest=x.arr+x.s0*b+i*x.s2;
+  float* destc=x.arrc+x.s0*b+i*x.s2;
+  if(tix<n){
+    for(int i=0; i<I; i++)
+      dest[i*s1+tix*s3]=src[i*J+tix];
+    for(int i=0; i<I; i++)
+      destc[i*s1+tix*s3]=srcc[i*J+tix];
+  }
+}
+
+
+__forceinline__ __device__ int saveg(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
   int s1=x.s1;
@@ -69,5 +120,8 @@ __device__ int saveg(const cnine::Ctensor3_view& x, float* source, const int b, 
   }
   return offs;
 }
+
+
+#undef tix 
 
 #endif

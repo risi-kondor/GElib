@@ -187,8 +187,7 @@ namespace GElib{
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
 	    auto v=parts[l]->Fview();
-	    SO3Fpart_addFproduct_Fn()(v,x.parts[l1]->Fview(),y.parts[l2]->Fview());
-	    //as_SO3Fpart(*parts[l]).add_Fproduct(as_SO3Fpart(*x.parts[l1]),as_SO3Fpart(*y.parts[l2]));
+	    SO3part_addFproduct_Fn()(v,x.parts[l1]->Fview(),y.parts[l2]->Fview());
 	  }
 	}
       }
@@ -207,8 +206,7 @@ namespace GElib{
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
 	    auto v=parts[l1]->Fview();
-	    SO3Fpart_addFproduct_back0Fn()(v,g.parts[l]->Fview(),y.parts[l2]->Fview());
-	    //as_SO3Fpart(*parts[l1]).add_Fproduct_back0(as_SO3Fpart(*g.parts[l]),as_SO3Fpart(*y.parts[l2]));
+	    SO3part_addFproduct_back0Fn()(v,g.parts[l]->Fview(),y.parts[l2]->Fview());
 	  }
 	}
       }
@@ -227,8 +225,7 @@ namespace GElib{
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
 	    auto v=parts[l2]->Fview();
-	    SO3Fpart_addFproduct_back1Fn()(v,g.parts[l]->Fview(),x.parts[l1]->Fview());
-	    //as_SO3Fpart(*parts[l2]).add_Fproduct(as_SO3Fpart(*g.parts[l]),as_SO3Fpart(*x.parts[l1]));
+	    SO3part_addFproduct_back1Fn()(v,g.parts[l]->Fview(),x.parts[l1]->Fview());
 	  }
 	}
       }
@@ -257,7 +254,7 @@ namespace GElib{
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
 	    auto v=parts[l]->Fview();
-	    SO3Fpart_addFproduct_Fn(1)(v,x.parts[l1]->Fview(),y.parts[l2]->Fview().flip());
+	    SO3part_addFproduct_Fn(1)(v,x.parts[l1]->Fview(),y.parts[l2]->Fview().flip());
 	  }
 	}
       }
@@ -280,7 +277,7 @@ namespace GElib{
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
 	    auto v=parts[l1]->Fview();
-	    SO3Fpart_addFproduct_back0Fn(1)(v,g.parts[l]->Fview(),y.parts[l2]->Fview().flip());
+	    SO3part_addFproduct_back0Fn(1)(v,g.parts[l]->Fview(),y.parts[l2]->Fview().flip());
 	  }
 	}
       }
@@ -298,7 +295,7 @@ namespace GElib{
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
 	    auto v=parts[l2]->Fview().flip();
-	    SO3Fpart_addFproduct_back1Fn(1)(v,g.parts[l]->Fview(),x.parts[l1]->Fview());
+	    SO3part_addFproduct_back1Fn(1)(v,g.parts[l]->Fview(),x.parts[l1]->Fview());
       //cout<<l1<<l2<<l<<":"<<*this<<endl;
 	  }
 	}
