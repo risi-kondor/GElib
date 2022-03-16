@@ -165,6 +165,8 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor3_view r,
 	  _rpi[rs1*(m+l)]+=r_i;
 	}
       }
+      __syncthreads();
+
     }
   }
 
