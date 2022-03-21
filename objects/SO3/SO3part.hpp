@@ -13,7 +13,8 @@
 #define _GElibSO3part
 
 #include "GElib_base.hpp"
-#include "SO3partA.hpp"
+//#include "SO3partA.hpp"
+#include "SO3partB.hpp"
 #include "SO3element.hpp"
 #include "WignerMatrix.hpp"
 #include "CscalarObj.hpp"
@@ -58,43 +59,49 @@ namespace GElib{
 
 
     static SO3part raw(const int _l, const int _n){
-      return SO3part(_l,_n,-1,cnine::fill::raw);}
-    static SO3part raw(const int _l, const int _n, const int _nbu){
-      return SO3part(_l,_n,_nbu,cnine::fill::raw);}
-    static SO3part raw(const int _l, const int _n, const int _nbu, const device& _dev){
-      return SO3part(_l,_n,_nbu,cnine::fill::raw,_dev);}
+      return SO3part(1,_l,_n,cnine::fill::raw,0);}
+
+    static SO3part raw(const int _b, const int _l, const int _n, const int _dev=0){
+      return SO3part(_b,_l,_n,cnine::fill::raw,_dev);}
+
+    static SO3part raw_like(const SO3part& x){
+      return SO3part(x.getb(), x.getl(), x.getn(), cnine::fill::raw,x.get_dev());}
+
 
     static SO3part zero(const int _l, const int _n){
-      return SO3part(_l,_n,-1,cnine::fill::zero);}
-    static SO3part zero(const int _l, const int _n, const int _nbu){
-      return SO3part(_l,_n,_nbu,cnine::fill::zero);}
-    static SO3part zero(const int _l, const int _n, const int _nbu, const device& _dev){
-      return SO3part(_l,_n,_nbu,cnine::fill::zero,_dev);}
+      return SO3part(1,_l,_n,cnine::fill::zero,0);}
 
-    static SO3part ones(const int _l, const int _n){
-      return SO3part(_l,_n,-1,cnine::fill::ones);}
-    static SO3part ones(const int _l, const int _n, const int _nbu){
-      return SO3part(_l,_n,_nbu,cnine::fill::ones);}
-    static SO3part ones(const int _l, const int _n, const int _nbu, const device& _dev){
-      return SO3part(_l,_n,_nbu,cnine::fill::ones,_dev);}
+    static SO3part zero(const int _b, const int _l, const int _n, const int _dev=0){
+      return SO3part(_b,_l,_n,cnine::fill::zero,_dev);}
+
+    static SO3part zero_like(const SO3part& x){
+      return SO3part(x.getb(), x.getl(), x.getn(), cnine::fill::zero,x.get_dev());}
+
+
 
     static SO3part gaussian(const int _l, const int _n){
-      return SO3part(_l,_n,-1,cnine::fill::gaussian);}
-    static SO3part gaussian(const int _l, const int _n, const int _nbu){
-      return SO3part(_l,_n,_nbu,cnine::fill::gaussian);}
-    static SO3part gaussian(const int _l, const int _n, const int _nbu, const device& _dev){
-      return SO3part(_l,_n,_nbu,cnine::fill::gaussian,_dev.id());}
+      return SO3part(1,_l,_n,cnine::fill::gaussian,0);}
 
-    static SO3part spharm(const int _l, const float x, const float y, const float z){
-      SO3part R(_l,1,-1,cnine::fill::zero);
-      R.add_spharm(x,y,z);
-      return R;
-    }
+    static SO3part gaussian(const int _b, const int _l, const int _n, const int _dev=0){
+      return SO3part(_b,_l,_n,cnine::fill::gaussian,_dev);}
+
+    static SO3part gaussian_like(const SO3part& x){
+      return SO3part(x.getb(), x.getl(), x.getn(), cnine::fill::gaussian,x.get_dev());}
 
 
-    SO3part(const int _l, const int _n, 
-      std::function<complex<float>(const int i, const int m)> fn):
-      GELIB_SO3PART_IMPL({2*_l+1,_n},[&](const int i, const int j){return fn(j,i-_l);}){}
+    //static SO3part spharm(const int _l, const float x, const float y, const float z){
+    //SO3part R(_l,1,-1,cnine::fill::zero);
+    //R.add_spharm(x,y,z);
+    //return R;
+    //}
+
+
+    // ---- Lambda constructors -------------------------------------------------------------------------------
+
+
+    //SO3part(const int _b, const int _l, const int _n, 
+    //std::function<complex<float>(const int b, const int i, const int m)> fn):
+    //GELIB_SO3PART_IMPL({_b,2*_l+1,_n},[&](const int b, const int i, const int j){return fn(b,j,i-_l);}){}
     
 
    public: // ---- Copying ------------------------------------------------------------------------------------
@@ -159,7 +166,7 @@ namespace GElib{
     }
   
    
-public: // ---- Access -------------------------------------------------------------------------------------
+  public: // ---- Access -------------------------------------------------------------------------------------
 
 
   public: // ---- Operations ---------------------------------------------------------------------------------
@@ -167,31 +174,6 @@ public: // ---- Access ---------------------------------------------------------
 
   public: // ---- Accumulating operations ------------------------------------------------------------------
 
-
-    void add_prod(const ctensor& M, const SO3part& p){
-      GELIB_SO3PART_IMPL::add_Mprod_AT<0>(p,M);
-    }
-
-    void add_prod_back0_into(GELIB_SO3PART_IMPL& Mg, const SO3part& p) const{
-      Mg.add_Mprod_TA<2>(*this,p);
-    }
-
-    void add_prod_back1_into(const GELIB_SO3PART_IMPL& M, SO3part& pg) const{
-      pg.add_Mprod_AA<2>(*this,M);
-    }
-
-    void add_norm2_back(const cscalar& g, const SO3part& x){
-      add(x,g);
-      add_conj(x,g.val);
-    }
-
-    void add_to_frags(const int offs, const SO3part& x){
-      GELIB_SO3PART_IMPL::add_to_chunk(1,offs,x);
-    }
-
-    void add_frags_of(const SO3part& x, const int offs, const int n){
-      GELIB_SO3PART_IMPL::add_chunk_of(x,1,offs,n);
-    }
 
 
   public: // ---- Spherical harmonics -----------------------------------------------------------------------
@@ -289,29 +271,11 @@ public: // ---- Access ---------------------------------------------------------
   public: // ---- In-place operators -------------------------------------------------------------------------
 
 
-    SO3part& operator+=(const SO3part& y){
-      add(y);
-      return *this;
-    }
-
-    SO3part& operator-=(const SO3part& y){
-      subtract(y);
-      return *this;
-    }
-
-    /*
-    SO3part& normalize_fragments(){
-      //GELIB_SO3PART_IMPL a=column_norms();
-      //divide_columns(column_norms());
-      (*this)=(divide_columns(column_norms()));
-      return *this;
-    }
-    */
-
 
   public: // ---- Binary operators ---------------------------------------------------------------------------
 
 
+    /*
     SO3part operator+(const SO3part& y) const{
       SO3part R(*this);
       R.add(y);
@@ -343,6 +307,7 @@ public: // ---- Access ---------------------------------------------------------
       R.add_mprod_TA(y,*this);
       return R;
     }
+    */
     
 
   public: // ---- I/O --------------------------------------------------------------------------------------
@@ -369,36 +334,14 @@ public: // ---- Access ---------------------------------------------------------
   // ---- Post-class functions -------------------------------------------------------------------------------
 
 
-  inline cnine::CscalarObj norm2(const SO3part& x){
-    cnine::CscalarObj r(x.get_nbu(),cnine::fill::zero);
-    x.add_norm2_into(r);
-    return r;
-  }
-
-  inline cnine::CscalarObj inp(const SO3part& x, const SO3part& y){
-    cnine::CscalarObj r(x.get_nbu(),cnine::fill::zero);
-    x.add_inp_into(r,y);
-    return r;
-  }
-
-  inline SO3part operator*(const cnine::CscalarObj& c, const SO3part& x){
-    return x*c; 
-  }
-
-  inline SO3part operator*(const cnine::CtensorObj& M, const SO3part& x){
-    SO3part R(x.getl(),M.get_dims()[0],cnine::fill::zero);
-    R.add_Mprod_AT<0>(x,M);
-    return R;
-  }
-
   inline SO3part CGproduct(const SO3part& x, const SO3part& y, const int l){
     const int dev=x.get_dev()*y.get_dev();
-    SO3part R(l,x.getn()*y.getn(),cnine::fill::zero,dev);
+    SO3part R(x.getb(),l,x.getn()*y.getn(),cnine::fill::zero,dev);
     R.add_CGproduct(x,y,0);
     return R;
   }
 
-  
+  /*  
   inline SO3part DiagCGproduct(const SO3part& x, const SO3part& y, const int l){
     assert(x.getn()==y.getn());
     const int dev=x.get_dev()*y.get_dev();
@@ -406,317 +349,11 @@ public: // ---- Access ---------------------------------------------------------
     R.add_DiagCGproduct(x,y,0);
     return R;
   }
-
-  
-  /*
-  ostream& operator<<(ostream& stream, const MemberExpr2<SO3part,CscalarObj,complex<float>,int>& x){
-    stream<<x.str(); return stream;
-  }
-
-  ostream& operator<<(ostream& stream, const ConstSO3partElement& x){
-    stream<<x.str(); return stream;
-  }
-  */
-
-
-  // ---- Downcasting ----------------------------------------------------------------------------------------
-  
-
-  /*
-  inline SO3part& asSO3part(Dnode* x){
-    if(!dynamic_cast<SO3part*>(x->obj)){
-      if(!x->obj) cerr<<"GEnet error: Dobject does not exist."<<endl;
-      else {cerr<<"GEnet error: Dobject is of type "<<x->obj->classname()<<" instead of SO3part."<<endl;}
-    }
-    assert(dynamic_cast<SO3part*>(x->obj));
-    return *static_cast<SO3part*>(x->obj);
-  }
-
-  inline const SO3part& asSO3part(const Dnode* x){
-    if(!dynamic_cast<const SO3part*>(x->obj)){
-      if(!x->obj) cerr<<"GEnet error: Dobject does not exist."<<endl;
-      else {cerr<<"GEnet error: Dobject is of type "<<x->obj->classname()<<" instead of SO3part."<<endl;}
-    }
-    assert(dynamic_cast<const SO3part*>(x->obj));
-    return *static_cast<const SO3part*>(x->obj);
-  }
-
-  inline SO3part& asSO3part(Dobject* x){
-    if(!dynamic_cast<SO3part*>(x)){
-      if(!x) cerr<<"GEnet error: Dobject does not exist."<<endl;
-      else {cerr<<"GEnet error: Dobject is of type "<<x->classname()<<" instead of SO3part."<<endl;}
-    }
-    assert(dynamic_cast<SO3part*>(x));
-    return *static_cast<SO3part*>(x);
-  }
-
-  inline const SO3part& asSO3part(const Dobject* x){
-    if(!dynamic_cast<const SO3part*>(x)){
-      if(!x) cerr<<"GEnet error: Dobject does not exist."<<endl;
-      else {cerr<<"GEnet error: Dobject is of type "<<x->classname()<<" instead of SO3part."<<endl;}
-    }
-    assert(dynamic_cast<const SO3part*>(x));
-    return *static_cast<const SO3part*>(x);
-  }
-
-  inline SO3part& asSO3part(Dobject& x){
-    if(!dynamic_cast<SO3part*>(&x))
-      cerr<<"GEnet error: Dobject is of type "<<x.classname()<<" instead of SO3part."<<endl;
-    assert(dynamic_cast<SO3part*>(&x));
-    return static_cast<SO3part&>(x);
-  }
-
-  inline const SO3part& asSO3part(const Dobject& x){
-    if(!dynamic_cast<const SO3part*>(&x))
-      cerr<<"GEnet error: Dobject is of type "<<x.classname()<<" instead of SO3part."<<endl;
-    assert(dynamic_cast<const SO3part*>(&x));
-    return static_cast<const SO3part&>(x);
-  }
   */
 
 
 }
 
 #endif 
-
-    //hdl=engine::new_ctensor({2*l+1,n},-1,device);
-    //hdl=engine::new_ctensor({2*l+1,n},-1,device);
-    //hdl=engine::new_ctensor_zero({2*l+1,n},-1,device);
-    //hdl=engine::new_ctensor_gaussian({2*l+1,n},-1,device);
-    //hdl(engine::ctensor_copy(x.hdl)){}
-  // ---- SO3partElement
-
-  /*
-  inline SO3partElement::operator CscalarObj() const{
-    return obj.get(i,m);
-  }
-
-  inline SO3partElement& SO3partElement::operator=(const CscalarObj& x){
-    obj.set(i,m,x);    
-    return *this;
-  }
-
-  inline complex<float> SO3partElement::get_value() const{
-    return obj.get_value(i,m);
-  }
-  
-  inline SO3partElement& SO3partElement::set_value(const complex<float> x){
-    obj.set_value(i,m,x);
-    return *this;
-  }
-  */
-
-  /*
-  inline ConstSO3partElement::operator CscalarObj() const{
-    return obj.get(i,m);
-  }
-
-  inline complex<float> ConstSO3partElement::get_value() const{
-    return obj.get_value(i,m);
-  }
-  */
-    /*
-    SO3part(const int _l, const int _n, const fill_zero& fill, const int device=0):
-      GELIB_SO3PART_IMPL({2*_l+1,_n},-1,fill,device), l(_l), n(_n){}
-
-    SO3part(const int _l, const int _n, const fill_ones& fill, const int device=0):
-      GELIB_SO3PART_IMPL({2*_l+1,_n},-1,fill,device), l(_l), n(_n){}
-
-    SO3part(const int _l, const int _n, const fill_gaussian& fill, const int device=0):
-      GELIB_SO3PART_IMPL({2*_l+1,_n},-1,fill,device), l(_l), n(_n){}
-    */
-
-    /*
-    SO3part(const int _l, const int _n, const int _nbu, const fill_zero& fill, const int device=0):
-      CtensorObj({2*_l+1,_n},_nbu,fill,device), l(_l), n(_n){}
-
-    SO3part(const int _l, const int _n, const int _nbu, const fill_ones& fill, const int device=0):
-      CtensorObj({2*_l+1,_n},_nbu,fill,device), l(_l), n(_n){}
-
-    SO3part(const int _l, const int _n, const int _nbu, const fill_gaussian& fill, const int device=0):
-      CtensorObj({2*_l+1,_n},_nbu,fill,device), l(_l), n(_n){}
-    */
-
-    //SO3part(const int _l, const int _n):
-    //CtensorObj({2*_l+1,_n},-1), l(_l), n(_n){}
-
-    //SO3partSeed* seed() const{
-    //return new SO3partSeed(l,n,nbu);
-    //}
-
-    //void add_CGproduct(const SO3part& x, const SO3part& y, const int offs=0){
-      // replace(hdl,Cengine_engine->push<SO3part_add_CGproduct_op>(hdl,x.hdl,y.hdl,dims,x.dims,y.dims,offs));
-    //}
-    
-    //void add_CGproductBack0(const SO3part& g, const SO3part& y, const int offs=0){
-    //GELIB_UNIMPL();
-      //replace(hdl,Cengine_engine->push<SO3part_add_CGproduct_back0_op>(hdl,g.hdl,y.hdl,dims,g.dims,y.dims,offs));
-    //}
-
-    //void add_CGproductBack1(const SO3part& g, const SO3part& x, const int offs=0){
-    //GELIB_UNIMPL();
-      //replace(hdl,Cengine_engine->push<SO3part_add_CGproduct_back1_op>(hdl,g.hdl,x.hdl,dims,g.dims,x.dims,offs));
-    //}
-    /*
-    SO3part(const vector<const SO3part*> v):
-      GELIB_SO3PART_IMPL(fill::cat,1,
-	::Cengine::apply<const SO3part*, const CtensorObj*>(v,[](const SO3part* x){return x;})), 
-      l(v[0]->l){
-      n=dims[1];
-    }
-    */
-    /*
-    Dobject* clone() const{
-      return new SO3part(*this);
-    }
-
-    Dobject* spawn(const fill_zero& fill) const{
-      return new SO3part(l,n,nbu,fill::zero,dev);
-    }
-
-    Dobject* spawn(const fill_zero& fill, const int dev) const{
-      return new SO3part(l,n,nbu,fill::zero,dev);
-    }
-
-    Dobject* spawn(const fill_gaussian& fill) const{
-      return new SO3part(l,n,nbu,fill::gaussian);
-    }
-
-    Dobject* spawn(const int _l, const int _n, const fill_zero& fill) const{
-      return new SO3part(_l,_n,nbu,fill::zero);
-    }
-    */
-    
-    /*
-    void add_sum(const vector<SO3part*> v){
-      vector<Chandle*> h(v.size());
-      for(int i=0; i<v.size(); i++) h[i]=v[i]->hdl;
-      replace(hdl,Cengine_engine->push<ctensor_add_sum_op>(hdl,h));
-    }
-    */
-
-
-
-    //SO3part static spharm(const int l, const GELIB_SO3PART_IMPL& x, const int _nbu=-1, const device_id& dev=0){
-    //return SO3part(::Cengine::engine::new_SO3part_spharm(l,x,_nbu,dev),l,1,nbu);
-    //}
-
-    //int get_dev() const{
-    //return dev;
-    //}
-    
-    //int get_nbu() const{ 
-    //return nbu;
-    //}
-
-    /*
-    complex<float> get_value(const int i, const int m) const{
-      return GELIB_SO3PART_IMPL::get(i,m+l);
-    }
-
-    SO3part& set_value(const int i, const int m, complex<float> x){
-      GELIB_SO3PART_IMPL::set(m+l,i,x);
-      return *this; 
-    }
-
-    SO3part& set(const int i, const int m, complex<float> x){
-      GELIB_SO3PART_IMPL::set(m+l,i,x);
-      return *this; 
-    }
-
-    cscalar get(const int i, const int m) const{
-      return GELIB_SO3PART_IMPL::get(i,m+l);
-    }
-
-    SO3part& set(const int i, const int m, const cscalar& x){
-      GELIB_SO3PART_IMPL::set(i,m+l,x.val);
-      return *this; 
-    }
-    */
-
-
-  /*
-  inline SO3part SO3partSeed::spawn(const fill_zero& fill){
-    //cout<<"No seed!"<<endl;
-    //exit(0);
-    return SO3part(l,n,nbu,fill::zero,dev);
-  }
-  */
-
-  /*
-  inline SO3fragExpr& SO3fragExpr::operator=(const SO3fragExpr& x){
-    operator=(SO3part(x));
-    return *this;
-  };
-
-  inline SO3fragExpr::operator SO3part() const{
-    return owner->chunk(1,i,n);
-  }
-
-  inline SO3fragExpr& SO3fragExpr::operator=(const SO3part& x){
-    GENET_CHECK_EQ(n,x.getn(),"SO3fragExpre::operator=","number of fragments does not match.");
-    owner->set_chunk(x,1,i);
-    return *this;
-  }
-
-  ostream& operator<<(ostream& stream, const SO3fragExpr& x){
-    stream<<SO3part(x).str(); return stream;
-  }
-  */
-    /*
-    SO3part(const int _l, const int _n, const int _nbu=-1, const int _dev=0):
-      GELIB_SO3PART_IMPL({2*_l+1,_n},_nbu,cnine::fill_raw(),_dev){}//, l(_l), n(_n){}
-
-    template<typename FILLTYPE, typename = typename 
-	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
-    SO3part(const int _l, const int _n, const FILLTYPE& fill, const int _dev=0):
-      GELIB_SO3PART_IMPL({2*_l+1,_n},fill,_dev){}//, l(_l), n(_n){}
-
-    template<typename FILLTYPE, typename = typename 
-	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
-    SO3part(const int _l, const int _n, const int _nbu, const FILLTYPE& fill, const int _dev=0):
-      GELIB_SO3PART_IMPL({2*_l+1,_n},_nbu,fill,_dev){}//, l(_l), n(_n){}
-
-    template<typename FILLTYPE, typename = typename 
-	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
-    SO3part(const int _l, const int _n, const FILLTYPE& fill, const device& _dev):
-      SO3part(_l,_n,-1,fill,_dev.id()){}
-
-    template<typename FILLTYPE, typename = typename 
-	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
-    SO3part(const int _l, const int _n, const int _nbu, const FILLTYPE& fill, 
-      const device& _dev):
-      SO3part(_l,_n,_nbu,fill,_dev.id()){}
-    */
-
-   // ---- Member expressions
-
-
-    //MemberExpr2<SO3part,cscalar,complex<float>,int,int> operator()(const int i, const int m){
-    //return MemberExpr2<SO3part,cscalar,complex<float>,int,int>(*this,i,m);
-    //}
-
-    //constMemberExpr2<SO3part,cscalar,complex<float>,int,int> operator()(const int i, const int m) const{
-    //return constMemberExpr2<SO3part,cscalar,complex<float>,int,int>(*this,i,m);
-    //}
-
-    //SO3partElement operator()(const int i, const int m){
-    //return SO3partElement(*this,i,m);
-    //}
-
-    //ConstSO3partElement operator()(const int i, const int m) const{
-    //return ConstSO3partElement(*this,i,m);
-    //}
-
-    //SO3fragExpr fragment(const int i){
-    //return SO3fragExpr(this,i);
-    //}
-
-
-    //public: // shorthands 
-
-    //complex<float> value(const int i, const int m) const {return get_value(i,m);}
-    //SO3part& set(const int i, const int m, complex<float> x) {return set_value(i,m,x);}
-      
 
 

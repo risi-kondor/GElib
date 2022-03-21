@@ -92,8 +92,8 @@ namespace GElib{
 #define GELIB_SO3PARTARRAY_IMPL SO3partArrayM
 #define GELIB_SO3VECARRAY_IMPL SO3vecArrayM
 #else 
-#define GELIB_SO3PART_IMPL SO3partA
-#define GELIB_SO3VEC_IMPL SO3vecA
+#define GELIB_SO3PART_IMPL SO3partB
+#define GELIB_SO3VEC_IMPL SO3vecB
 #define GELIB_SO3PARTARRAY_IMPL SO3partArrayA
 #define GELIB_SO3VECARRAY_IMPL SO3vecArrayA
 #endif 

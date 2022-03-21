@@ -268,7 +268,7 @@ namespace GElib{
     // ---- Fproducts ---------------------------------------------------------------------------------------
 
 
-    SO3vecB Fproduct(const SO3vecB& y, int maxl=-1){
+    SO3vecB Fproduct(const SO3vecB& y, int maxl=-1) const{
       assert(y.getb()==getb());
       if(maxl<0) maxl=get_maxl()+y.get_maxl();
       SO3vecB R=SO3vecB::Fzero(getb(),maxl,get_dev());
@@ -325,7 +325,7 @@ namespace GElib{
     // ---- Fmodsq -------------------------------------------------------------------------------------------
     
 
-    SO3vecB Fmodsq(int maxl=-1){
+    SO3vecB Fmodsq(int maxl=-1) const{
       if(maxl<0) maxl=2*get_maxl();
       SO3vecB R=SO3vecB::Fzero(getb(),maxl,get_dev());
       R.add_Fmodsq(*this,*this);
