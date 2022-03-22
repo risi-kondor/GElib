@@ -14,6 +14,7 @@
 
 #include "CtensorArrayA.hpp"
 #include "SO3part.hpp"
+#include "SO3partA.hpp"
 #include "SO3_CGbank.hpp"
 #include "SO3_SPHgen.hpp"
 //#include "Cmaps.hpp"

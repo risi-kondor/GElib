@@ -5,8 +5,8 @@
 __device__ __constant__ unsigned char cg_cmem[CNINE_CONST_MEM_SIZE];
 #define _SO3CG_CUDA_CONCAT
 
-#include "SO3partA_CGproduct.cu"
-#include "SO3partA_DiagCGproduct.cu"
+//#include "SO3partA_CGproduct.cu"
+//#include "SO3partA_DiagCGproduct.cu"
 
 #include "SO3partB_addCGproduct.cu"
 #include "SO3partB_addCGproduct_back0.cu"

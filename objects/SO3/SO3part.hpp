@@ -14,6 +14,8 @@
 
 #include "GElib_base.hpp"
 //#include "SO3partA.hpp"
+#include "SO3_CGbank.hpp"
+#include "SO3_SPHgen.hpp"
 #include "SO3partB.hpp"
 #include "SO3element.hpp"
 #include "WignerMatrix.hpp"
