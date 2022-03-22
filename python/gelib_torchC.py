@@ -44,7 +44,7 @@ class SO3part(torch.Tensor):
         if _dev==0:        
             return SO3part(torch.randn([b,2*l+1,n,2]))
         else:
-            return SO3part(torch.randn([b,2*l+1,n,2],device='cuda'))
+            return SO3part(torch.randn([b,2*l+1,n,2])).cuda()
 
 
     @staticmethod
@@ -77,7 +77,7 @@ class SO3part(torch.Tensor):
         if _dev==0:        
             return SO3part(torch.zeros([b,2*l+1,2*l+1,2]))
         else:
-            return SO3part(torch.zeros([b,2*l+1,2*l+1,2])).cuda() # why doesn't device='cuda' work?
+            return SO3part(torch.zeros([b,2*l+1,2*l+1,2])).cuda()
 
     @staticmethod
     def Frandn(b,l,_dev=0):
@@ -88,7 +88,7 @@ class SO3part(torch.Tensor):
         if _dev==0:        
             return SO3part(torch.randn([b,2*l+1,2*l+1,2]))
         else:
-            return SO3part(torch.randn([b,2*l+1,2*l+1,2],device='cuda'))
+            return SO3part(torch.randn([b,2*l+1,2*l+1,2])).cuda()
 
 
     ## ---- Access ------------------------------------------------------------------------------------------
@@ -174,10 +174,6 @@ class SO3vec:
         R=SO3vec()
         for l in range(0,maxl+1):
             R.parts.append(SO3part.Fzeros(b,l,_dev))
-            #if device==0:
-            #   R.parts.append(torch.zeros(b,2*l+1,2*l+1,2,dtype=torch.float))
-            #else:
-            #   R.parts.append(torch.zeros(b,2*l+1,2*l+1,2,dtype=torch.float,device=cuda0))
         return R
 
     @staticmethod
@@ -186,10 +182,6 @@ class SO3vec:
         R=SO3vec()
         for l in range(0,maxl+1):
             R.parts.append(SO3part.Frandn(b,l,_dev))            
-            #if device==0:
-            #    R.parts.append(torch.randn(b,2*l+1,2*l+1,2,dtype=torch.float))
-            #else:
-            #    R.parts.append(torch.randn(b,2*l+1,2*l+1,2,dtype=torch.float,device=cuda0))             
         return R
 
     @staticmethod
@@ -198,7 +190,6 @@ class SO3vec:
         b=x.parts[0].dim(0)
         for l in range(0,len(x.parts)):
             R.parts.append(SO3part(torch.zeros_like(x.parts[l])))
-            #R.parts.append(torch.zeros(b,2*l+1,2*l+1,2,dtype=torch.float))
         return R;
                            
                        
