@@ -22,8 +22,8 @@
 #include "SO3type.hpp"
 #include "SO3part.hpp"
 #include "SO3vec.hpp"
-#include "SO3partArray.hpp"
-#include "SO3vecArray.hpp"
+//#include "SO3partArray.hpp"
+//#include "SO3vecArray.hpp"
 
 #include "SO3partB.hpp"
 #include "SO3vecB.hpp"
@@ -98,10 +98,10 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
     py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
   */
 
-  #include "SO3part_py.cpp"
-  #include "SO3vec_py.cpp"
-  #include "SO3partArray_py.cpp"
-  #include "SO3vecArray_py.cpp"
+  //#include "SO3part_py.cpp"
+  //#include "SO3vec_py.cpp"
+  //  #include "SO3partArray_py.cpp"
+  //#include "SO3vecArray_py.cpp"
 
   #include "SO3partB_py.cpp"
   #include "SO3vecB_py.cpp"

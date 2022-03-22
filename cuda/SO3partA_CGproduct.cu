@@ -20,6 +20,7 @@
 //__device__ __constant__ unsigned char cg_cmem[32276]; 
 
 
+#include "SO3partA.hpp"
 #include "SO3partArrayA.hpp"
 #include "SO3_CGbank.hpp"
 

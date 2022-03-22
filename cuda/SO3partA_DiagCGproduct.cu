@@ -21,6 +21,7 @@
 
 #include "SO3partArrayA.hpp"
 #include "SO3_CGbank.hpp"
+#include "SO3partA.hpp"
 
 #include "CellwiseBinaryCmap.hpp"
 #include "BroadcastBinaryCmap.hpp"
