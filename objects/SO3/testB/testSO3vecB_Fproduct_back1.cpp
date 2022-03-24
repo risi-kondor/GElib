@@ -15,12 +15,13 @@ int main(int argc, char** argv){
   cout<<endl;
 
   int b=1;
-  int L=2;
+  int L1=2;
+  int L2=3;
   int maxl=2;
 
-  SO3vecB x=SO3vecB::Fgaussian(b,L);
-  SO3vecB y=SO3vecB::Fzero(b,L);
-  SO3vecB z=SO3vecB::Fgaussian(b,std::min(maxl,2*L));
+  SO3vecB x=SO3vecB::Fgaussian(b,L1);
+  SO3vecB y=SO3vecB::Fzero(b,L2);
+  SO3vecB z=SO3vecB::Fgaussian(b,std::min(maxl,L1+L2));
   //printl("x",x)<<endl;
   //printl("y",y)<<endl;
 
@@ -30,10 +31,10 @@ int main(int argc, char** argv){
 
 #ifdef _WITH_CUDA
   SO3vecB xc=x.to_device(1);
-  SO3vecB yc=SO3vecB::Fzero(b,L,1);
+  SO3vecB yc=SO3vecB::Fzero(b,L2,1);
   SO3vecB zc=z.to_device(1);
 
-  yc.add_Fproduct_back0(zc,xc);
+  yc.add_Fproduct_back1(zc,xc);
   printl("yc",yc);
   cout<<endl;
 #endif
