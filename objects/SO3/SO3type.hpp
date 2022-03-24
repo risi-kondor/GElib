@@ -171,8 +171,7 @@ namespace GElib{
 	  tau[l]+=t1(l1)*t2(l2);
     return tau;
   }
-
-
+  
   inline SO3type CGproduct(const SO3type& t1, const SO3type& t2,  const SO3type& t3, int _maxl=-1){
     if(_maxl==-1) _maxl=1000;
     SO3type a=CGproduct(t1,t2,_maxl+t3.maxl());
@@ -180,12 +179,27 @@ namespace GElib{
 
   }
 
-
   inline SO3type CGproduct(const SO3type& t1, const SO3type& t2,  const SO3type& t3, const SO3type& t4, int _maxl=-1){
     if(_maxl==-1) _maxl=1000;
     SO3type a=CGproduct(t1,t2,t3,_maxl+t4.maxl());
     return CGproduct(a,t4,_maxl);
   }
+
+
+  inline SO3type CGsquare(const SO3type& t, int _maxl=-1){
+    if(_maxl==-1) _maxl=1000;
+    SO3type tau(cnine::size_spec(std::min(2*t.maxl(),_maxl)+1));
+    for(int l1=0; l1<=t.maxl(); l1++){
+      for(int l=0; l<=2*l1 && l<=_maxl; l++)
+	tau[l]+=(t(l1)*(t(l1)-1))/2+t(l1)*(1-l%2);
+      for(int l2=l1+1; l2<=t.maxl(); l2++)
+	for(int l=std::abs(l2-l1); l<=l1+l2 && l<=_maxl; l++)
+	  tau[l]+=t(l1)*t(l2);
+    }
+    return tau;
+  }
+  
+
 
 
   inline cnine::GdimsPack dims(const SO3type& tau1, const SO3type& tau2){

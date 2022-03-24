@@ -5,10 +5,12 @@ INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_op
 
 TESTS= testSO3partB testSO3partB_covariance testSO3vecB testSO3vecB_covariance testSO3vecB_gradient \
 timeSO3CG \
-testSO3partB_CGproduct testSO3partB_CGproduct_back0 testSO3partB_CGproduct_back1 \
+#testSO3partB_CGproduct 
+TESTS+=testSO3partB_CGproduct_back0 testSO3partB_CGproduct_back1 \
 testSO3partB_Fproduct testSO3partB_Fproduct_back0 testSO3partB_Fproduct_back1 \
 testSO3vecB_Fproduct testSO3vecB_Fproduct_back0 testSO3vecB_Fproduct_back1 \
-testSO3vecB_Fmodsq 
+testSO3vecB_Fmodsq \
+testSO3vecB_CGsquare 
 
 #testSO3Fvec testSO3Fvec_covariance testSO3Fvec_Fmodsq
 
@@ -167,6 +169,15 @@ ifdef WITH_CUDA
 else
 	$(CC) -o testSO3vecB_Fmodsq_back testSO3vecB_Fmodsq_back.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 endif
+
+
+testSO3vecB_CGsquare: testSO3vecB_CGsquare.cpp $(DEPS) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o testSO3vecB_CGsquare testSO3vecB_CGsquare.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o testSO3vecB_CGsquare testSO3vecB_CGsquare.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+endif
+
 
 
 

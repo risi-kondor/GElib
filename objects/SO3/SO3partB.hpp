@@ -19,6 +19,8 @@
 #include "SO3part_addCGproduct_back0Fn.hpp"
 #include "SO3part_addCGproduct_back1Fn.hpp"
 
+#include "SO3part_addCGsquareFn.hpp"
+
 #include "SO3part_addFproduct_Fn.hpp"
 #include "SO3part_addFproduct_back0Fn.hpp"
 #include "SO3part_addFproduct_back1Fn.hpp"
@@ -65,26 +67,27 @@ namespace GElib{
   public: // ---- Named constructors -------------------------------------------------------------------------
 
     
+    static SO3partB raw(const int l, const int n){
+      return SO3partB(1,l,n,cnine::fill_raw());}
+    static SO3partB zero(const int l, const int n){
+      return SO3partB(1,l,n,cnine::fill_zero());}
+    static SO3partB gaussian(const int l, const int n){
+      return SO3partB(1,l,n,cnine::fill_gaussian());}
+
     static SO3partB raw(const int b, const int l, const int n,  const int _dev=0){
-      return SO3partB(b,l,n,cnine::fill_raw(),_dev);
-    }
-
+      return SO3partB(b,l,n,cnine::fill_raw());}
     static SO3partB zero(const int b, const int l, const int n,  const int _dev=0){
-      return SO3partB(b,l,n,cnine::fill_zero(),_dev);
-    }
-
+      return SO3partB(b,l,n,cnine::fill_zero(),_dev);}
     static SO3partB gaussian(const int b, const int l, const int n,  const int _dev=0){
-      return SO3partB(b,l,n,cnine::fill_gaussian(),_dev);
-    }
+      return SO3partB(b,l,n,cnine::fill_gaussian(),_dev);}
 
 
+    static SO3partB Fraw(const int b, const int l, const int _dev=0){
+      return SO3partB(1,l,2*l+1,cnine::fill_raw());}
     static SO3partB Fzero(const int b, const int l, const int _dev=0){
-      return SO3partB(b,l,2*l+1,cnine::fill_zero(),_dev);
-    }
-
+      return SO3partB(b,l,2*l+1,cnine::fill_zero(),_dev);}
     static SO3partB Fgaussian(const int b, const int l, const int _dev=0){
-      return SO3partB(b,l,2*l+1,cnine::fill_gaussian(),_dev);
-    }
+      return SO3partB(b,l,2*l+1,cnine::fill_gaussian(),_dev);}
 
 
   public: // ---- Conversions --------------------------------------------------------------------------------
@@ -102,6 +105,13 @@ namespace GElib{
       assert(dims(1)%2==1);
     }
       
+  public: // ---- Transport -----------------------------------------------------------------------------------
+
+
+    SO3partB to_device(const int _dev) const{
+      return SO3partB(*this,_dev);
+    }
+
 
   public: // ---- Access -------------------------------------------------------------------------------------
 
@@ -146,9 +156,26 @@ namespace GElib{
   public: // ---- Operations ---------------------------------------------------------------------------------
 
 
-    //SO3partB operator-(const SO3partB& y) const{
-    //return (*this)-y;
-    //}
+    SO3partB operator*(const CtensorB& M) const{
+      assert(M.dims.size()==2);
+      assert(M.dims(0)==getn());
+      SO3partB R(getb(),getl(),M.dims(1),cnine::fill_zero());
+      R.add_mprod(*this,M);
+      return R;
+    }
+
+
+  public: // ---- Cumulative Operations ----------------------------------------------------------------------
+
+
+    void add_mprod(const SO3partB& x, const CtensorB& M){
+      const int B=getb();
+      assert(x.getb()==B);
+      auto view=view3();
+      auto xview=x.view3();
+      auto Mview=M.view2();
+      cnine::MultiLoop(B,[&](const int b){view.slice0(b).add_matmul_AA(xview.slice0(b),Mview);});
+    }
 
 
   public: // ---- Rotations ----------------------------------------------------------------------------------
@@ -233,6 +260,23 @@ namespace GElib{
     void add_CGproduct_back1(const SO3partB& g, const SO3partB& x, const int _offs=0){
       SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
     }
+
+
+    SO3partB CGsquare(const int l) const{
+      assert(l>=0 && l<=2*getl());
+      int parity=(2*getl()-l)%2;
+      SO3partB R=SO3partB::zero(getb(),l,getn()*(getn()+1-2*parity)/2,get_dev());
+      R.add_CGsquare(*this);
+      return R;
+    }
+
+    void add_CGsquare(const SO3partB& x, const int _offs=0){
+      SO3part_addCGsquareFn()(*this,x,_offs);
+    }
+
+
+
+  public: // ---- F-products --------------------------------------------------------------------------------
 
 
     void add_Fproduct(const SO3partB& x, const SO3partB& y){

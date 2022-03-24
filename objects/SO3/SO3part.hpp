@@ -46,9 +46,9 @@ namespace GElib{
     using Gtensor=cnine::Gtensor<TYPE>;
 
     typedef cnine::Gdims Gdims;
-    typedef cnine::RscalarObj rscalar;
-    typedef cnine::CscalarObj cscalar;
-    typedef cnine::CtensorObj ctensor;
+    //typedef cnine::RscalarObj rscalar;
+    //typedef cnine::CscalarObj cscalar;
+    typedef cnine::CtensorB ctensor;
 
     ~SO3part(){
     }
@@ -62,31 +62,39 @@ namespace GElib{
 
     static SO3part raw(const int _l, const int _n){
       return SO3part(1,_l,_n,cnine::fill::raw,0);}
-
     static SO3part raw(const int _b, const int _l, const int _n, const int _dev=0){
       return SO3part(_b,_l,_n,cnine::fill::raw,_dev);}
 
-    static SO3part raw_like(const SO3part& x){
-      return SO3part(x.getb(), x.getl(), x.getn(), cnine::fill::raw,x.get_dev());}
-
-
     static SO3part zero(const int _l, const int _n){
       return SO3part(1,_l,_n,cnine::fill::zero,0);}
-
     static SO3part zero(const int _b, const int _l, const int _n, const int _dev=0){
       return SO3part(_b,_l,_n,cnine::fill::zero,_dev);}
 
-    static SO3part zero_like(const SO3part& x){
-      return SO3part(x.getb(), x.getl(), x.getn(), cnine::fill::zero,x.get_dev());}
-
-
-
     static SO3part gaussian(const int _l, const int _n){
       return SO3part(1,_l,_n,cnine::fill::gaussian,0);}
-
     static SO3part gaussian(const int _b, const int _l, const int _n, const int _dev=0){
       return SO3part(_b,_l,_n,cnine::fill::gaussian,_dev);}
 
+    static SO3part Fraw(const int _l, const int _n){
+      return SO3part(1,_l,2*_l+1,cnine::fill::raw,0);}
+    static SO3part Fraw(const int _b, const int _l, const int _n, const int _dev=0){
+      return SO3part(_b,_l,2*_l+1,cnine::fill::raw,_dev);}
+
+    static SO3part Fzero(const int _l, const int _n){
+      return SO3part(1,_l,2*_l+1,cnine::fill::zero,0);}
+    static SO3part Fzero(const int _b, const int _l, const int _n, const int _dev=0){
+      return SO3part(_b,_l,2*_l+1,cnine::fill::zero,_dev);}
+
+    static SO3part Fgaussian(const int _l, const int _n){
+      return SO3part(1,_l,2*_l+1,cnine::fill::gaussian,0);}
+    static SO3part Fgaussian(const int _b, const int _l, const int _n, const int _dev=0){
+      return SO3part(_b,_l,2*_l+1,cnine::fill::gaussian,_dev);}
+
+
+    static SO3part raw_like(const SO3part& x){
+      return SO3part(x.getb(), x.getl(), x.getn(), cnine::fill::raw,x.get_dev());}
+    static SO3part zero_like(const SO3part& x){
+      return SO3part(x.getb(), x.getl(), x.getn(), cnine::fill::zero,x.get_dev());}
     static SO3part gaussian_like(const SO3part& x){
       return SO3part(x.getb(), x.getl(), x.getn(), cnine::fill::gaussian,x.get_dev());}
 
@@ -277,7 +285,6 @@ namespace GElib{
   public: // ---- Binary operators ---------------------------------------------------------------------------
 
 
-    /*
     SO3part operator+(const SO3part& y) const{
       SO3part R(*this);
       R.add(y);
@@ -290,18 +297,19 @@ namespace GElib{
       return R;
     }
 
+    /*
     SO3part operator*(const cscalar& c) const{
       SO3part R(getl(),getn(),nbu,cnine::fill::zero);
       R.add(*this,c);
       return R;
     }
+    */
 
     SO3part operator*(const ctensor& M) const{
-      SO3part R(getl(),M.get_dims()[0],cnine::fill::zero);
-      R.add_Mprod_AT<0>(*this,M);
-      return R;
+      return GELIB_SO3PART_IMPL::operator*(M);
     }
     
+    /*
     ctensor operator*(const Transpose<SO3part>& _y) const{
       const SO3part& y=_y.obj;
       assert(y.getl()==getl());

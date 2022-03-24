@@ -6,8 +6,7 @@
 using namespace cnine;
 using namespace GElib;
 
-typedef CscalarObj cscalar;
-typedef CtensorObj ctensor;
+typedef CtensorB ctensor;
 
 
 int main(int argc, char** argv){
@@ -20,6 +19,15 @@ int main(int argc, char** argv){
   printl("u",u)<<endl;
   printl("v",v)<<endl;
 
+  u+=u;
+  cout<<u+v<<endl;  
+  cout<<u-v<<endl;
+
+  ctensor M=ctensor::gaussian({2,3});
+  cout<<u*M<<endl;
+
+  SO3element R=SO3element::uniform();
+  cout<<u.rotate(R)<<endl;
 
   cout<<"CGproduct(u,v,2)="<<endl<<CGproduct(u,v,2)<<endl<<endl;;
 
