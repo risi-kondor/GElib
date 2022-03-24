@@ -53,7 +53,7 @@ namespace GElib{
 
     template<typename FILLTYPE, typename = typename 
 	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
-    SO3vecB(const int b, const SO3type& tau, const FILLTYPE fill, const int _dev){
+    SO3vecB(const int b, const SO3type& tau, const FILLTYPE fill, const int _dev=0){
       for(int l=0; l<tau.size(); l++)
 	parts.push_back(new SO3partB(b,l,tau[l],fill,_dev));
     }
@@ -61,37 +61,59 @@ namespace GElib{
     
     template<typename FILLTYPE, typename = typename 
 	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
-    SO3vecB(const int b, const int maxl, const FILLTYPE fill, const int _dev){
+    SO3vecB(const int b, const int maxl, const FILLTYPE fill, const int _dev=0){
       for(int l=0; l<=maxl; l++)
 	parts.push_back(new SO3partB(b,l,2*l+1,fill,_dev));
+    }
+
+    
+    template<typename... Args>
+    SO3vecB(const SO3partB& x0, Args... args){
+      SO3vecB(const_variadic_unroller(x0,args...));
+    }
+
+    SO3vecB(vector<const SO3partB*> _v){
+      for(auto p:_v) parts.push_back(new SO3partB(*p));
     }
 
     
     // ---- Named constructors --------------------------------------------------------------------------------
 
     
+    static SO3vecB raw(const SO3type& tau, const int _dev=0){
+      return SO3vecB(1,tau,cnine::fill_raw(),_dev);}
+    static SO3vecB zero(const SO3type& tau, const int _dev=0){
+      return SO3vecB(1,tau,cnine::fill_zero(),_dev);}
+    static SO3vecB gaussian(const SO3type& tau, const int _dev=0){
+      return SO3vecB(1,tau,cnine::fill_gaussian(),_dev);}
+
+    static SO3vecB raw(const int b, const SO3type& tau, const int _dev=0){
+      return SO3vecB(b,tau,cnine::fill_raw(),_dev);}
     static SO3vecB zero(const int b, const SO3type& tau, const int _dev=0){
-      return SO3vecB(b,tau,cnine::fill_zero(),_dev);
-    }
-    
+      return SO3vecB(b,tau,cnine::fill_zero(),_dev);}
     static SO3vecB gaussian(const int b, const SO3type& tau, const int _dev=0){
-      return SO3vecB(b,tau,cnine::fill_gaussian(),_dev);
-    }
+      return SO3vecB(b,tau,cnine::fill_gaussian(),_dev);}
     
 
+    static SO3vecB Fraw(const int maxl){
+      return SO3vecB(1,maxl,cnine::fill_raw());}
+    static SO3vecB Fzero(const int maxl){
+      return SO3vecB(1,maxl,cnine::fill_zero());}
+    static SO3vecB Fgaussian(const int maxl){
+      return SO3vecB(1,maxl,cnine::fill_gaussian());}
+
+    static SO3vecB Fraw(const int b, const int maxl, const int _dev=0){
+      return SO3vecB(b,maxl,cnine::fill_raw(),_dev);}
     static SO3vecB Fzero(const int b, const int maxl, const int _dev=0){
-      return SO3vecB(b,maxl,cnine::fill_zero(),_dev);
-    }
-    
+      return SO3vecB(b,maxl,cnine::fill_zero(),_dev);}
     static SO3vecB Fgaussian(const int b, const int maxl, const int _dev=0){
-      return SO3vecB(b,maxl,cnine::fill_gaussian(),_dev);
-    }
+      return SO3vecB(b,maxl,cnine::fill_gaussian(),_dev);}
     
 
+    static SO3vecB raw_like(const SO3vecB& x){
+      return SO3vecB::zero(x.getb(),x.get_tau(),x.get_dev());}
     static SO3vecB zeros_like(const SO3vecB& x){
-      return SO3vecB::zero(x.getb(),x.get_tau(),x.get_dev());
-    }
-
+      return SO3vecB::zero(x.getb(),x.get_tau(),x.get_dev());}
     static SO3vecB gaussian_like(const SO3vecB& x){
       return SO3vecB::gaussian(x.getb(),x.get_tau(),x.get_dev());
     }
@@ -114,11 +136,18 @@ namespace GElib{
     // ---- Transport -----------------------------------------------------------------------------------------
 
 
+    SO3vecB(const SO3vecB& x, const int _dev){
+      for(auto p:x.parts)
+	parts.push_back(new SO3partB(p->to_device(_dev)));
+    }
+
+
     SO3vecB& move_to_device(const int _dev){
       for(auto p:parts)
 	p->move_to_device(_dev);
       return *this;
     }
+
     
     SO3vecB to_device(const int _dev) const{
       SO3vecB R;
@@ -172,7 +201,31 @@ namespace GElib{
 
     
 
+    // ---- Cumulative operations ----------------------------------------------------------------------------
+
+
+    void operator+=(const SO3vecB& x){
+      add(x);
+    }
+    
+    void add(const SO3vecB& x){
+      assert(parts.size()==x.parts.size());
+      for(int l=0; l<parts.size(); l++)
+	parts[l]->add(*x.parts[l]);
+    }
+
+
+
     // ---- Operations ---------------------------------------------------------------------------------------
+
+
+    SO3vecB operator+(const SO3vecB& y) const{
+      SO3vecB R;
+      for(int l=0; l<parts.size(); l++){
+	R.parts.push_back(new SO3partB((*parts[l])+(*y.parts[l])));
+      }
+      return R;
+    }
 
 
     SO3vecB operator-(const SO3vecB& y) const{
@@ -265,6 +318,43 @@ namespace GElib{
     }
 
       
+    // ---- CG-squares ---------------------------------------------------------------------------------------
+
+
+    SO3vecB CGsquare(const int maxl=-1) const{
+      SO3vecB R=SO3vecB::zero(getb(),GElib::CGsquare(get_tau(),maxl),get_dev());
+      R.add_CGsquare(*this);
+      return R;
+    }
+
+
+    void add_CGsquare(const SO3vecB& x){
+      assert(get_tau()==GElib::CGsquare(x.get_tau(),get_maxl()));
+
+      int L1=x.get_maxl(); 
+      int L=get_maxl();
+      vector<int> offs(parts.size(),0);
+	
+      for(int l1=0; l1<=L1; l1++){
+
+	for(int l=0; l<=2*l1 && l<=L; l++){
+	  int n=x.parts[l1]->getn();
+	  parts[l]->add_CGsquare(*x.parts[l1],offs[l]);
+	  offs[l]+=(n*(n-1))/2+n*(1-l%2);
+	}
+
+	for(int l2=l1+1; l2<=L1; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    parts[l]->add_CGproduct(*x.parts[l1],*x.parts[l2],offs[l]);
+	    offs[l]+=(x.parts[l1]->getn())*(x.parts[l2]->getn());
+	  }
+	}
+	
+      }
+    }
+
+      
+
     // ---- Fproducts ---------------------------------------------------------------------------------------
 
 

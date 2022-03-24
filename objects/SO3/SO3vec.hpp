@@ -73,76 +73,49 @@ namespace GElib{
 
     
     static SO3vec raw(const SO3type& tau, const int _dev=0){
-      return SO3vec(1,tau,cnine::fill_raw(),_dev);
-    }
-    
+      return SO3vec(1,tau,cnine::fill_raw(),_dev);}
     static SO3vec raw(const int b, const SO3type& tau, const int _dev=0){
-      return SO3vec(b,tau,cnine::fill_raw(),_dev);
-    }
-    
+      return SO3vec(b,tau,cnine::fill_raw(),_dev);}
 
     static SO3vec zero(const SO3type& tau, const int _dev=0){
-      return SO3vec(1,tau,cnine::fill_zero(),_dev);
-    }
-    
+      return SO3vec(1,tau,cnine::fill_zero(),_dev);}
     static SO3vec zero(const int b, const SO3type& tau, const int _dev=0){
-      return SO3vec(b,tau,cnine::fill_zero(),_dev);
-    }
-    
+      return SO3vec(b,tau,cnine::fill_zero(),_dev);}
 
     static SO3vec gaussian(const SO3type& tau, const int _dev=0){
-      return SO3vec(1,tau,cnine::fill_gaussian(),_dev);
-    }
-    
+      return SO3vec(1,tau,cnine::fill_gaussian(),_dev);}
     static SO3vec gaussian(const int b, const SO3type& tau, const int _dev=0){
-      return SO3vec(b,tau,cnine::fill_gaussian(),_dev);
-    }
+      return SO3vec(b,tau,cnine::fill_gaussian(),_dev);}
     
 
     // ---- Fourier constructors -----------------------------------------------------------------------------
 
 
     static SO3vec Fzero(const int maxl, const int _dev=0){
-      return SO3vec(1,maxl,cnine::fill_zero(),_dev);
-    }
-    
+      return SO3vec(1,maxl,cnine::fill_zero(),_dev);}
     static SO3vec Fzero(const int b, const int maxl, const int _dev=0){
-      return SO3vec(b,maxl,cnine::fill_zero(),_dev);
-    }
-    
+      return SO3vec(b,maxl,cnine::fill_zero(),_dev);}
 
     static SO3vec Fraw(const int maxl, const int _dev=0){
-      return SO3vec(1,maxl,cnine::fill_raw(),_dev);
-    }
-    
+      return SO3vec(1,maxl,cnine::fill_raw(),_dev);}
     static SO3vec Fraw(const int b, const int maxl, const int _dev=0){
-      return SO3vec(b,maxl,cnine::fill_raw(),_dev);
-    }
-    
+      return SO3vec(b,maxl,cnine::fill_raw(),_dev);}
 
     static SO3vec Fgaussian(const int maxl, const int _dev=0){
-      return SO3vec(1,maxl,cnine::fill_gaussian(),_dev);
-    }
-    
+      return SO3vec(1,maxl,cnine::fill_gaussian(),_dev);}
     static SO3vec Fgaussian(const int b, const int maxl, const int _dev=0){
-      return SO3vec(b,maxl,cnine::fill_gaussian(),_dev);
-    }
+      return SO3vec(b,maxl,cnine::fill_gaussian(),_dev);}
 
     
     // ---- Like constructors --------------------------------------------------------------------------------
 
 
     static SO3vec raw_like(const SO3vecB& x){
-      return SO3vec::raw(x.getb(),x.get_tau(),x.get_dev());
-    }
-
+      return SO3vec::raw(x.getb(),x.get_tau(),x.get_dev());}
     static SO3vec zero_like(const SO3vecB& x){
-      return SO3vec::zero(x.getb(),x.get_tau(),x.get_dev());
-    }
-
+      return SO3vec::zero(x.getb(),x.get_tau(),x.get_dev());}
     static SO3vec gaussian_like(const SO3vecB& x){
-      return SO3vec::gaussian(x.getb(),x.get_tau(),x.get_dev());
-    }
+      return SO3vec::gaussian(x.getb(),x.get_tau(),x.get_dev());}
 
 
     // ---- Copying -------------------------------------------------------------------------------------------
@@ -228,6 +201,10 @@ namespace GElib{
 
   inline SO3vec CGproduct(const SO3vec& x, const SO3vec& y, const int maxl=-1){
     return x.CGproduct(y,maxl);
+  }
+
+  inline SO3vec CGsquare(const SO3vec& x, const int maxl=-1){
+    return x.CGsquare(maxl);
   }
 
   inline SO3vec Fproduct(const SO3vec& x, const SO3vec& y, const int maxl=-1){
