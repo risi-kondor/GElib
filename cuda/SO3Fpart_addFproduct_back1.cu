@@ -101,10 +101,9 @@ __device__ int saveg5c(const cnine::Ctensor3_view& x, float* source, const int b
 
 
 __global__ void SO3Fpart_addFproduct_back1_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
-  const cnine::Ctensor3_view y, const int Cptr, const int conj){
+  const cnine::Ctensor3_view y, const int Cptr, float* cptr_global, const int conj){
 
   extern __shared__ unsigned char _shared[]; 
-  const float* C_ptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
   const int b=blockIdx.x;
   const int t=threadIdx.x;
 
@@ -114,6 +113,10 @@ __global__ void SO3Fpart_addFproduct_back1_kernel(const cnine::Ctensor3_view r, 
   int xn=x.n2;
   int yn=y.n2;
   int rn=r.n2;
+
+  float* cptr;
+  if(Cptr>=0) cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
+  else cptr=cptr_global;
 
   float* xpr=reinterpret_cast<float*>(_shared);
   float* xpi=xpr+loadg5(x,xpr,b,t);
@@ -143,7 +146,7 @@ __global__ void SO3Fpart_addFproduct_back1_kernel(const cnine::Ctensor3_view r, 
     float* _rpi=rpi+i;
 
     if(i>=0 && i<rn){
-      float c0=C_ptr[i1*yn+i2]*xn*yn/rn;
+      float c0=cptr[i1*yn+i2]*xn*yn/rn;
       
       for(int m1=-l1; m1<=l1; m1++){
 	const float x_r=_xpr[xn*(m1+l1)];
@@ -151,7 +154,7 @@ __global__ void SO3Fpart_addFproduct_back1_kernel(const cnine::Ctensor3_view r, 
 	int lower=-l-m1; if(lower<-l2) lower=-l2;
 	int upper=l-m1; if(upper>l2) upper=l2;
 	for(int m2=lower; m2<=upper; m2++){
-	  float c=C_ptr[(m1+l1)*yn+m2+l2];
+	  float c=cptr[(m1+l1)*yn+m2+l2];
 	  const float g_r=_rpr[rn*(m1+m2+l)];
 	  const float g_i=_rpi[rn*(m1+m2+l)];
 	  //_ypr[yn*(m2+l2)]+=c*(g_r*x_r+g_i*x_i);
@@ -187,7 +190,10 @@ namespace GElib{
     assert(x.n0==b);
     assert(y.n0==b);
 
+    float* cptr=nullptr;
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
+    if(Cptr<0) cptr=SO3_cgbank.getf(CGindex(xl,yl,l),g.dev).arrg;
+    int clines=cnine::roundup(x.n1*y.n1,32)/32;
 
     int nlines=cnine::roundup(x.n1*x.n2*2,32)/32+
       cnine::roundup(y.n1*y.n2*2,32)/32+
@@ -197,7 +203,7 @@ namespace GElib{
     if(nlines<=384){
 
       SO3Fpart_addFproduct_back1_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
-	(g,x,y,Cptr,conj);
+	(g,x,y,Cptr,cptr,conj);
 
     }else{
       cout<<"error"<<endl;

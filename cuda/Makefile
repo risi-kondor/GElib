@@ -1,7 +1,7 @@
 ROOTDIR=..
 include $(ROOTDIR)/common.txt
 
-INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops  
+INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions  
 
 TESTS= 
 
@@ -11,7 +11,7 @@ endif
 
 DEPS=$(SO3DIR)/*.hpp 
 
-EXECS= 
+EXECS=  
 
 CUDA_OBJECTS=  
 CUDA_EXTERNS=
@@ -19,7 +19,7 @@ CUDA_EXTERNS=
 ifdef WITH_CUDA
 INCLUDE+=-I$(CUDA_HOME)/include
 #CUDA_OBJECTS+=GElib_base.o
-CUDA_OBJECTS+=SO3partA_CGproduct.o SO3partA_DiagCGproduct.o
+#CUDA_OBJECTS+=SO3partA_CGproduct.o SO3partA_DiagCGproduct.o
 CUDA_OBJECTS+=SO3partB_addCGproduct.o SO3partB_addCGproduct_back0.o SO3partB_addCGproduct_back1.o 
 CUDA_OBJECTS+=SO3Fpart_addFproduct.o SO3Fpart_addFproduct_back0.o SO3Fpart_addFproduct_back1.o 
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
