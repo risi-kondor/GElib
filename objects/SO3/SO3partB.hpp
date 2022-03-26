@@ -291,7 +291,7 @@ namespace GElib{
     }
 
     void add_DiagCGproduct(const SO3partB& x, const SO3partB& y, const int _offs=0){
-      add_DiagCGproduct(x,y,1,_offs);
+      add_BlockedCGproduct(x,y,1,_offs);
     }
 
     void add_DiagCGproduct_back0(const SO3partB& g, const SO3partB& y, const int _offs=0){
