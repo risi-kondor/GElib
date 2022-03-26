@@ -25,7 +25,7 @@ namespace GElib{
   #ifdef _WITH_CUDA
   void SO3partB_addCGproduct_cu(cnine::Ctensor3_view r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
     const int offs, const cudaStream_t& stream);
-  void SO3partB_addBlockedCGproduct_cu(cnine::Ctensor3_view r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
+  void SO3partB_addDiagCGproduct_cu(cnine::Ctensor3_view r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
     const int bsize, const int offs, const cudaStream_t& stream);
   #endif
 
@@ -127,8 +127,10 @@ namespace GElib{
 	  });
 
       }
-      else CUDA_STREAM(SO3partB_addBlockedCGproduct_cu(_r,_x,_y,bsize,_offs,stream));
-
+      else{
+	assert(bsize==1);
+	CUDA_STREAM(SO3partB_addDiagCGproduct_cu(_r,_x,_y,bsize,_offs,stream));
+      }
     }
 
   };
