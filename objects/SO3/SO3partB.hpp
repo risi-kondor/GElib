@@ -248,7 +248,6 @@ namespace GElib{
       return R;
     }
 
-
     void add_CGproduct(const SO3partB& x, const SO3partB& y, const int _offs=0){
       SO3part_addCGproductFn()(*this,x,y,_offs);
     }
@@ -260,6 +259,29 @@ namespace GElib{
     void add_CGproduct_back1(const SO3partB& g, const SO3partB& x, const int _offs=0){
       SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
     }
+
+
+
+    SO3partB BlockedCGproduct(const SO3partB& y, const int bsize, const int l) const{
+      assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
+      assert(getn()==y.getn());
+      SO3partB R=SO3partB::zero(getb(),l,getn()*bsize,get_dev());
+      R.add_BlockedCGproduct(*this,y,bsize);
+      return R;
+    }
+
+    void add_BlockedCGproduct(const SO3partB& x, const SO3partB& y, const int bsize, const int _offs=0){
+      SO3part_addBlockedCGproductFn()(*this,x,y,bsize,_offs);
+    }
+
+    void add_BlockedCGproduct_back0(const SO3partB& g, const SO3partB& y, const int bsize, const int _offs=0){
+      SO3part_addBlockedCGproduct_back0Fn()(*this,g,y,bsize,_offs);
+    }
+
+    void add_BlockedCGproduct_back1(const SO3partB& g, const SO3partB& x, const int bsize, const int _offs=0){
+      SO3part_addBlockedCGproduct_back1Fn()(*this,g,x,bsize,_offs);
+    }
+
 
 
     SO3partB CGsquare(const int l) const{
