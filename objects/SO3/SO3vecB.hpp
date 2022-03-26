@@ -403,7 +403,7 @@ namespace GElib{
     }
 
     void add_DiagCGproduct_back1(const SO3vecB& g, const SO3vecB& x){
-      add_BlockedCGproduct_back0(g,x,1);
+      add_BlockedCGproduct_back1(g,x,1);
     }
 
 
