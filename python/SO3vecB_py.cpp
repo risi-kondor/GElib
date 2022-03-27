@@ -46,6 +46,10 @@ py::class_<SO3vecB>(m,"SO3vecB",
   .def("addCGproduct_back0",&SO3vecB::add_CGproduct_back0,py::arg("g"),py::arg("y"))
   .def("addCGproduct_back1",&SO3vecB::add_CGproduct_back1,py::arg("g"),py::arg("x"))
 
+  .def("addDiagCGproduct",&SO3vecB::add_DiagCGproduct,py::arg("x"),py::arg("y"))
+  .def("addDiagCGproduct_back0",&SO3vecB::add_DiagCGproduct_back0,py::arg("g"),py::arg("y"))
+  .def("addDiagCGproduct_back1",&SO3vecB::add_DiagCGproduct_back1,py::arg("g"),py::arg("x"))
+
   .def("device",&SO3vecB::get_device)
   .def("to",&SO3vecB::to_device)
   .def("to_device",&SO3vecB::to_device)

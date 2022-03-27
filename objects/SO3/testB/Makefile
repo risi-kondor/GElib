@@ -10,7 +10,8 @@ TESTS+=testSO3partB_CGproduct_back0 testSO3partB_CGproduct_back1 \
 testSO3partB_Fproduct testSO3partB_Fproduct_back0 testSO3partB_Fproduct_back1 \
 testSO3vecB_Fproduct testSO3vecB_Fproduct_back0 testSO3vecB_Fproduct_back1 \
 testSO3vecB_Fmodsq \
-testSO3vecB_CGsquare 
+testSO3vecB_CGsquare \
+testSO3vecB_BlockedCGproduct 
 
 #testSO3Fvec testSO3Fvec_covariance testSO3Fvec_Fmodsq
 
@@ -31,6 +32,7 @@ CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partA_CGproduct.o $(GELIB_CUDADIR)/SO3partA_Di
 $(CNINE_ROOT)/cuda/CtensorA_add.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/GElib_base.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partB_addCGproduct.o $(GELIB_CUDADIR)/SO3partB_addCGproduct_back0.o $(GELIB_CUDADIR)/SO3partB_addCGproduct_back1.o 
+CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partB_addDiagCGproduct.o $(GELIB_CUDADIR)/SO3partB_addDiagCGproduct_back0.o $(GELIB_CUDADIR)/SO3partB_addDiagCGproduct_back1.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3Fpart_addFproduct.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back0.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back1.o 
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
 endif 
@@ -176,6 +178,15 @@ ifdef WITH_CUDA
 	$(NVCC) $(NVCCFLAGS) -o testSO3vecB_CGsquare testSO3vecB_CGsquare.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
 	$(CC) -o testSO3vecB_CGsquare testSO3vecB_CGsquare.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+endif
+
+
+
+testSO3vecB_BlockedCGproduct: testSO3vecB_BlockedCGproduct.cpp $(DEPS) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o testSO3vecB_BlockedCGproduct testSO3vecB_BlockedCGproduct.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o testSO3vecB_BlockedCGproduct testSO3vecB_BlockedCGproduct.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 endif
 
 
