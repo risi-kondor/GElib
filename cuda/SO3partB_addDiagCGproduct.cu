@@ -99,7 +99,6 @@ __global__ void SO3partB_addDiagCGproduct_tiled_kernel(const cnine::Ctensor3_vie
     __syncthreads();
 
   }
-  }
 
 }
 

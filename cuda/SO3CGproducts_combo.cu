@@ -12,6 +12,10 @@ __device__ __constant__ unsigned char cg_cmem[CNINE_CONST_MEM_SIZE];
 #include "SO3partB_addCGproduct_back0.cu"
 #include "SO3partB_addCGproduct_back1.cu"
 
+#include "SO3partB_addDiagCGproduct.cu"
+#include "SO3partB_addDiagCGproduct_back0.cu"
+#include "SO3partB_addDiagCGproduct_back1.cu"
+
 #include "SO3Fpart_addFproduct.cu"
 #include "SO3Fpart_addFproduct_back0.cu"
 #include "SO3Fpart_addFproduct_back1.cu"
