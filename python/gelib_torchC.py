@@ -301,6 +301,7 @@ def tau_type(x):
 def CGproductType(x,y,maxl=-1):
     if maxl==-1:
         maxl=len(x)+len(y)-2
+    maxl=min(maxl,len(x)+len(y)-2)
     r=[0]*(maxl+1)
     for l1 in range(0,len(x)):
         for l2 in range(0,len(y)):
@@ -311,6 +312,7 @@ def CGproductType(x,y,maxl=-1):
 def DiagCGproductType(x,y,maxl=-1):
     if maxl==-1:
         maxl=len(x)+len(y)-2
+    maxl=min(maxl,len(x)+len(y)-2)
     r=[0]*(maxl+1)
     for l1 in range(0,len(x)):
         for l2 in range(0,len(y)):
