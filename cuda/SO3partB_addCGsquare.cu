@@ -9,8 +9,8 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _SO3partB_addCGproduct_cu
-#define _SO3partB_addCGproduct_cu
+#ifndef _SO3partB_addCGsquare_cu
+#define _SO3partB_addCGsquare_cu
 
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -24,26 +24,24 @@
 extern GElib::SO3_CGbank SO3_cgbank;
 
 
-
-__global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor4_view_t3 x, 
-  const cnine::Ctensor4_view_t3 y, const int Cptr, float* cptr_global, const bool preloadCG){
+__global__ void SO3partB_addCGsquare_tiled_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor4_view_t3 x, 
+  const int Cptr, float* cptr_global, const bool preloadCG){
 
   extern __shared__ unsigned char _shared[]; 
   const int b=blockIdx.x;
   const int t=threadIdx.x;
 
   int l1=(x.n1-1)/2;
-  int l2=(y.n1-1)/2;
   int l=(r.n1-1)/2;
-  int L2=y.n1;
+  int L2=x.n1;
 
   float* cptr;
   float* xpr;
   if(preloadCG){
     cptr=reinterpret_cast<float*>(_shared);
-    xpr=cptr+((x.n1*y.n1-1)/32+1)*32;
-    if(Cptr>=0) loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n1*y.n1);
-    else loadf(cptr,cptr_global,x.n1*y.n1);
+    xpr=cptr+((x.n1*x.n1-1)/32+1)*32;
+    if(Cptr>=0) loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n1*x.n1);
+    else loadf(cptr,cptr_global,x.n1*x.n1);
   }else{
     if(Cptr>=0) cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
     else cptr=cptr_global;
@@ -111,39 +109,35 @@ __global__ void SO3partB_addCGproduct_tiled_kernel(const cnine::Ctensor3_view r,
 namespace GElib{
 
 
-  void SO3partB_addCGproduct_cu(cnine::Ctensor3_view r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
+  void SO3partB_addCGsquare_cu(cnine::Ctensor3_view r, const cnine::Ctensor3_view& x,  
     const int offs, const cudaStream_t& stream){
 
     const int xl=(x.n1-1)/2;
-    const int yl=(y.n1-1)/2;
     const int l=(r.n1-1)/2;
     const int b=r.n0;
+    const int diag=1-(2*xl-l)%2;
 
     r.arr+=r.s2*offs;
     r.arrc+=r.s2*offs;
-    r.n2=x.n2*y.n2;
+    r.n2=x.n2*(x.n2-1)/2+x.n2*diag;
     //GELIB_CHECK(x.n2*y.n2<=1024,"Number of ouput channels can be at most 1024.")
 
     float* cptr=nullptr;
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
     if(Cptr<0) cptr=SO3_cgbank.getf(CGindex(xl,yl,l),r.dev).arrg;
-    int clines=cnine::roundup(x.n1*y.n1,32)/32;
+    int clines=cnine::roundup(r.n2,32)/32;
 
     // set tile sizes
     const int xn=std::min(x.n2,32);
-    const int yn=std::min(y.n2,32);
     cnine::Ctensor4_view_t3 xtiled(x,xn);
-    cnine::Ctensor4_view_t3 ytiled(y,yn);
     //cnine::Ctensor4_view_t3 rtiled(r,xn*yn);
 
-    int nlines=cnine::roundup(xtiled.n1*xn*2,32)/32+
-      cnine::roundup(ytiled.n1*yn*2,32)/32;
+    int nlines=2*cnine::roundup(xtiled.n1*xn*2,32)/32;
 
     if(nlines<=384){
       bool preloadCG=(nlines+clines<=384);
-      //preloadCG=false;
-      SO3partB_addCGproduct_tiled_kernel<<<b,cnine::roundup(xn*yn,32),(nlines+preloadCG*clines)*128,stream>>>
-	(r,xtiled,ytiled,Cptr,cptr,preloadCG);
+      SO3partB_addCGsquare_tiled_kernel<<<b,cnine::roundup(xn*xn,32),(nlines+preloadCG*clines)*128,stream>>>
+	(r,xtiled,Cptr,cptr,preloadCG);
       return;
     }
 
@@ -157,69 +151,3 @@ namespace GElib{
 
 #endif 
 
-
-
-/*
-__global__ void SO3partB_addCGproduct_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
-  const cnine::Ctensor3_view y, const int Cptr, const bool preloadCG){
-
-  extern __shared__ unsigned char _shared[]; 
-  const int b=blockIdx.x;
-  const int t=threadIdx.x;
-
-  int l1=(x.n1-1)/2;
-  int l2=(y.n1-1)/2;
-  int l=(r.n1-1)/2;
-  int xn=x.n2;
-  int yn=y.n2;
-  int rn=xn*yn;
-  int L2=y.n1;
-
-  float* xpr=reinterpret_cast<float*>(_shared);
-  float* xpi=xpr+loadg(x,xpr,b,t);
-
-  float* ypr=xpr+((2*x.n1*xn-1)/32+1)*32;
-  float* ypi=ypr+loadg(y,ypr,b,t);
-
-  float* rpr=ypr+((2*y.n1*yn-1)/32+1)*32;
-  float* rpi=rpr+loadg(r,rpr,b,t);
-
-  float* cptr;
-  const float C_ptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
-  if(preloadCG){
-    cptr=rpr+((2*r.n1*rn-1)/32+1)*32;
-    loadf(cptr,C_ptr,x.n1*y.n1,t);
-  }else cptr=C_ptr;
-
-  __syncthreads();
-
-  if(t<rn){
-
-    xpr=xpr+t/yn;
-    xpi=xpi+t/yn;
-    
-    ypr=ypr+t%yn;
-    ypi=ypi+t%yn;
-    
-    float* _rpr=rpr+t;
-    float* _rpi=rpi+t;
-
-    for(int m1=-l1; m1<=l1; m1++){
-      const float x_r=xpr[xn*(m1+l1)];
-      const float x_i=xpi[xn*(m1+l1)];
-      int lower=-l-m1; if(lower<-l2) lower=-l2;
-      int upper=l-m1; if(upper>l2) upper=l2;
-      for(int m2=lower; m2<=upper; m2++){
-	float c=C_ptr[(m1+l1)*L2+m2+l2];
-	const float y_r=ypr[yn*(m2+l2)];
-	const float y_i=ypi[yn*(m2+l2)];
-	_rpr[rn*(m1+m2+l)]+=c*(x_r*y_r-x_i*y_i); 
-	_rpi[rn*(m1+m2+l)]+=c*(x_r*y_i+x_i*y_r);
-      }
-    }
-  }
-
-  __syncthreads();
-  saveg(r,rpr,b,t);
-}
-*/

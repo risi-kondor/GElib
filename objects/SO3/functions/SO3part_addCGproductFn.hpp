@@ -23,9 +23,9 @@ extern GElib::SO3_SPHgen SO3_sphGen;
 namespace GElib{
 
   #ifdef _WITH_CUDA
-  //void SO3partB_addCGproduct_cu(cnine::Ctensor2_view r, const cnine::Ctensor2_view& x, const cnine::Ctensor2_view& y, 
-  //const cudaStream_t& stream, const int offs=0);
   void SO3partB_addCGproduct_cu(cnine::Ctensor3_view r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
+    const int offs, const cudaStream_t& stream);
+  void SO3partB_addDiagCGproduct_cu(cnine::Ctensor3_view r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
     const int offs, const cudaStream_t& stream);
   #endif
 
@@ -79,17 +79,64 @@ namespace GElib{
 
   };
 
+
+  class SO3part_addBlockedCGproductFn{
+  public:
+
+    void operator()(const SO3part3_view& _r, const SO3part3_view& _x, const SO3part3_view& _y, const int bsize, const int _offs=0){
+
+      const int l=_r.getl(); 
+      const int l1=_x.getl(); 
+      const int l2=_y.getl();
+ 
+      const int N=_x.n2/bsize;
+      const int N1=bsize;
+      const int N2=bsize;
+      const int B=_x.n0;
+      const int dev=_r.dev;
+
+      CNINE_CHECK_DEV3(_r,_x,_y)
+      CNINE_CHECK_BATCH3(_r,_x,_y)
+
+      assert(_offs+N1*N2<=_r.n2);
+      assert(l>=abs(l1-l2) && l<=l1+l2);
+      assert(_x.n2==_y.n2);
+      assert(_x.n2%bsize==0);
+
+      if(dev==0){
+
+	auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
+	cnine::MultiLoop(B,[&](const int b){
+	    SO3part2_view r=_r.slice0(b);
+	    SO3part2_view x=_x.slice0(b);
+	    SO3part2_view y=_y.slice0(b);
+	    int offs=_offs;
+	    
+	    for(int n=0; n<N; n++){
+	      for(int n1=0; n1<N1; n1++){
+		for(int n2=0; n2<N2; n2++){
+		  for(int m1=-l1; m1<=l1; m1++){
+		    for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+		      r.inc(m1+m2,offs+n2,C(m1+l1,m2+l2)*x(m1,n1+n*bsize)*y(m2,n2+n*bsize));
+		    }
+		  }
+		}
+		offs+=N2;
+	      }
+	    }
+	  });
+
+      }
+      else{
+	assert(bsize==1);
+	CUDA_STREAM(SO3partB_addDiagCGproduct_cu(_r,_x,_y,_offs,stream));
+      }
+    }
+
+  };
+
+
 }
 
 #endif
 
-
-	//#ifdef _WITH_CUDA
-	//cudaStream_t stream;
-	//CUDA_SAFE(cudaStreamCreate(&stream));
-	//SO3partB_addCGproduct_cu(_r,_x,_y,_offs,stream);
-	//CUDA_SAFE(cudaStreamSynchronize(stream));
-	//CUDA_SAFE(cudaStreamDestroy(stream));
-	//#else
-	//CNINE_NOCUDA_ERROR;
-	//#endif
