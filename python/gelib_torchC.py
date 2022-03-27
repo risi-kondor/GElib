@@ -239,6 +239,15 @@ class SO3vec:
         return r
 
 
+    def DiagCGproduct(self,y,maxl=-1):
+        """
+        Compute the diagonal Clesbsch--Gordan product of this SO3vec with another SO3vec y.
+        """
+        r=SO3vec()
+        r.parts=list(SO3vec_DiagCGproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
+        return r
+
+
     def Fproduct(self,y,maxl=-1):
         """
         Compute the Fourier space product of this SO3Fvec with another SO3Fvec y.
@@ -273,6 +282,9 @@ class SO3vec:
 def CGproduct(x,y,maxl=-1):
     return x.CGproduct(y,maxl)
     
+def DiagCGproduct(x,y,maxl=-1):
+    return x.DiagCGproduct(y,maxl)
+    
 def Fproduct(x,y,a=-1):
     return x.Fproduct(y,a)
 
@@ -294,6 +306,16 @@ def CGproductType(x,y,maxl=-1):
         for l2 in range(0,len(y)):
             for l in range(abs(l1-l2),min(l1+l2,maxl)+1):
                 r[l]+=x[l1]*y[l2]
+    return r
+
+def DiagCGproductType(x,y,maxl=-1):
+    if maxl==-1:
+        maxl=len(x)+len(y)-2
+    r=[0]*(maxl+1)
+    for l1 in range(0,len(x)):
+        for l2 in range(0,len(y)):
+            for l in range(abs(l1-l2),min(l1+l2,maxl)+1):
+                r[l]+=x[l1]
     return r
 
 
@@ -361,6 +383,54 @@ class SO3vec_CGproductFn(torch.autograd.Function):
 
         _xg.addCGproduct_back0(_g,_y)
         _yg.addCGproduct_back1(_g,_x)
+
+        return tuple(grads)
+
+
+class SO3vec_DiagCGproductFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,k1,k2,maxl,*args):
+        ctx.k1=k1
+        ctx.k2=k2
+        #ctx.maxl=maxl
+        ctx.save_for_backward(*args)
+
+        b=args[0].size(0)
+        tau=DiagCGproductType(tau_type(args[0:k1]),tau_type(args[k1:k1+k2]),maxl)
+        dev=int(args[0].is_cuda)
+        r=MakeZeroSO3parts(b,tau,dev)
+
+        _x=_SO3vecB.view(args[0:k1]);
+        _y=_SO3vecB.view(args[k1:k1+k2]);
+        _r=_SO3vecB.view(r)
+        _r.addDiagCGproduct(_x,_y)
+
+        return tuple(r)
+
+    @staticmethod
+    def backward(ctx,*args):
+
+        k1=ctx.k1
+        k2=ctx.k2
+        #maxl=ctx.maxl
+
+        inputs=ctx.saved_tensors
+        assert len(inputs)==k1+k2, "Wrong number of saved tensors."
+
+        grads=[None,None,None]
+        for i in range(k1+k2):
+            grads.append(torch.zeros_like(inputs[i]))
+
+        _x=_SO3vecB.view(inputs[0:k1]);
+        _y=_SO3vecB.view(inputs[k1:k1+k2]);
+
+        _g=_SO3vecB.view(args);
+        _xg=_SO3vecB.view(grads[3:k1+3]);
+        _yg=_SO3vecB.view(grads[k1+3:k1+k2+3]);
+
+        _xg.addDiagCGproduct_back0(_g,_y)
+        _yg.addDiagCGproduct_back1(_g,_x)
 
         return tuple(grads)
 

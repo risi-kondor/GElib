@@ -88,10 +88,11 @@ __global__ void SO3partB_addDiagCGproduct_back1_tiled_kernel(const cnine::Ctenso
 	  y_r+=c*(g_r*x_r+g_i*x_i);
 	  y_i+=c*(-g_r*x_i+g_i*x_r);
 	}
-      }
 
-      _ypr[ys1*(m2+l2)]+=y_r; 
-      _ypi[ys1*(m2+l2)]+=y_i;
+	_ypr[ys1*(m2+l2)]+=y_r; 
+	_ypi[ys1*(m2+l2)]+=y_i;
+
+      }
 
     }// end t<yn loop
     __syncthreads();

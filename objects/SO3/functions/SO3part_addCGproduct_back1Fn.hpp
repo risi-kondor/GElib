@@ -129,7 +129,7 @@ namespace GElib{
 
       }else{
 	assert(bsize==1);
-	CUDA_STREAM(SO3partB_addDiagCGproduct_back1_cu(_yg,_g,_x,bsize,_offs,stream));
+	CUDA_STREAM(SO3partB_addDiagCGproduct_back1_cu(_yg,_g,_x,_offs,stream));
       }
 
     }
