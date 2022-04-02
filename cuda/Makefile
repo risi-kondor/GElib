@@ -11,7 +11,7 @@ endif
 
 DEPS=$(SO3DIR)/*.hpp 
 
-EXECS= 
+EXECS=  
 
 CUDA_OBJECTS=  
 CUDA_EXTERNS=

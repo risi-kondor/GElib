@@ -14,12 +14,13 @@ int main(int argc, char** argv){
   GElibSession session;
   cout<<endl;
 
-  int b=1;
-  int L=2;
-  int maxl=2;
+  int b=2;
+  int L1=2;
+  int L2=3;
+  int maxl=3;
 
-  SO3vecB x=SO3vecB::Fgaussian(b,L);
-  SO3vecB y=SO3vecB::Fgaussian(b,L);
+  SO3vecB x=SO3vecB::Fgaussian(b,L1);
+  SO3vecB y=SO3vecB::Fgaussian(b,L2);
   //printl("x",x)<<endl;
   //printl("y",y)<<endl;
 
