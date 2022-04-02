@@ -14,13 +14,14 @@ int main(int argc, char** argv){
   GElibSession session;
   cout<<endl;
 
-  int b=1;
-  int L=2;
+  int b=2;
+  int L1=2;
+  int L2=3;
   int maxl=2;
 
-  SO3vecB x=SO3vecB::Fzero(b,L);
-  SO3vecB y=SO3vecB::Fgaussian(b,L);
-  SO3vecB z=SO3vecB::Fgaussian(b,std::min(maxl,2*L));
+  SO3vecB x=SO3vecB::Fzero(b,L1);
+  SO3vecB y=SO3vecB::Fgaussian(b,L2);
+  SO3vecB z=SO3vecB::Fgaussian(b,std::min(maxl,L1+L2));
   //printl("x",x)<<endl;
   //printl("y",y)<<endl;
 
@@ -29,7 +30,7 @@ int main(int argc, char** argv){
   cout<<endl;
 
 #ifdef _WITH_CUDA
-  SO3vecB xc=SO3vecB::Fzero(b,L,1);
+  SO3vecB xc=SO3vecB::Fzero(b,L1,1);
   SO3vecB yc=y.to_device(1);
   SO3vecB zc=z.to_device(1);
 
