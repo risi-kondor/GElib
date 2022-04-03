@@ -21,6 +21,7 @@
 namespace GElib{
 
 
+
   class SO3vecB{
   public:
 
@@ -179,6 +180,13 @@ namespace GElib{
     }
 
     SO3type get_tau() const{
+      SO3type tau;
+      for(auto p:parts)
+	tau.push_back(p->getn());
+      return tau;
+    }
+
+    SO3type get_type() const{
       SO3type tau;
       for(auto p:parts)
 	tau.push_back(p->getn());
@@ -560,6 +568,11 @@ namespace GElib{
     }
 
 
+    // ---- CG-products ---------------------------------------------------------------------------------------
+
+
+
+
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
 
@@ -583,6 +596,21 @@ namespace GElib{
     }
 
   };
+
+
+  // ---- Post-class functions -------------------------------------------------------------------------------
+
+
+  inline std::vector<SO3type> get_types(const std::vector<const SO3vecB*>& v){
+    vector<SO3type> R;
+    for(auto p:v)
+      R.push_back(p->get_type());
+    return R;
+  }
+
+
+  
+
 
 }
 

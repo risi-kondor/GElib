@@ -19,7 +19,8 @@
 #include "SO3_CGbank.hpp"
 #include "SO3_SPHgen.hpp"
 #include "Factorial.hpp"
-//#include "Dprogram.hpp"
+//#include "SO3CGprogramBank.hpp"
+
 
 /*
 #include "SO3part_ops.hpp"
@@ -33,6 +34,8 @@ vector<int> GElib::factorial::fact;
 
 GElib::SO3_CGbank SO3_cgbank;
 GElib::SO3_SPHgen SO3_sphGen;
+
+//GElib::SO3CGprogramBank SO3_CGprogram_bank;
 
 namespace GElib{
 

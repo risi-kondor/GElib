@@ -263,6 +263,7 @@ namespace GElib{
 
     // ---- BlockedCGproduct 
 
+
     SO3partB BlockedCGproduct(const SO3partB& y, const int bsize, const int l) const{
       assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
       assert(getn()==y.getn());
@@ -286,6 +287,7 @@ namespace GElib{
 
     // ---- DiagCGproduct 
 
+
     SO3partB DiagCGproduct(const SO3partB& y, const int l) const{
       return BlockedCGproduct(y,1,l);
     }
@@ -304,6 +306,7 @@ namespace GElib{
 
 
     // ---- CGsquare
+
 
     SO3partB CGsquare(const int l) const{
       assert(l>=0 && l<=2*getl());
