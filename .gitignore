@@ -6,6 +6,7 @@
 *.py[cod]
 
 python/build/
+python/cnine
 *.egg
 *.egg-info
 *.so

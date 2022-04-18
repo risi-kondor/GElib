@@ -23,7 +23,9 @@ def main():
     
     # TODO: better path handling
     cwd = os.getcwd()
-    cnine_folder = "../../cnine/"
+    cnine_folder = "/../../cnine/"
+    # print(cwd)
+    # raise Exception
 
     _include_dirs = [cwd + cnine_folder + '/include',
                      cwd + cnine_folder + '/include/cmaps',
@@ -38,6 +40,7 @@ def main():
                      cwd + '/../objects/SO3/cell_ops',
                      cwd + '/../objects/SO3/functions'
                      ]
+
 
     _cxx_compile_args = ['-std=c++14',
                          '-Wno-sign-compare',
@@ -83,19 +86,20 @@ def main():
     #             'SO3vecArray_py.cpp',
     #             'build/*/*'
     #             ]
-    sources = ['GElib_py.cpp',
-               'SO3part_py.cpp',
-               'SO3vec_py.cpp',
-               'SO3partArray_py.cpp',
-               'SO3vecArray_py.cpp',
-                ]
+
+    # sources = ['GElib_py.cpp',
+    #            'SO3part_py.cpp',
+    #            'SO3vec_py.cpp',
+    #            'SO3partArray_py.cpp',
+    #            'SO3vecArray_py.cpp',
+    #             ]
 
     # ---- Compilation commands ----------------------------------------------------------------------------------
 
     if compile_with_cuda:
         ext_modules = [CUDAExtension('gelib_base', [
-            cnine_folder + '/include/Cnine_base.cu',
-            cnine_folder + '/cuda/TensorView_accumulators.cu',
+            cwd + cnine_folder + '/include/Cnine_base.cu',
+            cwd + cnine_folder + '/cuda/TensorView_accumulators.cu',
             '../cuda/SO3CGproducts_combo.cu',
             # '../cuda/GElib_base.cu',
             # '../cuda/SO3partA_CGproduct.cu',
