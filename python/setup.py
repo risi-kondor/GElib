@@ -20,21 +20,23 @@ def main():
     torch_convert_warnings = True
 
     # ------------------------------------------------------------------------------------------------------------
-
+    
+    # TODO: better path handling
     cwd = os.getcwd()
+    cnine_folder = "../../cnine/"
 
-    _include_dirs = [cwd+'/../../cnine/include',
-                     cwd+'/../../cnine/include/cmaps',
-                     cwd+'/../../cnine/objects/scalar',
-                     cwd+'/../../cnine/objects/tensor',
-                     cwd+'/../../cnine/objects/tensor_views',
-                     cwd+'/../../cnine/objects/tensor_array',
-                     cwd+'/../../cnine/objects/tensor_array/cell_ops',
-                     cwd+'/../include',
-                     cwd+'/../combinatorial',
-                     cwd+'/../objects/SO3',
-                     cwd+'/../objects/SO3/cell_ops',
-                     cwd+'/../objects/SO3/functions'
+    _include_dirs = [cwd + cnine_folder + '/include',
+                     cwd + cnine_folder + '/include/cmaps',
+                     cwd + cnine_folder + '/objects/scalar',
+                     cwd + cnine_folder + '/objects/tensor',
+                     cwd + cnine_folder + '/objects/tensor_views',
+                     cwd + cnine_folder + '/objects/tensor_array',
+                     cwd + cnine_folder + '/objects/tensor_array/cell_ops',
+                     cwd + '/../include',
+                     cwd + '/../combinatorial',
+                     cwd + '/../objects/SO3',
+                     cwd + '/../objects/SO3/cell_ops',
+                     cwd + '/../objects/SO3/functions'
                      ]
 
     _cxx_compile_args = ['-std=c++14',
@@ -91,9 +93,9 @@ def main():
     # ---- Compilation commands ----------------------------------------------------------------------------------
 
     if compile_with_cuda:
-        ext_modules = [CUDAExtension('gelib', [
-            '../../cnine/include/Cnine_base.cu',
-            '../../cnine/cuda/TensorView_accumulators.cu',
+        ext_modules = [CUDAExtension('gelib_base', [
+            cnine_folder + '/include/Cnine_base.cu',
+            cnine_folder + '/cuda/TensorView_accumulators.cu',
             '../cuda/SO3CGproducts_combo.cu',
             # '../cuda/GElib_base.cu',
             # '../cuda/SO3partA_CGproduct.cu',
