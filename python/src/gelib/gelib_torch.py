@@ -15,7 +15,8 @@ print(real_path)
 print(dir_path)
 
 # tcn= SourceFileLoader("torch_cnine", "../../../../cnine/python/torch_cnine.py").load_module()
-tcn = SourceFileLoader("torch_cnine", dir_path + "/../../../../cnine/python/torch_cnine.py").load_module()
+# tcn = SourceFileLoader("torch_cnine", dir_path + "/../../../../cnine/python/torch_cnine.py").load_module()
+import cnine as tcn
 
 
 
