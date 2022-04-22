@@ -69,7 +69,7 @@ namespace GElib{
 	TYPE a=(lgamma(l+m1+1)+lgamma(l-m1+1)+lgamma(l+m2+1)+lgamma(l-m2+1))/2.0;
 	a-=lgamma(l+m1-s+1)+lgamma(s+1)+lgamma(m2-m1+s+1)+lgamma(l-m2-s+1);
 	if(std::isnan((float)std::exp(a))) cout<<s<<" "<<l<<m1<<m2<<" "<<beta<<endl;
-	x+=(2*(s%2)-1)*std::pow(cos(beta/2),2*l+m1-m2-2*s)*std::pow(sin(beta/2),m2-m1+2*s)*std::exp(a);
+	x+=(1-2*((m2-m1+s)%2))*std::pow(cos(beta/2),2*l+m1-m2-2*s)*std::pow(sin(beta/2),m2-m1+2*s)*std::exp(a);
 	if(std::isnan(x)){
 	  cout<<l<<m1<<m2<<" "<<beta<<" ww "<<a<<" "<<std::exp(a)<<" "<<x<<" ";
 	  cout<<(2*(s%2)-1)*std::pow(cos(beta/2),2*l+m1-m2-2*s)*std::pow(sin(beta/2),m2-m1+2*s)<<endl;
