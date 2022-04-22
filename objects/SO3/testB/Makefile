@@ -28,8 +28,8 @@ CUDA_EXTERNS=
 
 ifdef WITH_CUDA
 INCLUDE+=-I$(CUDA_HOME)/include
-CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partA_CGproduct.o $(GELIB_CUDADIR)/SO3partA_DiagCGproduct.o \
-$(CNINE_ROOT)/cuda/CtensorA_add.o 
+#CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partA_CGproduct.o $(GELIB_CUDADIR)/SO3partA_DiagCGproduct.o \
+#$(CNINE_ROOT)/cuda/CtensorA_add.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/GElib_base.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partB_addCGproduct.o $(GELIB_CUDADIR)/SO3partB_addCGproduct_back0.o $(GELIB_CUDADIR)/SO3partB_addCGproduct_back1.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partB_addDiagCGproduct.o $(GELIB_CUDADIR)/SO3partB_addDiagCGproduct_back0.o $(GELIB_CUDADIR)/SO3partB_addDiagCGproduct_back1.o 
