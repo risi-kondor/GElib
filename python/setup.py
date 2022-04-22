@@ -98,8 +98,8 @@ def main():
 
     if compile_with_cuda:
         ext_modules = [CUDAExtension('gelib_base', [
-            cwd + cnine_folder + '/include/Cnine_base.cu',
-            cwd + cnine_folder + '/cuda/TensorView_accumulators.cu',
+            '../../cnine/include/Cnine_base.cu',
+            '../../cnine/cuda/TensorView_accumulators.cu',
             '../cuda/SO3CGproducts_combo.cu',
             # '../cuda/GElib_base.cu',
             # '../cuda/SO3partA_CGproduct.cu',
@@ -119,7 +119,7 @@ def main():
             # depends=_depends
         )]
     else:
-        ext_modules = [CppExtension('gelib', ['src/gelib/GElib_py.cpp'],
+        ext_modules = [CppExtension('gelib_base', ['src/gelib/GElib_py.cpp'],
                                     include_dirs=_include_dirs,
                                     # sources=sources,
                                     extra_compile_args={
