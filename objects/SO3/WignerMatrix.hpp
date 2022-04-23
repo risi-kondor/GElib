@@ -51,7 +51,7 @@ namespace GElib{
   private:
 
     TYPE littled(const int l, const int m1, const int m2, const double beta){
-      TYPE x=0;
+      double x=0;
 
       if(l<5){
 	for(int s=std::max(0,m1-m2); s<=std::min(l+m1,l-m2); s++){
@@ -66,9 +66,9 @@ namespace GElib{
 
       // check this!
       for(int s=std::max(0,m1-m2); s<=std::min(l+m1,l-m2); s++){
-	TYPE a=(lgamma(l+m1+1)+lgamma(l-m1+1)+lgamma(l+m2+1)+lgamma(l-m2+1))/2.0;
+	double a=(lgamma(l+m1+1)+lgamma(l-m1+1)+lgamma(l+m2+1)+lgamma(l-m2+1))/2.0;
 	a-=lgamma(l+m1-s+1)+lgamma(s+1)+lgamma(m2-m1+s+1)+lgamma(l-m2-s+1);
-	if(std::isnan((float)std::exp(a))) cout<<s<<" "<<l<<m1<<m2<<" "<<beta<<endl;
+	if(std::isnan(std::exp(a))) cout<<s<<" "<<l<<m1<<m2<<" "<<beta<<endl;
 	x+=(1-2*((m2-m1+s)%2))*std::pow(cos(beta/2),2*l+m1-m2-2*s)*std::pow(sin(beta/2),m2-m1+2*s)*std::exp(a);
 	if(std::isnan(x)){
 	  cout<<l<<m1<<m2<<" "<<beta<<" ww "<<a<<" "<<std::exp(a)<<" "<<x<<" ";
