@@ -3,7 +3,7 @@ include $(ROOTDIR)/common.txt
 
 INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions   
 
-TESTS= testSO3partB testSO3partB_covariance testSO3vecB testSO3vecB_covariance testSO3vecB_gradient \
+TESTS= testSO3partB testSO3partB_covariance testSO3partB_covariance2 testSO3vecB testSO3vecB_covariance testSO3vecB_gradient \
 timeSO3CG \
 #testSO3partB_CGproduct 
 TESTS+=testSO3partB_CGproduct_back0 testSO3partB_CGproduct_back1 \
@@ -55,6 +55,14 @@ ifdef WITH_CUDA
 	$(NVCC) $(NVCCFLAGS) -o testSO3partB_covariance testSO3partB_covariance.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
 	$(CC) -o testSO3partB_covariance testSO3partB_covariance.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+endif
+
+
+testSO3partB_covariance2: testSO3partB_covariance2.cpp $(DEPS) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o testSO3partB_covariance2 testSO3partB_covariance2.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o testSO3partB_covariance2 testSO3partB_covariance2.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 endif
 
 
