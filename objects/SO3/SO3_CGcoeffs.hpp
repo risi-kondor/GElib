@@ -72,8 +72,8 @@ namespace GElib{
 
   private:
 
-    _SO3_CGcoeff_TYPE logfact(int n){
-      return lgamma((_SO3_CGcoeff_TYPE)(n+1));
+    double logfact(double n){
+      return lgamma(n+1);
     }
     
     _SO3_CGcoeff_TYPE plusminus(int k){ if(k%2==1) return -1; else return +1; }

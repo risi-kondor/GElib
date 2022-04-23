@@ -108,7 +108,8 @@ class SO3part(torch.Tensor):
 
 
     def rotate(self,R):
-        return SO3part(_SO3partB.view(self).apply(R).torch())
+        A=_SO3partB.view(self).apply(R)
+        return SO3part(A.torch())
 
     def apply(self,R):
         return SO3part(_SO3partB.view(self).apply(R).torch())
