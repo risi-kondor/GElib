@@ -41,7 +41,7 @@ namespace GElib{
       R(0,0)=sqrt(1.0/(M_PI*4.0));
       float xfact=sqrt((1.0-x)*(1.0+x));
       
-      for(int l=1; l<=L; l++){
+      for(int l=1; l<=_L; l++){
 	R(l,l)=c1(l,l)*R(l-1,l-1)*xfact;
 	R(l,l-1)=c1(l,l-1)*R(l-1,l-1)*x;
 	for(int m=0; m<l-1; m++)
