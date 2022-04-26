@@ -145,6 +145,8 @@ print(zr)
 
 
 print("\n\n")
+for x, y in zip(zr.parts, z.rotate(R).parts):
+    print(torch.allclose(x, y))
 
 
 
