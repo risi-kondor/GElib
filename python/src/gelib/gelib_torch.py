@@ -1,12 +1,24 @@
 from importlib.machinery import SourceFileLoader
 
 import torch
-
-tcn= SourceFileLoader("torch_cnine", "../../cnine/python/torch_cnine.py").load_module()
-
 import GElib
 from GElib import SO3part as _SO3part
 from GElib import SO3vec as _SO3vec
+
+# TODO: THIS LINE SHOULD BE CHANGED! WE SHOULDN'T BE IMPORTING A PACKAGE USING ITS FILE PATH!
+# I'VE FIXED IT SO IT RUNS (BEFORE IT WOULD ONLY RUN FROM ONE DIRECTORY) BUT IT SHOULD STILL CHANGE.
+import os
+real_path = os.path.realpath(__file__)
+dir_path = os.path.dirname(real_path)
+print(__file__)
+print(real_path)
+print(dir_path)
+
+# tcn= SourceFileLoader("torch_cnine", "../../../../cnine/python/torch_cnine.py").load_module()
+# tcn = SourceFileLoader("torch_cnine", dir_path + "/../../../../cnine/python/torch_cnine.py").load_module()
+import cnine as tcn
+
+
 
 
 class SO3part(tcn.ctensor):
