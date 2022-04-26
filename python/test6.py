@@ -31,6 +31,8 @@ outputs = model(inputs)
 
 # Rotate the inputs and run the model again
 R = gelib_base.SO3element.uniform()
+R = gelib_base.SO3element.uniform()
+R = gelib_base.SO3element.uniform()
 inputs_rot = inputs.rotate(R)
 outputs_rot = model(inputs_rot)
 
