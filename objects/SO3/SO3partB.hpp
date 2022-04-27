@@ -231,7 +231,7 @@ namespace GElib{
 	for(int i=0; i<B; i++){
 	  for(int j=0; j<n; j++){
 	    v.inc(i,l+m,j,a);
-	    v.inc(i,l-m,j,b);
+	    if(m>0) v.inc(i,l-m,j,b);
 	  }
 	}
       }
