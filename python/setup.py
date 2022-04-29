@@ -79,7 +79,7 @@ def main():
     if compile_with_cuda:
         _cxx_compile_args.extend(['-D_WITH_CUDA', '-D_WITH_CUBLAS'])
 
-    # _depends = ['setup.py',
+    _depends = ['setup.py']
     #             'GElib_py.cpp',
     #             'SO3part_py.cpp',
     #             'SO3vec_py.cpp',
@@ -117,7 +117,7 @@ def main():
             extra_compile_args={
             'nvcc': _nvcc_compile_args,
             'cxx': _cxx_compile_args},
-            # depends=_depends
+            depends=_depends
         )]
     else:
         ext_modules = [CppExtension('gelib_base', ['src/gelib/GElib_py.cpp'],
@@ -125,7 +125,7 @@ def main():
                                     # sources=sources,
                                     extra_compile_args={
             'cxx': _cxx_compile_args},
-            # depends=_depends
+            depends=_depends
         )]
 
     setup(name='gelib',

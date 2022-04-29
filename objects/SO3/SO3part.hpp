@@ -213,7 +213,7 @@ namespace GElib{
 	complex<float> b=complex<float>(1-2*(m%2))*std::conj(a);
 	for(int j=0; j<n; j++){
 	  R(l+m,j)=a; 
-	  R(l-m,j)=b; 
+	  if(m>0) R(l-m,j)=b; 
 	}
       }
 
@@ -222,12 +222,12 @@ namespace GElib{
       //return SO3part(Cengine_engine->push<new_SO3part_from_Gtensor_op>(R,dev.id()),l,n);
     }
     
-    /*
-    SO3part static spharm(const int l, const int n, const float x, const float y, const float z, const int _nbu=-1, const device_id& dev=0){
-      //return SO3part(engine::new_SO3part_spharm(l,x,y,z,_nbu,dev.id()),l,1,_nbu);
-      return SO3part(Cengine_engine->push<new_spharm_op>(l,n,x,y,z,_nbu,dev.id()),l,n);
-    }
-    */
+    
+    //SO3part static spharm(const int l, const int n, const float x, const float y, const float z, const device_id& dev=0){
+    //return SO3part(engine::new_SO3part_spharm(l,x,y,z,_nbu,dev.id()),l,1,_nbu);
+      //return SO3part(Cengine_engine->push<new_spharm_op>(l,n,x,y,z,_nbu,dev.id()),l,n);
+    //}
+    
  
 
 
