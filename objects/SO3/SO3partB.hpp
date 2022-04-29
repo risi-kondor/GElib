@@ -26,6 +26,7 @@
 #include "SO3part_addFproduct_back1Fn.hpp"
 
 //#include "SO3_CGbank.hpp"
+#include "RtensorA.hpp"
 #include "SO3_SPHgen.hpp"
 #include "SO3element.hpp"
 #include "WignerMatrix.hpp"
@@ -232,6 +233,41 @@ namespace GElib{
 	  for(int j=0; j<n; j++){
 	    v.inc(i,l+m,j,a);
 	    if(m>0) v.inc(i,l-m,j,b);
+	  }
+	}
+      }
+    }
+
+
+    void add_spharm(const cnine::RtensorA& x){
+      int l=getl();
+      int B=getb();
+      int n=getn();
+      cnine::Ctensor3_view v=view3();
+      assert(x.dims.size()==2);
+      assert(x.dims[0]==B);
+      assert(x.dims[1]==3);
+
+      for(int b=0; b<B; b++){
+	float vx=x(b,0);
+	float vy=x(b,1);
+	float vz=x(b,2);
+	float length=sqrt(vx*vx+vy*vy+vz*vz); 
+	float len2=sqrt(vx*vx+vy*vy);
+	complex<float> cphi(vx/len2,vy/len2);
+
+	cnine::Gtensor<float> P=SO3_sphGen(l,vz/length);
+	vector<complex<float> > phase(l+1);
+	phase[0]=complex<float>(1.0,0);
+	for(int m=1; m<=l; m++)
+	  phase[m]=cphi*phase[m-1];
+      
+	for(int m=0; m<=l; m++){
+	  complex<float> a=phase[m]*complex<float>(P(l,m)); // *(1-2*(m%2))
+	  complex<float> aa=complex<float>(1-2*(m%2))*std::conj(a);
+	  for(int j=0; j<n; j++){
+	    v.inc(b,l+m,j,a);
+	    if(m>0) v.inc(b,l-m,j,aa);
 	  }
 	}
       }

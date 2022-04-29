@@ -48,7 +48,11 @@ py::class_<SO3partB>(m,"SO3partB",
 //  .def("__setitem__",[](SO3part& obj, const vector<int> v, const complex<float> x){
 //      obj.set_value(v[0],v[1],x);})
 
-  .def("add_spharm",&SO3partB::add_spharm)
+  .def("add_spharm",[](SO3partB& obj, const float x, const float y, const float z){
+    obj.add_spharm(x,y,z);})
+  .def("add_spharmB",[](SO3partB& obj, at::Tensor& _X){
+      RtensorA X=RtensorA::view(_X);
+      obj.add_spharm(X);})
 
   .def("apply",&SO3partB::rotate)
 
