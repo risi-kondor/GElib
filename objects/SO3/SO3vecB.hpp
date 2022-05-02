@@ -20,6 +20,12 @@
 
 namespace GElib{
 
+  #ifdef _WITH_CUDA
+  void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, 
+    const cnine::Ctensor3_view& y, const int conj, const cudaStream_t& stream);
+  #endif
+
+
 
   class SO3vecB{
   public:
@@ -468,6 +474,39 @@ namespace GElib{
 	  }
 	}
       }
+    }
+
+
+    void add_FproductB(const SO3vecB& x, const SO3vecB& y){
+      int L1=x.get_maxl(); 
+      int L2=y.get_maxl();
+      int L=get_maxl();
+	
+      if(dev==0){
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
+	    SO3part_addFproduct_Fn()(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3());
+	  }
+	}
+      }
+      }
+
+      #ifdef _WITH_CUDA
+      if(dev==1){
+	for(int l=0; l<=L1+L2 && l<=L ; l++){
+	  cudaStream_t stream;
+	  CUDA_SAFE(cudaStreamCreate(&stream));
+	  for(int l1=std::max(0,l-L2); l1<=std::min(l+L2,L1); l1++){
+	    for(int l2=std::abs(l-l1); l2<=std::min(l+l1,L2); l2++){
+	      SO3Fpart_addFproduct_cu(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3(),0,stream);
+	    }
+	  }
+	  CUDA_SAFE(cudaStreamSynchronize(stream));
+	  CUDA_SAFE(cudaStreamDestroy(stream));
+	}
+      }
+      #endif 
     }
 
 

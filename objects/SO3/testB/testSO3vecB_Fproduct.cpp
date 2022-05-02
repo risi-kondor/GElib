@@ -33,6 +33,8 @@ int main(int argc, char** argv){
   SO3vecB yc=y.to_device(1);
   SO3vecB zc=xc.Fproduct(yc,maxl);
   printl("zc",zc);
+  SO3vecB zcb=xc.FproductB(yc,maxl);
+  printl("zcb",zcb);
   cout<<endl;
 #endif
 
