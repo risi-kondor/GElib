@@ -121,7 +121,7 @@ namespace GElib{
       //cout<<cmem_index_tail<<": "<<l1<<" "<<l2<<" "<<l<<endl;
 
       if(cmem_index_tail+4*sizeof(int)>CG_CMEM_DATA_OFFS || cmem_data_tail+sizeof(float)*coeffs.asize>CNINE_CONST_MEM_SIZE){
-	SO3CG_DEBUG("GPU constant memory full. Reverting to storing CG coefficients in global memory.");
+	//SO3CG_DEBUG("GPU constant memory full. Reverting to storing CG coefficients in global memory.");
 	return -128;
       }
 
