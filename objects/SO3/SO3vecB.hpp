@@ -21,10 +21,10 @@
 namespace GElib{
 
   #ifdef _WITH_CUDA
-  void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, 
-    const cnine::Ctensor3_view& y, const int conj, const cudaStream_t& stream);
-  void SO3Fpart_addFproductB_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, 
-    const cnine::Ctensor3_view& y, const int conj, const cudaStream_t& stream);
+  //void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, 
+  //const cnine::Ctensor3_view& y, const int conj, const cudaStream_t& stream);
+  //void SO3Fpart_addFproductB_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, 
+  //const cnine::Ctensor3_view& y, const int conj, const cudaStream_t& stream);
   #endif
 
 
@@ -468,12 +468,12 @@ namespace GElib{
       assert(y.getb()==getb());
       if(maxl<0) maxl=get_maxl()+y.get_maxl();
       SO3vecB R=SO3vecB::Fzero(getb(),maxl,get_dev());
-      R.add_FproductB(*this,y);
+      R.add_Fproduct(*this,y,1);
       return R;
     }
 
 
-    void add_Fproduct(const SO3vecB& x, const SO3vecB& y){
+    void add_Fproduct(const SO3vecB& x, const SO3vecB& y, const int method=0){
       int L1=x.get_maxl(); 
       int L2=y.get_maxl();
       int L=get_maxl();
@@ -481,13 +481,13 @@ namespace GElib{
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
-	    SO3part_addFproduct_Fn()(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3());
+	    SO3part_addFproduct_Fn(0,method)(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3());
 	  }
 	}
       }
     }
 
-
+    /* this didn't help
     void add_FproductB(const SO3vecB& x, const SO3vecB& y){
       int L1=x.get_maxl(); 
       int L2=y.get_maxl();
@@ -519,9 +519,10 @@ namespace GElib{
       }
       #endif 
     }
+    */
 
 
-    void add_Fproduct_back0(const SO3vecB& g, const SO3vecB& y){
+    void add_Fproduct_back0(const SO3vecB& g, const SO3vecB& y, const int method=0){
       int L1=get_maxl(); 
       int L2=y.get_maxl();
       int L=g.get_maxl();
@@ -529,7 +530,7 @@ namespace GElib{
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
-	    SO3part_addFproduct_back0Fn()(parts[l1]->view3(),g.parts[l]->view3(),y.parts[l2]->view3());
+	    SO3part_addFproduct_back0Fn(0,method)(parts[l1]->view3(),g.parts[l]->view3(),y.parts[l2]->view3());
 	  }
 	}
       }
