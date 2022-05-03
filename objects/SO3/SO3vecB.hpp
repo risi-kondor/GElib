@@ -462,6 +462,15 @@ namespace GElib{
     }
 
 
+    SO3vecB FproductB(const SO3vecB& y, int maxl=-1) const{
+      assert(y.getb()==getb());
+      if(maxl<0) maxl=get_maxl()+y.get_maxl();
+      SO3vecB R=SO3vecB::Fzero(getb(),maxl,get_dev());
+      R.add_FproductB(*this,y);
+      return R;
+    }
+
+
     void add_Fproduct(const SO3vecB& x, const SO3vecB& y){
       int L1=x.get_maxl(); 
       int L2=y.get_maxl();
@@ -482,7 +491,7 @@ namespace GElib{
       int L2=y.get_maxl();
       int L=get_maxl();
 	
-      if(dev==0){
+      if(get_dev()==0){
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
@@ -493,7 +502,7 @@ namespace GElib{
       }
 
       #ifdef _WITH_CUDA
-      if(dev==1){
+      if(get_dev()==1){
 	for(int l=0; l<=L1+L2 && l<=L ; l++){
 	  cudaStream_t stream;
 	  CUDA_SAFE(cudaStreamCreate(&stream));

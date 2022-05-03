@@ -165,6 +165,14 @@ else
 	$(CC) -o testSO3vecB_Fproduct_back1 testSO3vecB_Fproduct_back1.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 endif
 
+timeSO3vecB_Fproduct: timeSO3vecB_Fproduct.cpp $(DEPS) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o timeSO3vecB_Fproduct timeSO3vecB_Fproduct.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o timeSO3vecB_Fproduct timeSO3vecB_Fproduct.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+endif
+
+
 
 testSO3vecB_Fmodsq: testSO3vecB_Fmodsq.cpp $(DEPS) 
 ifdef WITH_CUDA
