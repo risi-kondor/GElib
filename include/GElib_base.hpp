@@ -17,6 +17,7 @@
 using namespace std; 
 //using namespace Cnine; 
 
+#define _GELIB_VERSION "0.0.0 5/3/22"
 
 #define GELIB_ASSERT(condition, message) if (!(condition)) {cout<<message<<endl; assert ((condition)); exit(-1); }
 #define GELIB_UNIMPL() printf("GElib error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
