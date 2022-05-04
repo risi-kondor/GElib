@@ -47,6 +47,8 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   py::options options;
   //options.disable_function_signatures();
 
+  m.def("version",[](){cout<<_GELIB_VERSION<<endl;});
+
   py::class_<SO3element>(m,"SO3element")
 
     .def(pybind11::init<>(),"")
