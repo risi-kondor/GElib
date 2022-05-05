@@ -21,8 +21,8 @@
 namespace GElib{
 
   #ifdef _WITH_CUDA
-  //void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, 
-  //const cnine::Ctensor3_view& y, const int conj, const cudaStream_t& stream);
+  void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, 
+    const cnine::Ctensor3_view& y, const int conj, const int method, const cudaStream_t& stream);
   //void SO3Fpart_addFproductB_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, 
   //const cnine::Ctensor3_view& y, const int conj, const cudaStream_t& stream);
   #endif
@@ -468,7 +468,7 @@ namespace GElib{
       assert(y.getb()==getb());
       if(maxl<0) maxl=get_maxl()+y.get_maxl();
       SO3vecB R=SO3vecB::Fzero(getb(),maxl,get_dev());
-      R.add_Fproduct(*this,y,1);
+      R.add_FproductB(*this,y);
       return R;
     }
 
@@ -487,7 +487,7 @@ namespace GElib{
       }
     }
 
-    /* this didn't help
+    
     void add_FproductB(const SO3vecB& x, const SO3vecB& y){
       int L1=x.get_maxl(); 
       int L2=y.get_maxl();
@@ -510,7 +510,7 @@ namespace GElib{
 	  CUDA_SAFE(cudaStreamCreate(&stream));
 	  for(int l1=std::max(0,l-L2); l1<=std::min(l+L2,L1); l1++){
 	    for(int l2=std::abs(l-l1); l2<=std::min(l+l1,L2); l2++){
-	      SO3Fpart_addFproductB_cu(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3(),0,stream);
+	      SO3Fpart_addFproduct_cu(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3(),0,0,stream);
 	    }
 	  }
 	  CUDA_SAFE(cudaStreamSynchronize(stream));
@@ -519,7 +519,6 @@ namespace GElib{
       }
       #endif 
     }
-    */
 
 
     void add_Fproduct_back0(const SO3vecB& g, const SO3vecB& y, const int method=0){
