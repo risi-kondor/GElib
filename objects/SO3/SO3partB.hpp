@@ -220,6 +220,13 @@ namespace GElib{
 
       float length=sqrt(x*x+y*y+z*z); 
       float len2=sqrt(x*x+y*y);
+      if(len2==0 || std::isnan(x/len2) || std::isnan(y/len2)){
+	float a=sqrt(((float)(2*l+1))/(M_PI*4.0));
+	for(int i=0; i<B; i++)
+	  for(int j=0; j<n; j++)
+	    v.inc(i,l,j,a);
+	return;
+      }
       complex<float> cphi(x/len2,y/len2);
 
       cnine::Gtensor<float> P=SO3_sphGen(l,z/length);
@@ -256,8 +263,14 @@ namespace GElib{
 	float vz=x(b,2);
 	float length=sqrt(vx*vx+vy*vy+vz*vz); 
 	float len2=sqrt(vx*vx+vy*vy);
+	if(len2==0 || std::isnan(vx/len2) || std::isnan(vy/len2)){
+	  float a=sqrt(((float)(2*l+1))/(M_PI*4.0));
+	  for(int i=0; i<B; i++)
+	    for(int j=0; j<n; j++)
+	      v.inc(i,l,j,a);
+	  return;
+	}
 	complex<float> cphi(vx/len2,vy/len2);
-
 	cnine::Gtensor<float> P=SO3_sphGen(l,vz/length);
 	vector<complex<float> > phase(l+1);
 	phase[0]=complex<float>(1.0,0);
