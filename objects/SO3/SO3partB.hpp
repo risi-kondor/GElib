@@ -265,9 +265,8 @@ namespace GElib{
 	float len2=sqrt(vx*vx+vy*vy);
 	if(len2==0 || std::isnan(vx/len2) || std::isnan(vy/len2)){
 	  float a=sqrt(((float)(2*l+1))/(M_PI*4.0));
-	  for(int i=0; i<B; i++)
-	    for(int j=0; j<n; j++)
-	      v.inc(i,l,j,a);
+	  for(int j=0; j<n; j++)
+	    v.inc(b,l,j,a);
 	  return;
 	}
 	complex<float> cphi(vx/len2,vy/len2);
