@@ -5,6 +5,7 @@ CNINE_INCLUDES=-I$(CNINE_ROOT)/include -I$(CNINE_ROOT)/include/cmaps \
 -I$(CNINE_ROOT)/objects/tensor_array -I$(CNINE_ROOT)/objects/tensor_array/cell_ops 
 
 GELIB_INCLUDEDIR=$(ROOTDIR)/include
+SO2DIR=$(ROOTDIR)/objects/SO2
 SO3DIR=$(ROOTDIR)/objects/SO3
 GELIB_CUDADIR=$(ROOTDIR)/cuda
 

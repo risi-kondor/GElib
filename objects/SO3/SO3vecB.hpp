@@ -17,6 +17,9 @@
 #include "SO3partB.hpp"
 #include "SO3element.hpp"
 
+#include "SO3_addFFT_Fn.hpp"
+#include "SO3_addIFFT_Fn.hpp"
+
 
 namespace GElib{
 
@@ -208,6 +211,18 @@ namespace GElib{
     }
 
     
+    void forall_parts(std::function<void(const SO3partB& x)> lambda) const{
+      int L=parts.size();
+      for(int l=0; l<L; l++)
+	lambda(*parts[l]);
+    }
+
+    void forall_parts(std::function<void(SO3partB& x)> lambda){
+      int L=parts.size();
+      for(int l=0; l<L; l++)
+	lambda(*parts[l]);
+    }
+
 
     // ---- Cumulative operations ----------------------------------------------------------------------------
 
@@ -610,6 +625,35 @@ namespace GElib{
     }
 
 
+  public: // ---- FFT ---------------------------------------------------------------------------------------
+
+
+    cnine::CtensorB iFFT(const int n0, const int n1, const int n2) const{
+      cnine::CtensorB R=cnine::CtensorB::zero(cnine::Gdims(n0,n1,n2));
+      add_iFFT_to(R);
+      return R;
+    }
+
+    void add_iFFT_to(cnine::CtensorB& R) const{
+      //int L=get_maxl(); 
+      //for(int l=0; l<=L; l++)
+      //SO3part_addIFFT_Fn()(R.view3(),parts[l]->view3());
+      forall_parts([&](const SO3partB& x){
+	  //Ctensor4_view Rview=R.view4();
+	  SO3part_addIFFT_Fn()(R.view4(),x.view3());
+	});
+    }
+
+    void add_FFT(const cnine::CtensorB& R){
+      //int L=get_maxl(); 
+      //for(int l=0; l<=L; l++)
+      //SO3part_addFFT_Fn()(parts[l]->view3(),R.view3());
+      forall_parts([&](const SO3partB& x){
+	  SO3part_addFFT_Fn()(x.view3(),R.view4());
+	});
+    }
+
+
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
 
@@ -633,6 +677,22 @@ namespace GElib{
     }
 
   };
+
+
+  // ---- Stand-alone functions ------------------------------------------------------------------------------
+
+
+  inline cnine::CtensorB SO3_iFFT(const SO3vecB& v, const int n0, const int n1, const int n2){
+    return v.iFFT(n0,n1,n2);
+  }
+
+  inline SO3vecB SO3_FFT(const cnine::CtensorB& f, const int _maxl){
+    assert(f.ndims()==3);
+    int B=f.dim(0);
+    SO3vecB R=SO3vecB::Fzero(B,_maxl,f.get_dev());
+    R.add_FFT(f);
+    return R;
+  }
 
 }
 

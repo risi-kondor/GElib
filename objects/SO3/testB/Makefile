@@ -2,16 +2,19 @@ ROOTDIR=../../..
 include $(ROOTDIR)/common.txt
 
 INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions   
+INCLUDE+=-I$(SO2DIR) -I$(SO2DIR)/functions 
 
 TESTS= testSO3partB testSO3partB_covariance testSO3partB_covariance2 testSO3vecB testSO3vecB_covariance testSO3vecB_gradient 
-TESTS+= timeSO3CG testSO3partB_CGproduct 
+TESTS+= timeSO3CG 
+# testSO3partB_CGproduct 
 TESTS+=testSO3partB_CGproduct_back0 testSO3partB_CGproduct_back1 \
-testSO3partB_Fproduct testSO3partB_Fproduct_back0 testSO3partB_Fproduct_back1 \
-timeSO3partB_Fproduct timeSO3partB_Fproduct_back0 timeSO3partB_Fproduct_back1 \
-testSO3vecB_Fproduct testSO3vecB_Fproduct_back0 testSO3vecB_Fproduct_back1 \
+testSO3partB_Fproduct testSO3partB_Fproduct_back0 testSO3partB_Fproduct_back1
+%TESTS+=timeSO3partB_Fproduct timeSO3partB_Fproduct_back0 timeSO3partB_Fproduct_back1
+TESTS+=testSO3vecB_Fproduct testSO3vecB_Fproduct_back0 testSO3vecB_Fproduct_back1 \
 testSO3vecB_Fmodsq \
 testSO3vecB_CGsquare \
 testSO3vecB_BlockedCGproduct 
+TESTS+=testSO3vecB_FFT
 
 #testSO3Fvec testSO3Fvec_covariance testSO3Fvec_Fmodsq
 
@@ -225,6 +228,15 @@ ifdef WITH_CUDA
 	$(NVCC) $(NVCCFLAGS) -o testSO3vecB_BlockedCGproduct testSO3vecB_BlockedCGproduct.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
 	$(CC) -o testSO3vecB_BlockedCGproduct testSO3vecB_BlockedCGproduct.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+endif
+
+
+
+testSO3vecB_FFT: testSO3vecB_FFT.cpp $(DEPS) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o testSO3vecB_FFT testSO3vecB_FFT.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o testSO3vecB_FFT testSO3vecB_FFT.cpp $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 endif
 
 
