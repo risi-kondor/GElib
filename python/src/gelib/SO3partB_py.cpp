@@ -54,6 +54,10 @@ py::class_<SO3partB>(m,"SO3partB",
       RtensorA X=RtensorA::view(_X);
       obj.add_spharm(X);})
 
+  .def("addCGproduct",&SO3partB::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
+  .def("addCGproduct_back0",&SO3partB::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
+  .def("addCGproduct_back1",&SO3partB::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
+
   .def("apply",&SO3partB::rotate)
 
   .def("device",&SO3partB::get_device)
