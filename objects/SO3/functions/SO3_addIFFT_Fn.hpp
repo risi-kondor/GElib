@@ -36,7 +36,7 @@ namespace GElib{
 
       Ctensor F0(cnine::Gdims(f.n3,p.n2));
       Ctensor F1(cnine::Gdims(f.n1,p.n1));
-      Ctensor D(cnine::Gdims(f.n2,p.n0,p.n1));
+      Ctensor D(cnine::Gdims(p.n0,f.n2,p.n1));
 
       Ctensor A=Ctensor::zero(cnine::Gdims(b,p.n1,f.n2,p.n2));
       A.view4().add_expand_2(p,D.view3());
