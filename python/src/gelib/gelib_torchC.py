@@ -1,8 +1,10 @@
 import torch
+#import cnine
 
 from gelib_base import SO3partB as _SO3partB
 from gelib_base import SO3vecB as _SO3vecB
 from gelib_base import SO3Fvec as _SO3Fvec
+from gelib_base import ctensorb 
 
 
 # ----------------------------------------------------------------------------------------------------------
@@ -279,6 +281,11 @@ class SO3vec:
         r.parts = list(SO3vec_FmodsqFn.apply(len(self.parts), maxl, *(self.parts)))
         return r
 
+    # ---- Fourier transforms -------------------------------------------------------------------------------
+
+    def iFFT(self,_N):
+        return SO3vec_iFFTFn.apply(_N,*(self.parts))
+    
     # ---- I/O ----------------------------------------------------------------------------------------------
 
     def __str__(self):
@@ -592,4 +599,35 @@ class SO3vec_FmodsqFn(torch.autograd.Function):
         _xg.addFproduct_back0(_g, _x)
         _xg.addFproduct_back1(_g, _x)
 
+        return tuple(grads)
+
+
+class SO3vec_iFFTFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx, N, *args):
+
+        _v=_SO3vecB.view(args)
+        b=_v.getb()
+        #maxl=_v.get_maxl()
+        ctx.save_for_backward(*args)
+        
+        r=torch.zeros([b,2*N,N,2*N,2],device=args[0].device)
+        _r=ctensorb.view(r)
+        _v.add_iFFT_to(_r)
+
+        return r
+
+    @staticmethod
+    def backward(ctx, fg):
+
+        inputs = ctx.saved_tensors
+        grads = [None]
+        for inp in inputs:
+            grads.append(torch.zeros_like(inp))
+
+        _fg = ctensorb.view(fg)
+        _vg=_SO3vecB.view(grads[1:])
+        _vg.add_FFT(_fg)
+        
         return tuple(grads)
