@@ -15,7 +15,7 @@ def main():
     # os.environ['CUDA_HOME']='/usr/local/cuda'
     #os.environ["CC"] = "clang"
 
-    compile_with_cuda = False
+    compile_with_cuda = True
     # compile_with_cuda = False
 
     copy_warnings = False
@@ -104,6 +104,7 @@ def main():
         ext_modules = [CUDAExtension('gelib_base', [
             '../../cnine/include/Cnine_base.cu',
             '../../cnine/cuda/TensorView_accumulators.cu',
+            '../../cnine/cuda/BasicCtensorProducts.cu',
             '../cuda/SO3CGproducts_combo.cu',
             # '../cuda/GElib_base.cu',
             # '../cuda/SO3partA_CGproduct.cu',
