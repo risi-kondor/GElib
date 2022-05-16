@@ -314,6 +314,19 @@ def Fmodsq(x, a=-1):
     return x.Fmodsq(a)
 
 
+def SO3FFT(f,maxl):
+    r=SO3vec()
+    r.parts=list(SO3vec_FFTFn.apply(maxl,f))
+    return r
+
+
+def SO3iFFT(v,N):
+    return v.iFFT(N)
+
+
+# ---- Helpers -----------------------------------------------------------------------------------------------
+
+
 def tau_type(x):
     r = []
     for t in x:
@@ -631,3 +644,29 @@ class SO3vec_iFFTFn(torch.autograd.Function):
         _vg.add_FFT(_fg)
         
         return tuple(grads)
+
+
+class SO3vec_FFTFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx, maxl, f):
+
+        ctx.save_for_backward(f)
+        _f = ctensorb.view(f)
+
+        v = makeZeroSO3Fparts(_f.get_dim(0), maxl, _f.get_dev())
+        _v=_SO3vecB.view(v)
+        _v.add_FFT(_f)
+
+        return v
+
+    @staticmethod
+    def backward(ctx, vg):
+
+        inputs = ctx.saved_tensors
+
+        fg=torch.zeros_like(inputs[0])
+        _fg=ctensorb.view(fg)
+        _vg.add_iFFT_to(_fg)
+        
+        return tuple([None, fg])
