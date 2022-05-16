@@ -28,6 +28,7 @@ namespace GElib{
     template<class TYPE2>
     using Gtensor=cnine::Gtensor<TYPE2>;
 
+    WignerMatrix(){}
 
     WignerMatrix(const int l, const SO3element& x): 
       WignerMatrix(l,x.phi,x.theta,x.psi){}
@@ -48,7 +49,7 @@ namespace GElib{
     }
 
     
-  private:
+  public:
 
     TYPE littled(const int l, const int m1, const int m2, const double beta){
       double x=0;

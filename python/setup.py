@@ -38,6 +38,8 @@ def main():
                      cwd + cnine_folder + '/objects/tensor_array/cell_ops',
                      cwd + '/../include',
                      cwd + '/../combinatorial',
+                     cwd + '/../objects/SO2',
+                     cwd + '/../objects/SO2/functions',
                      cwd + '/../objects/SO3',
                      cwd + '/../objects/SO3/cell_ops',
                      cwd + '/../objects/SO3/functions'
@@ -102,6 +104,7 @@ def main():
         ext_modules = [CUDAExtension('gelib_base', [
             '../../cnine/include/Cnine_base.cu',
             '../../cnine/cuda/TensorView_accumulators.cu',
+            '../../cnine/cuda/BasicCtensorProducts.cu',
             '../cuda/SO3CGproducts_combo.cu',
             # '../cuda/GElib_base.cu',
             # '../cuda/SO3partA_CGproduct.cu',
