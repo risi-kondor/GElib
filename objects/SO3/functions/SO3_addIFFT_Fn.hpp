@@ -43,11 +43,12 @@ namespace GElib{
       int Nphi=f.n1;
       SO3FourierMatrixBank& bank=SO3FourierMxBank;
 
-      Ctensor A=Ctensor::zero(cnine::Gdims(b,L,Ntheta,L));
+      //cout<<0<<endl;
+      Ctensor A=Ctensor::zero(cnine::Gdims(b,L,Ntheta,L),dev);
       A.view4().add_expand_2(p,bank.Dmatrix(l,Ntheta,dev).view3());
       //cout<<1<<endl;
 
-      Ctensor B=Ctensor::zero(cnine::Gdims(b,Nphi,Ntheta,L));
+      Ctensor B=Ctensor::zero(cnine::Gdims(b,Nphi,Ntheta,L),dev);
       B.view4().add_mix_1_0(A.view4(),bank.Fmatrix(l,Nphi,dev).view2());
       //cout<<2<<endl;
 

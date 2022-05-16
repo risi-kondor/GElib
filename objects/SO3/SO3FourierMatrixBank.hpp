@@ -30,6 +30,8 @@ namespace GElib{
 
     unordered_map<Findex,Ctensor*> Fmatrices;
     unordered_map<Findex,Ctensor*> FmatricesC;
+    unordered_map<Findex,Ctensor*> iFmatrices;
+    unordered_map<Findex,Ctensor*> iFmatricesC;
     unordered_map<Findex,Ctensor*> Dmatrices;
     unordered_map<Findex,Ctensor*> DmatricesC;
 
@@ -43,9 +45,11 @@ namespace GElib{
     
     ~SO3FourierMatrixBank(){
       for(auto p:Fmatrices) delete p.second;
-      for(auto p:FmatricesC) delete p.second;
+      //for(auto p:FmatricesC) delete p.second;
+      for(auto p:iFmatrices) delete p.second;
+      //for(auto p:iFmatricesC) delete p.second;
       for(auto p:Dmatrices) delete p.second;
-      for(auto p:DmatricesC) delete p.second;
+      //for(auto p:DmatricesC) delete p.second; // trouble!
     }
 
 
@@ -76,6 +80,35 @@ namespace GElib{
       }
 
       Fmatrices[pair<int,int>(l,n)]=F;
+      return *F;
+    }
+
+    
+    const Ctensor& iFmatrix(const int l, const int n, const int dev=0){
+
+      if(dev==1){
+	lock_guard<mutex> lock(safety_mxC);
+	auto it=iFmatricesC.find(pair<int,int>(l,n));
+	if(it!=iFmatricesC.end()) return *it->second;
+      
+	Ctensor* F=new Ctensor(iFmatrix(l,n,0),dev);
+	iFmatricesC[pair<int,int>(l,n)]=F;
+	return *F;      
+      }
+
+      lock_guard<mutex> lock(safety_mx);
+      auto it=iFmatrices.find(pair<int,int>(l,n));
+      if(it!=iFmatrices.end()) return *it->second;
+
+      Ctensor* F=new Ctensor(cnine::Gdims(n,2*l+1));
+      float fact=1.0/sqrt(n);
+      for(int i=0; i<n; i++){
+	float a=M_PI*2.0*i/n;
+	for(int m=-l; m<=l; m++)
+	  F->set(i,m+l,fact*std::exp(complex<float>(0,-m*a)));
+      }
+
+      iFmatrices[pair<int,int>(l,n)]=F;
       return *F;
     }
 

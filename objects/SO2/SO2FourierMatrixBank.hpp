@@ -28,6 +28,7 @@ namespace GElib{
     mutex safety_mxC;
 
     unordered_map<Findex,Ctensor*> matrices;
+    unordered_map<Findex,Ctensor*> matricesC;
 
 
   public:
@@ -39,6 +40,7 @@ namespace GElib{
     
     ~SO2FourierMatrixBank(){
       for(auto p:matrices) delete p.second;
+      for(auto p:matricesC) delete p.second;
     }
 
 

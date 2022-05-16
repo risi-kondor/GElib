@@ -18,24 +18,27 @@ int main(int argc, char** argv){
   int N=15;
 
   SO3vecB v=SO3vecB::Fgaussian(b,L);
-  print(v);
+  //printl("v=",v);
 
   CtensorB A=SO3_iFFT(v,2*N,N,2*N);
-  //print(A);
+  //printl("A=",A);
 
   SO3vecB w=SO3_FFT(A,L);
-  print(w);
+  //printl("w",w);
 
   cout<<"Ratio:"<<endl;
-
   print(w/v);
 
 
   #ifdef _WITH_CUDA
 
-  SO3vecB vc=SO3vecB::Fgaussian(b,L,1);
-  CtensorB Ac=SO3_iFFT(v,2*N,N,2*N);
-  SO3vecB wc=SO3_FFT(A,L);
+  SO3vecB vc=v.to_device(1);
+  //printl("vc=",vc);
+  CtensorB Ac=SO3_iFFT(vc,2*N,N,2*N);
+  //printl("Ac=",Ac);
+  SO3vecB wc=SO3_FFT(Ac,L);
+  //printl("wc=",wc);
+  //cout<<"devic="<<wc.get_dev()<<endl;
 
   SO3vecB vcc=vc.to_device(0);
   SO3vecB wcc=wc.to_device(0);
