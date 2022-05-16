@@ -15,8 +15,10 @@
 #include "CtensorB.hpp"
 #include "Ctensor4_view.hpp"
 #include "MultiLoop.hpp"
+#include "SO3FourierMatrixBank.hpp"
 
-extern GElib::SO2FourierMatrixBank SO2FmatrixBank;
+
+extern GElib::SO3FourierMatrixBank SO3FourierMxBank;
 
 
 namespace GElib{
@@ -29,21 +31,29 @@ namespace GElib{
 
 
     void operator()(const cnine::Ctensor3_view& p, const cnine::Ctensor4_view& f){
+      int dev=p.dev;
+      assert(f.dev==dev);
 
       assert(p.n1==p.n2);
       assert(p.n0==f.n0);
       int b=f.n0;
+      int L=p.n1;
+      int l=(L-1)/2;
+      int Npsi=f.n3;
+      int Ntheta=f.n2;
+      int Nphi=f.n1;
+      SO3FourierMatrixBank& bank=SO3FourierMxBank;
 
-      Ctensor F0(cnine::Gdims(f.n3,p.n2));
-      Ctensor F1(cnine::Gdims(f.n1,p.n1));
-      Ctensor D(cnine::Gdims(f.n2,p.n0,p.n1));
+      Ctensor A=Ctensor::zero(cnine::Gdims(b,Nphi,Ntheta,L));
+      A.view4().add_mix_3_H(f,bank.Fmatrix(l,Npsi,dev).view2());
+      //cout<<1<<endl;
 
-      Ctensor A=Ctensor::zero(cnine::Gdims(b,f.n1,f.n2,p.n2));
-      A.view4().add_mix_3_0(f,F0.view2());
-      Ctensor B=Ctensor::zero(cnine::Gdims(b,p.n1,f.n2,p.n2));
-      B.view4().add_mix_1_0(A.view4(),F1.view2());
-      B.view4().add_contract_abic_bic_abc_to(p,D.view3());
+      Ctensor B=Ctensor::zero(cnine::Gdims(b,L,Ntheta,L));
+      B.view4().add_mix_1_H(A.view4(),bank.Fmatrix(l,Nphi,dev).view2());
+      //cout<<2<<endl;
 
+      B.view4().add_contract_abic_bic_abc_to(p,bank.Dmatrix(l,Ntheta,dev).view3());
+      //cout<<3<<endl;
     }
 
   };

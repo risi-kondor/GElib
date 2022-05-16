@@ -8,8 +8,8 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _SOSFourierMatrixBank
-#define _SOSFourierMatrixBank
+#ifndef _SO2FourierMatrixBank
+#define _SO2FourierMatrixBank
 
 #include <mutex>
 

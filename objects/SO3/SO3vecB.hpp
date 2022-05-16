@@ -259,6 +259,15 @@ namespace GElib{
       return R;
     }
 
+    SO3vecB operator/(const SO3vecB& y) const{
+      SO3vecB R;
+      assert(y.parts.size()==parts.size());
+      for(int l=0; l<parts.size(); l++){
+	R.parts.push_back(new SO3partB( (*parts[l]/(*y.parts[l])) ));
+      }
+      return R;
+    }
+
 
     // ---- Rotations ----------------------------------------------------------------------------------------
 
@@ -629,7 +638,7 @@ namespace GElib{
 
 
     cnine::CtensorB iFFT(const int n0, const int n1, const int n2) const{
-      cnine::CtensorB R=cnine::CtensorB::zero(cnine::Gdims(n0,n1,n2));
+      cnine::CtensorB R=cnine::CtensorB::zero(cnine::Gdims(getb(),n0,n1,n2),get_dev());
       add_iFFT_to(R);
       return R;
     }
@@ -687,7 +696,7 @@ namespace GElib{
   }
 
   inline SO3vecB SO3_FFT(const cnine::CtensorB& f, const int _maxl){
-    assert(f.ndims()==3);
+    assert(f.ndims()==4);
     int B=f.dim(0);
     SO3vecB R=SO3vecB::Fzero(B,_maxl,f.get_dev());
     R.add_FFT(f);
