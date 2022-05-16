@@ -25,6 +25,9 @@ pybind11::class_<CtensorB>(m,"ctensorb")
 //.def_static("const_view",static_cast<CtensorObj>(*)(at::Tensor&)>(&CtensorObj::const_view))
   .def("torch",&CtensorB::torch)
 
+  .def("get_dim",&CtensorB::get_dim)
+  .def("get_dev",&CtensorB::get_dev)
+
   .def("str",&CtensorB::str,py::arg("indent")="")
   .def("__str__",&CtensorB::str,py::arg("indent")="")
   .def("__repr__",&CtensorB::str,py::arg("indent")="");
