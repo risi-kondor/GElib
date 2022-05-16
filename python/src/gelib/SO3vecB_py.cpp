@@ -40,6 +40,9 @@ py::class_<SO3vecB>(m,"SO3vecB",
       return r;
     })
 
+  .def("getb",&SO3vecB::getb)
+  .def("get_maxl",&SO3vecB::get_maxl)
+
   .def("apply",&SO3vecB::rotate)
 
   .def("addCGproduct",&SO3vecB::add_CGproduct,py::arg("x"),py::arg("y"))
@@ -49,6 +52,9 @@ py::class_<SO3vecB>(m,"SO3vecB",
   .def("addDiagCGproduct",&SO3vecB::add_DiagCGproduct,py::arg("x"),py::arg("y"))
   .def("addDiagCGproduct_back0",&SO3vecB::add_DiagCGproduct_back0,py::arg("g"),py::arg("y"))
   .def("addDiagCGproduct_back1",&SO3vecB::add_DiagCGproduct_back1,py::arg("g"),py::arg("x"))
+
+  .def("add_iFFT_to",&SO3vecB::add_iFFT_to)
+  .def("add_FFT",&SO3vecB::add_FFT)
 
   .def("device",&SO3vecB::get_device)
   .def("to",&SO3vecB::to_device)

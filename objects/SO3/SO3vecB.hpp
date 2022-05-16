@@ -644,19 +644,12 @@ namespace GElib{
     }
 
     void add_iFFT_to(cnine::CtensorB& R) const{
-      //int L=get_maxl(); 
-      //for(int l=0; l<=L; l++)
-      //SO3part_addIFFT_Fn()(R.view3(),parts[l]->view3());
       forall_parts([&](const SO3partB& x){
-	  //Ctensor4_view Rview=R.view4();
 	  SO3part_addIFFT_Fn()(R.view4(),x.view3());
 	});
     }
 
     void add_FFT(const cnine::CtensorB& R){
-      //int L=get_maxl(); 
-      //for(int l=0; l<=L; l++)
-      //SO3part_addFFT_Fn()(parts[l]->view3(),R.view3());
       forall_parts([&](const SO3partB& x){
 	  SO3part_addFFT_Fn()(x.view3(),R.view4());
 	});
