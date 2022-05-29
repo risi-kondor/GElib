@@ -2,7 +2,7 @@
 SO3element
 **********
 
-An ``SO3element`` object represents a single group element :math:`R\in\mathrm{SO}(3)`. 
+An ``SO3element`` object represents a single element :math:`R` of the rotation group :math:`\mathrm{SO}(3)`. 
 The group element can either be initialized from the :math:`(\phi,\theta,\psi)` Euler angles or
 chosen randomly from the group.
 

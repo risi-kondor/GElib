@@ -20,14 +20,17 @@ int main(int argc, char** argv){
   SO3vecB v=SO3vecB::Fgaussian(b,L);
   //printl("v=",v);
 
+  for(int i=0; i<10; i++){
+
   CtensorB A=SO3_iFFT(v,2*N,N,2*N);
   //printl("A=",A);
 
   SO3vecB w=SO3_FFT(A,L);
   //printl("w",w);
+  }
 
   cout<<"Ratio:"<<endl;
-  print(w/v);
+  //print(w/v);
 
 
   #ifdef _WITH_CUDA
