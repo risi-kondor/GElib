@@ -1,30 +1,23 @@
-GElib is a C++ library with a CUDA backend for computations related to 
-the rotation group SO(3), specifically for building SO(3)-equivariant 
-neural networks. 
-GElib is developed by Risi Kondor at the University of Chicago. 
-GElib is released under the 
-`Mozilla public license v.2.0 <https://www.mozilla.org/en-US/MPL/2.0/>`_ 
-and can be downloaded from `https://github.com/risi-kondor/GElib <https://github.com/risi-kondor/GElib>`_.
+############
+Introduction
+############
 
-This document provides documentation for GElib's PyTorch interface. 
-The PyTorch interface only provides access to a subset of the C++ library's functionality. 
-
-GElib is currently in alpha. Some features described below may still be incomplete or untested. 
-
-########
+********
 Features
-########
+********
+
+GElib provides the following features:
 
 #. Classes to store and manipulate SO(3)-equivariant vectors.
-#. Fast implementation of the Clebsch-Gordan transform for both the CPU and the GPU.
+#. Fast implementations of several variants of the Clebsch-Gordan transforms on both the CPU and the GPU.
 #. Facilities for operating on arrays of SO(3)-equivariant vectors in parallel, 
    including in irregular patterns (graphs).
 #. Interoperability with PyTorch's ``autograd`` functionality. 
 
  
-############
+************
 Installation
-############
+************
 
 GElib is installed as a PyTorch C++ (or CUDA) extension and requires the following: 
 
@@ -32,16 +25,23 @@ GElib is installed as a PyTorch C++ (or CUDA) extension and requires the followi
 #. PyTorch
 #. cnine (see below) 
 
-To install GElib follow these steps:
+GElib is easiest to install with ``pip``:
 
-#. Download the `cnine <https://github.com/risi-kondor/cnine>`_  library and install it on your system. 
+#. Download the `cnine <https://github.com/risi-kondor/cnine>`_  library. 
+   cnine does not need to be separately installed on your system, but the 
+   cnine source files are required for installing GElib. 
 #. Download `GElib <https://github.com/risi-kondor/GElib>`_. 
+   By default, it is assumed that cnine and GElib have been downloaded to the same directory 
+   (e.g., ``Downloads``).      
 #. Edit the user configurable variables in ``python/setup.py`` as necessary. 
-#. Run ``python setup.py install`` in the ``python`` directory to compile the package and install it on your system.
+#. Run the command ``pip install -e .`` in the ``GElib/python`` directory. 
 
-#############
+..
+   #. Run ``python setup.py install`` in the ``python`` directory to compile the package and install it on your system.
+
+*************
 Configuration
-#############
+*************
 
 The installation can be configured by setting the following variables in ``python/setup.py``.
 
@@ -60,18 +60,19 @@ The installation can be configured by setting the following variables in ``pytho
 
 
 
-###############
+***************
 Troubleshooting
-###############
+***************
 
-#. If it becomes necessary to change the location where `setuptools` 
-   places the compiled module, add a file called ``setup.cfg`` 
-   with content 
+.. 
+   #. If it becomes necessary to change the location where `setuptools` 
+     places the compiled module, add a file called ``setup.cfg`` 
+     with content 
 
-   .. code-block:: none
+      .. code-block:: none
    
-    [install]
-    prefix=<target directory where you want the module to be placed>
+      [install]
+      prefix=<target directory where you want the module to be placed>
 
    in the ``python`` directory. Make sure that the new target directory is in Python's load path.
 
@@ -85,20 +86,21 @@ Troubleshooting
     export CUDA_HOME=/usr/local/cuda-11.3
 
 
-############
+************
 Known issues
-############
+************
 
-GPU functionality is not fully tested.
 
 
  
-##### 
+*****
 Usage 
-#####
+*****
 
 To load the ``gelib`` module in Python, use the command ``import gelib``. 
-The message ``Starting GElib.`` confirms that `gelib` has successfully started and initialized its 
+Depending on whether or not GElib was installed with CUDA, the message 
+``Starting GElib with GPU support`` or ``Starting GElib without GPU support`` should appear, 
+confirming that `gelib` has successfully started and initialized its 
 static data objects. 
 
 ..

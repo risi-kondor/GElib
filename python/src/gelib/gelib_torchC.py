@@ -130,20 +130,18 @@ class SO3part(torch.Tensor):
         """
         return SO3part_CGproductFn.apply(self,y,l)
 
-    #def DiagCGproduct(self, y, maxl=-1):
-     #   """
-      #  Compute the diagonal Clesbsch--Gordan product of this SO3vec with another SO3vec y.
-       # """
-        #r = SO3vec()
-        #r.parts = list(SO3vec_DiagCGproductFn.apply(len(self.parts), len(y.parts), maxl, *(self.parts+y.parts)))
-        #return r
+    def DiagCGproduct(self, y, l):
+        """
+        Compute the l component of the diagonal Clesbsch--Gordan product of this SO3part with another SO3part y.
+        """
+        return SO3part_DiagCGproductFn.apply(self,y,l)
 
 
     # ---- I/O ----------------------------------------------------------------------------------------------
 
-    # def __str__(self):
-    #    u=_SO3partB.view(self)
-    #    return u.__str__()
+    def __str__(self):
+        u=_SO3partB.view(self)
+        return u.__str__()
 
 
 # ----------------------------------------------------------------------------------------------------------
@@ -221,6 +219,9 @@ class SO3vec:
         return R
 
     # ---- Access -------------------------------------------------------------------------------------------
+
+    def getb(self):
+        return parts[0].size(0)
 
     def tau(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
@@ -413,6 +414,47 @@ class SO3part_CGproductFn(torch.autograd.Function):
 
         _xg.addCGproduct_back0(_g, _y)
         _yg.addCGproduct_back1(_g, _x)
+
+        return xg,yg,None
+
+
+
+class SO3part_DiagCGproductFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,x,y,l):
+        ctx.l=l
+        assert x.size(2)==y.size(2)
+        ctx.save_for_backward(x,y)
+
+        b = x.size(0)
+        dev = int(x.is_cuda)
+        r = SO3part.zeros(b,l,x.size(2),dev)
+
+        _x = _SO3partB.view(x)
+        _y = _SO3partB.view(y)
+        _r = _SO3partB.view(r)
+        _r.addDiagCGproduct(_x,_y)
+
+        return r
+
+    @staticmethod
+    def backward(ctx, g):
+
+        x,y = ctx.saved_tensors
+
+        xg=torch.zeros_like(x)
+        yg=torch.zeros_like(y)
+
+        _x = _SO3partB.view(x)
+        _y = _SO3partB.view(y)
+
+        _g = _SO3partB.view(g)
+        _xg = _SO3partB.view(xg)
+        _yg = _SO3partB.view(yg)
+
+        _xg.addDiagCGproduct_back0(_g, _y)
+        _yg.addDiagCGproduct_back1(_g, _x)
 
         return xg,yg,None
 

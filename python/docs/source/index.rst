@@ -6,28 +6,24 @@
 GElib
 =================================
 
+.. include:: abstract.rst 
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-.. include:: intro.rst
+   intro.rst
 
-###########
-SO3 classes
-###########
+   SO3elementB.rst
 
-..
-   include:: SO3classesB.rst
+   SO3partB.rst
 
-.. include:: SO3elementB.rst
+   SO3vecB.rst
 
-.. include:: SO3partB.rst
+   SO3partArr.rst
 
-.. include:: SO3vecB.rst
+   SO3vecArr.rst
 
-.. include:: SO3partArr.rst
-
-.. include:: SO3vecArr.rst
 
 
 

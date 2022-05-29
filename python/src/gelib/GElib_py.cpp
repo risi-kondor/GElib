@@ -109,8 +109,8 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   #include "SO3vecB_py.cpp"
   #include "SO3Fvec_py.cpp"
 
-  #include "SO3partD_py.cpp"
-  #include "SO3vecD_py.cpp"
+  //#include "SO3partD_py.cpp"
+  //#include "SO3vecD_py.cpp"
 
   #include "CtensorB_py.cpp"
 

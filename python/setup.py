@@ -15,7 +15,7 @@ def main():
     # os.environ['CUDA_HOME']='/usr/local/cuda'
     #os.environ["CC"] = "clang"
 
-    compile_with_cuda = True
+    compile_with_cuda = False 
     # compile_with_cuda = False
 
     copy_warnings = False
@@ -82,14 +82,14 @@ def main():
     if compile_with_cuda:
         _cxx_compile_args.extend(['-D_WITH_CUDA', '-D_WITH_CUBLAS'])
 
-    _depends = ['setup.py']
-    #             'GElib_py.cpp',
+    _depends = ['setup.py',
+                'src/gelib.cpp'
     #             'SO3part_py.cpp',
     #             'SO3vec_py.cpp',
     #             'SO3partArray_py.cpp',
     #             'SO3vecArray_py.cpp',
     #             'build/*/*'
-    #             ]
+                ]
 
     # sources = ['GElib_py.cpp',
     #            'SO3part_py.cpp',
