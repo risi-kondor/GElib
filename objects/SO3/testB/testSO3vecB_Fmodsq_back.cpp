@@ -1,5 +1,4 @@
 #include "GElib_base.cpp"
-#include "SO3Fvec.hpp"
 #include "SO3vecB.hpp"
 #include "GElibSession.hpp"
 

@@ -13,7 +13,7 @@
 
 #include "GElib_base.hpp"
 #include "CtensorB.hpp"
-//#include "SO3Fpart3_view.hpp"
+#include "SO3Fpart2_view.hpp"
 #include "Ctensor3_view.hpp"
 
 extern GElib::SO3_CGbank SO3_cgbank;

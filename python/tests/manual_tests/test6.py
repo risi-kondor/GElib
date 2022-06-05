@@ -4,9 +4,7 @@ import torch.nn as nn
 import sys
 sys.path.insert(1, '../models')
 
-import gelib_base
-import gelib_torchC as gelib
-from gelib_torchC import *
+import gelib
 
 # Random seed
 torch.manual_seed(123456789)
@@ -30,9 +28,9 @@ inputs = gelib.SO3vec.randn(batch_size, input_tau)
 outputs = model(inputs)
 
 # Rotate the inputs and run the model again
-R = gelib_base.SO3element.uniform()
-R = gelib_base.SO3element.uniform()
-R = gelib_base.SO3element.uniform()
+R = gelib.SO3element.uniform()
+R = gelib.SO3element.uniform()
+R = gelib.SO3element.uniform()
 inputs_rot = inputs.rotate(R)
 outputs_rot = model(inputs_rot)
 
@@ -76,7 +74,7 @@ for l in range(len(outputs.parts)):
     output_str.append('Position of the max value of the first tensor:' + str(search_value(torch.abs(first), torch.max(torch.abs(first)).item())))
     output_str.append('Min, max of the second tensor: ' + str(torch.min(torch.abs(second)).item()) + ' ' + str(torch.max(torch.abs(second)).item()))
     output_str.append('Position of the max value of the second tensor:' + str(search_value(torch.abs(second), torch.max(torch.abs(second)).item())))
-    output_str.append('MAE: ' + str(diff))
+    output_str.append('MAE: ' + str(torch.tensor(diff)))
 
 print('Summary -------------------------------------------')
 for s in output_str:
