@@ -48,9 +48,12 @@ py::class_<SO3partB>(m,"SO3partB",
 
   .def("add_spharm",[](SO3partB& obj, const float x, const float y, const float z){
     obj.add_spharm(x,y,z);})
-  .def("add_spharmB",[](SO3partB& obj, at::Tensor& _X){
+  .def("add_spharm",[](SO3partB& obj, at::Tensor& _X){
       RtensorA X=RtensorA::view(_X);
       obj.add_spharm(X);})
+  .def("add_spharmB",[](SO3partB& obj, at::Tensor& _X){
+      RtensorA X=RtensorA::view(_X);
+      obj.add_spharmB(X);})
 
   .def("addCGproduct",&SO3partB::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
   .def("addCGproduct_back0",&SO3partB::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)

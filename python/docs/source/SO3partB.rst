@@ -46,7 +46,7 @@ The batch dimension, ``b``, order ``l``, and multiplicity ``n`` of the ``SO3part
  
 Since ``SO3part`` is derived from ``torch.Tensor``, it supports all the usual  
 tensor arithmetic operations, and its elements can be 
-accessed directly, just like for any PyTorch tensor. 
+accessed directly, just like any PyTorch tensor. 
 
 |
 
@@ -55,18 +55,24 @@ Spherical harmonics
 ===================
 
 
-``SO3part`` objects can also be initialized as spherical harmonic coefficients of a three dimensional vector 
-corresponding to a given :math:`\ell`.  
+``SO3part`` objects can also be initialized as the spherical harmonic coefficients 
+(for a given value of :math:`\ell`) 
+of corresponding three dimensional Euclidean vectors.  
+The following example computes the :math:`\ell=1` spherical harmonics of a collection 
+of random vectors with b=2 and n=4.
 
 .. code-block:: python
 
- >>> P=gelib.SO3part.spharm(2,[0.12,0.31,-0.55])
+ >>> A=torch.randn([2,3,4])
+ >>> P=gelib.SO3part.spharm(1,A)
  >>> print(P)
- [ (-0.0764131,-0.0695855) ]
- [ (-0.123458,0.318933) ]
- [ (0.37763,0) ]
- [ (0.123458,0.318933) ]
- [ (-0.0764131,0.0695855) ]
+ [ (0.0781101,0.0435727) (-0.261583,-0.170353) (-0.193139,-0.0910122) (0.230589,-0.236448) ]
+ [ (-0.471946,0) (-0.209383,0) (-0.384136,0) (-0.143436,0) ]
+ [ (-0.0781101,0.0435727) (0.261583,-0.170353) (0.193139,-0.0910122) (-0.230589,-0.236448) ]
+
+ [ (-0.00622543,0.0919017) (-0.0485813,-0.340067) (0.21314,0.26868) (0.196154,-0.284294) ]
+ [ (-0.470917,0) (0.0521697,0) (-0.0591338,0) (-0.0115272,0) ]
+ [ (0.00622543,0.0919017) (0.0485813,-0.340067) (-0.21314,0.26868) (-0.196154,-0.284294) ]
 
 |
 
@@ -111,11 +117,11 @@ so GElib can propagate gradients back through them.
 
 .. note::
   The CG-product of two SO3parts is essentially a tensor product followed by a fixed linear transformation. 
-  Since this operation is so critical to certain types of equivariant neural networks however, 
-  GElib uses special highly optimized routines for the CG-product on both the CPU and the GPU. 
+  Since this operation is critical to certain types of equivariant neural networks, 
+  GElib uses highly optimized routines for computing the CG-product on both the CPU and the GPU. 
 
   First, the tensor product is never explicitly formed, potentially saving significant amounts of 
-  memory in neural networks, where the results of intermediate calculations generally need to be 
+  memory in neural network applications, where the results of intermediate calculations generally need to be 
   saved for the backward pass. 
 
   Second, the linear transformation has a specific sparsity pattern, whereby 
@@ -126,7 +132,7 @@ so GElib can propagate gradients back through them.
   Finally, the coefficients of the transformation, the so-called CG-coefficents, 
   are computed once and then cached separately on both the CPU and the GPU. In the case of the latter, 
   to the extent possible, GElib stores the coefficients in so-called `constant memory`, 
-  allowing the coefficients to be broadcast to multiple streaming multiprocessors fast.
+  which makes it possible to broadcast the coefficients to multiple streaming multiprocessors fast.
  
 
 | 

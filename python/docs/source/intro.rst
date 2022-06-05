@@ -8,9 +8,9 @@ Features
 
 GElib provides the following features:
 
-#. Classes to store and manipulate SO(3)-equivariant vectors.
-#. Fast implementations of several variants of the Clebsch-Gordan transforms on both the CPU and the GPU.
-#. Facilities for operating on arrays of SO(3)-equivariant vectors in parallel, 
+#. Classes to store and manipulate SO(3)-covariant (equivariant) vectors.
+#. Fast implementations of different variants of the Clebsch-Gordan transforms on both the CPU and the GPU.
+#. Facilities for operating on arrays of SO(3)-covariant vectors in parallel, 
    including in irregular patterns (graphs).
 #. Interoperability with PyTorch's ``autograd`` functionality. 
 
@@ -29,9 +29,9 @@ GElib is easiest to install with ``pip``:
 
 #. Download the `cnine <https://github.com/risi-kondor/cnine>`_  library. 
    cnine does not need to be separately installed on your system, but the 
-   cnine source files are required for installing GElib. 
+   cnine source files are required for the GElib intallation process itself. 
 #. Download `GElib <https://github.com/risi-kondor/GElib>`_. 
-   By default, it is assumed that cnine and GElib have been downloaded to the same directory 
+   By default, it is assumed that cnine and GElib are downloaded to the same directory 
    (e.g., ``Downloads``).      
 #. Edit the user configurable variables in ``python/setup.py`` as necessary. 
 #. Run the command ``pip install -e .`` in the ``GElib/python`` directory. 
@@ -76,7 +76,7 @@ Troubleshooting
 
    in the ``python`` directory. Make sure that the new target directory is in Python's load path.
 
-#. PyTorch requires C++ extensions to be compiled against the same version of CUDA that it  
+#. PyTorch C++ extensions must be compiled against the same version of CUDA that PyTorch   
    itself was compiled with. If this becomes an issue, it might be necessary to install an 
    alternative version of CUDA on your system and force `setuptools` to use that version by setting 
    the ``CUDA_HOME`` enironment variable, as, e.g. 
@@ -99,7 +99,7 @@ Usage
 
 To load the ``gelib`` module in Python, use the command ``import gelib``. 
 Depending on whether or not GElib was installed with CUDA, the message 
-``Starting GElib with GPU support`` or ``Starting GElib without GPU support`` should appear, 
+``Starting GElib with GPU support`` or ``Starting GElib without GPU support`` will appear, 
 confirming that `gelib` has successfully started and initialized its 
 static data objects. 
 

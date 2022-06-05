@@ -13,7 +13,7 @@
 
 #include "CtensorB.hpp"
 #include "SO3part3_view.hpp"
-#include "SO3Fpart3_view.hpp"
+//#include "SO3Fpart3_view.hpp"
 
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
@@ -150,10 +150,10 @@ namespace GElib{
     }
 
 
-    SO3Fpart3_view Fview() const{
-      if(dev==0) return SO3Fpart3_view(arr,dims,strides,coffs);
-      else return SO3Fpart3_view(arrg,dims,strides,coffs,dev);
-    }
+    //SO3Fpart3_view Fview() const{
+    //if(dev==0) return SO3Fpart3_view(arr,dims,strides,coffs);
+    //else return SO3Fpart3_view(arrg,dims,strides,coffs,dev);
+    //}
 
 
   public: // ---- Operations ---------------------------------------------------------------------------------
@@ -249,6 +249,50 @@ namespace GElib{
 
 
     void add_spharm(const cnine::RtensorA& x){
+      int l=getl();
+      int B=getb();
+      int n=getn();
+      cnine::Ctensor3_view v=view3();
+      assert(x.dims.size()==3);
+      assert(x.dims[0]==B);
+      assert(x.dims[1]==3);
+      assert(x.dims[2]==n);
+
+      for(int b=0; b<B; b++){
+	for(int j=0; j<n; j++){
+	  float vx=x(b,0,j);
+	  float vy=x(b,1,j);
+	  float vz=x(b,2,j);
+	  float length=sqrt(vx*vx+vy*vy+vz*vz); 
+	  float len2=sqrt(vx*vx+vy*vy);
+
+	  if(len2==0 || std::isnan(vx/len2) || std::isnan(vy/len2)){
+	    float a=sqrt(((float)(2*l+1))/(M_PI*4.0));
+	    for(int j=0; j<n; j++)
+	      v.inc(b,l,j,a);
+	    return;
+	  }
+
+	  complex<float> cphi(vx/len2,vy/len2);
+	  cnine::Gtensor<float> P=SO3_sphGen(l,vz/length);
+	  vector<complex<float> > phase(l+1);
+	  phase[0]=complex<float>(1.0,0);
+	  for(int m=1; m<=l; m++)
+	    phase[m]=cphi*phase[m-1];
+      
+	  for(int m=0; m<=l; m++){
+	    complex<float> a=phase[m]*complex<float>(P(l,m)); // *(1-2*(m%2))
+	    complex<float> aa=complex<float>(1-2*(m%2))*std::conj(a);
+	    v.inc(b,l+m,j,a);
+	    if(m>0) v.inc(b,l-m,j,aa);
+	  }
+
+	}
+      }
+    }
+
+
+    void add_spharmB(const cnine::RtensorA& x){ // deprecated
       int l=getl();
       int B=getb();
       int n=getn();

@@ -2,6 +2,7 @@ ROOTDIR=../../..
 include $(ROOTDIR)/common.txt
 
 INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions   
+INCLUDE+=-I$(SO2DIR) -I$(SO2DIR)/functions 
 
 TESTS= testSO3part testSO3part2 
 #TESTS+= testSO3part_CGproduct_covariance

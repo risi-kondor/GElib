@@ -1,6 +1,4 @@
 import torch
-import gelib_base
-#import gelib_torchC as gelib
 import gelib 
 
 
@@ -79,7 +77,7 @@ print("CG-product covariance test\n")
 
 b=2
 tau=[1,1]
-R=gelib_base.SO3element.uniform()
+R=gelib.SO3element.uniform()
 x=gelib.SO3vec.randn(b,tau)
 y=gelib.SO3vec.randn(b,tau)
 
@@ -107,7 +105,7 @@ maxl=2
 
 x=gelib.SO3vec.Frandn(b,maxl)
 y=gelib.SO3vec.Frandn(b,maxl)
-R=gelib_base.SO3element.uniform()
+R=gelib.SO3element.uniform()
 
 z=gelib.Fproduct(x,y,2)
 print("Fproduct:")
@@ -131,7 +129,7 @@ b=2
 maxl=2
 
 x=gelib.SO3vec.Frandn(b,maxl)
-R=gelib_base.SO3element.uniform()
+R=gelib.SO3element.uniform()
 
 z=gelib.Fmodsq(x,2)
 print("Fmodsq:")

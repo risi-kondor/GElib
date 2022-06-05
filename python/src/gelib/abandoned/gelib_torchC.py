@@ -58,6 +58,18 @@ class SO3part(torch.Tensor):
         return R
 
     @staticmethod
+    def spharm(l, X, _dev=0):
+        """
+        Return the spherical harmonics of the vector (x,y,z)
+        """
+        assert(X.dim()==3)
+        R = SO3part.zeros(X.size(0), l, X.size(2))
+        _SO3partB.view(R).add_spharm(X)
+        if _dev > 0:
+            return R.cuda()
+        return R
+
+    @staticmethod
     def spharmB(l, X, _dev=0):
         """
         Return the spherical harmonics of each row of the matrix X.

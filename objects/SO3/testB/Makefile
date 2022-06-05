@@ -10,10 +10,9 @@ TESTS+= timeSO3CG
 TESTS+=testSO3partB_CGproduct_back0 testSO3partB_CGproduct_back1 \
 testSO3partB_Fproduct testSO3partB_Fproduct_back0 testSO3partB_Fproduct_back1
 %TESTS+=timeSO3partB_Fproduct timeSO3partB_Fproduct_back0 timeSO3partB_Fproduct_back1
-TESTS+=testSO3vecB_Fproduct testSO3vecB_Fproduct_back0 testSO3vecB_Fproduct_back1 \
-testSO3vecB_Fmodsq \
-testSO3vecB_CGsquare \
-testSO3vecB_BlockedCGproduct 
+TESTS+=testSO3vecB_Fproduct testSO3vecB_Fproduct_back0 testSO3vecB_Fproduct_back1 
+TESTS+=testSO3vecB_Fmodsq testSO3vecB_Fmodsq_back
+TESTS+=testSO3vecB_CGsquare testSO3vecB_BlockedCGproduct 
 TESTS+=testSO3vecB_FFT
 
 #testSO3Fvec testSO3Fvec_covariance testSO3Fvec_Fmodsq
