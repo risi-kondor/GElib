@@ -154,7 +154,16 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+</ul>
+
 </div>
 </div>
       </div>
@@ -181,7 +190,7 @@
         <article role="main">
           <section id="so3element">
 <h1>SO3element<a class="headerlink" href="#so3element" title="Permalink to this headline">¶</a></h1>
-<p>An <code class="docutils literal notranslate"><span class="pre">SO3element</span></code> object represents a single group element <img alt="R\in\mathrm{SO}(3)" class="math" src="_images/math/58098a343047e1438732735950b6a5ef3fa5550d.svg"/>.
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3element</span></code> object represents a single element <img alt="R" class="math" src="_images/math/598dad96905e818836181890c5adf5857dc1d4b2.svg"/> of the rotation group <img alt="\mathrm{SO}(3)" class="math" src="_images/math/0b503006ec577f16a7aefa87ce5cda9dcdfac897.svg"/>.
 The group element can either be initialized from the <img alt="(\phi,\theta,\psi)" class="math" src="_images/math/360e0faa1a98c2db28b5f9623272a2a4703ece1f.svg"/> Euler angles or
 chosen randomly from the group.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3element</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">)</span>
@@ -216,7 +225,7 @@ Since <img alt="D^{(l)}(R)" class="math" src="_images/math/fc661808ccaae4d2daea8
         </div>
 
         <div class="related-information">
-              Copyright &#169; 2021, Risi Kondor |
+              Copyright &#169; 2021-2022, Risi Kondor |
             Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
               and
               <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s

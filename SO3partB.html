@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3vec" href="SO3vecB.html" /><link rel="prev" title="SO3element" href="SO3elementB.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>SO3part - GElib documentation</title>
@@ -154,7 +154,16 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3part</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+</ul>
+
 </div>
 </div>
       </div>
@@ -181,21 +190,23 @@
         <article role="main">
           <section id="so3part">
 <h1>SO3part<a class="headerlink" href="#so3part" title="Permalink to this headline">¶</a></h1>
-<p>An <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is a collection of <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg"/> different complex valued vectors transforming according to the same
-irreducible representation <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> of SO(3).
-Given that <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> is a <img alt="2\ell\!+\!1" class="math" src="_images/math/9d92fcb93216b22d3ad1507285348f8058a2f8d5.svg"/> dimensional representation, this would
-correspond to a complex matrix <img alt="A\in\mathbb{C}^{(2\ell+1)\times n}" class="math" src="_images/math/92fd1081fb377760424d0459e55de5c23a882190.svg"/>.
-However, following PyTorch convention, <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can also have a “batch dimension”
-that GPU operations are automatically parallelized over .</p>
-<p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is thus implemented as a
-<img alt="b\times (2\ell+1)\times n\times 2" class="math" src="_images/math/a2202ef475a155bde94c05b5d32bed966ff3b88a.svg"/> dimensional single precision
-PyTorch tensor, where <code class="docutils literal notranslate"><span class="pre">b</span></code> is the batch dimension and the last dimension corresponds to the real/imaginary parts.
+<p>An SO3-part <img alt="P" class="math" src="_images/math/3009b24f49e5aa567b035fdb76bd939eac9b9b35.svg"/> is a collection of <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg"/> different complex valued vectors,
+which we call <cite>fragments</cite>, transforming according
+to the same irreducible representation <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> of SO(3).
+The irreducible representations of SO(3) are sometimes referred to as Wigner D-matrices.</p>
+<p>Since <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> is a <img alt="2\ell\!+\!1" class="math" src="_images/math/9d92fcb93216b22d3ad1507285348f8058a2f8d5.svg"/> a dimensional representation,
+<img alt="P" class="math" src="_images/math/3009b24f49e5aa567b035fdb76bd939eac9b9b35.svg"/> can be thought of as a matrix <img alt="\mathbb{C}^{(2\ell+1)\times n}" class="math" src="_images/math/b1be3e1209376d353d86358bbcc30acd3fd61d17.svg"/>.
+However, to aid in parallelizing certain operations, the
+<code class="docutils literal notranslate"><span class="pre">SO3part</span></code> class in GElib also admits a “batch dimension”, <img alt="b" class="math" src="_images/math/24f427669c3588bc442fbc57b978a87764e7d849.svg"/>.
+Therefore, <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is implemented as a
+<code class="docutils literal notranslate"><span class="pre">(b,2l+1,n,2)</span></code> -dimensional single precision <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> object,
+where the last dimension corresponds to the real/imaginary parts.
 This format may be converted to PyTorch’s new complex tensor format with
 <code class="docutils literal notranslate"><span class="pre">torch.view_as_complex()</span></code>, while <code class="docutils literal notranslate"><span class="pre">torch.view_as_real()</span></code> converts in the opposite direction.</p>
 <p>The following code constructs an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> object holding <code class="docutils literal notranslate"><span class="pre">n=3</span></code> Gaussian distributed random vectors corresponding
 to the <code class="docutils literal notranslate"><span class="pre">l=2</span></code> irrep of SO(3) (batch size 1) and prints it out in GElib’s own compact format.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
 <span class="go">[ (-0.254751,1.06977) (-0.0920261,0.568582) (0.61119,0.145976) ]</span>
 <span class="go">[ (-2.08142,-1.54979) (1.86277,0.739985) (-0.347901,-1.85592) ]</span>
 <span class="go">[ (0.537095,-1.018) (0.164219,-0.0593679) (-0.238732,0.50693) ]</span>
@@ -206,23 +217,51 @@ to the <code class="docutils literal notranslate"><span class="pre">l=2</span></
 <p>A zero <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> would be constructed similarly using the <code class="docutils literal notranslate"><span class="pre">gelib.SO3part.zeros(b,l,n)</span></code> constructor.
 In both cases the optional <code class="docutils literal notranslate"><span class="pre">dev</span></code> argument selects whether the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is
 placed on the CPU (<code class="docutils literal notranslate"><span class="pre">dev=0</span></code>) or the GPU (<code class="docutils literal notranslate"><span class="pre">dev=1</span></code>).
-The order <code class="docutils literal notranslate"><span class="pre">l</span></code> and multiplicity <code class="docutils literal notranslate"><span class="pre">n</span></code> of an <code class="docutils literal notranslate"><span class="pre">A</span></code> are read out as follows.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">getl</span><span class="p">()</span>
+The batch dimension, <code class="docutils literal notranslate"><span class="pre">b</span></code>, order <code class="docutils literal notranslate"><span class="pre">l</span></code>, and multiplicity <code class="docutils literal notranslate"><span class="pre">n</span></code> of the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> are read out as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">.</span><span class="n">getb</span><span class="p">()</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">.</span><span class="n">getl</span><span class="p">()</span>
 <span class="go">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">getn</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">.</span><span class="n">getn</span><span class="p">()</span>
 <span class="go">3</span>
 </pre></div>
 </div>
 <p>Since <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is derived from <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, it supports all the usual
-arithmetic operations that can be applied to tensors and its elements can be
-accessed directly, just like for any PyTorch tensor.</p>
+tensor arithmetic operations, and its elements can be
+accessed directly, just like any PyTorch tensor.</p>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<section id="spherical-harmonics">
+<h2>Spherical harmonics<a class="headerlink" href="#spherical-harmonics" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can also be initialized as the spherical harmonic coefficients
+(for a given value of <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/>)
+of corresponding three dimensional Euclidean vectors.
+The following example computes the <img alt="\ell=1" class="math" src="_images/math/a43448e698506cc367adf0a37c72a17158b01942.svg"/> spherical harmonics of a collection
+of random vectors with b=2 and n=4.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">spharm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+<span class="go">[ (0.0781101,0.0435727) (-0.261583,-0.170353) (-0.193139,-0.0910122) (0.230589,-0.236448) ]</span>
+<span class="go">[ (-0.471946,0) (-0.209383,0) (-0.384136,0) (-0.143436,0) ]</span>
+<span class="go">[ (-0.0781101,0.0435727) (0.261583,-0.170353) (0.193139,-0.0910122) (-0.230589,-0.236448) ]</span>
+
+<span class="go">[ (-0.00622543,0.0919017) (-0.0485813,-0.340067) (0.21314,0.26868) (0.196154,-0.284294) ]</span>
+<span class="go">[ (-0.470917,0) (0.0521697,0) (-0.0591338,0) (-0.0115272,0) ]</span>
+<span class="go">[ (0.00622543,0.0919017) (0.0485813,-0.340067) (-0.21314,0.26868) (-0.196154,-0.284294) ]</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+</section>
 <section id="group-action">
 <h2>Group action<a class="headerlink" href="#group-action" title="Permalink to this headline">¶</a></h2>
-<p>The group SO(3) acts on an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> <img alt="A" class="math" src="_images/math/565db5272a70df8fe06f163b6a0deedd44272896.svg"/> by <img alt="A\mapsto D^{(l)}(r) A" class="math" src="_images/math/b43a1e571ba5d1089f447e192a0a1221854bc8cc.svg"/>
-for any <img alt="r\in\mathrm{SO}(3)" class="math" src="_images/math/677eba826091fc7b207ccba72931a97a27f2505b.svg"/>. This is implemented in the <code class="docutils literal notranslate"><span class="pre">apply</span></code> method.</p>
+<p>The group SO(3) acts on <img alt="P" class="math" src="_images/math/3009b24f49e5aa567b035fdb76bd939eac9b9b35.svg"/> by <img alt="P\mapsto D^{(l)}(r) P" class="math" src="_images/math/97df2e6d965dd37793d8d3d104d1b51e9757cb79.svg"/>.
+This is implemented in the <code class="docutils literal notranslate"><span class="pre">rotate</span></code> method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3element</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Ar</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">Ar</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Pr</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">Pr</span><span class="p">)</span>
 <span class="go">[ (-1.11709,0.147657) (-1.11769,1.24745) ]</span>
 <span class="go">[ (-1.60924,0.32233) (1.23518,1.00509) ]</span>
 <span class="go">[ (0.618006,-0.476802) (-0.583183,-0.775842) ]</span>
@@ -230,19 +269,58 @@ for any <img alt="r\in\mathrm{SO}(3)" class="math" src="_images/math/677eba82609
 <span class="go">[ (-1.09639,0.00411239) (0.878735,-1.1598) ]</span>
 </pre></div>
 </div>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
 </section>
-<section id="spherical-harmonics">
-<h2>Spherical harmonics<a class="headerlink" href="#spherical-harmonics" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can be initialized as spherical harmonic coefficients of a three dimensional vector
-corresponding to a given <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">spharm</span><span class="p">(</span><span class="mi">2</span><span class="p">,[</span><span class="mf">0.12</span><span class="p">,</span><span class="mf">0.31</span><span class="p">,</span><span class="o">-</span><span class="mf">0.55</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
-<span class="go">[ (-0.0764131,-0.0695855) ]</span>
-<span class="go">[ (-0.123458,0.318933) ]</span>
-<span class="go">[ (0.37763,0) ]</span>
-<span class="go">[ (0.123458,0.318933) ]</span>
-<span class="go">[ (-0.0764131,0.0695855) ]</span>
+<section id="clebsch-gordan-products">
+<h2>Clebsch-Gordan products<a class="headerlink" href="#clebsch-gordan-products" title="Permalink to this headline">¶</a></h2>
+<p>The <img alt="l" class="math" src="_images/math/8c69666dbd6b15f2dc9105386bfdc3c967d6ee9f.svg"/>’th component of the Clebsch-Gordan product of two SO3-vectors is computed as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">R</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+<span class="go">[ (-1.48122,-0.946409) (-1.19139,-2.46886) (-1.59038,2.91211) (-2.47551,1.86631) ]</span>
+<span class="go">[ (-0.702674,-2.68819) (1.58708,-1.76738) (-0.247673,2.48612) (-1.36402,0.677406) ]</span>
+<span class="go">[ (-0.752623,-0.900017) (-0.366799,1.73799) (0.0230675,0.234838) (-1.811,-1.47884) ]</span>
 </pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">CGproduct</span></code> and its following variants are implemented as differentiable operations,
+so GElib can propagate gradients back through them.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The CG-product of two SO3parts is essentially a tensor product followed by a fixed linear transformation.
+Since this operation is critical to certain types of equivariant neural networks,
+GElib uses highly optimized routines for computing the CG-product on both the CPU and the GPU.</p>
+<p>First, the tensor product is never explicitly formed, potentially saving significant amounts of
+memory in neural network applications, where the results of intermediate calculations generally need to be
+saved for the backward pass.</p>
+<p>Second, the linear transformation has a specific sparsity pattern, whereby
+<img alt="{}_{[C_{\ell_1,\ell_2}^\ell]_{m_1,m_2,m}=0}" class="math" src="_images/math/6e67157df5a46de63410d78fe5fef7bb8a214659.svg"/> unless <img alt="m_1+m_2=m" class="math" src="_images/math/bf080ef3da9ab43b1c665ba2ebe5b20221fd8e09.svg"/>.
+GElib uses specialized multiplication kernels for the CG-product that
+exploit this symmetry.</p>
+<p>Finally, the coefficients of the transformation, the so-called CG-coefficents,
+are computed once and then cached separately on both the CPU and the GPU. In the case of the latter,
+to the extent possible, GElib stores the coefficients in so-called <cite>constant memory</cite>,
+which makes it possible to broadcast the coefficients to multiple streaming multiprocessors fast.</p>
+</div>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+</section>
+<section id="diagonal-clebsch-gordan-products">
+<h2>Diagonal Clebsch-Gordan products<a class="headerlink" href="#diagonal-clebsch-gordan-products" title="Permalink to this headline">¶</a></h2>
+<p>In the full CG-product, every fragment of <code class="docutils literal notranslate"><span class="pre">P</span></code> is multiplied with every fragment of <code class="docutils literal notranslate"><span class="pre">Q</span></code>.
+In contrast, the <code class="docutils literal notranslate"><span class="pre">DiagCGproduct</span></code> function only computes the product between corresponding fragments.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">R</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">DiagCGproduct</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+<span class="go">[ (-1.48122,-0.946409) (-2.47551,1.86631) ]</span>
+<span class="go">[ (-0.702674,-2.68819) (-1.36402,0.677406) ]</span>
+<span class="go">[ (-0.752623,-0.900017) (-1.811,-1.47884) ]</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br/></div>
 </div>
 </section>
 <section id="gpu-operations">
@@ -252,8 +330,11 @@ corresponding to a given <img alt="\ell" class="math" src="_images/math/b63508a5
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">B</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="s1">'cpu'</span><span class="p">)</span> <span class="c1"># Move B back to the host</span>
 </pre></div>
 </div>
-<p>In general, when all operands of a given operation are on the GPU, the computation will be performed on
+<p>In general, when all operands of a given operation are on the GPU, the computation is performed on
 the GPU and the result placed on the same GPU.</p>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
 </section>
 </section>
 
@@ -262,12 +343,30 @@ the GPU and the result placed on the same GPU.</p>
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="SO3vecB.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">SO3vec</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="SO3elementB.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">SO3element</div>
+                
+              </div>
+            </a>
         </div>
 
         <div class="related-information">
-              Copyright &#169; 2021, Risi Kondor |
+              Copyright &#169; 2021-2022, Risi Kondor |
             Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
               and
               <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
@@ -293,8 +392,10 @@ the GPU and the result placed on the same GPU.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">SO3part</a><ul>
-<li><a class="reference internal" href="#group-action">Group action</a></li>
 <li><a class="reference internal" href="#spherical-harmonics">Spherical harmonics</a></li>
+<li><a class="reference internal" href="#group-action">Group action</a></li>
+<li><a class="reference internal" href="#clebsch-gordan-products">Clebsch-Gordan products</a></li>
+<li><a class="reference internal" href="#diagonal-clebsch-gordan-products">Diagonal Clebsch-Gordan products</a></li>
 <li><a class="reference internal" href="#gpu-operations">GPU operations</a></li>
 </ul>
 </li>

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3partArr" href="SO3partArr.html" /><link rel="prev" title="SO3part" href="SO3partB.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>SO3vec - GElib documentation</title>
@@ -154,7 +154,16 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+</ul>
+
 </div>
 </div>
       </div>
@@ -181,8 +190,9 @@
         <article role="main">
           <section id="so3vec">
 <h1>SO3vec<a class="headerlink" href="#so3vec" title="Permalink to this headline">¶</a></h1>
-<p>An <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> object represents a general SO(3)-covariant vector and is stored
-as a sequence of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects. Once again, <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> also has an additional batch dimension.</p>
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> object represents a general SO(3)-covariant vector, stored
+as a sequence of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.
+Similarly to <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>, <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> also has a batch dimension.</p>
 <p>The <cite>type</cite> of an <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> is a list specifying the multiplicity of each of its parts.
 For example, the following creates a random <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> of type (2,3,1).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
@@ -203,8 +213,10 @@ For example, the following creates a random <code class="docutils literal notran
 <span class="go">  [ (-0.440433,-0.919034) (-0.700111,-0.901544) (1.29377,-0.482789) (-1.26476,-1.61195) (-1.42624,-0.967444) ]</span>
 </pre></div>
 </div>
-<p>The type of an SO(3)-vector can be accessed as follows.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">tau</span><span class="p">()</span>
+<p>The batch dimension and type of an SO(3)-vector can be accessed as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">getb</span><span class="p">()</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">tau</span><span class="p">()</span>
 <span class="go">[2, 3, 1]</span>
 </pre></div>
 </div>
@@ -215,28 +227,81 @@ For example, the following creates a random <code class="docutils literal notran
 <span class="go">  [ (0.871103,-0.726917) (0.787215,-1.39109) (2.66829,0.85663) ]</span>
 </pre></div>
 </div>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
 <section id="clebsch-gordan-products">
 <h2>Clebsch-Gordan products<a class="headerlink" href="#clebsch-gordan-products" title="Permalink to this headline">¶</a></h2>
-<p>The Clebsch-Gordan product of two SO3-vectors is computed as follows.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<p>The full Clebsch-Gordan product (CG-product) of two SO3-vectors is computed as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 <span class="go">Part l=0:</span>
-<span class="go">  [ (0.800454,-2.72231) (0.387997,-2.21325) ]</span>
+<span class="go">  [ (0.152031,-0.140948) (-0.176707,0.0986708) (-0.0514539,2.16813) (0.54849,-2.04492) (-1.24255,-0.815015) (-1.40811,-0.123935) (-0.391867,1.13209) (-0.161307,-0.330928) ]</span>
+
 
 <span class="go">Part l=1:</span>
-<span class="go">  [ (-1.08378,0.166964) (-1.13947,1.02458) (-0.979756,-0.170846) ]</span>
-<span class="go">  [ (-3.14667,-0.020229) (-1.60544,-0.595765) (-0.658927,1.13758) ]</span>
-<span class="go">  [ (0.573493,3.50629) (0.609701,-0.290724) (-1.86063,-0.256204) ]</span>
+<span class="go">  [ (0.0961476,-0.243252) (0.171405,-0.405961) (1.1234,2.495) (1.79502,4.24597) (-0.730597,0.187905) (0.736381,-0.00987765) (0.698929,0.568218) (-0.532079,-0.700114) (-0.163401,0.429268) (-0.412671,1.27816) (0.850947,-1.12338) (2.10184,-2.1415) ]</span>
+<span class="go">  [ (-0.0326659,-0.024234) (0.00847598,0.172192) (0.419973,-0.0682939) (-1.35334,-1.19208) (-0.374269,0.472096) (0.463849,-0.361595) (1.51776,-0.805567) (-1.62546,0.414405) (-0.0409343,-0.262541) (-0.664351,-1.61683) (-0.958011,-0.645344) (-2.28508,0.289834) ]</span>
+<span class="go">  [ (0.304888,-0.0110071) (0.0900037,-0.295688) (-2.14074,2.36709) (1.5615,2.83128) (-0.456644,-0.978039) (0.207788,1.03305) (-0.936221,-0.103796) (0.864218,0.314231) (0.494024,-0.0305465) (0.703364,-0.464528) (-1.7338,-0.26607) (-0.553973,1.15706) ]</span>
+
 
 <span class="go">Part l=2:</span>
-<span class="go">  [ (0.545523,0.23039) ]</span>
-<span class="go">  [ (1.0578,1.10345) ]</span>
-<span class="go">  [ (0.098245,0.754121) ]</span>
-<span class="go">  [ (1.15855,-0.537074) ]</span>
-<span class="go">  [ (-0.530323,0.658823) ]</span>
+<span class="go">  [ (-0.728853,0.612083) (-1.2514,1.00255) (1.10502,0.265513) (1.85081,0.490198) ]</span>
+<span class="go">  [ (-0.0748801,0.618935) (-0.0294498,0.478025) (0.970257,-1.34299) (1.06154,-1.94166) ]</span>
+<span class="go">  [ (-0.750575,-0.508764) (-1.11883,-0.688738) (-0.534416,0.477625) (-0.479641,1.47743) ]</span>
+<span class="go">  [ (-0.737463,0.204984) (0.522857,0.792809) (1.75326,0.526698) (1.35542,-1.92182) ]</span>
+<span class="go">  [ (0.430848,-1.52889) (-1.32246,-0.916922) (-0.943746,-1.01531) (-1.28382,0.569196) ]</span>
 </pre></div>
+</div>
+<p>The optional third argument of <code class="docutils literal notranslate"><span class="pre">CGproduct</span></code> can be used to limit the result to parts
+<img alt="\ell=0,1,\ldots,\ell_{\text{max}}" class="math" src="_images/math/9cb285ffaae7d5e43dc7b6a711555c0223282e42.svg"/>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go">Part l=0:</span>
+<span class="go">  [ (0.152031,-0.140948) (-0.176707,0.0986708) (-0.0514539,2.16813) (0.54849,-2.04492) (-1.24255,-0.815015) (-1.40811,-0.123935) (-0.391867,1.13209) (-0.161307,-0.330928) ]</span>
+
+
+<span class="go">Part l=1:</span>
+<span class="go">  [ (0.0961476,-0.243252) (0.171405,-0.405961) (1.1234,2.495) (1.79502,4.24597) (-0.730597,0.187905) (0.736381,-0.00987765) (0.698929,0.568218) (-0.532079,-0.700114) (-0.163401,0.429268) (-0.412671,1.27816) (0.850947,-1.12338) (2.10184,-2.1415) ]</span>
+<span class="go">  [ (-0.0326659,-0.024234) (0.00847598,0.172192) (0.419973,-0.0682939) (-1.35334,-1.19208) (-0.374269,0.472096) (0.463849,-0.361595) (1.51776,-0.805567) (-1.62546,0.414405) (-0.0409343,-0.262541) (-0.664351,-1.61683) (-0.958011,-0.645344) (-2.28508,0.289834) ]</span>
+<span class="go">  [ (0.304888,-0.0110071) (0.0900037,-0.295688) (-2.14074,2.36709) (1.5615,2.83128) (-0.456644,-0.978039) (0.207788,1.03305) (-0.936221,-0.103796) (0.864218,0.314231) (0.494024,-0.0305465) (0.703364,-0.464528) (-1.7338,-0.26607) (-0.553973,1.15706) ]</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+</section>
+<section id="diagonal-clebsch-gordan-products">
+<h2>Diagonal Clebsch-Gordan products<a class="headerlink" href="#diagonal-clebsch-gordan-products" title="Permalink to this headline">¶</a></h2>
+<p>In the full CG-product, every fragment of <code class="docutils literal notranslate"><span class="pre">u</span></code> is multiplied with every fragment of <code class="docutils literal notranslate"><span class="pre">v</span></code>,
+often leading to output vectors with very large numbers of fragments. In
+contrast, the <code class="docutils literal notranslate"><span class="pre">DiagCGproduct</span></code> function only computes the product between corresponding fragments.
+Naturally, this means that <code class="docutils literal notranslate"><span class="pre">u</span></code> and <code class="docutils literal notranslate"><span class="pre">v</span></code> must have the same type.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">DiagCGproduct</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go">Part l=0:</span>
+<span class="go">  [ (0.152031,-0.140948) (0.54849,-2.04492) (-1.24255,-0.815015) (-0.161307,-0.330928) ]</span>
+
+
+<span class="go">Part l=1:</span>
+<span class="go">  [ (0.0961476,-0.243252) (1.79502,4.24597) (-0.730597,0.187905) (-0.532079,-0.700114) (-0.163401,0.429268) (2.10184,-2.1415) ]</span>
+<span class="go">  [ (-0.0326659,-0.024234) (-1.35334,-1.19208) (-0.374269,0.472096) (-1.62546,0.414405) (-0.0409343,-0.262541) (-2.28508,0.289834) ]</span>
+<span class="go">  [ (0.304888,-0.0110071) (1.5615,2.83128) (-0.456644,-0.978039) (0.864218,0.314231) (0.494024,-0.0305465) (-0.553973,1.15706) ]</span>
+
+
+<span class="go">Part l=2:</span>
+<span class="go">  [ (-0.728853,0.612083) (1.85081,0.490198) ]</span>
+<span class="go">  [ (-0.0748801,0.618935) (1.06154,-1.94166) ]</span>
+<span class="go">  [ (-0.750575,-0.508764) (-0.479641,1.47743) ]</span>
+<span class="go">  [ (-0.737463,0.204984) (1.35542,-1.92182) ]</span>
+<span class="go">  [ (0.430848,-1.52889) (-1.28382,0.569196) ]</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br/></div>
 </div>
 </section>
 <section id="gpu-operations">
@@ -250,6 +315,9 @@ the same way as <code class="docutils literal notranslate"><span class="pre">SO3
 </div>
 <p>Similarly to the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> case, operations between GPU-resident <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> s are executed
 on the GPU and the result is placed on the same device.</p>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
 </section>
 </section>
 
@@ -258,12 +326,30 @@ on the GPU and the result is placed on the same device.</p>
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="SO3partArr.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">SO3partArr</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="SO3partB.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">SO3part</div>
+                
+              </div>
+            </a>
         </div>
 
         <div class="related-information">
-              Copyright &#169; 2021, Risi Kondor |
+              Copyright &#169; 2021-2022, Risi Kondor |
             Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
               and
               <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
@@ -290,6 +376,7 @@ on the GPU and the result is placed on the same device.</p>
             <ul>
 <li><a class="reference internal" href="#">SO3vec</a><ul>
 <li><a class="reference internal" href="#clebsch-gordan-products">Clebsch-Gordan products</a></li>
+<li><a class="reference internal" href="#diagonal-clebsch-gordan-products">Diagonal Clebsch-Gordan products</a></li>
 <li><a class="reference internal" href="#gpu-operations">GPU operations</a></li>
 </ul>
 </li>

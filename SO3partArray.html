@@ -154,7 +154,16 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+</ul>
+
 </div>
 </div>
       </div>
@@ -184,40 +193,67 @@
 <p>Similary to the tensor array classes in <code class="docutils literal notranslate"><span class="pre">cnine</span></code>, the basic tool for parallelizing SO3-operations in GElib
 are the <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> classes.
 An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> is a multidimensional array of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects with the same <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/> and <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg"/>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># Create a 2x2 array of SO3parts with l=2 and n=2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="go">Cell(0,0)</span>
+<span class="go">[ (0.311398,-1.80913) (-0.921517,1.3563) (-0.463656,-0.153738) ]</span>
+<span class="go">[ (-0.107248,-0.91566) (-0.268635,-0.934234) (0.292521,-0.466788) ]</span>
+<span class="go">[ (2.03572,-0.917957) (0.231427,-0.438412) (-0.360624,0.0279882) ]</span>
+<span class="go">[ (0.115751,1.16965) (0.588774,0.845822) (-0.291249,0.947408) ]</span>
+<span class="go">[ (-0.0814305,0.592962) (-0.761416,0.177536) (-1.1615,-0.492729) ]</span>
+</pre></div>
+</div>
+<p>Cell(0,1)
+[ (2.35398,0.425596) (-0.194245,0.566688) (1.38338,-2.13741) ]
+[ (-1.06957,-0.526105) (-0.759776,1.04892) (-1.01595,0.392939) ]
+[ (-0.581912,-1.07034) (-1.22874,1.92764) (-2.87221,-0.404009) ]
+[ (-0.609044,1.48928) (-0.236781,1.73229) (0.0744118,1.05315) ]
+[ (0.0746617,-0.272857) (0.225767,1.6043) (0.509717,1.18577) ]</p>
+<p>Cell(1,0)
+[ (0.947831,-3.48871) (-0.0304763,-2.04327) (0.564578,-1.22349) ]
+[ (-0.0346214,-1.32766) (-2.03267,-2.02395) (1.6006,1.92112) ]
+[ (-0.115995,-1.38828) (-1.59841,0.899515) (-1.56611,1.03086) ]
+[ (-1.72669,-1.18976) (-1.35317,0.0381025) (0.993481,-0.300125) ]
+[ (-1.89355,-0.901076) (-0.678269,-0.57792) (-1.81518,0.037866) ]</p>
+<p>Cell(1,1)
+[ (-1.29319,-1.78938) (-0.129255,-0.423372) (1.28934,-1.46638) ]
+[ (-1.03102,-0.603144) (0.0982916,-0.0189021) (0.0997176,-0.0518933) ]
+[ (1.18114,-0.145281) (1.03506,-1.23571) (-0.149596,-0.473458) ]
+[ (-1.46849,1.28294) (2.07751,-1.02977) (1.08815,0.0456315) ]
+[ (-1.47393,0.276098) (1.88762,0.878272) (-2.43639,1.74515) ]</p>
+<blockquote>
+<div><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">gaussian</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># Create a 2x2 array of SO3parts with l=2 and n=2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">Cell (0,0)</span>
 <span class="go">[ (-1.23974,-0.653697) (-0.407472,-0.645572) ]</span>
 <span class="go">[ (1.61201,0.471302) (0.399771,1.52415) ]</span>
 <span class="go">[ (1.3828,0.321597) (0.0523187,-0.406172) ]</span>
 <span class="go">[ (-0.904146,-1.41157) (1.87065,-1.49311) ]</span>
 <span class="go">[ (-1.66043,-1.36411) (-0.688081,1.01046) ]</span>
-
-
-<span class="go">Cell (0,1)</span>
-<span class="go">[ (-1.50279,0.0436305) (0.570759,-1.11315) ]</span>
-<span class="go">[ (-0.929941,-0.410768) (-0.934988,-1.3031) ]</span>
-<span class="go">[ (-0.764676,-0.807584) (0.250854,1.31755) ]</span>
-<span class="go">[ (-0.188164,1.29412) (-1.51315,-1.48009) ]</span>
-<span class="go">[ (1.32256,-0.795502) (1.93468,0.333338) ]</span>
-
-
-<span class="go">Cell (1,0)</span>
-<span class="go">[ (-1.13769,0.682072) (-1.22027,-0.711608) ]</span>
-<span class="go">[ (0.111152,0.177093) (-0.672931,-0.787544) ]</span>
-<span class="go">[ (-1.39814,-0.822316) (-0.477463,-0.517104) ]</span>
-<span class="go">[ (0.643125,0.328867) (1.37519,0.321593) ]</span>
-<span class="go">[ (-1.2589,-1.05669) (0.259477,0.525259) ]</span>
-
-
-<span class="go">Cell (1,1)</span>
-<span class="go">[ (-1.20183,0.967431) (-0.399454,-0.438438) ]</span>
-<span class="go">[ (-0.727057,1.89024) (0.43853,-0.750291) ]</span>
-<span class="go">[ (-0.42954,-0.566975) (-2.20967,1.39586) ]</span>
-<span class="go">[ (-1.22569,0.0196838) (0.73464,0.550065) ]</span>
-<span class="go">[ (0.630166,-1.0417) (0.137796,-0.579859) ]</span>
 </pre></div>
 </div>
+<p>Cell (0,1)
+[ (-1.50279,0.0436305) (0.570759,-1.11315) ]
+[ (-0.929941,-0.410768) (-0.934988,-1.3031) ]
+[ (-0.764676,-0.807584) (0.250854,1.31755) ]
+[ (-0.188164,1.29412) (-1.51315,-1.48009) ]
+[ (1.32256,-0.795502) (1.93468,0.333338) ]</p>
+<p>Cell (1,0)
+[ (-1.13769,0.682072) (-1.22027,-0.711608) ]
+[ (0.111152,0.177093) (-0.672931,-0.787544) ]
+[ (-1.39814,-0.822316) (-0.477463,-0.517104) ]
+[ (0.643125,0.328867) (1.37519,0.321593) ]
+[ (-1.2589,-1.05669) (0.259477,0.525259) ]</p>
+<p>Cell (1,1)
+[ (-1.20183,0.967431) (-0.399454,-0.438438) ]
+[ (-0.727057,1.89024) (0.43853,-0.750291) ]
+[ (-0.42954,-0.566975) (-2.20967,1.39586) ]
+[ (-1.22569,0.0196838) (0.73464,0.550065) ]
+[ (0.630166,-1.0417) (0.137796,-0.579859) ]</p>
+</div></blockquote>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">adims</span><span class="p">)</span>
 <span class="go">(2,2)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">getl</span><span class="p">())</span>
@@ -367,7 +403,7 @@ parallelize the operation across array cells.</p>
         </div>
 
         <div class="related-information">
-              Copyright &#169; 2021, Risi Kondor |
+              Copyright &#169; 2021-2022, Risi Kondor |
             Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
               and
               <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
