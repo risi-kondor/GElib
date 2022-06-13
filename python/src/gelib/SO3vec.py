@@ -10,7 +10,7 @@
 
 import torch
 
-from gelib_base import ctensorb 
+from cnine import ctensorb 
 from gelib_base import SO3partB as _SO3partB
 from gelib_base import SO3vecB as _SO3vecB
 #from gelib_base import SO3Fvec as _SO3Fvec
@@ -164,6 +164,10 @@ class SO3vec:
         return SO3vec_iFFTFn.apply(_N,*(self.parts))
     
     # ---- I/O ----------------------------------------------------------------------------------------------
+
+    def __repr__(self):
+        u=_SO3vecB.view(self.parts)
+        return u.__repr__()
 
     def __str__(self):
         u = _SO3vecB.view(self.parts)
@@ -369,6 +373,63 @@ class SO3vec_FmodsqFn(torch.autograd.Function):
         return tuple(grads)
 
 
+class SO3vec_iFFTFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx, N, *args):
+
+        _v=_SO3vecB.view(args)
+        b=_v.getb()
+        #maxl=_v.get_maxl()
+        ctx.save_for_backward(*args)
+        
+        r=torch.zeros([b,2*N,N,2*N,2],device=args[0].device)
+        _r=ctensorb.view(r)
+        _v.add_iFFT_to(_r)
+
+        return r
+
+    @staticmethod
+    def backward(ctx, fg):
+
+        inputs = ctx.saved_tensors
+        grads = [None]
+        for inp in inputs:
+            grads.append(torch.zeros_like(inp))
+
+        _fg = ctensorb.view(fg)
+        _vg=_SO3vecB.view(grads[1:])
+        _vg.add_FFT(_fg)
+        
+        return tuple(grads)
+
+
+class SO3vec_FFTFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx, maxl, f):
+
+        ctx.save_for_backward(f)
+        _f = ctensorb.view(f)
+
+        v = makeZeroSO3Fparts(_f.get_dim(0), maxl, _f.get_dev())
+        _v=_SO3vecB.view(v)
+        _v.add_FFT(_f)
+
+        return v
+
+    @staticmethod
+    def backward(ctx, vg):
+
+        inputs = ctx.saved_tensors
+
+        fg=torch.zeros_like(inputs[0])
+        _fg=ctensorb.view(fg)
+        _vg.add_iFFT_to(_fg)
+        
+        return tuple([None, fg])
+
+
 
 # ----------------------------------------------------------------------------------------------------------
 # ---- Other functions --------------------------------------------------------------------------------------
@@ -437,3 +498,14 @@ def makeZeroSO3Fparts(b, maxl, _dev=0):
     for l in range(0, maxl+1):
         R.append(SO3part.Fzeros(b, l, _dev))
     return R
+
+
+def SO3FFT(f,maxl):
+    r=SO3vec()
+    r.parts=list(SO3vec_FFTFn.apply(maxl,f))
+    return r
+
+
+def SO3iFFT(v,N):
+    return v.iFFT(N)
+

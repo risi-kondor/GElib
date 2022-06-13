@@ -72,7 +72,7 @@ py::class_<SO3partB>(m,"SO3partB",
     
   .def("str",&SO3partB::str,py::arg("indent")="")
   .def("__str__",&SO3partB::str,py::arg("indent")="")
-//.def("__repr__",&SO3partB::repr,py::arg("indent")="")
+  .def("__repr__",&SO3partB::repr,py::arg("indent")="")
 ;
 
 

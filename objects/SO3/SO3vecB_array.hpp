@@ -14,14 +14,18 @@
 
 #include "GElib_base.hpp"
 #include "SO3type.hpp"
+#include "CtensorB_multiArray.hpp"
 #include "SO3partB_array.hpp"
 #include "SO3element.hpp"
 
 
 namespace GElib{
 
+  //template<typename ARRAY>
+  typedef cnine::CtensorB_multiArray<SO3partB_array> SO3vecB_base;
 
-  class SO3vecB_array{
+
+  class SO3vecB_array: public cnine::CtensorB_multiArray<SO3partB_array>{
   public:
 
     typedef cnine::device device;
@@ -34,14 +38,16 @@ namespace GElib{
     typedef cnine::CtensorObj ctensor;
     typedef cnine::CtensorPackObj ctensorpack;
 
+    //using CtensorB_multiArray<SO3partB_array>::CtensorB_multiArray<SO3partB_array>;
+    using SO3vecB_base::SO3vecB_base;
 
-    vector<SO3partB_array*> parts;
+    //vector<SO3partB_array*> parts;
 
 
     SO3vecB_array(){}
 
     ~SO3vecB_array(){
-      for(auto p: parts) delete p;  
+      //for(auto p: parts) delete p;  
     }
 
 
@@ -81,7 +87,7 @@ namespace GElib{
 
     SO3vecB_array(const SO3vecB_array& x){
       for(auto& p:x.parts)
-	parts.push_back(p);
+	parts.push_back(new SO3partB_array(*p));
     }
 
     SO3vecB_array(SO3vecB_array&& x){
@@ -93,18 +99,18 @@ namespace GElib{
   public: // ---- Transport -----------------------------------------------------------------------------------------
 
 
-    SO3vecB_array& move_to_device(const int _dev){
-      for(auto p:parts)
-	p->move_to_device(_dev);
-      return *this;
-    }
+    //SO3vecB_array& move_to_device(const int _dev){
+    //for(auto p:parts)
+    //p->move_to_device(_dev);
+    //return *this;
+    //}
     
-    SO3vecB_array to_device(const int _dev) const{
-      SO3vecB_array R;
-      for(auto p:parts)
-	R.parts.push_back(new SO3partB_array(p->to_device(_dev)));
-      return R;
-    }
+    //SO3vecB_array to_device(const int _dev) const{
+    //SO3vecB_array R;
+    //for(auto p:parts)
+    //R.parts.push_back(new SO3partB_array(p->to_device(_dev)));
+    //return R;
+    //}
 
 
   public: // ---- ATen --------------------------------------------------------------------------------------
@@ -123,10 +129,10 @@ namespace GElib{
   public: // ---- Access --------------------------------------------------------------------------------------------
   
 
-    Gdims get_adims() const{
-      if(parts.size()>0) return parts[0]->get_adims();
-      return 0;
-    }
+    //Gdims get_adims() const{
+    //if(parts.size()>0) return parts[0]->get_adims();
+    //return 0;
+    //}
 
     SO3type get_tau() const{
       SO3type tau;
@@ -139,28 +145,28 @@ namespace GElib{
       return parts.size()-1;
     }
 
-    int get_dev() const{
-      if(parts.size()>0) return parts[0]->get_dev();
-      return 0;
-    }
+    //int get_dev() const{
+    //if(parts.size()>0) return parts[0]->get_dev();
+    //return 0;
+    //}
 
-    int get_device() const{
-      if(parts.size()>0) return parts[0]->get_dev();
-      return 0;
-    }
+    //int get_device() const{
+    //if(parts.size()>0) return parts[0]->get_dev();
+    //return 0;
+    //}
 
     
 
   public: // ---- Operations ---------------------------------------------------------------------------------------
 
 
-    SO3vecB_array operator-(const SO3vecB_array& y) const{
-      SO3vecB_array R;
-      for(int l=0; l<parts.size(); l++){
-	R.parts.push_back(new SO3partB_array((*parts[l])-(*y.parts[l])));
-      }
-      return R;
-    }
+    //SO3vecB_array operator-(const SO3vecB_array& y) const{
+    //SO3vecB_array R;
+    //for(int l=0; l<parts.size(); l++){
+    //R.parts.push_back(new SO3partB_array((*parts[l])-(*y.parts[l])));
+    //}
+    //return R;
+    //}
 
 
 
@@ -179,11 +185,11 @@ namespace GElib{
   public: // ---- Cumulative Operations -----------------------------------------------------------------------------
 
 
-    void add_gather(const SO3vecB_array& x, const cnine::Rmask1& mask){
-      assert(parts.size()==x.parts.size());
-      for(int l=0; l<parts.size(); l++)
-	parts[l]->add_gather(*x.parts[l],mask);
-    }
+    //void add_gather(const SO3vecB_array& x, const cnine::Rmask1& mask){
+    //assert(parts.size()==x.parts.size());
+    //for(int l=0; l<parts.size(); l++)
+    //parts[l]->add_gather(*x.parts[l],mask);
+    //}
     
     
   public: // ---- CG-products ---------------------------------------------------------------------------------------
@@ -262,16 +268,16 @@ namespace GElib{
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
 
-    string str(const string indent="") const{
-      ostringstream oss;
-	for(int l=0; l<parts.size(); l++){
-	  if(!parts[l]) continue;
-	  oss<<indent<<"Part l="<<l<<":\n";
-	  oss<<parts[l]->str(indent+"  ");
-	  oss<<endl;
-	}
-      return oss.str();
-    }
+    //string str(const string indent="") const{
+    //ostringstream oss;
+    //for(int l=0; l<parts.size(); l++){
+    //  if(!parts[l]) continue;
+    //  oss<<indent<<"Part l="<<l<<":\n";
+    //  oss<<parts[l]->str(indent+"  ");
+    //  oss<<endl;
+    //}
+    //return oss.str();
+    //}
 
     string repr(const string indent="") const{
       return "<GElib::SO3vecB_array of type("+get_adims().str()+","+get_tau().str()+")>";

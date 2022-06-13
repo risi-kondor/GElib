@@ -96,7 +96,11 @@ namespace GElib{
       
     SO3partB_array(CtensorB&& x):
       CtensorB_array(std::move(x),-2){}
+
       
+  public: // ---- ATen --------------------------------------------------------------------------------------
+
+
 
   public: // ---- Access -------------------------------------------------------------------------------------
 
@@ -206,9 +210,9 @@ namespace GElib{
   public: // ---- Cumulative Operations ----------------------------------------------------------------------
 
 
-    void add_gather(const SO3partB_array& x, const cnine::Rmask1& mask){
-      CtensorB::add_gather(x,mask);
-    }
+    //void add_gather(const SO3partB_array& x, const cnine::Rmask1& mask){
+    //CtensorB::add_gather(x,mask);
+    //}
 
 
   public: // ---- CG-products --------------------------------------------------------------------------------
@@ -224,8 +228,9 @@ namespace GElib{
 
     void add_CGproduct(const SO3partB_array& x, const SO3partB_array& y, const int _offs=0){
       auto v=this->part3_view();
-      cout<<v.n0<<v.n1<<v.n2<<endl;
+      //cout<<v.n0<<v.n1<<v.n2<<endl;
       SO3part_addCGproductFn()(v,x.part3_view(),y.part3_view(),_offs);
+      //cout<<*this<<endl;
     }
 
     void add_CGproduct_back0(const SO3partB_array& g, const SO3partB_array& y, const int _offs=0){
@@ -254,6 +259,15 @@ namespace GElib{
     }
     */
     
+    string repr(const string indent="") const{
+      return "<GElib::SO3partB_array of type ("+get_adims().str()+","+to_string(getl())+")>";
+    }
+    
+    friend ostream& operator<<(ostream& stream, const SO3partB_array& x){
+      stream<<x.str(); return stream;
+    }
+
+
   };
 
 }

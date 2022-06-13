@@ -33,7 +33,7 @@ to the ``l=2`` irrep of SO(3) (batch size 1) and prints it out in GElib's own co
 A zero ``SO3part`` would be constructed similarly using the ``gelib.SO3part.zeros(b,l,n)`` constructor. 
 In both cases the optional ``dev`` argument selects whether the ``SO3part`` is  
 placed on the CPU (``dev=0``) or the GPU (``dev=1``). 
-The batch dimension, ``b``, order ``l``, and multiplicity ``n`` of the ``SO3part`` are read out as follows.
+The batch dimension, ``b``, the order ``l``, and multiplicity ``n`` of the ``SO3part`` are read out as follows.
 
 .. code-block:: python
 
@@ -154,7 +154,35 @@ In contrast, the ``DiagCGproduct`` function only computes the product between co
 
 | 
 
+=============
+Fourier parts
+=============
 
+The Fourier transform of a band limited function on SO(3) consits of a sequence of ``SO3part``\s that 
+are square, i.e., the :math:`\ell`\'th part has exactly :math:`2\ell+1` fragments. 
+Such "Fourier" ``SO3part`` objects can be constructed with the ``Fzero`` and ``Frandn`` constructors. 
+
+.. code-block:: python
+
+ >>> P=gelib.SO3part.Frandn(2,2)
+ >>> P
+ <GElib::SO3partB(l=2,n=5)>
+ >>> print(P)
+ [ (0.52125,-0.22795) (1.9582,0.134816) (-0.234565,0.859961) (1.48554,-0.773917) (-0.470826,1.07681) ]
+ [ (-0.503722,1.6285) (1.43036,2.61762) (-1.59148,-0.599378) (-1.11276,-0.149922) (0.371091,0.135141) ]
+ [ (-1.13006,0.290993) (-0.445139,-0.494865) (0.898827,2.37421) (-0.0843652,0.393264) (-1.32196,1.73875) ]
+ [ (0.0904322,-0.434235) (-0.61949,0.484048) (-0.899059,0.727945) (0.0424086,-0.205882) (0.75044,0.394482) ]
+ [ (1.6362,0.0197323) (1.02175,-0.81815) (0.714489,-0.0640189) (0.281308,-1.28329) (-0.329355,-0.124222) ]
+
+ [ (1.34581,-1.06913) (1.08682,-1.91271) (1.43107,1.87496) (1.11412,-0.119892) (-0.903403,-1.04724) ]
+ [ (-0.104454,-0.402252) (0.168739,-0.640824) (-0.523968,0.803712) (1.33963,-1.51851) (-0.641333,1.00818) ]
+ [ (-0.668628,-0.279591) (-0.450142,-1.8119) (0.551215,-0.973758) (0.728455,-2.21968) (-0.577915,1.55737) ]
+ [ (0.162461,0.853651) (0.575921,1.05357) (-0.210975,-0.859355) (-1.69655,2.07018) (1.51726,-1.15862) ]
+ [ (1.66046,0.967729) (-0.632807,0.496959) (0.90735,-0.599696) (-1.99116,0.259688) (0.931691,-0.41819) ]
+
+The same operations can be applied to Fourier ``SO3part``\s as regular ``SO3part`` objects. 
+
+|
 
 ==============
 GPU operations

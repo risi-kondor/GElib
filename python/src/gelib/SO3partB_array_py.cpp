@@ -33,7 +33,8 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
       return SO3partB_array::gaussian(Gdims(av),l,n,dev);},
     py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
 
-  .def_static("view",[](at::Tensor& x){return SO3partB_array(cnine::CtensorB::view(x));})
+//.def_static("view",[](at::Tensor& x){return SO3partB_array(cnine::CtensorB::view(x));})
+  .def_static("view",[](at::Tensor& x){return SO3partB_array::view(x,-2);})
   .def("torch",[](const SO3partB_array& x){return x.torch();})
 
   .def("get_adims",[](const SO3partB_array& x){return vector<int>(x.get_adims());})
@@ -63,6 +64,8 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
 
   .def("apply",&SO3partB_array::rotate)
 
+  .def("gather",&SO3partB_array::add_gather,py::arg("x"),py::arg("mask"))
+
   .def("addCGproduct",&SO3partB_array::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
   .def("addCGproduct_back0",&SO3partB_array::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
   .def("addCGproduct_back1",&SO3partB_array::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
@@ -73,8 +76,8 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
   .def("move_to",[](SO3partB_array& x, const int _dev){x.move_to_device(_dev);})
 
   .def("str",&SO3partB_array::str,py::arg("indent")="")
-  .def("__str__",&SO3partB_array::str,py::arg("indent")="");
-//.def("__repr__",&SO3partB_array::repr,py::arg("indent")="");
+  .def("__str__",&SO3partB_array::str,py::arg("indent")="")
+  .def("__repr__",&SO3partB_array::repr,py::arg("indent")="");
 
 
 // ---- Stand-alone functions --------------------------------------------------------------------------------
