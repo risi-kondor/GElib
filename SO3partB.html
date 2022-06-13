@@ -323,6 +323,33 @@ In contrast, the <code class="docutils literal notranslate"><span class="pre">Di
 <div class="line"><br/></div>
 </div>
 </section>
+<section id="fourier-parts">
+<h2>Fourier parts<a class="headerlink" href="#fourier-parts" title="Permalink to this headline">¶</a></h2>
+<p>The Fourier transform of a band limited function on SO(3) consits of a sequence of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>s that
+are square, i.e., the <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/>'th part has exactly <img alt="2\ell+1" class="math" src="_images/math/1d3f01d9f1a70210c7595a682d9887f8b61be160.svg"/> fragments.
+Such “Fourier” <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can be constructed with the <code class="docutils literal notranslate"><span class="pre">Fzero</span></code> and <code class="docutils literal notranslate"><span class="pre">Frandn</span></code> constructors.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">Frandn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span>
+<span class="go">&lt;GElib::SO3partB(l=2,n=5)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+<span class="go">[ (0.52125,-0.22795) (1.9582,0.134816) (-0.234565,0.859961) (1.48554,-0.773917) (-0.470826,1.07681) ]</span>
+<span class="go">[ (-0.503722,1.6285) (1.43036,2.61762) (-1.59148,-0.599378) (-1.11276,-0.149922) (0.371091,0.135141) ]</span>
+<span class="go">[ (-1.13006,0.290993) (-0.445139,-0.494865) (0.898827,2.37421) (-0.0843652,0.393264) (-1.32196,1.73875) ]</span>
+<span class="go">[ (0.0904322,-0.434235) (-0.61949,0.484048) (-0.899059,0.727945) (0.0424086,-0.205882) (0.75044,0.394482) ]</span>
+<span class="go">[ (1.6362,0.0197323) (1.02175,-0.81815) (0.714489,-0.0640189) (0.281308,-1.28329) (-0.329355,-0.124222) ]</span>
+
+<span class="go">[ (1.34581,-1.06913) (1.08682,-1.91271) (1.43107,1.87496) (1.11412,-0.119892) (-0.903403,-1.04724) ]</span>
+<span class="go">[ (-0.104454,-0.402252) (0.168739,-0.640824) (-0.523968,0.803712) (1.33963,-1.51851) (-0.641333,1.00818) ]</span>
+<span class="go">[ (-0.668628,-0.279591) (-0.450142,-1.8119) (0.551215,-0.973758) (0.728455,-2.21968) (-0.577915,1.55737) ]</span>
+<span class="go">[ (0.162461,0.853651) (0.575921,1.05357) (-0.210975,-0.859355) (-1.69655,2.07018) (1.51726,-1.15862) ]</span>
+<span class="go">[ (1.66046,0.967729) (-0.632807,0.496959) (0.90735,-0.599696) (-1.99116,0.259688) (0.931691,-0.41819) ]</span>
+</pre></div>
+</div>
+<p>The same operations can be applied to Fourier <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>s as regular <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.</p>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+</section>
 <section id="gpu-operations">
 <h2>GPU operations<a class="headerlink" href="#gpu-operations" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can be moved to the GPU or moved back to the host (CPU) just like any PyTorch tensor.</p>
@@ -396,6 +423,7 @@ the GPU and the result placed on the same GPU.</p>
 <li><a class="reference internal" href="#group-action">Group action</a></li>
 <li><a class="reference internal" href="#clebsch-gordan-products">Clebsch-Gordan products</a></li>
 <li><a class="reference internal" href="#diagonal-clebsch-gordan-products">Diagonal Clebsch-Gordan products</a></li>
+<li><a class="reference internal" href="#fourier-parts">Fourier parts</a></li>
 <li><a class="reference internal" href="#gpu-operations">GPU operations</a></li>
 </ul>
 </li>

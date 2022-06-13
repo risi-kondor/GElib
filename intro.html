@@ -190,6 +190,22 @@
         <article role="main">
           <section id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>SO(3) is the group of three dimensional rotations.
+SO(3)-equivariant neural networks learn functions that behave in specific ways with respect to this group.
+Such architectures have recently become popular in a range of applications
+in physics, chemistry, computational biology and computer vision.</p>
+<p>From a mathematical point of view, the key feature of these architectures is that
+the output of each neuron is an SO(3)-covariant quantity, which means that under the action
+of the group it transforms either according to a single irreducible representation (irrep) of SO(3) or a specific
+combination of irreducible representations. This property is essential for ensuring equivariance,
+but also puts restrictions on what operations are permissible in the network.</p>
+<p>GElib provides two basic classes to facilitate implementing SO(3)-equivariant networks:</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> class stores any quantity that transforms according to a single irrep.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> class stores a quantity that transforms according to a combination of different irreps.</p></li>
+</ol>
+<p>The library implements the key operations that can be performed on SO(3)-covariant objects,
+notably different variants of the Clebsch–Gordan product.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <p>GElib provides the following features:</p>
