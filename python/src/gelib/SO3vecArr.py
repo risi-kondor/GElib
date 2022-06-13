@@ -154,9 +154,14 @@ class SO3vecArr:
     ## ---- I/O ----------------------------------------------------------------------------------------------
 
         
+    def __repr__(self):
+        u=_SO3vecB_array.view(self.parts)
+        return u.__repr__()
+
     def __str__(self):
         u=_SO3vecB_array.view(self.parts)
         return u.__str__()
+
 
 
 ## ----------------------------------------------------------------------------------------------------------
@@ -358,3 +363,36 @@ class SO3vec_FmodsqFn(torch.autograd.Function): #todo
         _xg.addFproduct_back1(_g,_x)
 
         return tuple(grads)
+
+
+class SO3vecArr_GatherFn(torch.autograd.Function): 
+
+    @staticmethod
+    def forward(ctx,*args):
+
+        ctx.mask=args[0]
+        ctx.adims=list(args[1].size()[0:args[1].dim()-3])
+        tau=tau_type(args[1:])
+        dev=int(args[1].is_cuda)
+        r=MakeZeroSO3partArrs(ctx.adims,tau,dev)
+        
+        _x=_SO3vecB_array.view(args[1:])
+        _r=_SO3vecB_array.view(r)
+        _r.gather(_x,args[0])
+
+        return tuple(r)
+
+    @staticmethod
+    def backward(ctx,*args):
+
+        tau=tau_type(args)
+        dev=int(args[0].is_cuda)
+        r=MakeZeroSO3partArrs(ctx.adims,tau,dev)
+
+        _x=_SO3vecB_array.view(args)
+        _r=_SO3vecB_array.view(r)
+        _r.gather(_x,ctx.mask.inv())
+
+        return tuple([None]+r)
+
+

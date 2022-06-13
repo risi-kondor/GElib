@@ -441,6 +441,16 @@ namespace GElib{
     }
 
 
+  public: // ---- I/O ----------------------------------------------------------------------------------------
+
+    string repr(const string indent="") const{
+      return "<GElib::SO3partB(l="+to_string(getl())+",n="+to_string(getn())+")>";
+    }
+    
+    friend ostream& operator<<(ostream& stream, const SO3partB& x){
+      stream<<x.str(); return stream;
+    }
+
   };
 
 }

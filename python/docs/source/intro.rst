@@ -2,6 +2,29 @@
 Introduction
 ############
 
+SO(3) is the group of three dimensional rotations. 
+SO(3)-equivariant neural networks learn functions that behave in specific ways with respect to this group.  
+Such architectures have recently become popular in a range of applications  
+in physics, chemistry, computational biology and computer vision.
+
+From a mathematical point of view, the key feature of these architectures is that  
+the output of each neuron is an SO(3)-covariant quantity, which means that under rotations  
+it transforms either according to a single irreducible representation (irrep) of SO(3) or a specific 
+combination of irreducible representations. This property is essential for ensuring equivariance,  
+but also puts restrictions on what operations are permissible in the network. 
+
+.. 
+ For example, a given application might demand that the overall output be rotation-invariant or 
+ transform the exact same way as the inputs transform. 
+
+GElib provides two basic classes to facilitate implementing SO(3)-equivariant networks:
+
+#. The ``SO3part`` class stores any quantity that transforms according to a single irrep. 
+#. The ``SO3vec`` class stores a quantity that transforms according to a combination of different irreps.
+
+The library also implements the most important operations that can be performed on SO(3)-covariant objects, 
+specifically, different variants of the Clebsch--Gordan product. 
+
 ********
 Features
 ********
@@ -27,9 +50,8 @@ GElib is installed as a PyTorch C++ (or CUDA) extension and requires the followi
 
 GElib is easiest to install with ``pip``:
 
-#. Download the `cnine <https://github.com/risi-kondor/cnine>`_  library. 
-   cnine does not need to be separately installed on your system, but the 
-   cnine source files are required for the GElib intallation process itself. 
+#. Download the `cnine <https://github.com/risi-kondor/cnine>`_  library 
+   and install it on your system
 #. Download `GElib <https://github.com/risi-kondor/GElib>`_. 
    By default, it is assumed that cnine and GElib are downloaded to the same directory 
    (e.g., ``Downloads``).      
@@ -38,6 +60,8 @@ GElib is easiest to install with ``pip``:
 
 ..
    #. Run ``python setup.py install`` in the ``python`` directory to compile the package and install it on your system.
+    cnine does not need to be separately installed on your system, but the 
+   cnine source files are required for the GElib intallation process itself. 
 
 *************
 Configuration

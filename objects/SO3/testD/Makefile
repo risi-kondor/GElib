@@ -4,7 +4,7 @@ include $(ROOTDIR)/common.txt
 INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions 
 INCLUDE+=-I$(SO2DIR) -I$(SO2DIR)/functions 
 
-TESTS+= testSO3partB_array testSO3vecB_array 
+TESTS+= testSO3partB_array testSO3partB_array2 testSO3vecB_array 
 
 ifdef WITH_CUDA
 TESTS+= 
@@ -37,6 +37,14 @@ ifdef WITH_CUDA
 	$(NVCC) $(NVCCFLAGS) -o testSO3partB_array testSO3partB_array.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
 	$(CC) -o testSO3partB_array testSO3partB_array.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+endif
+
+
+testSO3partB_array2: testSO3partB_array2.cpp $(DEPS) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o testSO3partB_array2 testSO3partB_array2.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o testSO3partB_array2 testSO3partB_array2.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
 endif
 
 

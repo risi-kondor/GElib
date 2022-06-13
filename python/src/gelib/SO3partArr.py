@@ -123,6 +123,10 @@ class SO3partArr(torch.Tensor):
     ## ---- I/O ----------------------------------------------------------------------------------------------
 
         
+    def __repr__(self):
+        u=_SO3partB_array.view(self)
+        return u.__repr__()
+
     def __str__(self):
         u=_SO3partB_array.view(self)
         return u.__str__()
@@ -211,6 +215,43 @@ class SO3partArr_DiagCGproductFn(torch.autograd.Function):
         _yg.addDiagCGproduct_back1(_g, _x)
 
         return xg,yg,None
+
+
+class SO3partArr_GatherFn(torch.autograd.Function): 
+
+    @staticmethod
+    def forward(ctx,_mask,x):
+
+        ctx.mask=_mask
+        adims = x.get_adims() #change this
+        l=x.getl()
+        n=x.getn()
+        dev=int(x.is_cuda)
+        r=SO3partArr.zeros(adims,l,n,dev)
+        
+        _x=_SO3partB_array.view(x)
+        _r=_SO3partB_array.view(r)
+        _r.gather(_x,_mask)
+
+        return r
+
+    @staticmethod
+    def backward(ctx,yg):
+
+        #N=yg.size(0)
+        #b=yg.size(1)
+        #l=int((y.size(2)-1)/2)
+        #n=y.size(3)
+        #dev=int(y.is_cuda)
+        #r=MakeZeroSO3partArrs(N,b,l,n,dev)
+        r=torch.zeros_like(yg) # change this
+
+        _x=_SO3partB_array.view(args)
+        _r=_SO3partB_array.view(r)
+        _r.gather(_x,ctx.mask.inv())
+
+        return tuple([None]+r)
+
 
 
 

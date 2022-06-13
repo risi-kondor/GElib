@@ -50,6 +50,43 @@ The invidual parts are stored in the ``parts`` member variable
 
 |
 
+===============
+Fourier vectors
+===============
+
+As mentioned before, one context in which ``SO3vec`` objects appear is when computing the 
+Fourier transform of functions on SO(3). In this case, however, all the ``SO3part``\s are square. 
+Such ``SO3vec`` objects are created with the ``Fzero`` or ``Frandn`` constructors, which take only two 
+arguments: the batch dimension and :math:`\ell_{\textrm{max}}`. 
+
+.. code-block:: python
+
+ >>> v=gelib.SO3vec.Frandn(1,2)
+ >>> v
+ <GElib::SO3vecB of type (1,3,5)>
+ >>> print(v)
+ Part l=0:
+   [ (1.87611,-0.890737) ]
+
+ Part l=1:
+   [ (0.13171,-1.274) (2.0406,1.17752) (-1.80254,-0.340302) ]
+   [ (0.640126,-1.1053) (-0.785457,0.986579) (0.725949,0.430661) ]
+   [ (-1.25901,1.26772) (1.22261,-0.704127) (-1.27295,0.0716574) ]
+
+
+ Part l=2:
+   [ (-0.699084,-1.68197) (-0.482411,-1.48628) (0.215704,1.25033) (0.551469,0.42062) (0.795124,0.636616) ]
+   [ (0.522405,-1.62037) (0.479887,1.40499) (0.605501,0.366552) (-1.01028,-0.662143) (2.46867,0.250409) ]
+   [ (0.0376103,1.33382) (-0.336708,0.671129) (-0.23257,-1.01927) (-1.10624,-0.912405) (-1.49729,-1.13004) ]
+   [ (0.490532,0.364831) (1.62448,-0.31748) (-0.101089,-0.300246) (1.36258,-0.823076) (-1.61671,0.0582258) ]
+   [ (0.443963,1.07747) (-1.57394,1.58904) (0.0186187,-0.376147) (0.970686,-0.55809) (0.39142,1.74658) ]
+
+.. 
+ In addition to all the operations that can be applied to generic ``SO3vec`` objects, Fourier ``SO3vec``\s 
+ also support the ``Fproduct`` and ``Fmodsq`` operations. 
+
+|
+
 =======================
 Clebsch-Gordan products
 =======================
@@ -130,6 +167,25 @@ Naturally, this means that ``u`` and ``v`` must have the same type.
 
 |
 
+
+===================
+Fproduct and Fmodsq
+===================
+
+If ``F`` and ``G`` are the Fourier transforms of two functions :math:`f,g\colon \textrm{SO}(3)\to\mathbb{C}` 
+(represented as Fourier ``SO3vec`` objects),  
+the Fourier transform of the product  :math:`h(R)=f(R)\,G(R)` can be computed directly from ``F`` and ``G`` 
+using the formula 
+
+.. math::
+ H_\ell=\frac{1}{8\pi^2} \sum_{\ell_1} \sum_{\ell_2} 
+ \frac{(2\ell_1 +1)(2\ell_2 +1)}{(2\ell +1)}~
+ C_{\ell_1,\ell_2,\ell}^\dag (F_\ell \otimes G_\ell)\, C_{\ell_1,\ell_2,\ell}.
+
+This operation is performed by the ``Fproduct`` function. 
+
+``Fmodsq`` uses a similar formula to compute the Fourier transform of the squared modulus function 
+:math:`h(R)=|f(R)|^2`. 
 
 ==============
 GPU operations
