@@ -416,7 +416,7 @@ class SO3vec_FFTFn(torch.autograd.Function):
         _v=_SO3vecB.view(v)
         _v.add_FFT(_f)
 
-        return v
+        return tuple(v)
 
     @staticmethod
     def backward(ctx, vg):
