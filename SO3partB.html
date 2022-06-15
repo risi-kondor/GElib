@@ -157,6 +157,8 @@
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WignerMatrix.html">Wigner matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch-Gordan matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
@@ -217,7 +219,7 @@ to the <code class="docutils literal notranslate"><span class="pre">l=2</span></
 <p>A zero <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> would be constructed similarly using the <code class="docutils literal notranslate"><span class="pre">gelib.SO3part.zeros(b,l,n)</span></code> constructor.
 In both cases the optional <code class="docutils literal notranslate"><span class="pre">dev</span></code> argument selects whether the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is
 placed on the CPU (<code class="docutils literal notranslate"><span class="pre">dev=0</span></code>) or the GPU (<code class="docutils literal notranslate"><span class="pre">dev=1</span></code>).
-The batch dimension, <code class="docutils literal notranslate"><span class="pre">b</span></code>, order <code class="docutils literal notranslate"><span class="pre">l</span></code>, and multiplicity <code class="docutils literal notranslate"><span class="pre">n</span></code> of the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> are read out as follows.</p>
+The batch dimension, <code class="docutils literal notranslate"><span class="pre">b</span></code>, the order <code class="docutils literal notranslate"><span class="pre">l</span></code>, and multiplicity <code class="docutils literal notranslate"><span class="pre">n</span></code> of the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> are read out as follows.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">.</span><span class="n">getb</span><span class="p">()</span>
 <span class="go">1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">.</span><span class="n">getl</span><span class="p">()</span>

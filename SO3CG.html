@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3part" href="SO3partB.html" /><link rel="prev" title="Clebsch-Gordan matrices" href="SO3CG.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3element" href="SO3elementB.html" /><link rel="prev" title="Wigner matrices" href="WignerMatrix.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
-        <title>SO3element - GElib documentation</title>
+        <title>Clebsch–Gordan matrices - GElib documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=0254c309f5cadf746f1a613e7677379ac9c8cdcd" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=16fb25fabf47304eee183a5e9af80b1ba98259b1" />
@@ -158,8 +158,8 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="WignerMatrix.html">Wigner matrices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch-Gordan matrices</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3element</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Clebsch–Gordan matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
@@ -190,17 +190,45 @@
           </label>
         </div>
         <article role="main">
-          <section id="so3element">
-<h1>SO3element<a class="headerlink" href="#so3element" title="Permalink to this headline">¶</a></h1>
-<p>An <code class="docutils literal notranslate"><span class="pre">SO3element</span></code> object represents a single group element <img alt="R\in\mathrm{SO}(3)" class="math" src="_images/math/58098a343047e1438732735950b6a5ef3fa5550d.svg"/>.
-The group element can be initialized from its <img alt="(\phi,\theta,\psi)" class="math" src="_images/math/360e0faa1a98c2db28b5f9623272a2a4703ece1f.svg"/> Euler angles or
-chosen randomly from the group.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3element</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
-<span class="go">SO3element(0.200000,1.000000,-0.100000)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3element</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span>
-<span class="go">SO3element(0.534275,2.801079,1.191856)</span>
+          <section id="clebsch-gordan-matrices">
+<h1>Clebsch–Gordan matrices<a class="headerlink" href="#clebsch-gordan-matrices" title="Permalink to this headline">¶</a></h1>
+<p>Given two irreps <img alt="D^{(\ell_1)}" class="math" src="_images/math/4a6ef88a0da2afec6a334c34ba29420e03ef2c65.svg"/> and <img alt="D^{(\ell_2)}" class="math" src="_images/math/310fc4937d5aa6a5d5d7d28aff93eeacc3cfb6c1.svg"/> of SO(3), the tensor product
+representation <img alt="D^{(\ell_1)}\otimes D^{(\ell_2)}" class="math" src="_images/math/2e1e30a07573e9d7e5c8f8b9a25e25bf2719421a.svg"/> reduces into a direct sum of irreps in the form</p>
+<div class="math-wrapper"><div class="math">
+<p><img alt="(D^{(\ell_1)}\otimes D^{(\ell_2)})(R)= C_{\ell_1,\ell_2} \biggl[\bigoplus_{\ell=|\ell_1-\ell_2|}^{\ell_1+\ell_2} D^{(\ell)(R)}\biggr] C_{\ell_1,\ell_2}^\dag" src="_images/math/66c15a9596a05ae5618a7b4ea3da3b3b95d8665d.svg"/></p>
+</div></div><p>called the Clebsch–Gordan decomposition.
+The submatrix of <img alt="C_{\ell_1,\ell_2}" class="math" src="_images/math/eb363aec611ca77bc23901b8a20ea01dbb11cfc3.svg"/> corresponding to a particular value of <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/> we will denote
+<img alt="C_{\ell_1,\ell_2,\ell}" class="math" src="_images/math/c634fe43088a3063e0547d5b4a49af82625a3557.svg"/>.</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">SO3ClebschGordanTensor(l1,l2,l)</span></code> returns <img alt="C_{\ell_1,\ell_2,\ell}" class="math" src="_images/math/c634fe43088a3063e0547d5b4a49af82625a3557.svg"/> as a third order tensor.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3CGtensor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span>
+<span class="go">tensor([[[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">         [-0.5774,  0.0000,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">         [ 0.0000, -0.7071,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">         [ 0.0000,  0.0000, -0.7071,  0.0000,  0.0000],</span>
+<span class="go">         [ 0.0000,  0.0000,  0.0000, -0.5774,  0.0000]],</span>
+
+<span class="go">        [[ 0.8165,  0.0000,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">         [ 0.0000,  0.4082,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">         [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">         [ 0.0000,  0.0000,  0.0000, -0.4082,  0.0000],</span>
+<span class="go">         [ 0.0000,  0.0000,  0.0000,  0.0000, -0.8165]],</span>
+
+<span class="go">        [[ 0.0000,  0.5774,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">         [ 0.0000,  0.0000,  0.7071,  0.0000,  0.0000],</span>
+<span class="go">         [ 0.0000,  0.0000,  0.0000,  0.7071,  0.0000],</span>
+<span class="go">         [ 0.0000,  0.0000,  0.0000,  0.0000,  0.5774],</span>
+<span class="go">         [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000]]])</span>
+</pre></div>
+</div>
+<p>As apparent from this output, the SO(3) Clebsch–Gordan coefficients satisfy
+<img alt="C_{\ell_1,\ell_2,\ell}(m_1,m_2,m)=0" class="math" src="_images/math/2a1baee79603105c0b411b5f06db29f8d15be5bd.svg"/> unless <img alt="m_1+m_2=m" class="math" src="_images/math/bf080ef3da9ab43b1c665ba2ebe5b20221fd8e09.svg"/>.
+Hence, the coefficients can also given as elements of a <img alt="(2\ell_1+1)\times (2\ell_2+1)" class="math" src="_images/math/73be7170743ec5e716d710f33e17fe1f6ae03410.svg"/> dimensional tensor.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">D</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3CGmatrix</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">D</span>
+<span class="go">tensor([[ 0.0000, -0.5774, -0.7071, -0.7071, -0.5774],</span>
+<span class="go">        [ 0.8165,  0.4082,  0.0000, -0.4082, -0.8165],</span>
+<span class="go">        [ 0.5774,  0.7071,  0.7071,  0.5774,  0.0000]])</span>
 </pre></div>
 </div>
 </section>
@@ -210,23 +238,23 @@ chosen randomly from the group.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="SO3partB.html">
+          <a class="next-page" href="SO3elementB.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">SO3part</div>
+                <div class="title">SO3element</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="SO3CG.html">
+          <a class="prev-page" href="WignerMatrix.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Clebsch-Gordan matrices</div>
+                <div class="title">Wigner matrices</div>
                 
               </div>
             </a>
@@ -238,7 +266,7 @@ chosen randomly from the group.</p>
               and
               <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
               <a href="https://github.com/pradyunsg/furo">Furo theme</a>. |
-            <a class="muted-link" href="_sources/SO3elementB.rst.txt"
+            <a class="muted-link" href="_sources/SO3CG.rst.txt"
                rel="nofollow">
               Show Source
             </a>
