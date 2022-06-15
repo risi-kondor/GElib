@@ -15,6 +15,7 @@
 #include "Gtensor.hpp"
 #include "SO3element.hpp"
 #include "Factorial.hpp"
+#include "Ctensor2_view.hpp"
 
 extern default_random_engine rndGen;
 
@@ -51,7 +52,7 @@ namespace GElib{
     
   public:
 
-    TYPE littled(const int l, const int m1, const int m2, const double beta){
+    static TYPE littled(const int l, const int m1, const int m2, const double beta){
       double x=0;
 
       if(l<5){
@@ -83,6 +84,24 @@ namespace GElib{
 
   };
 
+
+  inline void add_WignerMatrix_to(const cnine::Ctensor2_view& x, 
+    const int l, const double phi, const double theta, const double psi){
+    assert(l>=0);
+    assert(x.n0==2*l+1);
+    assert(x.n1==2*l+1);
+
+    for(int m1=-l; m1<=l; m1++)
+      for(int m2=-l; m2<=l; m2++){
+	complex<float> d=WignerMatrix<float>::littled(l,m2,m1,theta);
+	x.inc(m1+l,m2+l,d*exp(-complex<float>(0,m1*phi))*exp(-complex<float>(0,m2*psi)));
+      }
+  }
+
+  inline void add_WignerMatrix_to(cnine::CtensorB& x, 
+    const int l, const double phi, const double theta, const double psi){
+    add_WignerMatrix_to(x.view2(),l,phi,theta,psi);
+  }
 
   //inline Gtensor<float> SO3element::operator()(const Gtensor<float>& x){
   //auto D=WignerMatrix<float>(1,*this);

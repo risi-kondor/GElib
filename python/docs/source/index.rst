@@ -14,6 +14,10 @@ GElib
 
    intro.rst
 
+   WignerMatrix.rst 
+
+   SO3CG.rst
+
    SO3elementB.rst
 
    SO3partB.rst

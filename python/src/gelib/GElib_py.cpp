@@ -30,6 +30,7 @@
 #include "SO3partB_array.hpp"
 #include "SO3vecB_array.hpp"
 
+#include "SO3CGtensor.hpp"
 
 //std::default_random_engine rndGen;
 
@@ -86,6 +87,17 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
 
   m.def("CGproduct",static_cast<SO3type (*)(const SO3type&, const SO3type&, const int)>(&CGproduct),
     py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
+
+  m.def("add_WignerMatrix_to",
+    static_cast<void(*)(cnine::CtensorB&, const int, const double, const double, const double)>(&add_WignerMatrix_to));
+
+  m.def("add_CGmatrix_to",[](cnine::RtensorObj& R, const int l1, const int l2, const int l){
+      R+=SO3CGmatrix(l1,l2,l);
+    });
+
+  m.def("add_CGtensor_to",[](cnine::RtensorObj& R, const int l1, const int l2, const int l){
+      R+=SO3CGtensor(l1,l2,l);
+    });
 
   #include "SO3partB_py.cpp"
   #include "SO3vecB_py.cpp"
