@@ -1,8 +1,10 @@
 include $(ROOTDIR)/config.txt
 
-CNINE_INCLUDES=-I$(CNINE_ROOT)/include -I$(CNINE_ROOT)/include/cmaps \
--I$(CNINE_ROOT)/objects/scalar -I$(CNINE_ROOT)/objects/tensor -I$(CNINE_ROOT)/objects/tensor_views \
--I$(CNINE_ROOT)/objects/tensor_array -I$(CNINE_ROOT)/objects/tensor_array/cell_ops 
+CNINE_INCLUDES=-I$(CNINE_ROOT)/include 
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/scalar -I$(CNINE_ROOT)/objects/tensor 
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_views -I$(CNINE_ROOT)/objects/tensor_array 
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/backendA -I$(CNINE_ROOT)/objects/backendB 
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_array/cell_maps -I$(CNINE_ROOT)/objects/tensor_array/cell_ops 
 
 CNINE_CUDADIR=$(CNINE_ROOT)/cuda
 

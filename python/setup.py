@@ -23,18 +23,24 @@ def main():
 
     # ------------------------------------------------------------------------------------------------------------
     
-    # TODO: better path handling
+    if 'CUDAHOME' in os.environ:
+        print("CUDA found at "+os.environ['CUDAHOME'])
+    else:
+        print("No CUDA found, installing without GPU support.")
+        compile_with_cuda=False
+
     cwd = os.getcwd()
     cnine_folder = "/../../cnine/"
-    # print(cwd)
-    # raise Exception
 
     _include_dirs = [cwd + cnine_folder + '/include',
                      cwd + cnine_folder + '/include/cmaps',
                      cwd + cnine_folder + '/objects/scalar',
                      cwd + cnine_folder + '/objects/tensor',
+                     cwd + cnine_folder + '/objects/backendA',
+                     cwd + cnine_folder + '/objects/backendB',
                      cwd + cnine_folder + '/objects/tensor_views',
                      cwd + cnine_folder + '/objects/tensor_array',
+                     cwd + cnine_folder + '/objects/tensor_array/cell_maps',
                      cwd + cnine_folder + '/objects/tensor_array/cell_ops',
                      cwd + '/../include',
                      cwd + '/../combinatorial',

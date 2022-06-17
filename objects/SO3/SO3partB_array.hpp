@@ -11,7 +11,7 @@
 #ifndef _SO3partB_array
 #define _SO3partB_array
 
-#include "CtensorB_array.hpp"
+#include "CtensorArrayB.hpp"
 #include "SO3part3_view.hpp"
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
@@ -30,7 +30,7 @@ namespace GElib{
   // An SO3partB_array is an (a1 x ... x ak) x N x b x (2l+1) x n   dimensional complex tensor.
 
 
-  class SO3partB_array: public cnine::CtensorB_array{
+  class SO3partB_array: public cnine::CtensorArrayB{
   public:
 
     typedef cnine::device device;
@@ -39,27 +39,27 @@ namespace GElib{
     typedef cnine::Gstrides Gstrides;
     typedef cnine::Ctensor3_view Ctensor3_view;
 
-    using CtensorB_array::CtensorB_array;
+    using CtensorArrayB::CtensorArrayB;
 
     
   public: // ---- Constructors -------------------------------------------------------------------------------
 
 
     //SO3partB_array(const int N, const int b, const int l, const int n, const int _dev=0):
-    //CtensorB_array({N},{b,2*l+1,n},_dev){}
+    //CtensorArrayB({N},{b,2*l+1,n},_dev){}
 
     //template<typename FILLTYPE, typename = typename 
     //     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
     //SO3partB_array(const int N, const int b, const int l, const int n, const FILLTYPE& dummy, const int _dev=0):
-    //CtensorB_array({N},{b,2*l+1,n},dummy,_dev){}
+    //CtensorArrayB({N},{b,2*l+1,n},dummy,_dev){}
 
     SO3partB_array(const Gdims& _adims, const int l, const int n, const int _dev=0):
-      CtensorB_array(_adims,{2*l+1,n},_dev){}
+      CtensorArrayB(_adims,{2*l+1,n},_dev){}
 
     template<typename FILLTYPE, typename = typename 
 	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
     SO3partB_array(const Gdims& _adims, const int l, const int n, const FILLTYPE& dummy, const int _dev=0):
-      CtensorB_array(_adims,{2*l+1,n},dummy,_dev){}
+      CtensorArrayB(_adims,{2*l+1,n},dummy,_dev){}
 
     
 
@@ -92,10 +92,10 @@ namespace GElib{
 
 
     SO3partB_array(const CtensorB& x):
-      CtensorB_array(x,-2){}
+      CtensorArrayB(x,-2){}
       
     SO3partB_array(CtensorB&& x):
-      CtensorB_array(std::move(x),-2){}
+      CtensorArrayB(std::move(x),-2){}
 
       
   public: // ---- ATen --------------------------------------------------------------------------------------
