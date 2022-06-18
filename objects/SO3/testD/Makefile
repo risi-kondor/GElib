@@ -1,9 +1,12 @@
 ROOTDIR=../../..
 include $(ROOTDIR)/common.txt
 
-INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops  
+INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions 
+INCLUDE+=-I$(SO2DIR) -I$(SO2DIR)/functions 
 
-TESTS= testSO3partD testSO3vecD 
+TESTS=$(patsubst %.cpp,%,$(wildcard *.cpp))
+
+#TESTS+= testSO3partB_array testSO3partB_array2 testSO3vecB_array 
 
 ifdef WITH_CUDA
 TESTS+= 
@@ -27,53 +30,12 @@ CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu
 endif 
 
 
-
-# -------------------------------------------------------------------------------------------------------------
-
-
-testSO3partD: testSO3partD.cpp $(DEPS) 
+$(TESTS): %: %.cpp $(DEPS)
 ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o testSO3partD testSO3partD.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+	$(NVCC) $(NVCCFLAGS) -o $@ $@.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
-	$(CC) -o testSO3partD testSO3partD.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+	$(CC) -o $@ $@.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
 endif
-
-
-#testSO3partD_covariance: testSO3partD_covariance.cpp $(DEPS) 
-#ifdef WITH_CUDA
-#	$(NVCC) $(NVCCFLAGS) -o testSO3partD_covariance testSO3partD_covariance.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-#else
-#	$(CC) -o testSO3partD_covariance testSO3partD_covariance.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-#endif
-
-
-testSO3vecD: testSO3vecD.cpp $(DEPS) 
-ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o testSO3vecD testSO3vecD.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-else
-	$(CC) -o testSO3vecD testSO3vecD.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-endif
-
-
-#testSO3vecD_covariance: testSO3vecD_covariance.cpp $(DEPS) 
-#ifdef WITH_CUDA
-#	$(NVCC) $(NVCCFLAGS) -o testSO3vecD_covariance testSO3vecD_covariance.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-#else
-#	$(CC) -o testSO3vecD_covariance testSO3vecD_covariance.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-#endif
-
-
-#testSO3vecD_gradient: testSO3vecD_gradient.cpp $(DEPS) 
-#ifdef WITH_CUDA
-#	$(NVCC) $(NVCCFLAGS) -o testSO3vecD_gradient testSO3vecD_gradient.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-#else
-#	$(CC) -o testSO3vecD_gradient testSO3vecD_gradient.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-#endif
-
-
-
-# -------------------------------------------------------------------------------------------------------------
-
 
 
 objects: $(OBJECTS) $(CUDA_OBJECTS)
@@ -92,26 +54,61 @@ anew: clean all
 
 
 
-testSO3partView: testSO3partView.cpp ../*.hpp $(DEPS)
-ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o testSO3partView testSO3partView.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-else
-	$(CC) -o testSO3partView testSO3partView.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-endif
+# -------------------------------------------------------------------------------------------------------------
 
 
-spharm-test: spharm-test.cpp ../*.hpp $(DEPS)
-ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o spharm-test spharm-test.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-else
-	$(CC) -o spharm-test spharm-test.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-endif
+#testSO3partB_array: testSO3partB_array.cpp $(DEPS) 
+#ifdef WITH_CUDA
+#	$(NVCC) $(NVCCFLAGS) -o testSO3partB_array testSO3partB_array.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+#else
+#	$(CC) -o testSO3partB_array testSO3partB_array.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+#endif
 
 
-CGproduct-covariance-test: CGproduct-covariance-test.cpp ../*.hpp $(DEPS)
-ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o CGproduct-covariance-test CGproduct-covariance-test.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-else
-	$(CC) -o CGproduct-covariance-test CGproduct-covariance-test.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-endif
+#testSO3partB_array2: testSO3partB_array2.cpp $(DEPS) 
+#ifdef WITH_CUDA
+#	$(NVCC) $(NVCCFLAGS) -o testSO3partB_array2 testSO3partB_array2.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+#else
+#	$(CC) -o testSO3partB_array2 testSO3partB_array2.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+#endif
+
+
+#testSO3vecB_array: testSO3vecB_array.cpp $(DEPS) 
+#ifdef WITH_CUDA
+#	$(NVCC) $(NVCCFLAGS) -o testSO3vecB_array testSO3vecB_array.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+#else
+#	$(CC) -o testSO3vecB_array testSO3vecB_array.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+#endif
+
+
+
+# -------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+#testSO3partView: testSO3partView.cpp ../*.hpp $(DEPS)
+#ifdef WITH_CUDA
+#	$(NVCC) $(NVCCFLAGS) -o testSO3partView testSO3partView.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+#else
+#	$(CC) -o testSO3partView testSO3partView.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+#endif
+
+
+#spharm-test: spharm-test.cpp ../*.hpp $(DEPS)
+#ifdef WITH_CUDA
+#	$(NVCC) $(NVCCFLAGS) -o spharm-test spharm-test.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+#else
+#	$(CC) -o spharm-test spharm-test.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+#endif
+
+
+#CGproduct-covariance-test: CGproduct-covariance-test.cpp ../*.hpp $(DEPS)
+#ifdef WITH_CUDA
+#	$(NVCC) $(NVCCFLAGS) -o CGproduct-covariance-test CGproduct-covariance-test.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+#else
+#	$(CC) -o CGproduct-covariance-test CGproduct-covariance-test.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+#endif
 

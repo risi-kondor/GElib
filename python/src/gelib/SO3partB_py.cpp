@@ -17,12 +17,10 @@ py::class_<SO3partB>(m,"SO3partB",
 //    return SO3part::raw(b,l,n,dev);}, 
 //  py::arg("b"), py::arg("l"), py::arg("n")=1, py::arg("device")=0)
 
-//.def_static("zero",static_cast<SO3partB(*)(const int, const int, const int)>(&SO3partB::zero))
   .def_static("zero",[](const int b, const int l, const int n, const int dev){
       return SO3partB::zero(b,l,n,dev);}, 
     py::arg("b"), py::arg("l"), py::arg("n")=1, py::arg("device")=0)
 
-//.def_static("gaussian",static_cast<SO3partB(*)(const int, const int, const int)>(&SO3partB::gaussian))
   .def_static("gaussian",[](const int b, const int l, const int n, const int dev){
       return SO3partB::gaussian(b,l,n,dev);}, 
     py::arg("b"), py::arg("l"), py::arg("n")=1, py::arg("device")=0)
@@ -48,7 +46,22 @@ py::class_<SO3partB>(m,"SO3partB",
 //  .def("__setitem__",[](SO3part& obj, const vector<int> v, const complex<float> x){
 //      obj.set_value(v[0],v[1],x);})
 
-  .def("add_spharm",&SO3partB::add_spharm)
+  .def("add_spharm",[](SO3partB& obj, const float x, const float y, const float z){
+    obj.add_spharm(x,y,z);})
+  .def("add_spharm",[](SO3partB& obj, at::Tensor& _X){
+      RtensorA X=RtensorA::view(_X);
+      obj.add_spharm(X);})
+  .def("add_spharmB",[](SO3partB& obj, at::Tensor& _X){
+      RtensorA X=RtensorA::view(_X);
+      obj.add_spharmB(X);})
+
+  .def("addCGproduct",&SO3partB::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
+  .def("addCGproduct_back0",&SO3partB::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
+  .def("addCGproduct_back1",&SO3partB::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
+
+  .def("addDiagCGproduct",&SO3partB::add_DiagCGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
+  .def("addDiagCGproduct_back0",&SO3partB::add_DiagCGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
+  .def("addDiagCGproduct_back1",&SO3partB::add_DiagCGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
 
   .def("apply",&SO3partB::rotate)
 
@@ -59,11 +72,12 @@ py::class_<SO3partB>(m,"SO3partB",
     
   .def("str",&SO3partB::str,py::arg("indent")="")
   .def("__str__",&SO3partB::str,py::arg("indent")="")
-//.def("__repr__",&SO3partB::repr,py::arg("indent")="")
+  .def("__repr__",&SO3partB::repr,py::arg("indent")="")
 ;
 
 
 // ---- Stand-alone functions --------------------------------------------------------------------------------
+
     
 m.def("CGproduct",[](const SO3partB& x, const SO3partB& y, const int l){return x.CGproduct(y,l);});
 

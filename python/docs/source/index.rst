@@ -6,28 +6,28 @@
 GElib
 =================================
 
+.. include:: abstract.rst 
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-.. include:: intro.rst
+   intro.rst
 
-###########
-SO3 classes
-###########
+   WignerMatrix.rst 
 
-..
-   include:: SO3classesB.rst
+   SO3CG.rst
 
-.. include:: SO3elementB.rst
+   SO3elementB.rst
 
-.. include:: SO3partB.rst
+   SO3partB.rst
 
-.. include:: SO3vecB.rst
+   SO3vecB.rst
 
-.. include:: SO3partArr.rst
+   SO3partArr.rst
 
-.. include:: SO3vecArr.rst
+   SO3vecArr.rst
+
 
 
 

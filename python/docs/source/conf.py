@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'GElib'
-copyright = '2021, Risi Kondor'
+copyright = '2021-2022, Risi Kondor'
 author = 'Risi Kondor'
 
 
