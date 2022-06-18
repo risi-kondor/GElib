@@ -89,7 +89,8 @@ def main():
         _cxx_compile_args.extend(['-D_WITH_CUDA', '-D_WITH_CUBLAS'])
 
     _depends = ['setup.py',
-                'src/gelib.cpp'
+                'src/gelib.cpp',
+                'bindings/*.cpp'
     #             'SO3part_py.cpp',
     #             'SO3vec_py.cpp',
     #             'SO3partArray_py.cpp',
@@ -121,7 +122,7 @@ def main():
             # '../cuda/SO3Fpart_addFproduct.cu',
             # '../cuda/SO3Fpart_addFproduct_back0.cu',
             # '../cuda/SO3Fpart_addFproduct_back1.cu',
-            'src/gelib/GElib_py.cpp'
+            'bindings/GElib_py.cpp'
         ],
             include_dirs=_include_dirs,
             extra_compile_args={
@@ -130,7 +131,7 @@ def main():
             depends=_depends
         )]
     else:
-        ext_modules = [CppExtension('gelib_base', ['src/gelib/GElib_py.cpp'],
+        ext_modules = [CppExtension('gelib_base', ['bindings/GElib_py.cpp'],
                                     include_dirs=_include_dirs,
                                     # sources=sources,
                                     extra_compile_args={

@@ -10,5 +10,7 @@ from gelib.SO3vecArr import *
 from gelib.Wigner import *
 from gelib.CGtensor import *
 
+from gelib.SO3partB import *
+
 #from gelib.gelib_torchC import *
 # from gelib.gelib_torchD import *
