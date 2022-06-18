@@ -13,7 +13,7 @@
 
 #include "CtensorB.hpp"
 #include "SO3part3_view.hpp"
-#include "SO3Fpart3_view.hpp"
+//#include "SO3Fpart3_view.hpp"
 
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
@@ -22,10 +22,13 @@
 #include "SO3part_addCGsquareFn.hpp"
 
 #include "SO3part_addFproduct_Fn.hpp"
+//#include "SO3part_addFproductB_Fn.hpp"
 #include "SO3part_addFproduct_back0Fn.hpp"
+//#include "SO3part_addFproductB_back0Fn.hpp"
 #include "SO3part_addFproduct_back1Fn.hpp"
 
 //#include "SO3_CGbank.hpp"
+#include "RtensorA.hpp"
 #include "SO3_SPHgen.hpp"
 #include "SO3element.hpp"
 #include "WignerMatrix.hpp"
@@ -147,10 +150,10 @@ namespace GElib{
     }
 
 
-    SO3Fpart3_view Fview() const{
-      if(dev==0) return SO3Fpart3_view(arr,dims,strides,coffs);
-      else return SO3Fpart3_view(arrg,dims,strides,coffs,dev);
-    }
+    //SO3Fpart3_view Fview() const{
+    //if(dev==0) return SO3Fpart3_view(arr,dims,strides,coffs);
+    //else return SO3Fpart3_view(arrg,dims,strides,coffs,dev);
+    //}
 
 
   public: // ---- Operations ---------------------------------------------------------------------------------
@@ -217,6 +220,13 @@ namespace GElib{
 
       float length=sqrt(x*x+y*y+z*z); 
       float len2=sqrt(x*x+y*y);
+      if(len2==0 || std::isnan(x/len2) || std::isnan(y/len2)){
+	float a=sqrt(((float)(2*l+1))/(M_PI*4.0));
+	for(int i=0; i<B; i++)
+	  for(int j=0; j<n; j++)
+	    v.inc(i,l,j,a);
+	return;
+      }
       complex<float> cphi(x/len2,y/len2);
 
       cnine::Gtensor<float> P=SO3_sphGen(l,z/length);
@@ -231,7 +241,91 @@ namespace GElib{
 	for(int i=0; i<B; i++){
 	  for(int j=0; j<n; j++){
 	    v.inc(i,l+m,j,a);
-	    v.inc(i,l-m,j,b);
+	    if(m>0) v.inc(i,l-m,j,b);
+	  }
+	}
+      }
+    }
+
+
+    void add_spharm(const cnine::RtensorA& x){
+      int l=getl();
+      int B=getb();
+      int n=getn();
+      cnine::Ctensor3_view v=view3();
+      assert(x.dims.size()==3);
+      assert(x.dims[0]==B);
+      assert(x.dims[1]==3);
+      assert(x.dims[2]==n);
+
+      for(int b=0; b<B; b++){
+	for(int j=0; j<n; j++){
+	  float vx=x(b,0,j);
+	  float vy=x(b,1,j);
+	  float vz=x(b,2,j);
+	  float length=sqrt(vx*vx+vy*vy+vz*vz); 
+	  float len2=sqrt(vx*vx+vy*vy);
+
+	  if(len2==0 || std::isnan(vx/len2) || std::isnan(vy/len2)){
+	    float a=sqrt(((float)(2*l+1))/(M_PI*4.0));
+	    for(int j=0; j<n; j++)
+	      v.inc(b,l,j,a);
+	    return;
+	  }
+
+	  complex<float> cphi(vx/len2,vy/len2);
+	  cnine::Gtensor<float> P=SO3_sphGen(l,vz/length);
+	  vector<complex<float> > phase(l+1);
+	  phase[0]=complex<float>(1.0,0);
+	  for(int m=1; m<=l; m++)
+	    phase[m]=cphi*phase[m-1];
+      
+	  for(int m=0; m<=l; m++){
+	    complex<float> a=phase[m]*complex<float>(P(l,m)); // *(1-2*(m%2))
+	    complex<float> aa=complex<float>(1-2*(m%2))*std::conj(a);
+	    v.inc(b,l+m,j,a);
+	    if(m>0) v.inc(b,l-m,j,aa);
+	  }
+
+	}
+      }
+    }
+
+
+    void add_spharmB(const cnine::RtensorA& x){ // deprecated
+      int l=getl();
+      int B=getb();
+      int n=getn();
+      cnine::Ctensor3_view v=view3();
+      assert(x.dims.size()==2);
+      assert(x.dims[0]==B);
+      assert(x.dims[1]==3);
+
+      for(int b=0; b<B; b++){
+	float vx=x(b,0);
+	float vy=x(b,1);
+	float vz=x(b,2);
+	float length=sqrt(vx*vx+vy*vy+vz*vz); 
+	float len2=sqrt(vx*vx+vy*vy);
+	if(len2==0 || std::isnan(vx/len2) || std::isnan(vy/len2)){
+	  float a=sqrt(((float)(2*l+1))/(M_PI*4.0));
+	  for(int j=0; j<n; j++)
+	    v.inc(b,l,j,a);
+	  return;
+	}
+	complex<float> cphi(vx/len2,vy/len2);
+	cnine::Gtensor<float> P=SO3_sphGen(l,vz/length);
+	vector<complex<float> > phase(l+1);
+	phase[0]=complex<float>(1.0,0);
+	for(int m=1; m<=l; m++)
+	  phase[m]=cphi*phase[m-1];
+      
+	for(int m=0; m<=l; m++){
+	  complex<float> a=phase[m]*complex<float>(P(l,m)); // *(1-2*(m%2))
+	  complex<float> aa=complex<float>(1-2*(m%2))*std::conj(a);
+	  for(int j=0; j<n; j++){
+	    v.inc(b,l+m,j,a);
+	    if(m>0) v.inc(b,l-m,j,aa);
 	  }
 	}
       }
@@ -329,14 +423,36 @@ namespace GElib{
       SO3part_addFproduct_Fn()(view3(),x.view3(),y.view3());
     }
 
+    void add_FproductB(const SO3partB& x, const SO3partB& y){
+      SO3part_addFproduct_Fn(0,1)(view3(),x.view3(),y.view3());
+    }
+
     void add_Fproduct_back0(const SO3partB& g, const SO3partB& y){
       SO3part_addFproduct_back0Fn()(view3(),g.view3(),y.view3());
+    }
+
+    void add_FproductB_back0(const SO3partB& g, const SO3partB& y){
+      SO3part_addFproduct_back0Fn(0,1)(view3(),g.view3(),y.view3());
     }
 
     void add_Fproduct_back1(const SO3partB& g, const SO3partB& x){
       SO3part_addFproduct_back1Fn()(view3(),g.view3(),x.view3());
     }
 
+    void add_FproductB_back1(const SO3partB& g, const SO3partB& x){
+      SO3part_addFproduct_back1Fn(0,1)(view3(),g.view3(),x.view3());
+    }
+
+
+  public: // ---- I/O ----------------------------------------------------------------------------------------
+
+    string repr(const string indent="") const{
+      return "<GElib::SO3partB(l="+to_string(getl())+",n="+to_string(getn())+")>";
+    }
+    
+    friend ostream& operator<<(ostream& stream, const SO3partB& x){
+      stream<<x.str(); return stream;
+    }
 
   };
 

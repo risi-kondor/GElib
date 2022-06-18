@@ -1,6 +1,4 @@
 import torch
-import gelib_base
-#import gelib_torchD as gelib
 import gelib 
 
 
@@ -8,13 +6,12 @@ import gelib
 # In a full CG-product each fragment in each part of x is multiplied with each fragment of each part in y 
 
 # Define the type
-N=3
-b=1
+adims=[2,1]
 tau=[1,1]
 
 # Define two random SO3vec objects  
-x=gelib.SO3vecArr.randn(N,b,tau)
-y=gelib.SO3vecArr.randn(N,b,tau)
+x=gelib.SO3vecArr.randn(adims,tau)
+y=gelib.SO3vecArr.randn(adims,tau)
 x.parts[1].requires_grad_()
 
 # Compute the CG-product
@@ -32,12 +29,12 @@ print("\n\n")
 # ---- CG-product covariance test ----------------------------------------------------------------------------
 print("CG-product covariance test\n")
 
-N=3
-b=2
+adims=[2,1]
 tau=[1,1]
-R=gelib_base.SO3element.uniform()
-x=gelib.SO3vecArr.randn(N,b,tau)
-y=gelib.SO3vecArr.randn(N,b,tau)
+
+R=gelib.SO3element.uniform()
+x=gelib.SO3vecArr.randn(adims,tau)
+y=gelib.SO3vecArr.randn(adims,tau)
 
 z=gelib.CGproduct(x,y)
 print("CG-product:")

@@ -152,7 +152,7 @@ class SO3vecArr:
     @staticmethod
     def zeros_like(x):
         R=SO3vecrArr()
-        b=x.parts[0].dim(0)
+        # b=x.parts[0].dim(0)
         for l in range(0,len(x.parts)):
             R.parts.append(SO3partArr(torch.zeros_like(x.parts[l])))
         return R;

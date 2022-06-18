@@ -23,6 +23,7 @@ INCLUDE+=-I$(CUDA_HOME)/include
 CUDA_OBJECTS+=SO3partB_addCGproduct.o SO3partB_addCGproduct_back0.o SO3partB_addCGproduct_back1.o 
 CUDA_OBJECTS+=SO3partB_addDiagCGproduct.o SO3partB_addDiagCGproduct_back0.o SO3partB_addDiagCGproduct_back1.o 
 CUDA_OBJECTS+=SO3Fpart_addFproduct.o SO3Fpart_addFproduct_back0.o SO3Fpart_addFproduct_back1.o 
+#CUDA_OBJECTS+=SO3Fpart_addFproductB.o SO3Fpart_addFproductB_back0.o #SO3Fpart_addFproduct_back1.o 
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
 endif 
 
@@ -64,8 +65,14 @@ SO3partB_addDiagCGproduct_back1.o: SO3partB_addDiagCGproduct_back1.cu Makefile
 SO3Fpart_addFproduct.o: SO3Fpart_addFproduct.cu Makefile  
 	$(NVCC) $(NVCCFLAGS) -c SO3Fpart_addFproduct.cu $(CFLAGS) $(MACROS) $(INCLUDE) 
 
+#SO3Fpart_addFproductB.o: SO3Fpart_addFproductB.cu Makefile  
+#	$(NVCC) $(NVCCFLAGS) -c SO3Fpart_addFproductB.cu $(CFLAGS) $(MACROS) $(INCLUDE) 
+
 SO3Fpart_addFproduct_back0.o: SO3Fpart_addFproduct_back0.cu Makefile  
 	$(NVCC) $(NVCCFLAGS) -c SO3Fpart_addFproduct_back0.cu $(CFLAGS) $(MACROS) $(INCLUDE) 
+
+#SO3Fpart_addFproductB_back0.o: SO3Fpart_addFproductB_back0.cu Makefile  
+#	$(NVCC) $(NVCCFLAGS) -c SO3Fpart_addFproductB_back0.cu $(CFLAGS) $(MACROS) $(INCLUDE) 
 
 SO3Fpart_addFproduct_back1.o: SO3Fpart_addFproduct_back1.cu Makefile  
 	$(NVCC) $(NVCCFLAGS) -c SO3Fpart_addFproduct_back1.cu $(CFLAGS) $(MACROS) $(INCLUDE) 

@@ -17,8 +17,19 @@
 #include "SO3partB.hpp"
 #include "SO3element.hpp"
 
+#include "SO3_addFFT_Fn.hpp"
+#include "SO3_addIFFT_Fn.hpp"
+
 
 namespace GElib{
+
+  #ifdef _WITH_CUDA
+  void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, 
+    const cnine::Ctensor3_view& y, const int conj, const int method, const cudaStream_t& stream);
+  //void SO3Fpart_addFproductB_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, 
+  //const cnine::Ctensor3_view& y, const int conj, const cudaStream_t& stream);
+  #endif
+
 
 
 
@@ -208,6 +219,18 @@ namespace GElib{
     }
 
     
+    void forall_parts(std::function<void(const SO3partB& x)> lambda) const{
+      int L=parts.size();
+      for(int l=0; l<L; l++)
+	lambda(*parts[l]);
+    }
+
+    void forall_parts(std::function<void(SO3partB& x)> lambda){
+      int L=parts.size();
+      for(int l=0; l<L; l++)
+	lambda(*parts[l]);
+    }
+
 
     // ---- Cumulative operations ----------------------------------------------------------------------------
 
@@ -240,6 +263,15 @@ namespace GElib{
       SO3vecB R;
       for(int l=0; l<parts.size(); l++){
 	R.parts.push_back(new SO3partB((*parts[l])-(*y.parts[l])));
+      }
+      return R;
+    }
+
+    SO3vecB operator/(const SO3vecB& y) const{
+      SO3vecB R;
+      assert(y.parts.size()==parts.size());
+      for(int l=0; l<parts.size(); l++){
+	R.parts.push_back(new SO3partB( (*parts[l]/(*y.parts[l])) ));
       }
       return R;
     }
@@ -464,7 +496,16 @@ namespace GElib{
     }
 
 
-    void add_Fproduct(const SO3vecB& x, const SO3vecB& y){
+    SO3vecB FproductB(const SO3vecB& y, int maxl=-1) const{
+      assert(y.getb()==getb());
+      if(maxl<0) maxl=get_maxl()+y.get_maxl();
+      SO3vecB R=SO3vecB::Fzero(getb(),maxl,get_dev());
+      R.add_FproductB(*this,y);
+      return R;
+    }
+
+
+    void add_Fproduct(const SO3vecB& x, const SO3vecB& y, const int method=0){
       int L1=x.get_maxl(); 
       int L2=y.get_maxl();
       int L=get_maxl();
@@ -472,14 +513,47 @@ namespace GElib{
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
-	    SO3part_addFproduct_Fn()(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3());
+	    SO3part_addFproduct_Fn(0,method)(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3());
 	  }
 	}
       }
     }
 
+    
+    void add_FproductB(const SO3vecB& x, const SO3vecB& y){
+      int L1=x.get_maxl(); 
+      int L2=y.get_maxl();
+      int L=get_maxl();
+	
+      if(get_dev()==0){
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
+	    SO3part_addFproduct_Fn()(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3());
+	  }
+	}
+      }
+      }
 
-    void add_Fproduct_back0(const SO3vecB& g, const SO3vecB& y){
+      #ifdef _WITH_CUDA
+      if(get_dev()==1){
+	for(int l=0; l<=L1+L2 && l<=L ; l++){
+	  cudaStream_t stream;
+	  CUDA_SAFE(cudaStreamCreate(&stream));
+	  for(int l1=std::max(0,l-L2); l1<=std::min(l+L2,L1); l1++){
+	    for(int l2=std::abs(l-l1); l2<=std::min(l+l1,L2); l2++){
+	      SO3Fpart_addFproduct_cu(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3(),0,0,stream);
+	    }
+	  }
+	  CUDA_SAFE(cudaStreamSynchronize(stream));
+	  CUDA_SAFE(cudaStreamDestroy(stream));
+	}
+      }
+      #endif 
+    }
+
+
+    void add_Fproduct_back0(const SO3vecB& g, const SO3vecB& y, const int method=0){
       int L1=get_maxl(); 
       int L2=y.get_maxl();
       int L=g.get_maxl();
@@ -487,7 +561,7 @@ namespace GElib{
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
-	    SO3part_addFproduct_back0Fn()(parts[l1]->view3(),g.parts[l]->view3(),y.parts[l2]->view3());
+	    SO3part_addFproduct_back0Fn(0,method)(parts[l1]->view3(),g.parts[l]->view3(),y.parts[l2]->view3());
 	  }
 	}
       }
@@ -568,9 +642,26 @@ namespace GElib{
     }
 
 
-    // ---- CG-products ---------------------------------------------------------------------------------------
+  public: // ---- FFT ---------------------------------------------------------------------------------------
 
 
+    cnine::CtensorB iFFT(const int n0, const int n1, const int n2) const{
+      cnine::CtensorB R=cnine::CtensorB::zero(cnine::Gdims(getb(),n0,n1,n2),get_dev());
+      add_iFFT_to(R);
+      return R;
+    }
+
+    void add_iFFT_to(cnine::CtensorB& R) const{
+      forall_parts([&](const SO3partB& x){
+	  SO3part_addIFFT_Fn()(R.view4(),x.view3());
+	});
+    }
+
+    void add_FFT(const cnine::CtensorB& R){
+      forall_parts([&](const SO3partB& x){
+	  SO3part_addFFT_Fn()(x.view3(),R.view4());
+	});
+    }
 
 
   public: // ---- I/O ---------------------------------------------------------------------------------------
@@ -588,7 +679,7 @@ namespace GElib{
     }
 
     string repr(const string indent="") const{
-      return "<GElib::SO3vecB of type"+get_tau().str()+">";
+      return "<GElib::SO3vecB of type "+get_tau().str()+">";
     }
     
     friend ostream& operator<<(ostream& stream, const SO3vecB& x){
@@ -601,16 +692,30 @@ namespace GElib{
   // ---- Post-class functions -------------------------------------------------------------------------------
 
 
-  inline std::vector<SO3type> get_types(const std::vector<const SO3vecB*>& v){
-    vector<SO3type> R;
-    for(auto p:v)
-      R.push_back(p->get_type());
-    return R;
-  }
+  //inline std::vector<SO3type> get_types(const std::vector<const SO3vecB*>& v){
+  //vector<SO3type> R;
+  //for(auto p:v)
+  //  R.push_back(p->get_type());
+  //return R;
+  //}
 
 
   
 
+  // ---- Stand-alone functions ------------------------------------------------------------------------------
+
+
+  inline cnine::CtensorB SO3_iFFT(const SO3vecB& v, const int n0, const int n1, const int n2){
+    return v.iFFT(n0,n1,n2);
+  }
+
+  inline SO3vecB SO3_FFT(const cnine::CtensorB& f, const int _maxl){
+    assert(f.ndims()==4);
+    int B=f.dim(0);
+    SO3vecB R=SO3vecB::Fzero(B,_maxl,f.get_dev());
+    R.add_FFT(f);
+    return R;
+  }
 
 }
 

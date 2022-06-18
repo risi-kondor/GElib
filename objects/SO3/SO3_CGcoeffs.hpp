@@ -17,6 +17,8 @@
 #include "SO3_CGbank.hpp" 
 #include "Gtensor.hpp"
 
+#define _SO3_CGcoeff_TYPE double 
+
 extern default_random_engine rndGen;
 
 
@@ -70,13 +72,13 @@ namespace GElib{
 
   private:
 
-    TYPE logfact(int n){
+    double logfact(double n){
       return lgamma(n+1);
     }
     
-    TYPE plusminus(int k){ if(k%2==1) return -1; else return +1; }
+    _SO3_CGcoeff_TYPE plusminus(int k){ if(k%2==1) return -1; else return +1; }
 
-    TYPE slowCG(const int m1, const int m2){
+    _SO3_CGcoeff_TYPE slowCG(const int m1, const int m2){
       
       int m=m1+m2;
       int m3=-m;
@@ -89,16 +91,16 @@ namespace GElib{
       int tmin=std::max(0,std::max(t1,t2));
       int tmax=std::min(t3,std::min(t4,t5));
 
-      TYPE logA=(logfact(l1+l2-l)+logfact(l1-l2+l)+logfact(-l1+l2+l)-logfact(l1+l2+l+1))/2;
+      _SO3_CGcoeff_TYPE logA=(logfact(l1+l2-l)+logfact(l1-l2+l)+logfact(-l1+l2+l)-logfact(l1+l2+l+1))/2;
       logA+=(logfact(l1+m1)+logfact(l1-m1)+logfact(l2+m2)+logfact(l2-m2)+logfact(l+m3)+logfact(l-m3))/2;
 
-      TYPE wigner=0;
+      _SO3_CGcoeff_TYPE wigner=0;
       for(int t=tmin; t<=tmax; t++){
-	TYPE logB=logfact(t)+logfact(t-t1)+logfact(t-t2)+logfact(t3-t)+logfact(t4-t)+logfact(t5-t);
+	_SO3_CGcoeff_TYPE logB=logfact(t)+logfact(t-t1)+logfact(t-t2)+logfact(t3-t)+logfact(t4-t)+logfact(t5-t);
 	wigner += plusminus(t)*exp(logA-logB);
       }
       
-      return plusminus(l1-l2-m3)*plusminus(l1-l2+m)*sqrt((TYPE)(2*l+1))*wigner; 
+      return plusminus(l1-l2-m3)*plusminus(l1-l2+m)*sqrt((_SO3_CGcoeff_TYPE)(2*l+1))*wigner; 
     }
 
   };

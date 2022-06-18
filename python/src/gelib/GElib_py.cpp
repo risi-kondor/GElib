@@ -20,17 +20,17 @@
 
 #include "WignerMatrix.hpp"
 #include "SO3type.hpp"
-#include "SO3part.hpp"
-#include "SO3vec.hpp"
+//#include "SO3part.hpp"
+//#include "SO3vec.hpp"
 //#include "SO3partArray.hpp"
 //#include "SO3vecArray.hpp"
 
 #include "SO3partB.hpp"
 #include "SO3vecB.hpp"
-#include "SO3Fvec.hpp"
-#include "SO3partD.hpp"
-#include "SO3vecD.hpp"
+#include "SO3partB_array.hpp"
+#include "SO3vecB_array.hpp"
 
+#include "SO3CGtensor.hpp"
 
 //std::default_random_engine rndGen;
 
@@ -46,6 +46,8 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
 
   py::options options;
   //options.disable_function_signatures();
+
+  m.def("version",[](){cout<<_GELIB_VERSION<<endl;});
 
   py::class_<SO3element>(m,"SO3element")
 
@@ -86,29 +88,24 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   m.def("CGproduct",static_cast<SO3type (*)(const SO3type&, const SO3type&, const int)>(&CGproduct),
     py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
 
-  /*
-  m.def("CGproduct",[](const vector<int>& x, const vector<int>& y, const int maxl){ // this causes problems with dispatch
-      return CGproduct(SO3type(x),SO3type(y),maxl);},
-    py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
-  m.def("CGproduct",[](const SO3type& x, const vector<int>& y, const int maxl){
-      return CGproduct(x,SO3type(y),maxl);},
-    py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
-  m.def("CGproduct",[](const vector<int>& x, const SO3type& y, const int maxl){
-      return CGproduct(SO3type(x),y,maxl);},
-    py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
-  */
+  m.def("add_WignerMatrix_to",
+    static_cast<void(*)(cnine::CtensorB&, const int, const double, const double, const double)>(&add_WignerMatrix_to));
 
-  //#include "SO3part_py.cpp"
-  //#include "SO3vec_py.cpp"
-  //  #include "SO3partArray_py.cpp"
-  //#include "SO3vecArray_py.cpp"
+  m.def("add_CGmatrix_to",[](cnine::RtensorObj& R, const int l1, const int l2, const int l){
+      R+=SO3CGmatrix(l1,l2,l);
+    });
+
+  m.def("add_CGtensor_to",[](cnine::RtensorObj& R, const int l1, const int l2, const int l){
+      R+=SO3CGtensor(l1,l2,l);
+    });
 
   #include "SO3partB_py.cpp"
   #include "SO3vecB_py.cpp"
-  #include "SO3Fvec_py.cpp"
 
-  #include "SO3partD_py.cpp"
-  #include "SO3vecD_py.cpp"
+  #include "SO3partB_array_py.cpp"
+  #include "SO3vecB_array_py.cpp"
+
+  //#include "CtensorB_py.cpp"
 
 }
 

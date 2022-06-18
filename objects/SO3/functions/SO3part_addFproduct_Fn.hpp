@@ -13,7 +13,7 @@
 
 #include "GElib_base.hpp"
 #include "CtensorB.hpp"
-//#include "SO3Fpart3_view.hpp"
+#include "SO3Fpart2_view.hpp"
 #include "Ctensor3_view.hpp"
 
 extern GElib::SO3_CGbank SO3_cgbank;
@@ -24,7 +24,7 @@ namespace GElib{
 
   #ifdef _WITH_CUDA
   void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, 
-    const cnine::Ctensor3_view& y, const int conj, const cudaStream_t& stream);
+    const cnine::Ctensor3_view& y, const int conj, const int method, const cudaStream_t& stream);
   #endif
 
 
@@ -32,9 +32,10 @@ namespace GElib{
   public:
 
     int conj=0;
+    int method=0;
 
     SO3part_addFproduct_Fn(){}
-    SO3part_addFproduct_Fn(const int _conj): conj(_conj){}
+    SO3part_addFproduct_Fn(const int _conj, const int _method=0): conj(_conj), method(_method){}
 
   public:
 
@@ -84,9 +85,9 @@ namespace GElib{
 	      }
 	    }
 	  });
-      else 
-	CUDA_STREAM(SO3Fpart_addFproduct_cu(_r,_x,_y,conj,stream));
-
+      else{
+	CUDA_STREAM(SO3Fpart_addFproduct_cu(_r,_x,_y,conj,method,stream));
+      }
     }
     
   };

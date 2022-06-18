@@ -3,8 +3,9 @@ SO3vec
 ******
 
 
-An ``SO3vec`` object represents a general SO(3)-covariant vector and is stored 
-as a sequence of ``SO3part`` objects. Once again, ``SO3vec`` also has an additional batch dimension. 
+An ``SO3vec`` object represents a general SO(3)-covariant vector, stored 
+as a sequence of ``SO3part`` objects. 
+Similarly to ``SO3part``, ``SO3vec`` also has a batch dimension. 
 
 The `type` of an ``SO3vec`` is a list specifying the multiplicity of each of its parts. 
 For example, the following creates a random ``SO3vec`` of type (2,3,1). 
@@ -29,10 +30,12 @@ For example, the following creates a random ``SO3vec`` of type (2,3,1).
     [ (-0.440433,-0.919034) (-0.700111,-0.901544) (1.29377,-0.482789) (-1.26476,-1.61195) (-1.42624,-0.967444) ]
 
 
-The type of an SO(3)-vector can be accessed as follows.
+The batch dimension and type of an SO(3)-vector can be accessed as follows.
 
 .. code-block:: python
 
+ >>> v.getb()
+ 1
  >>> v.tau()
  [2, 3, 1]
 
@@ -45,34 +48,144 @@ The invidual parts are stored in the ``parts`` member variable
     [ (0.541032,1.58891) (-1.55468,-0.30842) (-0.937764,0.634763) ]
     [ (0.871103,-0.726917) (0.787215,-1.39109) (2.66829,0.85663) ]
 
+|
+
+===============
+Fourier vectors
+===============
+
+As mentioned before, one context in which ``SO3vec`` objects appear is when computing the 
+Fourier transform of functions on SO(3). In this case, however, all the ``SO3part``\s are square. 
+Such ``SO3vec`` objects are created with the ``Fzero`` or ``Frandn`` constructors, which take only two 
+arguments: the batch dimension and :math:`\ell_{\textrm{max}}`. 
+
+.. code-block:: python
+
+ >>> v=gelib.SO3vec.Frandn(1,2)
+ >>> v
+ <GElib::SO3vecB of type (1,3,5)>
+ >>> print(v)
+ Part l=0:
+   [ (1.87611,-0.890737) ]
+
+ Part l=1:
+   [ (0.13171,-1.274) (2.0406,1.17752) (-1.80254,-0.340302) ]
+   [ (0.640126,-1.1053) (-0.785457,0.986579) (0.725949,0.430661) ]
+   [ (-1.25901,1.26772) (1.22261,-0.704127) (-1.27295,0.0716574) ]
+
+
+ Part l=2:
+   [ (-0.699084,-1.68197) (-0.482411,-1.48628) (0.215704,1.25033) (0.551469,0.42062) (0.795124,0.636616) ]
+   [ (0.522405,-1.62037) (0.479887,1.40499) (0.605501,0.366552) (-1.01028,-0.662143) (2.46867,0.250409) ]
+   [ (0.0376103,1.33382) (-0.336708,0.671129) (-0.23257,-1.01927) (-1.10624,-0.912405) (-1.49729,-1.13004) ]
+   [ (0.490532,0.364831) (1.62448,-0.31748) (-0.101089,-0.300246) (1.36258,-0.823076) (-1.61671,0.0582258) ]
+   [ (0.443963,1.07747) (-1.57394,1.58904) (0.0186187,-0.376147) (0.970686,-0.55809) (0.39142,1.74658) ]
+
+.. 
+ In addition to all the operations that can be applied to generic ``SO3vec`` objects, Fourier ``SO3vec``\s 
+ also support the ``Fproduct`` and ``Fmodsq`` operations. 
+
+|
 
 =======================
 Clebsch-Gordan products
 =======================
 
-The Clebsch-Gordan product of two SO3-vectors is computed as follows.
+The full Clebsch-Gordan product (CG-product) of two SO3-vectors is computed as follows.
 
 .. code-block:: python
 
- >>> u=gelib.SO3vec.randn(1,[1,1])
- >>> v=gelib.SO3vec.randn(1,[1,1])
- >>> w=gelib.CGproduct(u,v)
- >>> print(w)
- Part l=0:
-   [ (0.800454,-2.72231) (0.387997,-2.21325) ]
- 
- Part l=1:
-   [ (-1.08378,0.166964) (-1.13947,1.02458) (-0.979756,-0.170846) ]
-   [ (-3.14667,-0.020229) (-1.60544,-0.595765) (-0.658927,1.13758) ]
-   [ (0.573493,3.50629) (0.609701,-0.290724) (-1.86063,-0.256204) ]
- 
- Part l=2:
-   [ (0.545523,0.23039) ]
-   [ (1.0578,1.10345) ]
-   [ (0.098245,0.754121) ]
-   [ (1.15855,-0.537074) ]
-   [ (-0.530323,0.658823) ]
+  >>> v=gelib.SO3vec.randn(1,[2,2])
+  >>> u=gelib.SO3vec.randn(1,[2,2])
+  >>> v=gelib.SO3vec.randn(1,[2,2])
+  >>> w=gelib.CGproduct(u,v)
+  >>> print(w)
+  Part l=0:
+    [ (0.152031,-0.140948) (-0.176707,0.0986708) (-0.0514539,2.16813) (0.54849,-2.04492) (-1.24255,-0.815015) (-1.40811,-0.123935) (-0.391867,1.13209) (-0.161307,-0.330928) ]
 
+
+  Part l=1:
+    [ (0.0961476,-0.243252) (0.171405,-0.405961) (1.1234,2.495) (1.79502,4.24597) (-0.730597,0.187905) (0.736381,-0.00987765) (0.698929,0.568218) (-0.532079,-0.700114) (-0.163401,0.429268) (-0.412671,1.27816) (0.850947,-1.12338) (2.10184,-2.1415) ]
+    [ (-0.0326659,-0.024234) (0.00847598,0.172192) (0.419973,-0.0682939) (-1.35334,-1.19208) (-0.374269,0.472096) (0.463849,-0.361595) (1.51776,-0.805567) (-1.62546,0.414405) (-0.0409343,-0.262541) (-0.664351,-1.61683) (-0.958011,-0.645344) (-2.28508,0.289834) ]
+    [ (0.304888,-0.0110071) (0.0900037,-0.295688) (-2.14074,2.36709) (1.5615,2.83128) (-0.456644,-0.978039) (0.207788,1.03305) (-0.936221,-0.103796) (0.864218,0.314231) (0.494024,-0.0305465) (0.703364,-0.464528) (-1.7338,-0.26607) (-0.553973,1.15706) ]
+
+
+  Part l=2:
+    [ (-0.728853,0.612083) (-1.2514,1.00255) (1.10502,0.265513) (1.85081,0.490198) ]
+    [ (-0.0748801,0.618935) (-0.0294498,0.478025) (0.970257,-1.34299) (1.06154,-1.94166) ]
+    [ (-0.750575,-0.508764) (-1.11883,-0.688738) (-0.534416,0.477625) (-0.479641,1.47743) ]
+    [ (-0.737463,0.204984) (0.522857,0.792809) (1.75326,0.526698) (1.35542,-1.92182) ]
+    [ (0.430848,-1.52889) (-1.32246,-0.916922) (-0.943746,-1.01531) (-1.28382,0.569196) ]
+
+The optional third argument of ``CGproduct`` can be used to limit the result to parts 
+:math:`\ell=0,1,\ldots,\ell_{\text{max}}`. 
+
+.. code-block:: python
+
+  >>> w=gelib.CGproduct(u,v,1)
+  >>> print(w)
+  Part l=0:
+    [ (0.152031,-0.140948) (-0.176707,0.0986708) (-0.0514539,2.16813) (0.54849,-2.04492) (-1.24255,-0.815015) (-1.40811,-0.123935) (-0.391867,1.13209) (-0.161307,-0.330928) ]
+
+
+  Part l=1:
+    [ (0.0961476,-0.243252) (0.171405,-0.405961) (1.1234,2.495) (1.79502,4.24597) (-0.730597,0.187905) (0.736381,-0.00987765) (0.698929,0.568218) (-0.532079,-0.700114) (-0.163401,0.429268) (-0.412671,1.27816) (0.850947,-1.12338) (2.10184,-2.1415) ]
+    [ (-0.0326659,-0.024234) (0.00847598,0.172192) (0.419973,-0.0682939) (-1.35334,-1.19208) (-0.374269,0.472096) (0.463849,-0.361595) (1.51776,-0.805567) (-1.62546,0.414405) (-0.0409343,-0.262541) (-0.664351,-1.61683) (-0.958011,-0.645344) (-2.28508,0.289834) ]
+    [ (0.304888,-0.0110071) (0.0900037,-0.295688) (-2.14074,2.36709) (1.5615,2.83128) (-0.456644,-0.978039) (0.207788,1.03305) (-0.936221,-0.103796) (0.864218,0.314231) (0.494024,-0.0305465) (0.703364,-0.464528) (-1.7338,-0.26607) (-0.553973,1.15706) ]
+
+|
+
+================================
+Diagonal Clebsch-Gordan products
+================================
+
+In the full CG-product, every fragment of ``u`` is multiplied with every fragment of ``v``, 
+often leading to output vectors with very large numbers of fragments. In 
+contrast, the ``DiagCGproduct`` function only computes the product between corresponding fragments. 
+Naturally, this means that ``u`` and ``v`` must have the same type.
+
+.. code-block:: python
+
+  >>> w=gelib.DiagCGproduct(u,v)
+  >>> print(w)
+  Part l=0:
+    [ (0.152031,-0.140948) (0.54849,-2.04492) (-1.24255,-0.815015) (-0.161307,-0.330928) ]
+
+
+  Part l=1:
+    [ (0.0961476,-0.243252) (1.79502,4.24597) (-0.730597,0.187905) (-0.532079,-0.700114) (-0.163401,0.429268) (2.10184,-2.1415) ]
+    [ (-0.0326659,-0.024234) (-1.35334,-1.19208) (-0.374269,0.472096) (-1.62546,0.414405) (-0.0409343,-0.262541) (-2.28508,0.289834) ]
+    [ (0.304888,-0.0110071) (1.5615,2.83128) (-0.456644,-0.978039) (0.864218,0.314231) (0.494024,-0.0305465) (-0.553973,1.15706) ]
+
+
+  Part l=2:
+    [ (-0.728853,0.612083) (1.85081,0.490198) ]
+    [ (-0.0748801,0.618935) (1.06154,-1.94166) ]
+    [ (-0.750575,-0.508764) (-0.479641,1.47743) ]
+    [ (-0.737463,0.204984) (1.35542,-1.92182) ]
+    [ (0.430848,-1.52889) (-1.28382,0.569196) ]
+
+|
+
+
+===================
+Fproduct and Fmodsq
+===================
+
+If ``F`` and ``G`` are the Fourier transforms of two functions :math:`f,g\colon \textrm{SO}(3)\to\mathbb{C}` 
+(represented as Fourier ``SO3vec`` objects),  
+the Fourier transform of the product  :math:`h(R)=f(R)\,G(R)` can be computed directly from ``F`` and ``G`` 
+using the formula 
+
+.. math::
+ H_\ell=\frac{1}{8\pi^2} \sum_{\ell_1} \sum_{\ell_2} 
+ \frac{(2\ell_1 +1)(2\ell_2 +1)}{(2\ell +1)}~
+ C_{\ell_1,\ell_2,\ell}^\dag (F_\ell \otimes G_\ell)\, C_{\ell_1,\ell_2,\ell}.
+
+This operation is performed by the ``Fproduct`` function. 
+
+``Fmodsq`` uses a similar formula to compute the Fourier transform of the squared modulus function 
+:math:`h(R)=|f(R)|^2`. 
 
 ==============
 GPU operations
@@ -90,4 +203,6 @@ the same way as ``SO3part`` objects.
 
 Similarly to the ``SO3part`` case, operations between GPU-resident ``SO3vec`` s are executed  
 on the GPU and the result is placed on the same device.  
+
+|
 

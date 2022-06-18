@@ -17,6 +17,7 @@
 using namespace std; 
 //using namespace Cnine; 
 
+#define _GELIB_VERSION "0.0.0 5/3/22"
 
 #define GELIB_ASSERT(condition, message) if (!(condition)) {cout<<message<<endl; assert ((condition)); exit(-1); }
 #define GELIB_UNIMPL() printf("GElib error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
@@ -99,6 +100,18 @@ namespace GElib{
 #endif 
 
 
+// ---- Conevenience functions --------------------------------------------------------------------------------
+
+// move to cnine
+namespace std{
+template<>
+struct hash<pair<int,int>>{
+public:
+  size_t operator()(const pair<int,int>& ix) const{
+    return ((hash<int>()(ix.first)<<1)^hash<int>()(ix.second));
+  }
+};
+}
 
 
 

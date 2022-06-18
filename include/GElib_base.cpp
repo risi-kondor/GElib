@@ -18,6 +18,8 @@
 
 #include "SO3_CGbank.hpp"
 #include "SO3_SPHgen.hpp"
+#include "SO2FourierMatrixBank.hpp"
+#include "SO3FourierMatrixBank.hpp"
 #include "Factorial.hpp"
 //#include "SO3CGprogramBank.hpp"
 
@@ -34,6 +36,8 @@ vector<int> GElib::factorial::fact;
 
 GElib::SO3_CGbank SO3_cgbank;
 GElib::SO3_SPHgen SO3_sphGen;
+GElib::SO2FourierMatrixBank SO2FmatrixBank;
+GElib::SO3FourierMatrixBank SO3FourierMxBank;
 
 //GElib::SO3CGprogramBank SO3_CGprogram_bank;
 
