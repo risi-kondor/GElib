@@ -204,6 +204,13 @@ namespace GElib{
 	parts.push_back(new SO3partB(p));
     }
 
+    vector<at::Tensor> torch(){
+      vector<at::Tensor> R;
+      for(auto p: parts)
+	R.push_back(p->torch());
+      return R;
+    }
+
 #endif
 
  

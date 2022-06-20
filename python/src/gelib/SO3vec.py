@@ -43,7 +43,7 @@ class SO3vec:
 
     # ---- Static constructors ------------------------------------------------------------------------------
 
-    @staticmethod
+    @classmethod
     def zeros(b, _tau, _dev=0):
         "Construct a zero SO3vec object of given type _tau."
         R = SO3vec()
@@ -51,7 +51,7 @@ class SO3vec:
             R.parts.append(SO3part.zeros(b, l, _tau[l], _dev))
         return R
 
-    @staticmethod
+    @classmethod
     def randn(b, _tau, _dev=0):
         "Construct a random SO3vec object of given type _tau."
         R = SO3vec()
@@ -59,7 +59,7 @@ class SO3vec:
             R.parts.append(SO3part.randn(b, l, _tau[l], _dev))
         return R
 
-    @staticmethod
+    @classmethod
     def spharm(b, _tau, x, y, z, _dev=0):
         """
         Compute a vector of spherical harmonic coefficients. 
@@ -70,7 +70,7 @@ class SO3vec:
             R.parts.append(SO3part.spharM(b, l, _tau[l], x, y, z, _dev))
         return R
 
-    @staticmethod
+    @classmethod
     def Fzeros(b, maxl, _dev=0):
         "Construct an SO3vec corresponding the to the Forier matrices 0,1,...maxl of b functions on SO(3)."
         R = SO3vec()
@@ -78,7 +78,7 @@ class SO3vec:
             R.parts.append(SO3part.Fzeros(b, l, _dev))
         return R
 
-    @staticmethod
+    @classmethod
     def Frandn(b, maxl, _dev=0):
         "Construct a zero SO3Fvec object  with l ranging from 0 to maxl."
         R = SO3vec()
@@ -86,7 +86,7 @@ class SO3vec:
             R.parts.append(SO3part.Frandn(b, l, _dev))
         return R
 
-    @staticmethod
+    @classmethod
     def zeros_like(x):
         R = SO3vec()
         # b=x.parts[0].dim(0)

@@ -20,9 +20,13 @@ py::class_<SO3vecB>(m,"SO3vecB",
     return SO3vecB::Fraw(b,maxl,dev);}, 
     py::arg("b"), py::arg("maxl"), py::arg("device")=0)
 
-//.def_static("Fraw",static_cast<SO3vecB(*)(const int, const int, const int)>(&SO3vecB::Fraw))
-//  .def_static("Fzero",static_cast<SO3vecB(*)(const int, const int)>(&SO3vecB::Fzero))
-//  .def_static("Fgaussian",static_cast<SO3vecB(*)(const int, const int)>(&SO3vecB::Fgaussian))
+  .def_static("Fzero",[](const int b, const int maxl, const int dev){
+    return SO3vecB::Fzero(b,maxl,dev);}, 
+    py::arg("b"), py::arg("maxl"), py::arg("device")=0)
+
+  .def_static("Fgaussian",[](const int b, const int maxl, const int dev){
+    return SO3vecB::Fgaussian(b,maxl,dev);}, 
+    py::arg("b"), py::arg("maxl"), py::arg("device")=0)
 
   .def(pybind11::init<vector<at::Tensor>&>())
 
@@ -33,6 +37,8 @@ py::class_<SO3vecB>(m,"SO3vecB",
       return r;
     })
 
+  .def("torch",&SO3vecB::torch)
+
   .def("get_dev",&SO3vecB::get_dev)
   .def("getb",&SO3vecB::getb)
   .def("get_tau",&SO3vecB::get_tau)
@@ -40,14 +46,17 @@ py::class_<SO3vecB>(m,"SO3vecB",
 
   .def("apply",&SO3vecB::rotate)
 
+  .def("CGproduct",&SO3vecB::CGproduct,py::arg("y"),py::arg("maxl")=-1)
   .def("addCGproduct",&SO3vecB::add_CGproduct,py::arg("x"),py::arg("y"))
   .def("addCGproduct_back0",&SO3vecB::add_CGproduct_back0,py::arg("g"),py::arg("y"))
   .def("addCGproduct_back1",&SO3vecB::add_CGproduct_back1,py::arg("g"),py::arg("x"))
 
+  .def("DiagCGproduct",&SO3vecB::CGproduct,py::arg("y"),py::arg("maxl")=-1)
   .def("addDiagCGproduct",&SO3vecB::add_DiagCGproduct,py::arg("x"),py::arg("y"))
   .def("addDiagCGproduct_back0",&SO3vecB::add_DiagCGproduct_back0,py::arg("g"),py::arg("y"))
   .def("addDiagCGproduct_back1",&SO3vecB::add_DiagCGproduct_back1,py::arg("g"),py::arg("x"))
 
+  .def("Fproduct",&SO3vecB::Fproduct,py::arg("y"),py::arg("maxl")=-1)
   .def("addFproduct",&SO3vecB::add_Fproduct,py::arg("x"),py::arg("y"),py::arg("method")=0)
   .def("addFproduct_back0",&SO3vecB::add_Fproduct_back0,py::arg("g"),py::arg("y"),py::arg("method")=0)
   .def("addFproduct_back1",&SO3vecB::add_Fproduct_back1,py::arg("g"),py::arg("x"))
