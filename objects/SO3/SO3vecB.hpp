@@ -166,6 +166,7 @@ namespace GElib{
       for(auto p: parts)
 	R.parts.push_back(new SO3partB(p->CtensorB::view()));
       if(grad) R.grad=new SO3vecB(view());
+      return R;
     }
 
 
