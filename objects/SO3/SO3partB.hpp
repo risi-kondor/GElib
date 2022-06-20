@@ -13,6 +13,7 @@
 
 #include "CtensorB.hpp"
 #include "SO3part3_view.hpp"
+//#include "FakeGrad.hpp"
 //#include "SO3Fpart3_view.hpp"
 
 #include "SO3part_addCGproductFn.hpp"
@@ -44,7 +45,8 @@ namespace GElib{
   // An SO3partB is a  b x (2l+1) x n   dimensional complex tensor.
 
 
-  class SO3partB: public cnine::CtensorB{
+  class SO3partB: public cnine::CtensorB 
+  {
   public:
 
     typedef cnine::device device;
@@ -53,6 +55,16 @@ namespace GElib{
 
     
     using CtensorB::CtensorB;
+
+#ifdef WITH_FAKE_GRAD
+    SO3partB* grad=nullptr;
+#endif 
+
+    ~SO3partB(){
+#ifdef WITH_FAKE_GRAD
+      if(!is_view) delete grad;
+#endif 
+    }
 
 
   public: // ---- Constructors -------------------------------------------------------------------------------
@@ -93,6 +105,22 @@ namespace GElib{
       return SO3partB(b,l,2*l+1,cnine::fill_gaussian(),_dev);}
 
 
+  public: // ---- Copying ------------------------------------------------------------------------------------
+    // only needed for grad
+
+    #ifdef WITH_FAKE_GRAD
+    SO3partB(const SO3partB& x):
+      CtensorB(x){
+      if(x.grad) grad=new SO3partB(*x.grad);
+    }
+      
+    SO3partB(SO3partB&& x):
+      CtensorB(std::move(x)){
+      grad=x.grad;
+      x.grad=nullptr;
+    }
+    #endif 
+
   public: // ---- Conversions --------------------------------------------------------------------------------
 
 
@@ -108,6 +136,7 @@ namespace GElib{
       assert(dims(1)%2==1);
     }
       
+
   public: // ---- Transport -----------------------------------------------------------------------------------
 
 
@@ -138,6 +167,10 @@ namespace GElib{
         
   public: // ---- Access views --------------------------------------------------------------------------------
 
+
+    SO3partB _view(){
+      return CtensorB::view();
+    }
 
     SO3part3_view view() const{
       if(dev==0) return SO3part3_view(arr,dims,strides,coffs);
@@ -442,6 +475,28 @@ namespace GElib{
     void add_FproductB_back1(const SO3partB& g, const SO3partB& x){
       SO3part_addFproduct_back1Fn(0,1)(view3(),g.view3(),x.view3());
     }
+
+
+  public: // ---- Experimental -------------------------------------------------------------------------------
+
+
+
+    #ifdef WITH_FAKE_GRAD
+    void add_to_grad(const SO3partB& x){
+      if(grad) grad->add(x);
+      else grad=new SO3partB(x);
+    }
+
+    SO3partB& get_grad(){
+      if(!grad) grad=new SO3partB(SO3partB::zeros_like(*this));
+      return *grad;
+    }
+
+    SO3partB view_of_grad(){
+      if(!grad) grad=new SO3partB(SO3partB::zeros_like(*this));
+      return SO3partB(grad->CtensorB::view());
+    }
+    #endif 
 
 
   public: // ---- I/O ----------------------------------------------------------------------------------------

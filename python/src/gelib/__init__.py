@@ -11,6 +11,8 @@ from gelib.Wigner import *
 from gelib.CGtensor import *
 
 from gelib.SO3partB import *
+from gelib.SO3vecB import *
+
 
 #from gelib.gelib_torchC import *
 # from gelib.gelib_torchD import *
