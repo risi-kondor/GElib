@@ -179,7 +179,6 @@ class SO3partB_CGproductFn(torch.autograd.Function):
     def forward(ctx,x,y,l):
         r=SO3partB.zeros(x.getb(),l,x.getn()*y.getn(),x.get_dev())
         r.obj.addCGproduct(x.obj,y.obj)
-        ctx.l=l
         ctx.x=x
         ctx.y=y
         ctx.r=r
@@ -201,7 +200,6 @@ class SO3partB_DiagCGproductFn(torch.autograd.Function):
         assert x.getn()==y.getn()
         r=SO3partB.zeros(x.getb(),l,x.getn(),x.get_dev())
         r.obj.addDiagCGproduct(x.obj,y.obj)
-        ctx.l=l
         ctx.x=x
         ctx.y=y
         ctx.r=r
@@ -233,12 +231,12 @@ class SO3partB_InitFromTorchTensorFn(torch.autograd.Function):
 class SO3partB_ToTorchTensorFn(torch.autograd.Function):
 
     @staticmethod
-    def backward(ctx,x):
+    def forward(ctx,x):
         ctx.x=x
         return obj.view_of_grad().torch()
 
     @staticmethod
-    def forward(ctx,g):
+    def backward(ctx,g):
         assert(g.dim()==4)
         assert(g.size(3)==2)
         assert(g.size(1)%2==1)
