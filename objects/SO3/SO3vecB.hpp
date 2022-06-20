@@ -48,11 +48,17 @@ namespace GElib{
 
     vector<SO3partB*> parts;
 
+    #ifdef WITH_FAKE_GRAD
+    SO3vecB* grad;
+    #endif
 
     SO3vecB(){}
 
     ~SO3vecB(){
       for(auto p: parts) delete p;  
+      #ifdef WITH_FAKE_GRAD
+      delete grad;
+      #endif
     }
 
 
@@ -137,11 +143,29 @@ namespace GElib{
     SO3vecB(const SO3vecB& x){
       for(auto& p:x.parts)
 	parts.push_back(p);
+      #ifdef WITH_FAKE_GRAD
+      if(x.grad) grad=new SO3vecB(*x.grad);
+      #endif 
     }
 
     SO3vecB(SO3vecB&& x){
       parts=x.parts;
       x.parts.clear();
+      #ifdef WITH_FAKE_GRAD
+      grad=x.grad;
+      x.grad=nullptr;
+      #endif 
+    }
+
+
+    // ---- Views ---------------------------------------------------------------------------------------------
+
+
+    SO3vecB view(){
+      SO3vecB R;
+      for(auto p: parts)
+	R.parts.push_back(new SO3partB(p->CtensorB::view()));
+      if(grad) R.grad=new SO3vecB(view());
     }
 
 
@@ -662,6 +686,28 @@ namespace GElib{
 	  SO3part_addFFT_Fn()(x.view3(),R.view4());
 	});
     }
+
+
+  public: // ---- Experimental -------------------------------------------------------------------------------
+
+
+
+    #ifdef WITH_FAKE_GRAD
+    void add_to_grad(const SO3vecB& x){
+      if(grad) grad->add(x);
+      else grad=new SO3vecB(x);
+    }
+
+    SO3vecB& get_grad(){
+      if(!grad) grad=new SO3vecB(SO3vecB::zeros_like(*this));
+      return *grad;
+    }
+
+    SO3vecB view_of_grad(){
+      if(!grad) grad=new SO3vecB(SO3vecB::zeros_like(*this));
+      return grad->view();
+    }
+    #endif 
 
 
   public: // ---- I/O ---------------------------------------------------------------------------------------

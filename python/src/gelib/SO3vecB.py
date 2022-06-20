@@ -10,6 +10,7 @@
 import torch
 from cnine import ctensorb 
 from gelib_base import SO3partB as _SO3partB
+from gelib_base import SO3vecB as _SO3vecB
 
 
 # ----------------------------------------------------------------------------------------------------------
@@ -17,78 +18,83 @@ from gelib_base import SO3partB as _SO3partB
 # ----------------------------------------------------------------------------------------------------------
 
 
-class SO3partB(torch.Tensor):
+class SO3vecB(torch.Tensor):
     """
-    A collection of vectors that transform according to a specific irreducible representation of SO(3).
-    The vectors are stacked into a third order tensor. The first index is the batch index, the second
-    is m=-l,...,l, and the third index is the fragment index. 
+    An SO(3)-covariant vector consisting of a sequence of SO3part objects, each transforming according
+    to a specific irrep of SO(3).
     """
 
     def __init__(self):
         self.obj=_SO3partB.zero(1,1,1)
 
     def __init__(self, x):
-        if(isinstance(x,SO3partB)):
+        if(isinstance(x,SO3vecB)):
             super().__init__(x)
             self.obj=x.obj
             return
-        if(isinstance(x,_SO3partB)):
+        if(isinstance(x,_SO3vecB)):
             self.obj=x
             return
-        if(isinstance(x,torch.Tensor)):
-           self=SO3partB_InitFromTorchTensorFn.apply(x)
-       
-    @classmethod
-    def raw(self, b, l, n, _dev=0):
-        r=SO3partB([1])
-        r.obj=_SO3partB.raw(b,l,n,_dev)
-        return r
-
-    @classmethod
-    def zeros(self, b, l, n, _dev=0):
-        r=SO3partB([1])
-        r.obj=_SO3partB.zero(b,l,n,_dev)
-        return r
-
-    @classmethod
-    def randn(self, b, l, n, _dev=0):
-        r=SO3partB([1])
-        r.obj=_SO3partB.gaussian(b,l,n,_dev)
-        return r
-
-    @classmethod
-    def Fraw(self, b, l, _dev=0):
-        r=SO3partB([1])
-        r.obj=_SO3partB.Fraw(b,l,n,_dev)
-        return r
-
-    @classmethod
-    def Fzeros(self, b, l, n, _dev=0):
-        r=SO3partB([1])
-        r.obj=_SO3partB.Fzero(b,l,n,_dev)
-        return r
-
-    @classmethod
-    def Frandn(self, b, l, n, _dev=0):
-        r=SO3partB([1])
-        r.obj=_SO3partB.Fgaussian(b,l,n,_dev)
-        return r
-
-    @classmethod
-    def spharm(self, l, X):
-        x=_SO3partB.zero(X.size(0),l,X.size(2))
-        x.add_spharm(X)
-        return SO3partB(x)
-
-    @classmethod
-    def zeros_like(self,x):
-        r=SO3partB([1])
-        r.obj=_SO3partB.zeros_like(x.obj)
-        return r
 
 
+# ---- Static constructors ------------------------------------------------------------------------------
 
-    # -------------------------------------------------------------------------------------------------------
+
+    @staticmethod
+    def raw(b, _tau, _dev=0):
+        "Construct a zero SO3vec object of given type _tau."
+        R = SO3vecB(1)
+        r.obj=_SO3vecB.raw(b,_tau,_dev)
+        return R
+
+    @staticmethod
+    def zeros(b, _tau, _dev=0):
+        "Construct a zero SO3vec object of given type _tau."
+        R = SO3vecB(1)
+        r.obj=_SO3vecB.zero(b,_tau,_dev)
+        return R
+
+    @staticmethod
+    def randn(b, _tau, _dev=0):
+        "Construct a zero SO3vec object of given type _tau."
+        R = SO3vecB(1)
+        r.obj=_SO3vecB.gaussian(b,_tau,_dev)
+        return R
+
+    @staticmethod
+    def Fraw(b, _tau, _dev=0):
+        "Construct a zero SO3vec object of given type _tau."
+        R = SO3vecB(1)
+        r.obj=_SO3vecB.Fraw(b,_tau,_dev)
+        return R
+
+    @staticmethod
+    def Fzeros(b, _tau, _dev=0):
+        "Construct a zero SO3vec object of given type _tau."
+        R = SO3vecB(1)
+        r.obj=_SO3vecB.Fzero(b,_tau,_dev)
+        return R
+
+    @staticmethod
+    def Frandn(b, _tau, _dev=0):
+        "Construct a zero SO3vec object of given type _tau."
+        R = SO3vecB(1)
+        r.obj=_SO3vecB.Fgaussian(b,_tau,_dev)
+        return R
+
+    #@classmethod
+    #def spharm(self, l, X):
+    #    x=_SO3partB.zero(X.size(0),l,X.size(2))
+    #    x.add_spharm(X)
+    #    return SO3partB(x)
+
+    #@classmethod
+    #def zeros_like(self,x):
+    #    r=SO3partB([1])
+    #    r.obj=_SO3partB.zeros_like(x.obj)
+    #    return r
+
+    # ---- Access -------------------------------------------------------------------------------------------
 
 
     def get_dev(self):
@@ -97,11 +103,11 @@ class SO3partB(torch.Tensor):
     def getb(self):
         return self.obj.getb()
 
-    def getl(self):
-        return self.obj.getl()
+    def get_tau(self):
+        return self.obj.get_tau()
 
-    def getn(self):
-        return self.obj.getn()
+    def get_maxl(self):
+        return self.obj.get_maxl()
 
     def _get_grad(self):
         return self.obj.get_grad()
@@ -110,22 +116,22 @@ class SO3partB(torch.Tensor):
         return self.obj.view_of_grad()
     
     def get_grad(self):
-        R=SO3partB(1)
+        R=SO3vecB(1)
         R.obj=self.obj.get_grad()
         return R
     
     def view_of_grad(self):
-        R=SO3partB(1)
+        R=SO3vecB(1)
         R.obj=self.obj.view_of_grad()
         return R
     
     def add_to_grad(self,x):
-        R=SO3partB(1)
+        R=SO3vecB(1)
         R.obj=self.obj.add_to_grad(x.obj.get_grad())
         return R
 
-    def torch(self):
-        return SO3partB_ToTorchTensorFn.apply(self)
+    #def torch(self):
+    #    return SO3vecB_ToTorchTensorFn.apply(self)
 
 
     # -------------------------------------------------------------------------------------------------------
@@ -133,7 +139,7 @@ class SO3partB(torch.Tensor):
 
     def __add__(self,y):
         print("add")
-        r=SO3partB(1)
+        r=SO3vecB(1)
         r.obj=obj.plus(y)
         return r
         

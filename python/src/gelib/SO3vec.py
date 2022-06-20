@@ -96,6 +96,7 @@ class SO3vec:
 
     # ---- Access -------------------------------------------------------------------------------------------
 
+
     def getb(self):
         return parts[0].size(0)
 
@@ -106,6 +107,7 @@ class SO3vec:
             r.append(self.parts[l].size(2))
             # r.append(self.parts[l].getn())
         return r
+
 
     # ---- Transport ---------------------------------------------------------------------------------------
 

@@ -12,8 +12,13 @@
 py::class_<SO3vecB>(m,"SO3vecB",
   "Class to store b separate SO3 Fourier transforms")
 
+  .def_static("raw",static_cast<SO3vecB(*)(const int, const SO3type&, const int)>(&SO3vecB::raw))
   .def_static("zero",static_cast<SO3vecB(*)(const int, const SO3type&, const int)>(&SO3vecB::zero))
   .def_static("gaussian",static_cast<SO3vecB(*)(const int, const SO3type&, const int)>(&SO3vecB::gaussian))
+
+  .def_static("Fraw",static_cast<SO3vecB(*)(const int, const int)>(&SO3vecB::Fraw))
+  .def_static("Fzero",static_cast<SO3vecB(*)(const int, const int)>(&SO3vecB::Fzero))
+  .def_static("Fgaussian",static_cast<SO3vecB(*)(const int, const int)>(&SO3vecB::Fgaussian))
 
   .def(pybind11::init<vector<at::Tensor>&>())
 
@@ -24,7 +29,9 @@ py::class_<SO3vecB>(m,"SO3vecB",
       return r;
     })
 
+  .def("get_dev",&SO3vecB::get_dev)
   .def("getb",&SO3vecB::getb)
+  .def("get_tau",&SO3vecB::get_tau)
   .def("get_maxl",&SO3vecB::get_maxl)
 
   .def("apply",&SO3vecB::rotate)

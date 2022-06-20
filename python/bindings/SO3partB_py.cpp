@@ -11,6 +11,8 @@
 
 py::class_<SO3partB>(m,"SO3partB",
   "Class to store an array consisting of n vectors transforming according to a specific irreducible representation of SO(3)")
+
+  .def(pybind11::init<const at::Tensor&>())
     
   .def_static("raw",[](const int b, const int l, const int n, const int dev){
     return SO3partB::raw(b,l,n,dev);}, 
@@ -36,12 +38,16 @@ py::class_<SO3partB>(m,"SO3partB",
       return SO3partB::Fgaussian(b,l,dev);}, 
     py::arg("b"), py::arg("l"), py::arg("device")=0)
 
-  .def_static("zeros_like",[](const SO3partB& x){return SO3partB::zeros_like(x);})
+  .def_static("zeros_like",[](const SO3partB& x){return SO3partB(SO3partB::zeros_like(x));})
 
 //.def(pybind11::init([](const at::Tensor& x){return SO3partB(cnine::CtensorB(x));}))
   .def_static("view",[](at::Tensor& x){return SO3partB(cnine::CtensorB::view(x));})
 //.def("torch",&cnine::CtensorObj::torch)
   .def("torch",[](const SO3partB& x){return x.torch();})
+
+  .def("add_to_grad",&SO3partB::add_to_grad)
+  .def("get_grad",&SO3partB::get_grad)
+  .def("view_of_grad",&SO3partB::view_of_grad)
 
   .def("__len__",[](const SO3partB& obj){cout<<"111"<<endl;return 1;})
 
