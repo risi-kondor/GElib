@@ -16,9 +16,13 @@ py::class_<SO3vecB>(m,"SO3vecB",
   .def_static("zero",static_cast<SO3vecB(*)(const int, const SO3type&, const int)>(&SO3vecB::zero))
   .def_static("gaussian",static_cast<SO3vecB(*)(const int, const SO3type&, const int)>(&SO3vecB::gaussian))
 
-  .def_static("Fraw",static_cast<SO3vecB(*)(const int, const int)>(&SO3vecB::Fraw))
-  .def_static("Fzero",static_cast<SO3vecB(*)(const int, const int)>(&SO3vecB::Fzero))
-  .def_static("Fgaussian",static_cast<SO3vecB(*)(const int, const int)>(&SO3vecB::Fgaussian))
+  .def_static("Fraw",[](const int b, const int maxl, const int dev){
+    return SO3vecB::Fraw(b,maxl,dev);}, 
+    py::arg("b"), py::arg("maxl"), py::arg("device")=0)
+
+//.def_static("Fraw",static_cast<SO3vecB(*)(const int, const int, const int)>(&SO3vecB::Fraw))
+//  .def_static("Fzero",static_cast<SO3vecB(*)(const int, const int)>(&SO3vecB::Fzero))
+//  .def_static("Fgaussian",static_cast<SO3vecB(*)(const int, const int)>(&SO3vecB::Fgaussian))
 
   .def(pybind11::init<vector<at::Tensor>&>())
 
