@@ -26,7 +26,11 @@ using namespace std;
 
 #define GELIB_CHECK(condition,err) if(!condition) {{cnine::CoutLock lk; cerr<<"GElib error in function '"<<__PRETTY_FUNCTION__<<"' : "<<err<<endl;} exit(1);};
 
-
+#ifdef GELIB_RANGE_CHECKING
+#define GELIB_CHECK_RANGE(expr) expr
+#else 
+#define GELIB_CHECK_RANGE(expr)
+#endif 
 
 namespace GElib{
 
@@ -51,6 +55,7 @@ namespace GElib{
 
 
 }
+
 
 
 #define GENET_CHECK_NBU(a,b,cmd) if(a!=b) {{CoutLock lk; cerr<<"GEnet error in function "<<cmd<<": bundle dimensions do not match."<<endl;} exit(1);}

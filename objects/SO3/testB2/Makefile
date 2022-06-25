@@ -4,10 +4,7 @@ include $(ROOTDIR)/common.txt
 INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions   
 INCLUDE+=-I$(SO2DIR) -I$(SO2DIR)/functions 
 
-TESTS= testSO3part testSO3part2 
-#TESTS+= testSO3part_CGproduct_covariance
-TESTS+= testSO3vec #testSO3vec2 testSO3vec3 
-#TESTS+= testSpharm\
+TESTS=$(patsubst %.cpp,%,$(wildcard *.cpp))
 
 ifdef WITH_CUDA
 TESTS+=
@@ -30,78 +27,13 @@ CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3Fpart_addFproduct.o $(GELIB_CUDADIR)/SO3Fpart_
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
 endif 
 
-
-
-# -------------------------------------------------------------------------------------------------------------
-
-
-testSO3part: testSO3part.cpp $(DEPS) 
+$(TESTS): %: %.cpp $(DEPS)
 ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o testSO3part testSO3part.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+	$(NVCC) $(NVCCFLAGS) -o $@ $@.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
-	$(CC) -o testSO3part testSO3part.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+	$(CC) -o $@ $@.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
 endif
 
-
-testSO3part2: testSO3part2.cpp $(DEPS) 
-ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o testSO3part2 testSO3part2.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-else
-	$(CC) -o testSO3part2 testSO3part2.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-endif
-
-
-testSO3part_CGproduct_covariance: testSO3part_CGproduct_covariance.cpp $(DEPS) 
-ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o testSO3part_CGproduct_covariance testSO3part_CGproduct_covariance.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-else
-	$(CC) -o testSO3part_CGproduct_covariance testSO3part_CGproduct_covariance.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-endif
-
-
-testSpharm: testSpharm.cpp $(DEPS) 
-ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o testSpharm testSpharm.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-else
-	$(CC) -o testSpharm testSpharm.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-endif
-
-
-
-# -------------------------------------------------------------------------------------------------------------
-
-
-testSO3vec: testSO3vec.cpp $(DEPS) 
-ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o testSO3vec testSO3vec.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-else
-	$(CC) -o testSO3vec testSO3vec.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-endif
-
-
-testSO3vec2: testSO3vec2.cpp $(DEPS) 
-ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o testSO3vec2 testSO3vec2.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-else
-	$(CC) -o testSO3vec2 testSO3vec2.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-endif
-
-
-testSO3vec3: testSO3vec3.cpp $(DEPS) 
-ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o testSO3vec3 testSO3vec3.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
-else
-	$(CC) -o testSO3vec3 testSO3vec3.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
-endif
-
-
-# -------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-# -------------------------------------------------------------------------------------------------------------
 
 
 

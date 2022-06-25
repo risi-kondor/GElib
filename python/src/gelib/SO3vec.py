@@ -44,7 +44,7 @@ class SO3vec:
     # ---- Static constructors ------------------------------------------------------------------------------
 
     @classmethod
-    def zeros(b, _tau, _dev=0):
+    def zeros(self, b, _tau, _dev=0):
         "Construct a zero SO3vec object of given type _tau."
         R = SO3vec()
         for l in range(0, len(_tau)):
@@ -52,7 +52,7 @@ class SO3vec:
         return R
 
     @classmethod
-    def randn(b, _tau, _dev=0):
+    def randn(self, b, _tau, _dev=0):
         "Construct a random SO3vec object of given type _tau."
         R = SO3vec()
         for l in range(0, len(_tau)):
@@ -60,7 +60,7 @@ class SO3vec:
         return R
 
     @classmethod
-    def spharm(b, _tau, x, y, z, _dev=0):
+    def spharm(self, b, _tau, x, y, z, _dev=0):
         """
         Compute a vector of spherical harmonic coefficients. 
         The values will be duplicated along the batch and channel dimensions.
@@ -71,7 +71,7 @@ class SO3vec:
         return R
 
     @classmethod
-    def Fzeros(b, maxl, _dev=0):
+    def Fzeros(self, b, maxl, _dev=0):
         "Construct an SO3vec corresponding the to the Forier matrices 0,1,...maxl of b functions on SO(3)."
         R = SO3vec()
         for l in range(0, maxl+1):
@@ -79,7 +79,7 @@ class SO3vec:
         return R
 
     @classmethod
-    def Frandn(b, maxl, _dev=0):
+    def Frandn(self, b, maxl, _dev=0):
         "Construct a zero SO3Fvec object  with l ranging from 0 to maxl."
         R = SO3vec()
         for l in range(0, maxl+1):
@@ -87,7 +87,7 @@ class SO3vec:
         return R
 
     @classmethod
-    def zeros_like(x):
+    def zeros_like(self, x):
         R = SO3vec()
         # b=x.parts[0].dim(0)
         for l in range(0, len(x.parts)):
@@ -159,6 +159,37 @@ class SO3vec:
         r = SO3vec()
         r.parts = list(SO3vec_FmodsqFn.apply(len(self.parts), maxl, *(self.parts)))
         return r
+
+    def __mul__(self, w):
+        if(isinstance(w,SO3weights)):
+            if(len(self.parts)!=len(w.parts)):
+                raise IndexError("SO3vec and SO3weights have different number of parts.")
+            R=SO3vec()
+            for l in range(len(self.parts)):
+                b=self.parts[l].getb()
+                n=self.parts[l].getn()
+                m=w.parts[l].size(1)
+                x=torch.view_as_complex(self.parts[l]).reshape([b*(2*l+1),n])
+                y=torch.view_as_complex(w.parts[l])
+                R.parts.append(torch.view_as_real(torch.matmul(x,y).reshape([b,2*l+1,m])))
+            return R
+        if(isinstance(w,torch.Tensor)):
+            R=SO3vec()
+            for l in range(len(self.parts)):
+                R.parts.append(torch.matmul(self.parts[l],w))
+            return R
+        raise TypeError("SO3vec can only be multiplied by a scalar tensor or an SO3weights object.")
+
+    def __add__(self, y):
+       if(isinstance(y,SO3vec)):
+           if(len(self.parts)!=len(y.parts)):
+               raise IndexError("SO3weights must have the same number of parts.")
+           R=SO3vec()
+           for l in range(len(self.parts)):
+               R.parts.append(self.parts[l]+y.parts)
+           return R
+       raise TypeError("Not an SO3vec object.")
+
 
     # ---- Fourier transforms -------------------------------------------------------------------------------
 

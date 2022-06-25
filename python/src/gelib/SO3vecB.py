@@ -9,9 +9,10 @@
 
 import torch
 from cnine import ctensorb 
+from gelib_base import SO3type as _SO3type
 from gelib_base import SO3partB as _SO3partB
 from gelib_base import SO3vecB as _SO3vecB
-
+from gelib import *
 
 # ----------------------------------------------------------------------------------------------------------
 # ---- SO3part ---------------------------------------------------------------------------------------------
@@ -33,6 +34,8 @@ class SO3vecB(torch.Tensor):
             self.obj=x.obj
             return
         if(isinstance(x,_SO3vecB)):
+            print(777)
+            super().__init__(1)
             self.obj=x
             return
 
@@ -41,49 +44,49 @@ class SO3vecB(torch.Tensor):
 
 
     @classmethod
-    def raw(b, _tau, _dev=0):
+    def raw(self, b, _tau, _dev=0):
         "Construct a zero SO3vec object of given type _tau."
         R = SO3vecB(1)
-        r.obj=_SO3vecB.raw(b,_tau,_dev)
+        R.obj=_SO3vecB.raw(b,_tau,_dev)
         return R
 
     @classmethod
-    def zeros(b, _tau, _dev=0):
+    def zeros(self, b, _tau, _dev=0):
         "Construct a zero SO3vec object of given type _tau."
         R = SO3vecB(1)
-        r.obj=_SO3vecB.zero(b,_tau,_dev)
+        R.obj=_SO3vecB.zero(b,_tau,_dev)
         return R
 
     @classmethod
-    def randn(b, _tau, _dev=0):
+    def randn(self, b, _tau, _dev=0):
         "Construct a zero SO3vec object of given type _tau."
         R = SO3vecB(1)
-        r.obj=_SO3vecB.gaussian(b,_tau,_dev)
+        R.obj=_SO3vecB.gaussian(b,_SO3type(_tau),_dev)
         return R
 
     @classmethod
-    def Fraw(b, _tau, _dev=0):
+    def Fraw(self, b, _tau, _dev=0):
         "Construct a zero SO3vec object of given type _tau."
         R = SO3vecB(1)
-        r.obj=_SO3vecB.Fraw(b,_tau,_dev)
+        R.obj=_SO3vecB.Fraw(b,_tau,_dev)
         return R
 
     @classmethod
-    def Fzeros(b, _tau, _dev=0):
+    def Fzeros(self, b, _tau, _dev=0):
         "Construct a zero SO3vec object of given type _tau."
         R = SO3vecB(1)
-        r.obj=_SO3vecB.Fzero(b,_tau,_dev)
+        R.obj=_SO3vecB.Fzero(b,_tau,_dev)
         return R
 
     @classmethod
-    def Frandn(b, _tau, _dev=0):
+    def Frandn(self, b, _tau, _dev=0):
         "Construct a zero SO3vec object of given type _tau."
         R = SO3vecB(1)
-        r.obj=_SO3vecB.Fgaussian(b,_tau,_dev)
+        R.obj=_SO3vecB.Fgaussian(b,_tau,_dev)
         return R
 
     @classmethod
-    def fromTorch(*args):
+    def fromTorch(self, *args):
         return SO3vecB_InitFromTorchTensorsFn.apply(*args)
 
     #@classmethod
@@ -115,6 +118,9 @@ class SO3vecB(torch.Tensor):
 
     def _get_grad(self):
         return self.obj.get_grad()
+
+    def __getitem__(self,l):
+        return SO3vecB_getPartFn.apply(self,l)
     
     def _view_of_grad(self):
         return self.obj.view_of_grad()
@@ -130,13 +136,13 @@ class SO3vecB(torch.Tensor):
         return R
     
     def add_to_grad(self,x):
-        R=SO3vecB(1)
-        R.obj=self.obj.add_to_grad(x.obj.get_grad())
-        return R
+        self.obj.add_to_grad(x.obj)
 
     def torch(self):
         return SO3vecB_ToTorchTensorsFn.apply(self)
 
+    def requires_gradient_():
+        pass
 
     # -------------------------------------------------------------------------------------------------------
 
@@ -167,7 +173,6 @@ class SO3vecB(torch.Tensor):
         """
         return SO3vecB_DiagCGproductFn.apply(self,y,maxl)
 
-
     def Fproduct(self, y, maxl=-1):
         """
         Compute the l component of the diagonal Clesbsch--Gordan product of this SO3part with another SO3part y.
@@ -194,7 +199,8 @@ class SO3vecB_CGproductFn(torch.autograd.Function):
 
     @staticmethod
     def forward(ctx,x,y,maxl):
-        r=x.CGproduct(y,maxl)
+        r=SO3vecB(1)
+        r.obj=x.obj.CGproduct(y.obj,maxl)
         ctx.x=x
         ctx.y=y
         ctx.r=r
@@ -212,8 +218,9 @@ class SO3vecB_CGproductFn(torch.autograd.Function):
 class SO3vecB_DiagCGproductFn(torch.autograd.Function):
 
     @staticmethod
-    def forward(ctx,x,y,l):
-        r=x.DiagCGproduct(y,maxl)
+    def forward(ctx,x,y,maxl):
+        r=SO3vecB(1)
+        r.obj=x.obj.DiagCGproduct(y.obj,maxl)
         ctx.x=x
         ctx.y=y
         ctx.r=r
@@ -221,8 +228,8 @@ class SO3vecB_DiagCGproductFn(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx, g):
-        xg=SO3partB(1)
-        yg=SO3partB(1)
+        xg=SO3vecB(1)
+        yg=SO3vecB(1)
         ctx.x._view_of_grad().addDiagCGproduct_back0(ctx.r._get_grad(),ctx.y.obj)
         ctx.y._view_of_grad().addDiagCGproduct_back1(ctx.r._get_grad(),ctx.x.obj)
         return xg,yg,None
@@ -232,7 +239,8 @@ class SO3vecB_FproductFn(torch.autograd.Function):
 
     @staticmethod
     def forward(ctx,x,y,l):
-        r=x.Fproduct(y,maxl)
+        r=SO3vecB(1)
+        r.obj=x.obj.Fproduct(y.obj,maxl)
         ctx.x=x
         ctx.y=y
         ctx.r=r
@@ -240,11 +248,28 @@ class SO3vecB_FproductFn(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx, g):
-        xg=SO3partB(1)
-        yg=SO3partB(1)
+        xg=SO3vecB(1)
+        yg=SO3vecB(1)
         ctx.x._view_of_grad().addFproduct_back0(ctx.r._get_grad(),ctx.y.obj)
         ctx.y._view_of_grad().addFproduct_back1(ctx.r._get_grad(),ctx.x.obj)
         return xg,yg,None
+
+
+class SO3vecB_getPartFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,x,l):
+        R=SO3partB(1)
+        R.obj=x.obj.get_part(l)
+        ctx.x=x
+        ctx.l=l
+        return R
+
+    @staticmethod
+    def backward(ctx,g):
+        xg=SO3vecB(1)
+        ctx.x.obj.add_to_part_of_grad(ctx.l,g.obj)
+        return xg,None
 
 
 class SO3vecB_InitFromTorchTensorsFn(torch.autograd.Function):
@@ -267,7 +292,7 @@ class SO3vecB_ToTorchTensorsFn(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx,g):
-        return x.add_to_grad(_SO3vecB(g))
+        return x.obj.add_to_grad(_SO3vecB(g))
 
     
 # ----------------------------------------------------------------------------------------------------------

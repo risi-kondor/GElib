@@ -13,9 +13,15 @@
 
 #include "CtensorArrayB.hpp"
 #include "SO3part3_view.hpp"
+
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
 #include "SO3part_addCGproduct_back1Fn.hpp"
+#include "SO3part_addCGsquareFn.hpp"
+#include "SO3part_addFproduct_Fn.hpp"
+#include "SO3part_addFproduct_back0Fn.hpp"
+#include "SO3part_addFproduct_back1Fn.hpp"
+
 #include "SO3element.hpp"
 #include "WignerMatrix.hpp"
 
@@ -241,6 +247,19 @@ namespace GElib{
     void add_CGproduct_back1(const SO3partB_array& g, const SO3partB_array& x, const int _offs=0){
       auto v=this->part3_view();
       SO3part_addCGproduct_back1Fn()(v,g.part3_view(),x.part3_view(),_offs);
+    }
+
+
+    SO3partB_array CGsquare(const int l) const{
+      assert(l>=0 && l<=2*getl());
+      int parity=(2*getl()-l)%2;
+      SO3partB_array R=SO3partB_array::zero(get_adims(),l,getn()*(getn()+1-2*parity)/2,get_dev());
+      R.add_CGsquare(*this);
+      return R;
+    }
+
+    void add_CGsquare(const SO3partB_array& x, const int _offs=0){
+      SO3part_addCGsquareFn()(part3_view(),x.part3_view(),_offs);
     }
 
 

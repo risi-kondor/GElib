@@ -122,13 +122,13 @@ class SO3part(torch.Tensor):
     # ---- Access ------------------------------------------------------------------------------------------
 
     def getb(self):
-        return self.size(2)
+        return self.size(0)
 
     def getl(self):
         return (self.size(1)-1)/2
 
     def getn(self):
-        return self.size(3)
+        return self.size(2)
 
     # ---- Operations --------------------------------------------------------------------------------------
 
