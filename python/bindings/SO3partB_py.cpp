@@ -62,6 +62,16 @@ py::class_<SO3partB>(m,"SO3partB",
 //  .def("__setitem__",[](SO3part& obj, const vector<int> v, const complex<float> x){
 //      obj.set_value(v[0],v[1],x);})
 
+//.def("mprod",&SO3partB::mprod)
+//  .def("add_mprod",&SO3partB::add_mprod)
+//  .def("add_mprod_back0",&SO3partB::add_mprod_back0)
+//  .def("add_mprod_back1",&SO3partB::add_mprod_back1)
+
+  .def("mprod",static_cast<SO3partB(SO3partB::*)(const cnine::CtensorB&)>(&SO3partB::mprod))
+  .def("add_mprod",static_cast<void(SO3partB::*)(const SO3partB&, const cnine::CtensorB&)>(&SO3partB::add_mprod))
+  .def("add_mprod_back0",static_cast<void(SO3partB::*)(const SO3partB&, const cnine::CtensorB&)>(&SO3partB::add_mprod_back0))
+  .def("add_mprod_back1_into",static_cast<void(SO3partB::*)(cnine::CtensorB&, const SO3partB&) const>(&SO3partB::add_mprod_back1_into))
+
   .def("add_spharm",[](SO3partB& obj, const float x, const float y, const float z){
     obj.add_spharm(x,y,z);})
   .def("add_spharm",[](SO3partB& obj, at::Tensor& _X){

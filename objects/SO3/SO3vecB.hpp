@@ -20,6 +20,8 @@
 #include "SO3_addFFT_Fn.hpp"
 #include "SO3_addIFFT_Fn.hpp"
 
+#include "CtensorPackObj.hpp"
+
 
 namespace GElib{
 
@@ -49,7 +51,7 @@ namespace GElib{
     vector<SO3partB*> parts;
 
     #ifdef WITH_FAKE_GRAD
-    SO3vecB* grad;
+    SO3vecB* grad=nullptr;
     #endif
 
     SO3vecB(){}
@@ -57,7 +59,7 @@ namespace GElib{
     ~SO3vecB(){
       for(auto p: parts) delete p;  
       #ifdef WITH_FAKE_GRAD
-      delete grad;
+      if(grad) delete grad;
       #endif
     }
 
@@ -141,14 +143,16 @@ namespace GElib{
 
 
     SO3vecB(const SO3vecB& x){
+      cout<<"copy"<<endl;
       for(auto& p:x.parts)
-	parts.push_back(p);
+	parts.push_back(new SO3partB(*p));
       #ifdef WITH_FAKE_GRAD
       if(x.grad) grad=new SO3vecB(*x.grad);
       #endif 
     }
 
     SO3vecB(SO3vecB&& x){
+      cout<<"move"<<endl;
       parts=x.parts;
       x.parts.clear();
       #ifdef WITH_FAKE_GRAD
@@ -163,9 +167,13 @@ namespace GElib{
 
     SO3vecB view(){
       SO3vecB R;
-      for(auto p: parts)
+      int i=0;
+      for(auto p: parts){
 	R.parts.push_back(new SO3partB(p->CtensorB::view()));
-      if(grad) R.grad=new SO3vecB(view());
+      }
+      #ifdef WITH_FAKE_GRAD
+      if(grad) R.grad=new SO3vecB(grad->view());
+      #endif 
       return R;
     }
 
@@ -250,6 +258,10 @@ namespace GElib{
       return 0;
     }
 
+    SO3partB get_part(const int l) const{
+      GELIB_CHECK_RANGE(if(l<0||l>=parts.size()) throw std::out_of_range("GElib error: SO3vecB part index "+to_string(l)+" is outside range (0,...,"+to_string(parts.size()-1)+")."));
+      return *parts[l];
+    }
     
     void forall_parts(std::function<void(const SO3partB& x)> lambda) const{
       int L=parts.size();
@@ -278,6 +290,15 @@ namespace GElib{
     }
 
 
+    void add_mprod(const SO3vecB& x, const cnine::CtensorPackObj& y){
+      CNINE_DEVICE_SAMEB(x);
+      CNINE_DEVICE_SAMEB(y);
+      assert(x.parts.size()==y.tensors.size());
+      assert(x.parts.size()<=parts.size());
+      for(int l=0; l<x.parts.size(); l++)
+	parts[l]->add_mprod(*x.parts[l],*y.tensors[l]);
+    }
+
 
     // ---- Operations ---------------------------------------------------------------------------------------
 
@@ -305,6 +326,20 @@ namespace GElib{
       for(int l=0; l<parts.size(); l++){
 	R.parts.push_back(new SO3partB( (*parts[l]/(*y.parts[l])) ));
       }
+      return R;
+    }
+
+    SO3vecB operator*(const cnine::CtensorPackObj& y){
+      assert(y.tensors.size()==parts.size());
+      SO3type tau;
+      for(int l=0; l<parts.size(); l++){
+	auto& w=*y.tensors[l];
+	assert(w.get_ndims()==2);
+	assert(w.get_dim(0)==parts[l]->getn());
+	tau.push_back(w.get_dim(1));
+      }
+      SO3vecB R=SO3vecB::zero(getb(),tau,get_dev());
+      R.add_mprod(*this,y);
       return R;
     }
 
@@ -706,12 +741,18 @@ namespace GElib{
       else grad=new SO3vecB(x);
     }
 
+    void add_to_part_of_grad(const int l, const SO3partB& x){
+      if(!grad) grad=new SO3vecB(SO3vecB::zeros_like(*this));
+      grad->parts[l]->add(x);
+    }
+
     SO3vecB& get_grad(){
       if(!grad) grad=new SO3vecB(SO3vecB::zeros_like(*this));
       return *grad;
     }
 
     SO3vecB view_of_grad(){
+      cout<<"view"<<endl;
       if(!grad) grad=new SO3vecB(SO3vecB::zeros_like(*this));
       return grad->view();
     }

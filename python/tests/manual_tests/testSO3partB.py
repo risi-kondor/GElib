@@ -13,7 +13,7 @@ u.register_hook(hookfn)
 
 v=gelib.SO3partB.randn(1,2,2)
 w=gelib.CGproduct(u,v,2)
-w.register_hook(hookfn)
+#w.register_hook(hookfn)
 
 #u.grad=v %u.detach()
 #print(u.grad)
@@ -21,7 +21,9 @@ w.register_hook(hookfn)
 w.add_to_grad(w.obj)
 
 w.backward(w)
+print(1)
 print(u.get_grad())
+print(2)
 
 #torch.autograd.grad(w,u,create_graph=True)
 

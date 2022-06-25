@@ -142,6 +142,13 @@ class SO3partB(torch.Tensor):
         obj.add(y)
         
 
+    def __mult__(self,y):
+        return SO3partB_timesCtensorFn.apply(self,y)
+    
+    def inp(self,y):
+        return SO3partB_inpFn.apply(self,y)
+
+    
     # ---- CG-products ---------------------------------------------------------------------------------------
 
 
@@ -221,11 +228,14 @@ class SO3partB_InitFromTorchTensorFn(torch.autograd.Function):
         assert(x.dim()==4)
         assert(x.size(3)==2)
         assert(x.size(1)%2==1)
-        return SO3partB(x)
+        r=SO3partB(1)
+        r.obj=_SO3partB(x.obj)
+        ctx.r=r
+        return r
 
     @staticmethod
     def backward(ctx,g):
-        return g.obj.view_of_grad().torch()
+        return r.view_of_grad().torch()
 
 
 class SO3partB_ToTorchTensorFn(torch.autograd.Function):
@@ -233,7 +243,7 @@ class SO3partB_ToTorchTensorFn(torch.autograd.Function):
     @staticmethod
     def forward(ctx,x):
         ctx.x=x
-        return obj.view_of_grad().torch()
+        return x.obj.torch()
 
     @staticmethod
     def backward(ctx,g):
@@ -241,6 +251,44 @@ class SO3partB_ToTorchTensorFn(torch.autograd.Function):
         assert(g.size(3)==2)
         assert(g.size(1)%2==1)
         return x.add_to_grad(_SO3partB(g))
+
+
+class SO3partB_timesCtensorFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,x,y):
+        r=SO3partB(1)
+        r.obj=x.mprod(y)
+        ctx.x=x
+        ctx.y=y
+        ctx.r=r
+        return r
+
+    def backward(ctx,g):
+        xg=SO3partB(1)
+        yg=SO3partB(1)
+        ctx.x._view_of_grad().add_mprod_back0(ctx.r._view_of_grad(),ctx.y.obj)
+        ctx.x._view_of_grad().add_mprod_back1(ctx.r._view_of_grad(),ctx.x.obj)
+        return xg,yg
+
+    
+class SO3partB_inpFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,x,y):
+        r=ctensor(1)
+        r.obj=x.mprod(y)
+        ctx.x=x
+        ctx.y=y
+        ctx.r=r
+        return r
+
+    def backward(ctx,g):
+        xg=SO3partB(1)
+        yg=SO3partB(1)
+        ctx.x._view_of_grad().add_mprod_back0(ctx.r._view_of_grad(),ctx.y.obj)
+        ctx.x._view_of_grad().add_mprod_back1(ctx.r._view_of_grad(),ctx.x.obj)
+        return xg,yg
 
     
 # ----------------------------------------------------------------------------------------------------------

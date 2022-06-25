@@ -64,12 +64,14 @@ def main():
                          '-DCNINE_RANGE_CHECKING',
                          '-DCNINE_SIZE_CHECKING',
                          '-DCNINE_DEVICE_CHECKING',
+                         '-DGELIB_RANGE_CHECKING',
                          '-DWITH_FAKE_GRAD'
                          ]
 
     _nvcc_compile_args = ['-D_WITH_CUDA',
                           '-D_WITH_CUBLAS',
                           '-D_DEF_CGCMEM',
+                          '-DGELIB_RANGE_CHECKING',
                           '-DWITH_FAKE_GRAD'
                           # '-rdc=true'
                           ]

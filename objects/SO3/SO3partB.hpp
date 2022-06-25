@@ -200,13 +200,33 @@ namespace GElib{
   public: // ---- Cumulative Operations ----------------------------------------------------------------------
 
 
-    void add_mprod(const SO3partB& x, const CtensorB& M){
-      const int B=getb();
-      assert(x.getb()==B);
-      auto view=view3();
-      auto xview=x.view3();
-      auto Mview=M.view2();
-      cnine::MultiLoop(B,[&](const int b){view.slice0(b).add_matmul_AA(xview.slice0(b),Mview);});
+    //void add_mprod(const SO3partB& x, const CtensorB& M){
+    //const int B=getb();
+    //assert(x.getb()==B);
+    //auto view=view3();
+    //auto xview=x.view3();
+    //auto Mview=M.view2();
+    //cnine::MultiLoop(B,[&](const int b){view.slice0(b).add_matmul_AA(xview.slice0(b),Mview);});
+    //}
+
+    SO3partB mprod(const CtensorB& y){
+      assert(y.ndims()==2);
+      assert(y.dims(0)==getn());
+      SO3partB R=SO3partB::zero(getb(),getl(),y.dims(1),dev);
+      R.add_mprod(*this,y);
+      return R;
+    }
+
+    void add_mprod(const SO3partB& x, const CtensorB& w){
+      view3().fuse01().add_matmul(x.view3().fuse01(),w.view2());
+    }
+
+    void add_mprod_back0(const SO3partB& rg, const CtensorB& w){
+      view3().fuse01().add_matmul_AH(rg.view3().fuse01(),w.view2());
+    }
+
+    void add_mprod_back1_into(CtensorB& yg, const SO3partB& x) const{
+      yg.view2().add_matmul_HA(x.view3().fuse01(),view3().fuse01());
     }
 
 
@@ -229,6 +249,9 @@ namespace GElib{
 
       return R;
     }
+
+
+  public: // ---- Cumulative operations ---------------------------------------------------------------------
 
 
   public: // ---- Spherical harmonics -----------------------------------------------------------------------
