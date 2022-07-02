@@ -1,5 +1,6 @@
 #include "GElib_base.cpp"
 #include "SO3mvec.hpp"
+#include "SO3mweights.hpp"
 #include "GElibSession.hpp"
 
 
@@ -16,6 +17,7 @@ int main(int argc, char** argv){
   int b=1;
   int k=2;
   SO3type tau({2,2});
+  SO3type tau2({1,3});
 
   SO3mvec u=SO3mvec::gaussian(b,k,tau);
   SO3mvec v=SO3mvec::gaussian(b,k,tau);
@@ -67,5 +69,23 @@ int main(int argc, char** argv){
   printl("vgc",vgc);
   #endif 
 
+  {
+    cout<<"----------- SO3mweights -----------------------"<<endl;
+  
+    SO3mweights W=SO3mweights::gaussian(k,tau,tau2);
+    cout<<W<<endl;
+
+    SO3mvec u2=u*W;
+    cout<<u2<<endl;
+
+    cout<<1<<endl;
+    auto ug=SO3mvec::zeros_like(u);
+    ug.add_mprod_back0(u2,W);
+
+    cout<<2<<endl;
+    auto Wg=SO3mweights::zeros_like(W);
+    u2.add_mprod_back1_into(Wg,u);
+
+  }
 }
 

@@ -27,6 +27,7 @@
 
 #include "SO3partB.hpp"
 #include "SO3vecB.hpp"
+#include "SO3mvec.hpp"
 #include "SO3weights.hpp"
 #include "SO3partB_array.hpp"
 #include "SO3vecB_array.hpp"
@@ -102,6 +103,7 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
 
   #include "SO3partB_py.cpp"
   #include "SO3vecB_py.cpp"
+  #include "SO3mvec_py.cpp"
   #include "SO3weights_py.cpp"
 
   #include "SO3partB_array_py.cpp"

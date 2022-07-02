@@ -220,6 +220,27 @@ namespace GElib{
     //CtensorB::add_gather(x,mask);
     //}
 
+    /*
+    SO3partB_array mprod(const CtensorB& y){
+      assert(y.ndims()==2);
+      assert(y.dims(0)==getn());
+      SO3partB_array R=SO3partB::zero(get_adims(),getl(),y.dims(1),dev);
+      R.add_mprod(*this,y);
+      return R;
+    }
+
+    void add_mprod(const SO3partB& x, const CtensorB& w){
+      view3().fuse01().add_matmul(x.view3().fuse01(),w.view2());
+    }
+
+    void add_mprod_back0(const SO3partB& rg, const CtensorB& w){
+      view3().fuse01().add_matmul_AH(rg.view3().fuse01(),w.view2());
+    }
+
+    void add_mprod_back1_into(CtensorB& yg, const SO3partB& x) const{
+      yg.view2().add_matmul_HA(x.view3().fuse01(),view3().fuse01());
+    }
+    */
 
   public: // ---- CG-products --------------------------------------------------------------------------------
 
@@ -248,6 +269,28 @@ namespace GElib{
       auto v=this->part3_view();
       SO3part_addCGproduct_back1Fn()(v,g.part3_view(),x.part3_view(),_offs);
     }
+
+
+    SO3partB_array BlockedCGproduct(const SO3partB_array& y, const int bsize, const int l) const{
+      assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
+      assert(getn()==y.getn());
+      SO3partB_array R=SO3partB_array::zero(get_adims(),l,getn()*bsize,get_dev());
+      R.add_BlockedCGproduct(*this,y,bsize);
+      return R;
+    }
+
+    void add_BlockedCGproduct(const SO3partB_array& x, const SO3partB_array& y, const int bsize, const int _offs=0){
+      SO3part_addBlockedCGproductFn()(part3_view(),x.part3_view(),y.part3_view(),bsize,_offs);
+    }
+
+    void add_BlockedCGproduct_back0(const SO3partB_array& g, const SO3partB_array& y, const int bsize, const int _offs=0){
+      SO3part_addBlockedCGproduct_back0Fn()(part3_view(),g.part3_view(),y.part3_view(),bsize,_offs);
+    }
+
+    void add_BlockedCGproduct_back1(const SO3partB_array& g, const SO3partB_array& x, const int bsize, const int _offs=0){
+      SO3part_addBlockedCGproduct_back1Fn()(part3_view(),g.part3_view(),x.part3_view(),bsize,_offs);
+    }
+
 
 
     SO3partB_array CGsquare(const int l) const{
