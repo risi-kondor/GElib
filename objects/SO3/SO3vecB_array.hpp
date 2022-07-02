@@ -113,6 +113,24 @@ namespace GElib{
     }
 
 
+  public: // ---- Conversions ------------------------------------------------------------------------------------
+
+
+    SO3vecB_array(const SO3vecB_base& x):
+      SO3vecB_base(x){}
+
+    SO3vecB_array(SO3vecB_base&& x):
+      SO3vecB_base(std::move(x)){}
+
+
+  public: // ---- Views -------------------------------------------------------------------------------------------
+
+
+    SO3vecB_array view(){
+      return SO3vecB_array(SO3vecB_base::view());
+    }
+
+
   public: // ---- Transport -----------------------------------------------------------------------------------------
 
 
@@ -138,6 +156,13 @@ namespace GElib{
     SO3vecB_array(vector<at::Tensor>& v){
       for(auto& p: v)
 	parts.push_back(new SO3partB_array(p));
+    }
+
+    vector<at::Tensor> torch(){
+      vector<at::Tensor> R;
+      for(auto p: parts)
+	R.push_back(p->torch());
+      return R;
     }
 
 #endif
@@ -282,6 +307,95 @@ namespace GElib{
     }
 
       
+    // ---- Blocked CG-products ------------------------------------------------------------------------------
+
+
+    SO3vecB_array BlockedCGproduct(const SO3vecB_array& y, const int bsize, const int maxl=-1) const{
+      assert(get_adims()==y.get_adims());
+
+      SO3vecB_array R=SO3vecB_array::zero(get_adims(),GElib::BlockedCGproduct(get_tau(),y.get_tau(),bsize,maxl),get_dev());
+      R.add_BlockedCGproduct(*this,y,bsize);
+      return R;
+    }
+
+
+    void add_BlockedCGproduct(const SO3vecB_array& x, const SO3vecB_array& y, const int bsize){
+      assert(get_tau()==GElib::BlockedCGproduct(x.get_tau(),y.get_tau(),bsize,get_maxl()));
+
+      int L1=x.get_maxl(); 
+      int L2=y.get_maxl();
+      int L=get_maxl();
+      vector<int> offs(parts.size(),0);
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    parts[l]->add_BlockedCGproduct(*x.parts[l1],*y.parts[l2],bsize,offs[l]);
+	    offs[l]+=(x.parts[l1]->getn())*bsize;
+	  }
+	}
+      }
+    }
+
+      
+    void add_BlockedCGproduct_back0(const SO3vecB_array& g, const SO3vecB_array& y, const int bsize){
+      assert(g.get_tau()==GElib::BlockedCGproduct(get_tau(),y.get_tau(),bsize,g.get_maxl()));
+
+      int L1=get_maxl(); 
+      int L2=y.get_maxl();
+      int L=g.get_maxl();
+      vector<int> offs(g.parts.size(),0);
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    parts[l1]->add_BlockedCGproduct_back0(*g.parts[l],*y.parts[l2],bsize,offs[l]);
+	    offs[l]+=(parts[l1]->getn())*bsize;
+	  }
+	}
+      }
+    }
+
+      
+    void add_BlockedCGproduct_back1(const SO3vecB_array& g, const SO3vecB_array& x, const int bsize){
+      assert(g.get_tau()==GElib::BlockedCGproduct(x.get_tau(),get_tau(),bsize,g.get_maxl()));
+
+      int L1=x.get_maxl(); 
+      int L2=get_maxl();
+      int L=g.get_maxl();
+      vector<int> offs(g.parts.size(),0);
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    parts[l2]->add_BlockedCGproduct_back1(*g.parts[l],*x.parts[l1],bsize,offs[l]);
+	    offs[l]+=(x.parts[l1]->getn())*bsize;
+	  }
+	}
+      }
+    }
+
+      
+    // ---- Diagonal CG-products -----------------------------------------------------------------------------
+
+
+    SO3vecB_array DiagCGproduct(const SO3vecB_array& y, const int maxl=-1) const{
+      return BlockedCGproduct(y,1,maxl);
+    }
+
+    void add_DiagCGproduct(const SO3vecB_array& x, const SO3vecB_array& y){
+      add_BlockedCGproduct(x,y,1);
+    }
+
+    void add_DiagCGproduct_back0(const SO3vecB_array& g, const SO3vecB_array& y){
+      add_BlockedCGproduct_back0(g,y,1);
+    }
+
+    void add_DiagCGproduct_back1(const SO3vecB_array& g, const SO3vecB_array& x){
+      add_BlockedCGproduct_back1(g,x,1);
+    }
+
+
   public: // ---- CG-squares ----------------------------------------------------------------------------------
 
 

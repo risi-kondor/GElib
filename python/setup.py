@@ -39,6 +39,7 @@ def main():
                      cwd + cnine_folder + '/objects/backendA',
                      cwd + cnine_folder + '/objects/backendB',
                      cwd + cnine_folder + '/objects/tensor_views',
+                     cwd + cnine_folder + '/objects/tensor_views/functions',
                      cwd + cnine_folder + '/objects/tensor_array',
                      cwd + cnine_folder + '/objects/tensor_array/cell_maps',
                      cwd + cnine_folder + '/objects/tensor_array/cell_ops',

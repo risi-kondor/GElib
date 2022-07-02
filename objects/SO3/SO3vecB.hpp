@@ -290,16 +290,6 @@ namespace GElib{
     }
 
 
-    void add_mprod(const SO3vecB& x, const cnine::CtensorPackObj& y){
-      CNINE_DEVICE_SAMEB(x);
-      CNINE_DEVICE_SAMEB(y);
-      assert(x.parts.size()==y.tensors.size());
-      assert(x.parts.size()<=parts.size());
-      for(int l=0; l<x.parts.size(); l++)
-	parts[l]->add_mprod(*x.parts[l],*y.tensors[l]);
-    }
-
-
     // ---- Operations ---------------------------------------------------------------------------------------
 
 
@@ -329,6 +319,10 @@ namespace GElib{
       return R;
     }
 
+
+    // ---- Products -----------------------------------------------------------------------------------------
+
+
     SO3vecB operator*(const cnine::CtensorPackObj& y){
       assert(y.tensors.size()==parts.size());
       SO3type tau;
@@ -341,6 +335,36 @@ namespace GElib{
       SO3vecB R=SO3vecB::zero(getb(),tau,get_dev());
       R.add_mprod(*this,y);
       return R;
+    }
+
+
+    void add_mprod(const SO3vecB& x, const cnine::CtensorPackObj& y){
+      CNINE_DEVICE_SAMEB(x);
+      CNINE_DEVICE_SAMEB(y);
+      assert(x.parts.size()==y.tensors.size());
+      assert(x.parts.size()<=parts.size());
+      for(int l=0; l<x.parts.size(); l++)
+	parts[l]->add_mprod(*x.parts[l],*y.tensors[l]);
+    }
+
+
+    void add_mprod_back0(const SO3vecB& g, const cnine::CtensorPackObj& y){
+      CNINE_DEVICE_SAMEB(g);
+      CNINE_DEVICE_SAMEB(y);
+      assert(parts.size()==y.tensors.size());
+      assert(parts.size()==g.parts.size());
+      for(int l=0; l<parts.size(); l++)
+	parts[l]->add_mprod_back0(*g.parts[l],*y.tensors[l]);
+    }
+
+
+    void add_mprod_back1_into(cnine::CtensorPackObj& yg, const SO3vecB& x) const{
+      CNINE_DEVICE_SAMEB(yg);
+      CNINE_DEVICE_SAMEB(x);
+      assert(parts.size()==yg.tensors.size());
+      assert(parts.size()==x.parts.size());
+      for(int l=0; l<parts.size(); l++)
+	parts[l]->add_mprod_back1_into(*yg.tensors[l],*x.parts[l]);
     }
 
 
