@@ -27,6 +27,13 @@ namespace GElib{
 {
   public:
 
+  #ifdef WITH_FAKE_GRAD
+  ~SO3mvec(){
+    if(!is_view) delete grad;
+  }
+  #endif
+
+
     using SO3mvec_base::SO3mvec_base;
     //using SO3vecB_array::SO3vecB_array;
 
@@ -91,6 +98,27 @@ namespace GElib{
 
     static SO3mvec gaussian_like(const SO3mvec& x){
       return SO3mvec::gaussian(x.getb(),x.getk(),x.get_tau(),x.get_dev());}
+
+
+
+public: // ---- Copying --------------------------------------------------------------------------------------
+
+
+  SO3mvec(const SO3mvec& x):
+    SO3mvec_base(x){}
+
+  SO3mvec(SO3mvec&& x):
+    SO3mvec_base(std::move(x)){}
+
+  SO3mvec& operator=(const SO3mvec& x){
+    SO3mvec_base::operator=(x);
+    return *this;
+  }
+
+  SO3mvec& operator=(SO3mvec&& x){
+    SO3mvec_base::operator=(std::move(x));
+    return *this;
+  }
 
 
 public: // ---- Views ----------------------------------------------------------------------------------------

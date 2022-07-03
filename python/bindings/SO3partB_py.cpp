@@ -49,7 +49,7 @@ py::class_<SO3partB>(m,"SO3partB",
   .def("get_grad",&SO3partB::get_grad)
   .def("view_of_grad",&SO3partB::view_of_grad)
 
-  .def("__len__",[](const SO3partB& obj){cout<<"111"<<endl;return 1;})
+  .def("__len__",[](const SO3partB& obj){return 1;})
 
   .def("get_dev",&SO3partB::get_dev)
   .def("getb",&SO3partB::getb)

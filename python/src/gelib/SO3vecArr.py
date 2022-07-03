@@ -172,8 +172,8 @@ class SO3vecArr:
 def CGproduct(x,y,maxl=-1):
     return x.CGproduct(y,maxl)
     
-def Fproduct(x,y,a=-1):
-    return x.Fproduct(y,a)
+def Fproduct(x,y,maxl=-1):
+    return x.Fproduct(y,maxl)
 
 def Fmodsq(x,a=-1):
     return x.Fmodsq(a)
