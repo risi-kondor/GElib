@@ -103,13 +103,25 @@ namespace GElib{
 
 
     SO3vecB_array(const SO3vecB_array& x){
+      //cout<<"copy SO3vecV_array"<<endl;
       for(auto& p:x.parts)
 	parts.push_back(new SO3partB_array(*p));
     }
 
     SO3vecB_array(SO3vecB_array&& x){
+      //cout<<"move SO3vecV_array"<<endl;
       parts=x.parts;
       x.parts.clear();
+    }
+
+    SO3vecB_array& operator=(const SO3vecB_array& x){
+      SO3vecB_base::operator=(x);
+      return *this;
+    }
+
+    SO3vecB_array& operator=(SO3vecB_array&& x){
+      SO3vecB_base::operator=(std::move(x));
+      return *this;
     }
 
 
@@ -259,8 +271,8 @@ namespace GElib{
 	  //if(y.tau[l2]==0) continue;
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
 	    //cout<<l1<<l2<<l<<endl;
-      //cout<<parts.size()<<endl;
-      //cout<<*parts[l]<<endl;
+	    //cout<<parts.size()<<endl;
+	    //cout<<*parts[l]<<endl;
 	    parts[l]->add_CGproduct(*x.parts[l1],*y.parts[l2],offs[l]);
 	    offs[l]+=(x.parts[l1]->getn())*(y.parts[l2]->getn());
 	  }

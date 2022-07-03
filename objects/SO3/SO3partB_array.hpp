@@ -98,10 +98,14 @@ namespace GElib{
 
 
     SO3partB_array(const CtensorB& x):
-      CtensorArrayB(x,-2){}
+      CtensorArrayB(x,-2){
+      //cout<<"copy"<<endl;
+    }
       
     SO3partB_array(CtensorB&& x):
-      CtensorArrayB(std::move(x),-2){}
+      CtensorArrayB(std::move(x),-2){
+      //cout<<"move"<<endl;
+    }
 
       
   public: // ---- ATen --------------------------------------------------------------------------------------
@@ -153,6 +157,14 @@ namespace GElib{
     }
     */
 
+    SO3partB fused_view(){
+      return SO3partB(view_fusing_first(ak));
+    }
+
+    const SO3partB fused_view() const{
+      return SO3partB(const_cast<SO3partB_array*>(this)->view_fusing_first(ak));
+    }
+
     SO3part3_view part3_view() const{
       if(dev==0) return SO3part3_view(arr,Gdims({getN(),dims.back(1),dims.back(0)}),
 	Gstrides({strides.back(2),strides.back(1),strides.back(0)}),coffs);
@@ -191,16 +203,13 @@ namespace GElib{
   public: // ---- Rotations ----------------------------------------------------------------------------------
 
 
-    SO3partB_array rotate(const SO3element& r){
+    SO3partB_array rotate(const SO3element& r) const{
       CtensorB D(WignerMatrix<float>(getl(),r),dev);
       SO3partB_array R=SO3partB_array::zero(get_adims(),getl(),getn(),dev);
-      cout<<R.repr()<<endl;
 
       auto dv=D.view2D();
-      //auto xv=this->part3_view();
-      //auto rv=R.part3_view();
-      auto xv=this->view3();
-      auto rv=R.view3();
+      auto xv=fused_view().view3();
+      auto rv=R.fused_view().view3();
       
       int B=rv.n0;
       for(int b=0; b<B; b++){

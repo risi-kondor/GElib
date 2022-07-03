@@ -34,7 +34,7 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
     py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
 
 //.def_static("view",[](at::Tensor& x){return SO3partB_array(cnine::CtensorB::view(x));})
-  .def_static("view",[](at::Tensor& x){return SO3partB_array::view(x,-2);})
+  .def_static("view",[](at::Tensor& x){return SO3partB_array(SO3partB_array::view(x,-2));})
   .def("torch",[](const SO3partB_array& x){return x.torch();})
 
   .def("get_adims",[](const SO3partB_array& x){return vector<int>(x.get_adims());})
@@ -62,7 +62,8 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
 //.def("widen",&SO3partB_array::widen)
 //.def("reduce",&SO3partB_array::reduce)
 
-  .def("apply",&SO3partB_array::rotate)
+//.def("apply",&SO3partB_array::rotate)
+  .def("rotate",[](const SO3partB_array& x, const SO3element& R){return SO3partB_array(x.rotate(R));})
 
   .def("gather",&SO3partB_array::add_gather,py::arg("x"),py::arg("mask"))
 

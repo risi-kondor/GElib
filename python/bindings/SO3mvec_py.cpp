@@ -41,8 +41,8 @@ py::class_<SO3mvec>(m,"SO3mvec",
 
   .def_static("view",[](vector<at::Tensor>& v){
       SO3mvec r;
-      //for(auto& p: v)
-      //r.parts.push_back(static_cast<SO3partB*>(cnine::CtensorB::viewp(p)));
+      for(auto& p: v)
+	r.parts.push_back(new SO3partB_array(cnine::CtensorB::view(p)));
       return r;
     })
 
@@ -63,19 +63,19 @@ py::class_<SO3mvec>(m,"SO3mvec",
   .def("apply",&SO3mvec::rotate)
 
   .def("CGproduct",&SO3mvec::CGproduct,py::arg("y"),py::arg("maxl")=-1)
-  .def("addCGproduct",&SO3mvec::add_CGproduct,py::arg("x"),py::arg("y"))
-  .def("addCGproduct_back0",&SO3mvec::add_CGproduct_back0,py::arg("g"),py::arg("y"))
-  .def("addCGproduct_back1",&SO3mvec::add_CGproduct_back1,py::arg("g"),py::arg("x"))
+  .def("addCGproduct",[](SO3mvec& r, const SO3mvec& x, const SO3mvec& y){r.add_CGproduct(x,y);},py::arg("x"),py::arg("y"))
+  .def("addCGproduct_back0",[](SO3mvec& xg, const SO3mvec& g, const SO3mvec& y){xg.add_CGproduct_back0(g,y);},py::arg("g"),py::arg("y"))
+  .def("addCGproduct_back1",[](SO3mvec& yg, const SO3mvec& g, const SO3mvec& x){yg.add_CGproduct_back1(g,x);},py::arg("g"),py::arg("x"))
 
   .def("DiagCGproduct",&SO3mvec::CGproduct,py::arg("y"),py::arg("maxl")=-1)
-  .def("addDiagCGproduct",&SO3mvec::add_DiagCGproduct,py::arg("x"),py::arg("y"))
-  .def("addDiagCGproduct_back0",&SO3mvec::add_DiagCGproduct_back0,py::arg("g"),py::arg("y"))
-  .def("addDiagCGproduct_back1",&SO3mvec::add_DiagCGproduct_back1,py::arg("g"),py::arg("x"))
+  .def("addDiagCGproduct",[](SO3mvec& r, const SO3mvec& x, const SO3mvec& y){r.add_DiagCGproduct(x,y);},py::arg("x"),py::arg("y"))
+  .def("addDiagCGproduct_back0",[](SO3mvec& xg, const SO3mvec& g, const SO3mvec& y){xg.add_DiagCGproduct_back0(g,y);},py::arg("g"),py::arg("y"))
+  .def("addDiagCGproduct_back1",[](SO3mvec& yg, const SO3mvec& g, const SO3mvec& x){yg.add_DiagCGproduct_back1(g,x);},py::arg("g"),py::arg("x"))
 
   .def("Fproduct",&SO3mvec::Fproduct,py::arg("y"),py::arg("maxl")=-1)
-  .def("addFproduct",&SO3mvec::add_Fproduct,py::arg("x"),py::arg("y"),py::arg("method")=0)
-  .def("addFproduct_back0",&SO3mvec::add_Fproduct_back0,py::arg("g"),py::arg("y"),py::arg("method")=0)
-  .def("addFproduct_back1",&SO3mvec::add_Fproduct_back1,py::arg("g"),py::arg("x"))
+  .def("addFproduct",[](SO3mvec& r, const SO3mvec& x, const SO3mvec& y){r.add_Fproduct(x,y);},py::arg("x"),py::arg("y"))
+  .def("addFproduct_back0",[](SO3mvec& xg, const SO3mvec& g, const SO3mvec& y){xg.add_Fproduct_back0(g,y);},py::arg("g"),py::arg("y"))
+  .def("addFproduct_back1",[](SO3mvec& yg, const SO3mvec& g, const SO3mvec& x){yg.add_Fproduct_back1(g,x);},py::arg("g"),py::arg("x"))
 
 //.def("add_iFFT_to",&SO3mvec::add_iFFT_to)
 //.def("add_FFT",&SO3mvec::add_FFT)

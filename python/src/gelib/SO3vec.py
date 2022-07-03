@@ -108,6 +108,10 @@ class SO3vec:
             # r.append(self.parts[l].getn())
         return r
 
+    def requires_grad_(self):
+        for p in self.parts:
+            p.requires_grad_()
+
 
     # ---- Transport ---------------------------------------------------------------------------------------
 
@@ -213,6 +217,9 @@ class SO3vec:
 
 
 class SO3vec_CGproductFn(torch.autograd.Function):
+
+    def __init__(self):
+        self.is_sparse=False
 
     @staticmethod
     def forward(ctx, k1, k2, maxl, *args):
@@ -477,8 +484,8 @@ def DiagCGproduct(x, y, maxl=-1):
     return x.DiagCGproduct(y, maxl)
 
 
-def Fproduct(x, y, a=-1):
-    return x.Fproduct(y, a)
+def Fproduct(x, y, maxl=-1):
+    return x.Fproduct(y, maxl)
 
 
 def Fmodsq(x, a=-1):
