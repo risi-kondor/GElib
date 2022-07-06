@@ -537,14 +537,16 @@ def DiagCGproductType(x, y, maxl=-1):
 def MakeZeroSO3parts(b, tau, _dev=0):
     R = []
     for l in range(0, len(tau)):
-        R.append(SO3part.zeros(b, l, tau[l], _dev))
+        R.append(torch.zeros([b,2*l+1,tau[l]],dtype=torch.cfloat))
+        #R.append(SO3part.zeros(b, l, tau[l], _dev))
     return R
 
 
 def makeZeroSO3Fparts(b, maxl, _dev=0):
     R = []
     for l in range(0, maxl+1):
-        R.append(SO3part.Fzeros(b, l, _dev))
+        R.append(torch.zeros([b,2*l+1,2*l+1],dtype=torch.cfloat))
+        #R.append(SO3part.Fzeros(b, l, _dev))
     return R
 
 

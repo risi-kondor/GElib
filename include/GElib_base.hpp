@@ -36,8 +36,10 @@ using namespace std;
 
 #ifdef GELIB_MOVE_WARNINGS
 #define GELIB_MOVE_WARNING() cout<<"\e[1mGElib:\e[0m "<<classname()<<" moved."<<endl;
+#define GELIB_MCONVERT_WARNING(x) cout<<"\e[1mGElib:\e[0m "<<x.classname()<<" move converted to "<<classname()<<"."<<endl;
 #else 
 #define GELIB_MOVE_WARNING()
+#define GELIB_MCONVERT_WARNING(x)
 #endif 
 
 #ifdef GELIB_ASSIGN_WARNINGS
@@ -50,11 +52,10 @@ using namespace std;
 
 #ifdef GELIB_CONVERT_WARNINGS
 #define GELIB_CONVERT_WARNING(x) cout<<"\e[1mGElib:\e[0m "<<x.classname()<<" converted to "<<classname()<<"."<<endl;
-#define GELIB_MCONVERT_WARNING(x) cout<<"\e[1mGElib:\e[0m "<<x.classname()<<" move converted to "<<classname()<<"."<<endl;
 #else 
-#define GELIB_CONVERT_WARNING()
-#define GELIB_MCONVERT_WARNING()
+#define GELIB_CONVERT_WARNING(x)
 #endif 
+
 
 // --------------------------------------------------------------------------------------------------
 
