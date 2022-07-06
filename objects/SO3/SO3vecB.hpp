@@ -143,7 +143,7 @@ namespace GElib{
 
 
     SO3vecB(const SO3vecB& x){
-      cout<<"copy"<<endl;
+      GELIB_COPY_WARNING();
       for(auto& p:x.parts)
 	parts.push_back(new SO3partB(*p));
       #ifdef WITH_FAKE_GRAD
@@ -152,7 +152,7 @@ namespace GElib{
     }
 
     SO3vecB(SO3vecB&& x){
-      cout<<"move"<<endl;
+      GELIB_MOVE_WARNING();
       parts=x.parts;
       x.parts.clear();
       #ifdef WITH_FAKE_GRAD
@@ -785,6 +785,10 @@ namespace GElib{
 
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
+
+    static string classname(){
+      return "GElib::SO3vecB";
+    }
 
     string str(const string indent="") const{
       ostringstream oss;

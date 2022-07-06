@@ -21,7 +21,6 @@
 
 namespace GElib{
 
-  //template<typename ARRAY>
   typedef cnine::CtensorB_multiArray<SO3partB_array> SO3vecB_base;
 
 
@@ -103,23 +102,26 @@ namespace GElib{
 
 
     SO3vecB_array(const SO3vecB_array& x){
-      //cout<<"copy SO3vecV_array"<<endl;
+      GELIB_COPY_WARNING();
       for(auto& p:x.parts)
 	parts.push_back(new SO3partB_array(*p));
     }
 
     SO3vecB_array(SO3vecB_array&& x){
-      //cout<<"move SO3vecV_array"<<endl;
+      GELIB_MOVE_WARNING();
       parts=x.parts;
       x.parts.clear();
+
     }
 
     SO3vecB_array& operator=(const SO3vecB_array& x){
+      GELIB_ASSIGN_WARNING();
       SO3vecB_base::operator=(x);
       return *this;
     }
 
     SO3vecB_array& operator=(SO3vecB_array&& x){
+      GELIB_MASSIGN_WARNING();
       SO3vecB_base::operator=(std::move(x));
       return *this;
     }
@@ -129,10 +131,14 @@ namespace GElib{
 
 
     SO3vecB_array(const SO3vecB_base& x):
-      SO3vecB_base(x){}
+      SO3vecB_base(x){
+      GELIB_CONVERT_WARNING(x);
+    }
 
     SO3vecB_array(SO3vecB_base&& x):
-      SO3vecB_base(std::move(x)){}
+      SO3vecB_base(std::move(x)){
+      GELIB_MCONVERT_WARNING(x);
+    }
 
 
   public: // ---- Views -------------------------------------------------------------------------------------------
@@ -615,6 +621,10 @@ namespace GElib{
     //}
     //return oss.str();
     //}
+
+    static string classname(){
+      return "GElib::SO3vecB_array";
+    }
 
     string repr(const string indent="") const{
       return "<GElib::SO3vecB_array of type("+get_adims().str()+","+get_tau().str()+")>";

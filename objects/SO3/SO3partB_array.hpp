@@ -94,17 +94,31 @@ namespace GElib{
     }
 
 
+  public: // ---- Copying ------------------------------------------------------------------------------------
+
+
+    SO3partB_array(const SO3partB_array& x):
+      CtensorArrayB(x,-2){
+      GELIB_COPY_WARNING();
+    }
+      
+    SO3partB_array(SO3partB_array&& x):
+      CtensorArrayB(std::move(x),-2){
+      GELIB_MOVE_WARNING();
+    }
+
+      
   public: // ---- Conversions --------------------------------------------------------------------------------
 
 
     SO3partB_array(const CtensorB& x):
       CtensorArrayB(x,-2){
-      //cout<<"copy"<<endl;
+      GELIB_CONVERT_WARNING(x);
     }
       
     SO3partB_array(CtensorB&& x):
       CtensorArrayB(std::move(x),-2){
-      //cout<<"move"<<endl;
+      GELIB_MCONVERT_WARNING(x);
     }
 
       
@@ -280,6 +294,9 @@ namespace GElib{
     }
 
 
+    // ---- BlockedCGproduct 
+
+
     SO3partB_array BlockedCGproduct(const SO3partB_array& y, const int bsize, const int l) const{
       assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
       assert(getn()==y.getn());
@@ -299,6 +316,27 @@ namespace GElib{
     void add_BlockedCGproduct_back1(const SO3partB_array& g, const SO3partB_array& x, const int bsize, const int _offs=0){
       SO3part_addBlockedCGproduct_back1Fn()(part3_view(),g.part3_view(),x.part3_view(),bsize,_offs);
     }
+
+
+    // ---- DiagCGproduct 
+
+
+    SO3partB_array DiagCGproduct(const SO3partB_array& y, const int l) const{
+      return BlockedCGproduct(y,1,l);
+    }
+
+    void add_DiagCGproduct(const SO3partB_array& x, const SO3partB_array& y, const int _offs=0){
+      add_BlockedCGproduct(x,y,1,_offs);
+    }
+
+    void add_DiagCGproduct_back0(const SO3partB_array& g, const SO3partB_array& y, const int _offs=0){
+      add_BlockedCGproduct_back0(g,y,1,_offs);
+    }
+
+    void add_DiagCGproduct_back1(const SO3partB_array& g, const SO3partB_array& x, const int _offs=0){
+      add_BlockedCGproduct_back1(g,x,1,_offs);
+    }
+
 
 
 
@@ -330,8 +368,12 @@ namespace GElib{
     }
     */
     
+    string classname() const{
+      return "GElib::SO3partB_array";
+    }
+
     string repr(const string indent="") const{
-      return "<GElib::SO3partB_array of type ("+get_adims().str()+","+to_string(getl())+")>";
+      return "<GElib::SO3partB_array of type ("+get_adims().str()+","+to_string(getl())+","+to_string(getn())+")>";
     }
     
     friend ostream& operator<<(ostream& stream, const SO3partB_array& x){

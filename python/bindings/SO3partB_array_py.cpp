@@ -71,6 +71,10 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
   .def("addCGproduct_back0",&SO3partB_array::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
   .def("addCGproduct_back1",&SO3partB_array::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
 
+  .def("addDiagCGproduct",&SO3partB_array::add_DiagCGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
+  .def("addDiagCGproduct_back0",&SO3partB_array::add_DiagCGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
+  .def("addDiagCGproduct_back1",&SO3partB_array::add_DiagCGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
+
   .def("device",&SO3partB_array::get_device)
   .def("to",&SO3partB_array::to_device)
   .def("to_device",&SO3partB_array::to_device)

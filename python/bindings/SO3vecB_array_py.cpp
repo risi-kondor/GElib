@@ -33,6 +33,15 @@ py::class_<SO3vecB_array>(m,"SO3vecB_array",
   .def("addCGproduct_back0",&SO3vecB_array::add_CGproduct_back0,py::arg("g"),py::arg("y"))
   .def("addCGproduct_back1",&SO3vecB_array::add_CGproduct_back1,py::arg("g"),py::arg("x"))
 
+  .def("addDiagCGproduct",&SO3vecB_array::add_DiagCGproduct,py::arg("x"),py::arg("y"))
+  .def("addDiagCGproduct_back0",&SO3vecB_array::add_DiagCGproduct_back0,py::arg("g"),py::arg("y"))
+  .def("addDiagCGproduct_back1",&SO3vecB_array::add_DiagCGproduct_back1,py::arg("g"),py::arg("x"))
+
+  .def("Fproduct",&SO3vecB_array::Fproduct,py::arg("y"),py::arg("maxl")=-1)
+  .def("addFproduct",&SO3vecB_array::add_Fproduct,py::arg("x"),py::arg("y"),py::arg("method")=0)
+  .def("addFproduct_back0",&SO3vecB_array::add_Fproduct_back0,py::arg("g"),py::arg("y"),py::arg("method")=0)
+  .def("addFproduct_back1",&SO3vecB_array::add_Fproduct_back1,py::arg("g"),py::arg("x"))
+
 //.def("gather",&SO3vecB_array::add_gather,py::arg("x"),py::arg("mask"))
   .def("gather",[](SO3vecB_array& x, const SO3vecB_array& y, const cnine::Rmask1& mask){
       x.add_gather(y,mask);},py::arg("x"),py::arg("mask"))

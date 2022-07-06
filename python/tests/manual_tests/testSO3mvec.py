@@ -18,11 +18,12 @@ x.parts[1].requires_grad_()
 # Compute the CG-product
 z=gelib.CGproduct(x,y)
 
+print("---- CG-product: ---------------------------------------------")
 print(x)
-print("CG-product:")
 print(z)
 
 z.parts[2].backward(z.parts[2])
+print("Backpropagated gradient:")
 print(x.parts[1].grad)
 
 print("\n\n")
@@ -42,7 +43,7 @@ x.parts[1].requires_grad_()
 # Compute the Fproduct
 z=gelib.Fproduct(x,y)
 
-print("Fproduct:")
+print("---- Fproduct: -----------------------------------------------")
 print(z)
 
 z.parts[2].backward(z.parts[2])
@@ -64,7 +65,7 @@ x.parts[1].requires_grad_()
 # Compute Fmodsq
 z=gelib.Fmodsq(x)
 
-print("Fmodsq:")
+print("---- Fmodsq: --------------------------------------------------")
 print(z)
 
 z.parts[2].backward(z.parts[2])
@@ -75,7 +76,7 @@ print("\n\n")
 
 
 # ---- CG-product covariance test ----------------------------------------------------------------------------
-print("CG-product covariance test\n")
+print("---- CG-product covariance test ---------------------------------\n")
 
 b=2
 tau=[1,1]
@@ -86,7 +87,6 @@ y=gelib.SO3mvec.randn(b,k,tau)
 z=gelib.CGproduct(x,y)
 print("CG-product:")
 print(z.rotate(R))
-print(999)
 
 xr=x.rotate(R)
 yr=y.rotate(R)
@@ -100,7 +100,7 @@ print("\n\n")
 
 
 # ---- Fproduct covariance test ------------------------------------------------------------------------------
-print("Fproduct covariance test\n")
+print("---- Fproduct covariance test -----------------------------------\n")
 
 b=2
 maxl=2
@@ -125,7 +125,7 @@ print("\n\n")
 
 
 # ---- Fmodsq covariance test ------------------------------------------------------------------------------
-print("Fmodsq covariance test\n")
+print("---- Fmodsq covariance test --------------------------------\n")
 
 b=2
 maxl=2

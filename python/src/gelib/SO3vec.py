@@ -48,7 +48,8 @@ class SO3vec:
         "Construct a zero SO3vec object of given type _tau."
         R = SO3vec()
         for l in range(0, len(_tau)):
-            R.parts.append(SO3part.zeros(b, l, _tau[l], _dev))
+            R.parts.append(torch.zeros([b,2*l+1,_tau[l]],dtype=torch.cfloat))
+#            R.parts.append(SO3part.zeros(b, l, _tau[l], _dev))
         return R
 
     @classmethod
@@ -56,7 +57,8 @@ class SO3vec:
         "Construct a random SO3vec object of given type _tau."
         R = SO3vec()
         for l in range(0, len(_tau)):
-            R.parts.append(SO3part.randn(b, l, _tau[l], _dev))
+            R.parts.append(torch.randn([b,2*l+1,_tau[l]],dtype=torch.cfloat))
+            #R.parts.append(SO3part.randn(b, l, _tau[l], _dev))
         return R
 
     @classmethod
@@ -75,7 +77,8 @@ class SO3vec:
         "Construct an SO3vec corresponding the to the Forier matrices 0,1,...maxl of b functions on SO(3)."
         R = SO3vec()
         for l in range(0, maxl+1):
-            R.parts.append(SO3part.Fzeros(b, l, _dev))
+            R.parts.append(torch.zeros([b,2*l+1,2*l+1],dtype=torch.cfloat))
+            #R.parts.append(SO3part.Fzeros(b, l, _dev))
         return R
 
     @classmethod
@@ -83,7 +86,8 @@ class SO3vec:
         "Construct a zero SO3Fvec object  with l ranging from 0 to maxl."
         R = SO3vec()
         for l in range(0, maxl+1):
-            R.parts.append(SO3part.Frandn(b, l, _dev))
+            R.parts.append(torch.randn([b,2*l+1,2*l+1],dtype=torch.cfloat))
+            #R.parts.append(SO3part.Frandn(b, l, _dev))
         return R
 
     @classmethod
@@ -91,7 +95,8 @@ class SO3vec:
         R = SO3vec()
         # b=x.parts[0].dim(0)
         for l in range(0, len(x.parts)):
-            R.parts.append(SO3part(torch.zeros_like(x.parts[l])))
+            R.parts.append(torch.zeros_like(x.parts[l]))
+            #R.parts.append(SO3part(torch.zeros_like(x.parts[l])))
         return R
 
     # ---- Access -------------------------------------------------------------------------------------------
@@ -115,11 +120,13 @@ class SO3vec:
 
     # ---- Transport ---------------------------------------------------------------------------------------
 
+
     def to(self, device):
         r = SO3vec()
         for p in self.parts:
             r.parts.append(p.to(device))
         return r
+
 
     # ---- Operations ---------------------------------------------------------------------------------------
 
@@ -127,7 +134,8 @@ class SO3vec:
         "Apply the group element to this vector"
         r = SO3vec()
         for l in range(0, len(self.parts)):
-            r.parts.append(self.parts[l].rotate(R))
+            r.parts.append(_SO3partB.view(self.parts[l]).apply(R).torch())
+            #r.parts.append(SO3part(self.parts[l]).rotate(R))
         return r
 
     # ---- Products -----------------------------------------------------------------------------------------
@@ -170,12 +178,12 @@ class SO3vec:
                 raise IndexError("SO3vec and SO3weights have different number of parts.")
             R=SO3vec()
             for l in range(len(self.parts)):
-                b=self.parts[l].getb()
-                n=self.parts[l].getn()
+                b=self.parts[l].size(0)
+                n=self.parts[l].size(2)
                 m=w.parts[l].size(1)
-                x=torch.view_as_complex(self.parts[l]).reshape([b*(2*l+1),n])
-                y=torch.view_as_complex(w.parts[l])
-                R.parts.append(torch.view_as_real(torch.matmul(x,y).reshape([b,2*l+1,m])))
+                x=self.parts[l].reshape([b*(2*l+1),n])
+                #y=torch.view_as_complex(w.parts[l])
+                R.parts.append(torch.matmul(x,w.parts[l]).reshape([b,2*l+1,m]))
             return R
         if(isinstance(w,torch.Tensor)):
             R=SO3vec()

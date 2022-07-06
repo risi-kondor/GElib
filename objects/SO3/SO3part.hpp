@@ -118,17 +118,23 @@ namespace GElib{
     
 
     SO3part(const SO3part& x):
-      GELIB_SO3PART_IMPL(x){}
+      GELIB_SO3PART_IMPL(x){
+      GELIB_COPY_WARNING();
+    }
       
     SO3part(SO3part&& x):
-      GELIB_SO3PART_IMPL(std::move(x)){}
+      GELIB_SO3PART_IMPL(std::move(x)){
+      GELIB_MOVE_WARNING();
+    }
 
     SO3part& operator=(const SO3part& x){
+      GELIB_ASSIGN_WARNING();
       GELIB_SO3PART_IMPL::operator=(x);
       return *this;
     }
 
     SO3part& operator=(SO3part&& x){
+      GELIB_MASSIGN_WARNING();
       GELIB_SO3PART_IMPL::operator=(x);
       return *this;
     }
@@ -155,12 +161,12 @@ namespace GElib{
 
     SO3part(const GELIB_SO3PART_IMPL& x):
       GELIB_SO3PART_IMPL(x){
-      //cout<<"SO3partA -> SO3part"<<endl;
+      GELIB_CONVERT_WARNING(x);
     }
       
     SO3part(GELIB_SO3PART_IMPL&& x):
       GELIB_SO3PART_IMPL(std::move(x)){
-      //cout<<"move SO3partA -> SO3part"<<endl;
+      GELIB_MCONVERT_WARNING(x);
     }
 
     SO3part to(const device& _dev) const{

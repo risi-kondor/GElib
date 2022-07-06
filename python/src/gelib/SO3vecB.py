@@ -34,7 +34,6 @@ class SO3vecB(torch.Tensor):
             self.obj=x.obj
             return
         if(isinstance(x,_SO3vecB)):
-            print(777)
             super().__init__(1)
             self.obj=x
             return
