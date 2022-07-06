@@ -25,7 +25,8 @@ class SO3part(torch.Tensor):
     """
 
     def __init__(self, _T):
-        self = _T
+        self=_T
+        #super().__init__()
 
     # ---- Static constructors -----------------------------------------------------------------------------
 
@@ -36,9 +37,9 @@ class SO3part(torch.Tensor):
         The vectors are initialized to zero, resulting in an b*(2+l+1)*n dimensional complex tensor of zeros.
         """
         if _dev == 0:
-            return SO3part(torch.zeros([b, 2*l+1, n, 2]))
+            return torch.view_as_complex(SO3part(torch.zeros([b, 2*l+1, n,2])))
         else:
-            return SO3part(torch.zeros([b, 2*l+1, n, 2])).cuda()
+            return torch.view_as_complex(SO3part(torch.zeros([b, 2*l+1, n,2]))).cuda()
 
     @classmethod
     def randn(self, b, l, n, _dev=0):
@@ -48,9 +49,9 @@ class SO3part(torch.Tensor):
         complex tensor.
         """
         if _dev == 0:
-            return SO3part(torch.randn([b, 2*l+1, n, 2]))
+            return torch.view_as_complex(SO3part(torch.randn([b, 2*l+1, n,2])))
         else:
-            return SO3part(torch.randn([b, 2*l+1, n, 2])).cuda()
+            return torch.view_as_complex(SO3part(torch.randn([b, 2*l+1, n,2]))).cuda()
 
     @classmethod
     def spharm(self, l, x, y, z, _dev=0):
@@ -104,9 +105,9 @@ class SO3part(torch.Tensor):
         This gives a b*(2+l+1)*(2l+1) dimensional complex tensor. 
         """
         if _dev == 0:
-            return SO3part(torch.zeros([b, 2*l+1, 2*l+1, 2]))
+            return torch.view_as_complex(SO3part(torch.zeros([b, 2*l+1, 2*l+1,2])))
         else:
-            return SO3part(torch.zeros([b, 2*l+1, 2*l+1, 2])).cuda()
+            return torch.view_as_complex(SO3part(torch.zeros([b, 2*l+1, 2*l+1,2]))).cuda()
 
     @classmethod
     def Frandn(self, b, l, _dev=0):
@@ -115,11 +116,13 @@ class SO3part(torch.Tensor):
         This gives a b*(2+l+1)*(2l+1) dimensional complex random tensor. 
         """
         if _dev == 0:
-            return SO3part(torch.randn([b, 2*l+1, 2*l+1, 2]))
+            return torch.view_as_complex(SO3part(torch.randn([b, 2*l+1, 2*l+1])))
         else:
-            return SO3part(torch.randn([b, 2*l+1, 2*l+1, 2])).cuda()
+            return torch.view_as_complex(SO3part(torch.randn([b, 2*l+1, 2*l+1]))).cuda()
+
 
     # ---- Access ------------------------------------------------------------------------------------------
+
 
     def getb(self):
         return self.size(0)
@@ -130,14 +133,16 @@ class SO3part(torch.Tensor):
     def getn(self):
         return self.size(2)
 
+
     # ---- Operations --------------------------------------------------------------------------------------
+
 
     def rotate(self, R):
         A = _SO3partB.view(self).apply(R)
-        return SO3part(A.torch())
+        return torch.view_as_complex(SO3part(torch.view_as_real(A.torch())))
 
-    def apply(self, R):
-        return SO3part(_SO3partB.view(self).apply(R).torch())
+    #def apply(self, R):
+    #    return SO3part(_SO3partB.view(self).apply(R).torch())
 
 
     # ---- Products -----------------------------------------------------------------------------------------

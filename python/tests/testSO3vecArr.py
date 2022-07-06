@@ -2,20 +2,19 @@ import torch
 import gelib as G
 import pytest
 
-class TestSO3mvec(object):
+class TestSO3vecArr(object):
     
+    @pytest.mark.parametrize('a', [1, 2, 4])    
     @pytest.mark.parametrize('tau', [1, 2, 4, 8, 32])
-    @pytest.mark.parametrize('maxl', range(6))
-    @pytest.mark.parametrize('b', [1, 2, 3])    
-    @pytest.mark.parametrize('k', [1, 2, 4])    
-    def test_CGproduct(self,b,k,tau,maxl):
-        x = G.SO3mvec.randn(b,k,[tau for i in range(maxl + 1)])
-        y = G.SO3mvec.randn(b,k,[tau for i in range(maxl + 1)])
+    @pytest.mark.parametrize('maxl', range(7))
+    def test_CGproduct(self,a,tau, maxl):
+        x = G.SO3vecArr.randn([a,a],[tau for i in range(maxl + 1)])
+        y = G.SO3vecArr.randn([a,a],[tau for i in range(maxl + 1)])
         R = G.SO3element.uniform()
         xr=x.rotate(R)
         yr=y.rotate(R)
+
         z=G.CGproduct(x,y,maxl=maxl)
-        #print(z)
         zr=G.CGproduct(xr,yr,maxl=maxl)
         rz=z.rotate(R)
 
@@ -23,13 +22,12 @@ class TestSO3mvec(object):
             assert (torch.allclose(rz.parts[i] , zr.parts[i], rtol=1e-3, atol=1e-4))
 
 
+    @pytest.mark.parametrize('a', [1, 2, 4])    
     @pytest.mark.parametrize('tau', [1, 2, 4, 8, 32])
     @pytest.mark.parametrize('maxl', range(7))
-    @pytest.mark.parametrize('b', [1, 2, 4])    
-    @pytest.mark.parametrize('k', [1, 2, 4])    
-    def test_DiagCGproduct(self,b,k,tau, maxl):
-        x=G.SO3mvec.randn(b,k,[tau for i in range(maxl + 1)])
-        y=G.SO3mvec.randn(b,k,[tau for i in range(maxl + 1)])
+    def test_DiagCGproduct(self,a,tau, maxl):
+        x=G.SO3vecArr.randn([a,a],[tau for i in range(maxl + 1)])
+        y=G.SO3vecArr.randn([a,a],[tau for i in range(maxl + 1)])
         R=G.SO3element.uniform()
         xr=x.rotate(R)
         yr=y.rotate(R)
@@ -41,13 +39,11 @@ class TestSO3mvec(object):
         for i in range(maxl+1 ):
             assert (torch.allclose(rz.parts[i] , zr.parts[i], rtol=1e-3, atol=1e-5))
 
+    @pytest.mark.parametrize('a', [1, 2, 4])    
     @pytest.mark.parametrize('maxl', range(7))
-    @pytest.mark.parametrize('b', [1, 2, 4])    
-    @pytest.mark.parametrize('k', [1, 2, 4])    
-    def test_Fproduct(self,b,k,maxl):
-        return
-        x=G.SO3mvec.Frandn(b,k,maxl)
-        y=G.SO3mvec.Frandn(b,k,maxl)
+    def test_Fproduct(self,a,maxl):
+        x=G.SO3vecArr.Frandn([a,a],maxl)
+        y=G.SO3vecArr.Frandn([a,a],maxl)
         R = G.SO3element.uniform()
         xr=x.rotate(R)
         yr=y.rotate(R)
@@ -60,14 +56,13 @@ class TestSO3mvec(object):
             assert (torch.allclose(rz.parts[i] , zr.parts[i], rtol=1e-3, atol=1e-4))
 
 
+    @pytest.mark.parametrize('a', [1, 2, 4])    
     @pytest.mark.parametrize('tau', [1, 2, 4, 8, 32])
     @pytest.mark.parametrize('maxl', range(7))
-    @pytest.mark.parametrize('b', [1, 2, 4])    
-    @pytest.mark.parametrize('k', [1, 2, 4])    
-    def test_CGproduct_backprop(self,b,k,tau, maxl):
-        return
-        x = G.SO3mvec.randn(b,k,[tau for i in range(maxl + 1)])
-        y = G.SO3mvec.randn(b,k,[tau for i in range(maxl + 1)])
-        torch.autograd.gradcheck(G.SO3mvec_CGproductFn.apply,[maxl+1,maxl+1,maxl,*(x.parts+y.parts)])
-
+    def test_CGproduct_backprop(self,a,tau, maxl):
+        x = G.SO3vecArr.randn([a,a],[tau for i in range(maxl + 1)])
+        y = G.SO3vecArr.randn([a,a],[tau for i in range(maxl + 1)])
+        x.requires_grad_()
+        y.requires_grad_()
+        torch.autograd.gradcheck(G.SO3vecArr_CGproductFn.apply,[maxl+1,maxl+1,maxl,*(x.parts+y.parts)])
 

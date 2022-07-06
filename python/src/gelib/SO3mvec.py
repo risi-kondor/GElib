@@ -50,7 +50,7 @@ class SO3mvec:
         "Construct a zero SO3mvec object of given type _tau."
         R = SO3mvec()
         for l in range(0, len(_tau)):
-            R.parts.append(torch.zeros([b,k,2*l+1,_tau[l],2]))
+            R.parts.append(torch.zeros([b,k,2*l+1,_tau[l]],dtype=torch.cfloat))
         return R
 
     @classmethod
@@ -58,7 +58,7 @@ class SO3mvec:
         "Construct a random SO3mvec object of given type _tau."
         R = SO3mvec()
         for l in range(0, len(_tau)):
-            R.parts.append(torch.randn([b,k,2*l+1,_tau[l],2]))
+            R.parts.append(torch.randn([b,k,2*l+1,_tau[l]],dtype=torch.cfloat))
         return R
 
     @classmethod
@@ -77,7 +77,7 @@ class SO3mvec:
         "Construct an SO3mvec corresponding the to the Forier matrices 0,1,...maxl of b functions on SO(3)."
         R = SO3mvec()
         for l in range(0, maxl+1):
-            R.parts.append(torch.randn([b,k,2*l+1,2*l+1,2]))
+            R.parts.append(torch.randn([b,k,2*l+1,2*l+1],dtype=torch.cfloat))
         return R
 
     @classmethod
@@ -85,7 +85,7 @@ class SO3mvec:
         "Construct a zero SO3Fvec object  with l ranging from 0 to maxl."
         R = SO3mvec()
         for l in range(0, maxl+1):
-            R.parts.append(torch.randn([b,k,2*l+1,2*l+1,2]))
+            R.parts.append(torch.randn([b,k,2*l+1,2*l+1],dtype=torch.cfloat))
         return R
 
     @classmethod
@@ -533,14 +533,14 @@ def DiagCGproductType(x, y, maxl=-1):
 def MakeZeroSO3mparts(b,k,tau,_dev=0):
     R = []
     for l in range(0, len(tau)):
-        R.append(torch.zeros([b,k,2*l+1,tau[l],2]))
+        R.append(torch.zeros([b,k,2*l+1,tau[l]],dtype=torch.cfloat))
     return R
 
 
 def makeZeroSO3Fmparts(b,k,maxl,_dev=0):
     R = []
     for l in range(0, maxl+1):
-        R.append(torch.zeros([b,k,2*l+1,2*l+1,2]))
+        R.append(torch.zeros([b,k,2*l+1,2*l+1],dtype=torch.cfloat))
     return R
 
 

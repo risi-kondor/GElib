@@ -22,7 +22,9 @@ CFLAGS= -std=c++11 -O3 -ferror-limit=1
 INCLUDE= -I $(ROOTDIR)/include 
 LIBS= -lstdc++ -lm -lpthread 
 
-
+MACROS+=-DGELIB_COPY_WARNINGS
+MACROS+=-DGELIB_MOVE_WARNINGS
+MACROS+=-DGELIB_CONVERT_WARNINGS
 
 MACROS=
 

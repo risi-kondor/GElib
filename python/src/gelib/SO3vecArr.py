@@ -39,7 +39,8 @@ class SO3vecArr:
         "Construct a zero SO3vec object of given type _tau."
         R=SO3vecArr()
         for l in range(0,len(_tau)):
-            R.parts.append(SO3partArr.zeros(_adims,l,_tau[l],_dev))
+            R.parts.append(torch.zeros(_adims+[2*l+1,_tau[l]],dtype=torch.cfloat))
+            #R.parts.append(SO3partArr.zeros(_adims,l,_tau[l],_dev))
         return R
 
     @staticmethod
@@ -47,7 +48,8 @@ class SO3vecArr:
         "Construct a random SO3vec array of given type _tau."
         R=SO3vecArr()
         for l in range(0,len(_tau)):
-            R.parts.append(SO3partArr.randn(_adims,l,_tau[l],_dev))
+            R.parts.append(torch.randn(_adims+[2*l+1,_tau[l]],dtype=torch.cfloat))
+            #R.parts.append(SO3partArr.randn(_adims,l,_tau[l],_dev))
         return R
 
     @staticmethod
@@ -55,7 +57,8 @@ class SO3vecArr:
         "Construct an SO3vec array corresponding the to the Forier matrices 0,1,...maxl of b functions on SO(3)."
         R=SO3vecArr()
         for l in range(0,maxl+1):
-            R.parts.append(SO3partArr.Fzeros(_adims,l,_dev))
+            R.parts.append(torch.zeros(_adims+[2*l+1,2*l+1],dtype=torch.cfloat))
+            #R.parts.append(SO3partArr.Fzeros(_adims,l,_dev))
         return R
 
     @staticmethod
@@ -63,7 +66,8 @@ class SO3vecArr:
         "Construct a zero SO3Fvec array with l ranging from 0 to maxl."
         R=SO3vecArr()
         for l in range(0,maxl+1):
-            R.parts.append(SO3partArr.Frandn(_adims,l,_dev))            
+            R.parts.append(torch.randn(_adims+[2*l+1,2*l+1],dtype=torch.cfloat))
+            #R.parts.append(SO3partArr.Frandn(_adims,l,_dev))            
         return R
 
     @staticmethod
@@ -71,7 +75,8 @@ class SO3vecArr:
         R=SO3vecrArr()
         # b=x.parts[0].dim(0)
         for l in range(0,len(x.parts)):
-            R.parts.append(SO3partArr(torch.zeros_like(x.parts[l])))
+            R.parts.append(torch.zeros_like(x.parts[l]))
+            #R.parts.append(SO3partArr(torch.zeros_like(x.parts[l])))
         return R;
                            
                        
@@ -81,14 +86,18 @@ class SO3vecArr:
 
     def get_adims(self):
         assert len(parts)>0 
-        return parts[0].get_adims()
+        return list(parts[0].size()[0:parts[0].dim()-2])
 
     def tau(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
         r=[]
         for l in range(0,len(self.parts)):
-            r.append(self.parts[l].getn())
+            r.append(self.parts[l].size(-1))
         return r
+
+    def requires_grad_(self):
+        for p in self.parts:
+            p.requires_grad_()
 
 
     ## ---- Transport ---------------------------------------------------------------------------------------
@@ -108,7 +117,8 @@ class SO3vecArr:
         "Apply the group element to this vector"
         r=SO3vecArr()
         for l in range(0,len(self.parts)):
-            r.parts.append(self.parts[l].rotate(R))
+            r.parts.append(SO3partB_array.view(self.parts[l]).rotate(R).torch())
+            #r.parts.append(self.parts[l].rotate(R))
         return r
 
 
@@ -130,6 +140,15 @@ class SO3vecArr:
         """
         r=SO3vecArr()
         r.parts=list(SO3vecArr_CGproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
+        return r
+
+
+    def DiagCGproduct(self,y,maxl=-1):
+        """
+        Compute the diagonal Clesbsch--Gordan product of this SO3vecArr with another SO3vecArr y.
+        """
+        r=SO3vecArr()
+        r.parts=list(SO3vecArr_DiagCGproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
         return r
 
 
@@ -182,7 +201,7 @@ def Fmodsq(x,a=-1):
 def tau_type(x):
     r=[]
     for t in x:
-        r.append(t.getn())
+        r.append(t.size(-1))
     return r
 
 def CGproductType(x,y,maxl=-1):
@@ -199,14 +218,16 @@ def CGproductType(x,y,maxl=-1):
 def MakeZeroSO3partArrs(adims,tau,_dev=0):
     R=[]
     for l in range(0,len(tau)):
-        R.append(SO3partArr.zeros(adims,l,tau[l],_dev))
+        R.append(torch.zeros(adims+[2*l+1,tau[l]],dtype=torch.cfloat))
+        #R.append(SO3partArr.zeros(adims,l,tau[l],_dev))
     return R
 
 
 def makeZeroSO3FpartArrs(adims,maxl,_dev=0):
     R=[]
     for l in range(0,maxl+1):
-        R.append(SO3part.Fzeros(adims,l,_dev))
+        R.append(torch.zeros(adims+[2*l+1,2*l+1],dtype=torch.cfloat))
+#        R.append(SO3part.Fzeros(adims,l,_dev))
     return R
 
 
@@ -225,7 +246,7 @@ class SO3vecArr_CGproductFn(torch.autograd.Function):
         #ctx.maxl=maxl
         ctx.save_for_backward(*args)
 
-        adims=list(args[0].size()[0:args[0].dim()-3])
+        adims=list(args[0].size()[0:args[0].dim()-2])
         tau=CGproductType(tau_type(args[0:k1]),tau_type(args[k1:k1+k2]),maxl)
         dev=int(args[0].is_cuda)
         r=MakeZeroSO3partArrs(adims,tau,dev)
@@ -264,7 +285,55 @@ class SO3vecArr_CGproductFn(torch.autograd.Function):
         return tuple(grads)
 
 
-class SO3vec_FproductFn(torch.autograd.Function): #todo
+class SO3vecArr_DiagCGproductFn(torch.autograd.Function): 
+
+    @staticmethod
+    def forward(ctx,k1,k2,maxl,*args):
+        ctx.k1=k1
+        ctx.k2=k2
+        #ctx.maxl=maxl
+        ctx.save_for_backward(*args)
+
+        adims=list(args[0].size()[0:args[0].dim()-3])
+        tau=DiagCGproductType(tau_type(args[0:k1]),tau_type(args[k1:k1+k2]),maxl)
+        dev=int(args[0].is_cuda)
+        r=MakeZeroSO3partArrs(adims,tau,dev)
+
+        _x=_SO3vecB_array.view(args[0:k1]);
+        _y=_SO3vecB_array.view(args[k1:k1+k2]);
+        _r=_SO3vecB_array.view(r)
+        _r.addDiagCGproduct(_x,_y)
+
+        return tuple(r)
+
+    @staticmethod
+    def backward(ctx,*args):
+
+        k1=ctx.k1
+        k2=ctx.k2
+        #maxl=ctx.maxl
+
+        inputs=ctx.saved_tensors
+        assert len(inputs)==k1+k2, "Wrong number of saved tensors."
+
+        grads=[None,None,None]
+        for i in range(k1+k2):
+            grads.append(torch.zeros_like(inputs[i]))
+
+        _x=_SO3vecB_array.view(inputs[0:k1]);
+        _y=_SO3vecB_array.view(inputs[k1:k1+k2]);
+
+        _g=_SO3vecB_array.view(args);
+        _xg=_SO3vecB_array.view(grads[3:k1+3]);
+        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3]);
+
+        _xg.addDiagCGproduct_back0(_g,_y)
+        _yg.addDiagCGproduct_back1(_g,_x)
+
+        return tuple(grads)
+
+
+class SO3vecArr_FproductFn(torch.autograd.Function): #todo
 
     @staticmethod
     def forward(ctx,k1,k2,_maxl,*args):
@@ -279,7 +348,7 @@ class SO3vec_FproductFn(torch.autograd.Function): #todo
             maxl=_maxl
         dev=int(args[0].is_cuda)
 
-        r=makeZeroSO3Fparts(adims,maxl,dev)
+        r=makeZeroSO3FpartArrs(adims,maxl,dev)
 
         _x=_SO3vecB_array.view(args[0:k1]);
         _y=_SO3vecB_array.view(args[k1:k1+k2]);
@@ -330,7 +399,7 @@ class SO3vec_FmodsqFn(torch.autograd.Function): #todo
             maxl=_maxl
         dev=int(args[0].is_cuda)
 
-        r=makeZeroSO3Fparts(adims,maxl,dev)
+        r=makeZeroSO3FpartArrs(adims,maxl,dev)
 
         _x=_SO3vecB_array.view(args[0:k1]);
         #_y=_SO3vecB_array.view(args[k1:k1+k2]);
@@ -394,5 +463,8 @@ class SO3vecArr_GatherFn(torch.autograd.Function):
         _r.gather(_x,ctx.mask.inv())
 
         return tuple([None]+r)
+
+
+# ---- Helpers -----------------------------------------------------------------------------------------------
 
 

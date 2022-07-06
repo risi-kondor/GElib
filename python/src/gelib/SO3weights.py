@@ -48,9 +48,9 @@ class SO3weights:
         assert len(_tau1)==len(_tau2)
         for l in range(0, len(_tau1)):
             if(_dev==0):
-                R.parts.append(torch.zeros(_tau1[l],_tau2[l],2))
+                R.parts.append(torch.zeros([_tau1[l],_tau2[l]],dtype=torch.cfloat))
             else:
-                R.parts.append(torch.zeros(_tau1[l],_tau2[l],2).cuda())
+                R.parts.append(torch.zeros([_tau1[l],_tau2[l]],dtype=torch.cfloat).cuda())
         return R
 
     @classmethod
@@ -59,9 +59,9 @@ class SO3weights:
         assert len(_tau1)==len(_tau2)
         for l in range(0, len(_tau1)):
             if(_dev==0):
-                R.parts.append(torch.randn(_tau1[l],_tau2[l],2))
+                R.parts.append(torch.randn([_tau1[l],_tau2[l]],dtype=torch.cfloat))
             else:
-                R.parts.append(torch.randn(_tau1[l],_tau2[l],2).cuda())
+                R.parts.append(torch.randn([_tau1[l],_tau2[l]],dtype=torch.cfloat).cuda())
         return R
 
     @classmethod
@@ -70,9 +70,9 @@ class SO3weights:
         assert len(_tau1)==len(_tau2)
         for l in range(0, len(_tau1)):
             if(_dev==0):
-                R.parts.append(torch.zeros(2*l+1,2*l+1,2))
+                R.parts.append(torch.zeros([2*l+1,2*l+1],dtype=torch.cfloat))
             else:
-                R.parts.append(torch.zeros(2*l+1,2*l+1,2).cuda())
+                R.parts.append(torch.zeros([2*l+1,2*l+1],dtype=torch.cfloat).cuda())
         return R
 
     @classmethod
@@ -81,9 +81,9 @@ class SO3weights:
         assert len(_tau1)==len(_tau2)
         for l in range(0, len(_tau1)):
             if(_dev==0):
-                R.parts.append(torch.randn(2*l+1,2*l+1,2))
+                R.parts.append(torch.randn([2*l+1,2*l+1],dtype=torch.cfloat))
             else:
-                R.parts.append(torch.randn(2*l+1,2*l+1,2).cuda())
+                R.parts.append(torch.randn([2*l+1,2*l+1],dtype=torch.cfloat).cuda())
         return R
 
     @classmethod
@@ -96,6 +96,7 @@ class SO3weights:
     
     # ---- Arithmetic ---------------------------------------------------------------------------------------
 
+
     def __mul__(self, w):
         if(isinstance(w,torch.Tensor)):
             R=SO3weights()
@@ -107,6 +108,7 @@ class SO3weights:
 
     # ---- Access -------------------------------------------------------------------------------------------
 
+
     def tau1(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
         r = []
@@ -114,6 +116,10 @@ class SO3weights:
             r.append(self.parts[l].size(0))
         return r
 
+    def requires_grad_(self):
+        for p in self.parts:
+            p.requires_grad_()
+            
 
     # ---- Transport ---------------------------------------------------------------------------------------
 

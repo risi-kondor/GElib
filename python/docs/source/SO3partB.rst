@@ -12,10 +12,7 @@ Since :math:`D^{(\ell)}` is a :math:`2\ell\!+\!1` a dimensional representation,
 However, to aid in parallelizing certain operations, the  
 ``SO3part`` class in GElib also admits a "batch dimension", :math:`b`.  
 Therefore, ``SO3part`` is implemented as a  
-``(b,2l+1,n,2)`` -dimensional single precision ``torch.Tensor`` object,  
-where the last dimension corresponds to the real/imaginary parts. 
-This format may be converted to PyTorch's new complex tensor format with  
-``torch.view_as_complex()``, while ``torch.view_as_real()`` converts in the opposite direction.
+``(b,2l+1,n)`` -dimensional single precision complex ``torch.Tensor``. 
 
 The following code constructs an ``SO3part`` object holding ``n=3`` Gaussian distributed random vectors corresponding 
 to the ``l=2`` irrep of SO(3) (batch size 1) and prints it out in GElib's own compact format.  

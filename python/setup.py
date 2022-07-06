@@ -65,6 +65,9 @@ def main():
                          '-DCNINE_RANGE_CHECKING',
                          '-DCNINE_SIZE_CHECKING',
                          '-DCNINE_DEVICE_CHECKING',
+                         '-DGELIB_COPY_WARNINGS',
+                         '-DGELIB_MOVE_WARNINGS',
+                         '-DGELIB_CONVERT_WARNINGS',
                          '-DGELIB_RANGE_CHECKING',
                          '-DWITH_FAKE_GRAD'
                          ]

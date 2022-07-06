@@ -4,31 +4,31 @@ SO3vec
 
 
 An ``SO3vec`` object represents a general SO(3)-covariant vector, stored 
-as a sequence of ``SO3part`` objects. 
+as a sequence of PyTorch tensors. 
 Similarly to ``SO3part``, ``SO3vec`` also has a batch dimension. 
 
-The `type` of an ``SO3vec`` is a list specifying the multiplicity of each of its parts. 
+The `type` of an ``SO3vec`` is a list specifying the number of fragments in each of its parts. 
 For example, the following creates a random ``SO3vec`` of type (2,3,1). 
 
 .. code-block:: python
 
   >>> v=gelib.SO3vec.randn(1,[2,3,1])
   >>> v
-  <gelib_torchC.SO3vec object at 0x7f974337bb70>
+  <GElib::SO3vecB of type (2,3,1)>
   >>> print(v)
   Part l=0:
-    [ (0.289356,1.54426) (-1.34567,1.53707) ]
-
-
+    [ (0.132629,0.950553) (0.719683,1.16923) ]
+   
+  
   Part l=1:
-    [ (-1.01328,-0.592903) (-1.11794,0.749696) (-0.734772,1.43901) ]
-    [ (0.541032,1.58891) (-1.55468,-0.30842) (-0.937764,0.634763) ]
-    [ (0.871103,-0.726917) (0.787215,-1.39109) (2.66829,0.85663) ]
-
-
+    [ (-0.308873,1.34239) (-0.0749153,0.787603) (0.124809,-0.68182) ]
+    [ (-0.395814,-0.452225) (-0.301379,-0.498362) (0.368224,0.251531) ]
+    [ (1.73902,-0.423323) (-0.411957,0.293598) (-1.11078,-0.537569) ]
+  
+  
   Part l=2:
-    [ (-0.440433,-0.919034) (-0.700111,-0.901544) (1.29377,-0.482789) (-1.26476,-1.61195) (-1.42624,-0.967444) ]
-
+    [ (0.295592,-0.0414616) (1.63098,0.730143) (-0.0242692,0.707672) (0.771041,-0.809959) (0.763403,0.260789) ]
+  
 
 The batch dimension and type of an SO(3)-vector can be accessed as follows.
 
@@ -44,9 +44,9 @@ The invidual parts are stored in the ``parts`` member variable
 .. code-block:: python
 
   >>> print(v.parts[1])
-    [ (-1.01328,-0.592903) (-1.11794,0.749696) (-0.734772,1.43901) ]
-    [ (0.541032,1.58891) (-1.55468,-0.30842) (-0.937764,0.634763) ]
-    [ (0.871103,-0.726917) (0.787215,-1.39109) (2.66829,0.85663) ]
+  tensor([[[-0.3089+1.3424j, -0.0749+0.7876j,  0.1248-0.6818j],
+           [-0.3958-0.4522j, -0.3014-0.4984j,  0.3682+0.2515j],
+           [ 1.7390-0.4233j, -0.4120+0.2936j, -1.1108-0.5376j]]])
 
 |
 

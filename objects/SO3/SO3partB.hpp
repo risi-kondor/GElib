@@ -111,11 +111,13 @@ namespace GElib{
     #ifdef WITH_FAKE_GRAD
     SO3partB(const SO3partB& x):
       CtensorB(x){
+      GELIB_COPY_WARNING();
       if(x.grad) grad=new SO3partB(*x.grad);
     }
       
     SO3partB(SO3partB&& x):
       CtensorB(std::move(x)){
+      GELIB_MOVE_WARNING();
       grad=x.grad;
       x.grad=nullptr;
     }
@@ -126,12 +128,14 @@ namespace GElib{
 
     SO3partB(const CtensorB& x):
       CtensorB(x){
+      GELIB_CONVERT_WARNING(x);
       assert(dims.size()==3);
       assert(dims(1)%2==1);
     }
       
     SO3partB(CtensorB&& x):
       CtensorB(std::move(x)){
+      GELIB_MCONVERT_WARNING(x);
       assert(dims.size()==3);
       assert(dims(1)%2==1);
     }
@@ -519,6 +523,11 @@ namespace GElib{
 
 
   public: // ---- I/O ----------------------------------------------------------------------------------------
+
+
+    string classname() const{
+      return "GElib::SO3partB";
+    }
 
     string repr(const string indent="") const{
       return "<GElib::SO3partB(l="+to_string(getl())+",n="+to_string(getn())+")>";

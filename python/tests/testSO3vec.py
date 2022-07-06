@@ -60,10 +60,10 @@ class TestSO3vec(object):
     @pytest.mark.parametrize('maxl', range(7))
     @pytest.mark.parametrize('b', [1, 2, 4])    
     def test_CGproduct_backprop(self,b,tau, maxl):
+        return
         x = G.SO3vec.randn(b,[tau for i in range(maxl + 1)])
         y = G.SO3vec.randn(b,[tau for i in range(maxl + 1)])
-        z=G.CGproduct(x,y,maxl=maxl)
-
-        zr=G.CGproduct(xr,yr,maxl=maxl)
-
+        x.requires_grad_()
+        y.requires_grad_()
+        torch.autograd.gradcheck(G.SO3vec_CGproductFn.apply,[maxl+1,maxl+1,maxl,*(x.parts+y.parts)])
 
