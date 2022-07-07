@@ -44,60 +44,63 @@ class SO3vec:
     # ---- Static constructors ------------------------------------------------------------------------------
 
     @classmethod
-    def zeros(self, b, _tau, _dev=0):
+    def zeros(self, b, _tau,  device='cpu'):
         "Construct a zero SO3vec object of given type _tau."
         R = SO3vec()
         for l in range(0, len(_tau)):
-            R.parts.append(torch.zeros([b,2*l+1,_tau[l]],dtype=torch.cfloat))
-#            R.parts.append(SO3part.zeros(b, l, _tau[l], _dev))
+            R.parts.append(torch.zeros([b,2*l+1,_tau[l]], dtype=torch.cfloat, device=device))
         return R
 
     @classmethod
-    def randn(self, b, _tau, _dev=0):
+    def randn(self, b, _tau,  device='cpu'):
         "Construct a random SO3vec object of given type _tau."
         R = SO3vec()
         for l in range(0, len(_tau)):
-            R.parts.append(torch.randn([b,2*l+1,_tau[l]],dtype=torch.cfloat))
-            #R.parts.append(SO3part.randn(b, l, _tau[l], _dev))
+            R.parts.append(torch.randn([b,2*l+1,_tau[l]], dtype=torch.cfloat, device=device))
         return R
 
     @classmethod
-    def spharm(self, b, _tau, x, y, z, _dev=0):
+    def spharm(self, b, _tau, x, y, z, device='cpu'):
         """
         Compute a vector of spherical harmonic coefficients. 
         The values will be duplicated along the batch and channel dimensions.
         """
         R = SO3vec()
         for l in range(0, len(_tau)):
-            R.parts.append(SO3part.spharM(b, l, _tau[l], x, y, z, _dev))
+            R.parts.append(SO3part.spharM(b, l, _tau[l], x, y, z, device=device))
         return R
 
     @classmethod
-    def Fzeros(self, b, maxl, _dev=0):
+    def Fzeros(self, b, maxl,  device='cpu'):
         "Construct an SO3vec corresponding the to the Forier matrices 0,1,...maxl of b functions on SO(3)."
         R = SO3vec()
         for l in range(0, maxl+1):
-            R.parts.append(torch.zeros([b,2*l+1,2*l+1],dtype=torch.cfloat))
-            #R.parts.append(SO3part.Fzeros(b, l, _dev))
+            R.parts.append(torch.zeros([b,2*l+1,2*l+1], dtype=torch.cfloat, device=device))
         return R
 
     @classmethod
-    def Frandn(self, b, maxl, _dev=0):
+    def Frandn(self, b, maxl,  device='cpu'):
         "Construct a zero SO3Fvec object  with l ranging from 0 to maxl."
         R = SO3vec()
         for l in range(0, maxl+1):
-            R.parts.append(torch.randn([b,2*l+1,2*l+1],dtype=torch.cfloat))
+            R.parts.append(torch.randn([b,2*l+1,2*l+1], dtype=torch.cfloat, device=device))
             #R.parts.append(SO3part.Frandn(b, l, _dev))
         return R
 
     @classmethod
     def zeros_like(self, x):
         R = SO3vec()
-        # b=x.parts[0].dim(0)
         for l in range(0, len(x.parts)):
             R.parts.append(torch.zeros_like(x.parts[l]))
-            #R.parts.append(SO3part(torch.zeros_like(x.parts[l])))
         return R
+
+    @classmethod
+    def randn_like(self, x):
+        R = SO3vec()
+        for l in range(0, len(x.parts)):
+            R.parts.append(torch.randn_like(x.parts[l]))
+        return R
+
 
     # ---- Access -------------------------------------------------------------------------------------------
 
@@ -110,13 +113,19 @@ class SO3vec:
         r = []
         for l in range(0, len(self.parts)):
             r.append(self.parts[l].size(2))
-            # r.append(self.parts[l].getn())
         return r
 
     def requires_grad_(self):
         for p in self.parts:
             p.requires_grad_()
 
+    def get_grad(self):
+        r = SO3vec()
+        for p in self.parts:
+            r.parts.append(p.grad)
+        return r
+        
+        
 
     # ---- Transport ---------------------------------------------------------------------------------------
 
@@ -135,9 +144,16 @@ class SO3vec:
         r = SO3vec()
         for l in range(0, len(self.parts)):
             r.parts.append(_SO3partB.view(self.parts[l]).apply(R).torch())
-            #r.parts.append(SO3part(self.parts[l]).rotate(R))
         return r
 
+    def odot(self,y):
+        assert(len(self.parts)==len(y.parts))
+        r=0
+        for l in range(0, len(self.parts)):
+            r+=torch.sum(torch.mul(torch.view_as_real(self.parts[l]),torch.view_as_real(y.parts[l])))
+        return r
+
+        
     # ---- Products -----------------------------------------------------------------------------------------
 
     def CGproduct(self, y, maxl=-1):
@@ -195,10 +211,10 @@ class SO3vec:
     def __add__(self, y):
        if(isinstance(y,SO3vec)):
            if(len(self.parts)!=len(y.parts)):
-               raise IndexError("SO3weights must have the same number of parts.")
+               raise IndexError("SO3vec must have the same number of parts.")
            R=SO3vec()
            for l in range(len(self.parts)):
-               R.parts.append(self.parts[l]+y.parts)
+               R.parts.append(self.parts[l]+y.parts[l])
            return R
        raise TypeError("Not an SO3vec object.")
 
@@ -238,8 +254,7 @@ class SO3vec_CGproductFn(torch.autograd.Function):
 
         b = args[0].size(0)
         tau = CGproductType(tau_type(args[0:k1]), tau_type(args[k1:k1+k2]), maxl)
-        dev = int(args[0].is_cuda)
-        r = MakeZeroSO3parts(b, tau, dev)
+        r = MakeZeroSO3parts(b,tau,args[0].device)
 
         _x = _SO3vecB.view(args[0:k1])
         _y = _SO3vecB.view(args[k1:k1+k2])
@@ -281,13 +296,11 @@ class SO3vec_DiagCGproductFn(torch.autograd.Function):
     def forward(ctx, k1, k2, maxl, *args):
         ctx.k1 = k1
         ctx.k2 = k2
-        # ctx.maxl=maxl
         ctx.save_for_backward(*args)
 
         b = args[0].size(0)
         tau = DiagCGproductType(tau_type(args[0:k1]), tau_type(args[k1:k1+k2]), maxl)
-        dev = int(args[0].is_cuda)
-        r = MakeZeroSO3parts(b, tau, dev)
+        r = MakeZeroSO3parts(b, tau, args[0].device)
 
         _x = _SO3vecB.view(args[0:k1])
         _y = _SO3vecB.view(args[k1:k1+k2])
@@ -336,9 +349,8 @@ class SO3vec_FproductFn(torch.autograd.Function):
             maxl = k1+k2-2
         else:
             maxl = _maxl
-        dev = int(args[0].is_cuda)
 
-        r = makeZeroSO3Fparts(b, maxl, dev)
+        r = makeZeroSO3Fparts(b, maxl, args[0].device)
 
         _x = _SO3vecB.view(args[0:k1])
         _y = _SO3vecB.view(args[k1:k1+k2])
@@ -387,9 +399,8 @@ class SO3vec_FmodsqFn(torch.autograd.Function):
             maxl = k1+k1-2
         else:
             maxl = _maxl
-        dev = int(args[0].is_cuda)
 
-        r = makeZeroSO3Fparts(b, maxl, dev)
+        r = makeZeroSO3Fparts(b, maxl, args[0].device)
 
         _x = _SO3vecB.view(args[0:k1])
         _r = _SO3vecB.view(r)
@@ -534,19 +545,17 @@ def DiagCGproductType(x, y, maxl=-1):
     return r
 
 
-def MakeZeroSO3parts(b, tau, _dev=0):
+def MakeZeroSO3parts(b, tau, device):
     R = []
     for l in range(0, len(tau)):
-        R.append(torch.zeros([b,2*l+1,tau[l]],dtype=torch.cfloat))
-        #R.append(SO3part.zeros(b, l, tau[l], _dev))
+        R.append(torch.zeros([b,2*l+1,tau[l]],dtype=torch.cfloat,device=device))
     return R
 
 
-def makeZeroSO3Fparts(b, maxl, _dev=0):
+def makeZeroSO3Fparts(b, maxl, device):
     R = []
     for l in range(0, maxl+1):
-        R.append(torch.zeros([b,2*l+1,2*l+1],dtype=torch.cfloat))
-        #R.append(SO3part.Fzeros(b, l, _dev))
+        R.append(torch.zeros([b,2*l+1,2*l+1],dtype=torch.cfloat,device=device))
     return R
 
 
