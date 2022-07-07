@@ -72,11 +72,16 @@ class SO3vecArr:
 
     @staticmethod
     def zeros_like(x):
-        R=SO3vecrArr()
-        # b=x.parts[0].dim(0)
+        R=SO3vecArr()
         for l in range(0,len(x.parts)):
             R.parts.append(torch.zeros_like(x.parts[l]))
-            #R.parts.append(SO3partArr(torch.zeros_like(x.parts[l])))
+        return R;
+                           
+    @staticmethod
+    def randn_like(x):
+        R=SO3vecArr()
+        for l in range(0,len(x.parts)):
+            R.parts.append(torch.randn_like(x.parts[l]))
         return R;
                            
                        
@@ -99,6 +104,12 @@ class SO3vecArr:
         for p in self.parts:
             p.requires_grad_()
 
+    def get_grad(self):
+        r = SO3vecArr()
+        for p in self.parts:
+            r.parts.append(p.grad)
+        return r
+
 
     ## ---- Transport ---------------------------------------------------------------------------------------
 
@@ -113,12 +124,30 @@ class SO3vecArr:
     ## ---- Operations ---------------------------------------------------------------------------------------
 
 
+    def __add__(self, y):
+       if(isinstance(y,SO3vecArr)):
+           if(len(self.parts)!=len(y.parts)):
+               raise IndexError("SO3vecArr must have the same number of parts.")
+           R=SO3vecArr()
+           for l in range(len(self.parts)):
+               R.parts.append(self.parts[l]+y.parts[l])
+           return R
+       raise TypeError("Not an SO3vecArr object.")
+
     def rotate(self,R):
         "Apply the group element to this vector"
         r=SO3vecArr()
         for l in range(0,len(self.parts)):
             r.parts.append(SO3partB_array.view(self.parts[l]).rotate(R).torch())
             #r.parts.append(self.parts[l].rotate(R))
+        return r
+
+
+    def odot(self,y):
+        assert(len(self.parts)==len(y.parts))
+        r=0
+        for l in range(0, len(self.parts)):
+            r+=torch.sum(torch.mul(torch.view_as_real(self.parts[l]),torch.view_as_real(y.parts[l])))
         return r
 
 
@@ -294,7 +323,7 @@ class SO3vecArr_DiagCGproductFn(torch.autograd.Function):
         #ctx.maxl=maxl
         ctx.save_for_backward(*args)
 
-        adims=list(args[0].size()[0:args[0].dim()-3])
+        adims=list(args[0].size()[0:args[0].dim()-2])
         tau=DiagCGproductType(tau_type(args[0:k1]),tau_type(args[k1:k1+k2]),maxl)
         dev=int(args[0].is_cuda)
         r=MakeZeroSO3partArrs(adims,tau,dev)
