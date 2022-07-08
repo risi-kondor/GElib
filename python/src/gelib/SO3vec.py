@@ -139,6 +139,7 @@ class SO3vec:
 
     # ---- Operations ---------------------------------------------------------------------------------------
 
+
     def rotate(self, R):
         "Apply the group element to this vector"
         r = SO3vec()
@@ -155,6 +156,7 @@ class SO3vec:
 
         
     # ---- Products -----------------------------------------------------------------------------------------
+
 
     def CGproduct(self, y, maxl=-1):
         """

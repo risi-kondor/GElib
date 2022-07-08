@@ -12,18 +12,17 @@
 py::class_<SO3vecB_array>(m,"SO3vecB_array",
   "Class to store an array of SO3-vectors")
 
-  .def_static("zero",[](const Gdims& adims, const SO3type& tau, const int dev){
-      return SO3vecB_array::zero(adims,tau,dev);}, 
-    py::arg("adims"), py::arg("tau"), py::arg("device")=0)
-  .def_static("zero",[](const vector<int>& av, const SO3type& tau, const int dev){
-      return SO3vecB_array::zero(Gdims(av),tau,dev);},
-    py::arg("adims"),py::arg("tau"),py::arg("device")=0)
+  .def_static("zero",[](const int b, const Gdims& adims, const SO3type& tau, const int dev){
+      return SO3vecB_array::zero(b,adims,tau,dev);}, 
+    py::arg("b"),py::arg("adims"), py::arg("tau"), py::arg("device")=0)
+  .def_static("zero",[](const int b, const vector<int>& av, const SO3type& tau, const int dev){
+      return SO3vecB_array::zero(b,Gdims(av),tau,dev);},
+    py::arg("b"),py::arg("adims"),py::arg("tau"),py::arg("device")=0)
 
   .def_static("view",[](vector<at::Tensor>& v){
       SO3vecB_array r;
       for(auto& p: v)
 	r.parts.push_back(static_cast<SO3partB_array*>(SO3partB_array::viewp(p,-2)));
-      //r.parts.push_back(static_cast<SO3partB_array*>(SO3partB_array::viewp(p)));
       return r;
     })
 

@@ -43,47 +43,35 @@ class SO3weights:
     # ---- Static constructors ------------------------------------------------------------------------------
 
     @classmethod
-    def zeros(self, _tau1, _tau2, _dev=0):
+    def zeros(self, _tau1, _tau2, device='cpu'):
         R = SO3weights()
         assert len(_tau1)==len(_tau2)
         for l in range(0, len(_tau1)):
-            if(_dev==0):
-                R.parts.append(torch.zeros([_tau1[l],_tau2[l]],dtype=torch.cfloat))
-            else:
-                R.parts.append(torch.zeros([_tau1[l],_tau2[l]],dtype=torch.cfloat).cuda())
+            R.parts.append(torch.zeros([_tau1[l],_tau2[l]],dtype=torch.cfloat,device=device))
         return R
 
     @classmethod
-    def randn(self, _tau1, _tau2, _dev=0):
+    def randn(self, _tau1, _tau2, device='cpu'):
         R = SO3weights()
         assert len(_tau1)==len(_tau2)
         for l in range(0, len(_tau1)):
-            if(_dev==0):
-                R.parts.append(torch.randn([_tau1[l],_tau2[l]],dtype=torch.cfloat))
-            else:
-                R.parts.append(torch.randn([_tau1[l],_tau2[l]],dtype=torch.cfloat).cuda())
+            R.parts.append(torch.randn([_tau1[l],_tau2[l]],dtype=torch.cfloat,device=device))
         return R
 
     @classmethod
-    def Fzeros(self, _tau1, _tau2, _dev=0):
+    def Fzeros(self, _tau1, _tau2, device='cpu'):
         R = SO3weights()
         assert len(_tau1)==len(_tau2)
         for l in range(0, len(_tau1)):
-            if(_dev==0):
-                R.parts.append(torch.zeros([2*l+1,2*l+1],dtype=torch.cfloat))
-            else:
-                R.parts.append(torch.zeros([2*l+1,2*l+1],dtype=torch.cfloat).cuda())
+            R.parts.append(torch.zeros([2*l+1,2*l+1],dtype=torch.cfloat,device=device))
         return R
 
     @classmethod
-    def Frandn(self, _tau1, _tau2, _dev=0):
+    def Frandn(self, _tau1, _tau2, device='cpu'):
         R = SO3weights()
         assert len(_tau1)==len(_tau2)
         for l in range(0, len(_tau1)):
-            if(_dev==0):
-                R.parts.append(torch.randn([2*l+1,2*l+1],dtype=torch.cfloat))
-            else:
-                R.parts.append(torch.randn([2*l+1,2*l+1],dtype=torch.cfloat).cuda())
+            R.parts.append(torch.randn([2*l+1,2*l+1],dtype=torch.cfloat,device=device))
         return R
 
     @classmethod

@@ -16,9 +16,10 @@ int main(int argc, char** argv){
 
   int n=4;
   int B=2;
+  int b=2;
   Gdims adims({n});
 
-  SO3partB_array u=SO3partB_array::gaussian(adims,2,2);
+  SO3partB_array u=SO3partB_array::gaussian(b,adims,2,2);
 
   rtensor M=rtensor::zero({n,n});
   M.set(0,1,1.0);

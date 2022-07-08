@@ -4,9 +4,9 @@ import pytest
 
 class TestSO3vecArr(object):
     
-    def vecArr_vecArr_backprop(self,a,tau,fn):
-        x = G.SO3vecArr.randn([a,a],tau)
-        y = G.SO3vecArr.randn([a,a],tau)
+    def vecArr_vecArr_backprop(self,b,a,tau,fn):
+        x = G.SO3vecArr.randn(b,a,tau)
+        y = G.SO3vecArr.randn(b,a,tau)
         x.requires_grad_()
         y.requires_grad_()
         z=fn(x,y)
@@ -28,12 +28,13 @@ class TestSO3vecArr(object):
         assert(torch.allclose(yloss-loss,yeps.odot(ygrad),rtol=1e-3, atol=1e-4))
         
 
+    @pytest.mark.parametrize('b', [1, 2, 4])    
     @pytest.mark.parametrize('a', [1, 2, 4])    
     @pytest.mark.parametrize('tau', [1, 2, 4, 8, 32])
     @pytest.mark.parametrize('maxl', range(7))
-    def test_CGproduct(self,a,tau, maxl):
-        x = G.SO3vecArr.randn([a,a],[tau for i in range(maxl + 1)])
-        y = G.SO3vecArr.randn([a,a],[tau for i in range(maxl + 1)])
+    def test_CGproduct(self,b,a,tau, maxl):
+        x = G.SO3vecArr.randn(b,[a],[tau for i in range(maxl + 1)])
+        y = G.SO3vecArr.randn(b,[a],[tau for i in range(maxl + 1)])
         R = G.SO3element.uniform()
         xr=x.rotate(R)
         yr=y.rotate(R)
@@ -46,12 +47,13 @@ class TestSO3vecArr(object):
             assert (torch.allclose(rz.parts[i] , zr.parts[i], rtol=1e-3, atol=1e-4))
 
 
+    @pytest.mark.parametrize('b', [1, 2, 4])    
     @pytest.mark.parametrize('a', [1, 2, 4])    
     @pytest.mark.parametrize('tau', [1, 2, 4, 8, 32])
     @pytest.mark.parametrize('maxl', range(7))
-    def test_DiagCGproduct(self,a,tau, maxl):
-        x=G.SO3vecArr.randn([a,a],[tau for i in range(maxl + 1)])
-        y=G.SO3vecArr.randn([a,a],[tau for i in range(maxl + 1)])
+    def test_DiagCGproduct(self,b,a,tau, maxl):
+        x=G.SO3vecArr.randn(b,[a],[tau for i in range(maxl + 1)])
+        y=G.SO3vecArr.randn(b,[a],[tau for i in range(maxl + 1)])
         R=G.SO3element.uniform()
         xr=x.rotate(R)
         yr=y.rotate(R)
@@ -63,11 +65,12 @@ class TestSO3vecArr(object):
         for i in range(maxl+1 ):
             assert (torch.allclose(rz.parts[i] , zr.parts[i], rtol=1e-3, atol=1e-5))
 
+    @pytest.mark.parametrize('b', [1, 2, 4])    
     @pytest.mark.parametrize('a', [1, 2, 4])    
     @pytest.mark.parametrize('maxl', range(7))
-    def test_Fproduct(self,a,maxl):
-        x=G.SO3vecArr.Frandn([a,a],maxl)
-        y=G.SO3vecArr.Frandn([a,a],maxl)
+    def test_Fproduct(self,b,a,maxl):
+        x=G.SO3vecArr.Frandn(b,[a],maxl)
+        y=G.SO3vecArr.Frandn(b,[a],maxl)
         R = G.SO3element.uniform()
         xr=x.rotate(R)
         yr=y.rotate(R)
@@ -77,27 +80,30 @@ class TestSO3vecArr(object):
         rz=z.rotate(R)
 
         for i in range(maxl+1 ):
-            assert (torch.allclose(rz.parts[i] , zr.parts[i], rtol=1e-3, atol=1e-4))
+            assert (torch.allclose(rz.parts[i] , zr.parts[i], rtol=1e-3, atol=1e-2))
 
 
+    @pytest.mark.parametrize('b', [1, 2, 4])    
     @pytest.mark.parametrize('a', [1, 2, 4])    
     @pytest.mark.parametrize('tau', [1, 2, 4, 8, 32])
     @pytest.mark.parametrize('maxl', range(7))
-    def test_CGproduct_backprop(self,a,tau,maxl):
-        self.vecArr_vecArr_backprop(a,[tau for i in range(maxl + 1)],G.CGproduct)
+    def test_CGproduct_backprop(self,b,a,tau,maxl):
+        self.vecArr_vecArr_backprop(b,[a],[tau for i in range(maxl + 1)],G.CGproduct)
         return
 
+    @pytest.mark.parametrize('b', [1, 2, 4])    
     @pytest.mark.parametrize('a', [1, 2, 4])    
     @pytest.mark.parametrize('tau', [1, 2, 4, 8, 32])
     @pytest.mark.parametrize('maxl', range(7))
-    def test_DiagCGproduct_backprop(self,a,tau,maxl):
-        self.vecArr_vecArr_backprop(a,[tau for i in range(maxl + 1)],G.DiagCGproduct)
+    def test_DiagCGproduct_backprop(self,b,a,tau,maxl):
+        self.vecArr_vecArr_backprop(b,[a],[tau for i in range(maxl + 1)],G.DiagCGproduct)
         return
 
+    @pytest.mark.parametrize('b', [1, 2, 4])    
     @pytest.mark.parametrize('a', [1, 2, 4])    
     @pytest.mark.parametrize('maxl', range(7))
-    def test_Fproduct_backprop(self,a,maxl):
-        self.vecArr_vecArr_backprop(a,[2*l+1 for l in range(maxl+1)],G.Fproduct)
+    def test_Fproduct_backprop(self,b,a,maxl):
+        self.vecArr_vecArr_backprop(b,[a],[2*l+1 for l in range(maxl+1)],G.Fproduct)
         return
 
 
