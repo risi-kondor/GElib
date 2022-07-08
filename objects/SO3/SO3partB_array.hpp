@@ -13,6 +13,7 @@
 
 #include "CtensorArrayB.hpp"
 #include "SO3part3_view.hpp"
+#include "SO3partB.hpp"
 
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
@@ -67,18 +68,14 @@ namespace GElib{
     SO3partB_array(const Gdims& _adims, const int l, const int n, const FILLTYPE& dummy, const int _dev=0):
       CtensorArrayB(_adims,{2*l+1,n},dummy,_dev){}
 
+    template<typename FILLTYPE, typename = typename 
+	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
+    SO3partB_array(const int b, const Gdims& _adims, const int l, const int n, const FILLTYPE& dummy, const int _dev=0):
+      CtensorArrayB(_adims.prepend(b),{2*l+1,n},dummy,_dev){}
+
     
 
   public: // ---- Named constructors -------------------------------------------------------------------------
-
-    
-    //static SO3partB_array zero(const int N, const int b, const int l, const int n,  const int _dev=0){
-    //return SO3partB_array(N,b,l,n,cnine::fill_zero(),_dev);
-    //}
-
-    //static SO3partB_array gaussian(const int N, const int b, const int l, const int n,  const int _dev=0){
-    //return SO3partB_array(N,b,l,n,cnine::fill_gaussian(),_dev);
-    //}
 
 
     static SO3partB_array zero(const Gdims& _adims, const int l, const int n,  const int _dev=0){
@@ -91,6 +88,24 @@ namespace GElib{
 
     static SO3partB_array gaussian(const Gdims& _adims, const int l, const int n,  const int _dev=0){
       return SO3partB_array(_adims,l,n,cnine::fill_gaussian(),_dev);
+    }
+
+
+    static SO3partB_array zero(const int b, const Gdims& _adims, const int l, const int n,  const int _dev=0){
+      return SO3partB_array(b,_adims,l,n,cnine::fill_zero(),_dev);
+    }
+
+    static SO3partB_array ones(const int b, const Gdims& _adims, const int l, const int n,  const int _dev=0){
+      return SO3partB_array(b,_adims,l,n,cnine::fill_zero(),_dev);
+    }
+
+    static SO3partB_array gaussian(const int b, const Gdims& _adims, const int l, const int n,  const int _dev=0){
+      return SO3partB_array(b,_adims,l,n,cnine::fill_gaussian(),_dev);
+    }
+
+    
+    static SO3partB_array zeros_like(const SO3partB_array& x){
+      return SO3partB_array(x.getb(),x.get_adims(),x.getl(),x.getn(),cnine::fill_zero(),x.dev);
     }
 
 
@@ -133,9 +148,9 @@ namespace GElib{
       return memsize/strides.back(2);
     }
     
-    //int getb() const{
-    //return dims.back(2);
-    //}
+    int getb() const{
+      return dims(0);
+    }
 
     int getl() const{
       return (dims.back(1)-1)/2;
@@ -145,9 +160,9 @@ namespace GElib{
       return dims.back(0);
     }
 
-    //Gdims get_cdims(){
-    //return Gdims({getb(),getl(),getn()});
-    //}
+    Gdims get_adims() const{
+      return dims.chunk(1,ak-1);
+    }
 
     //Gstrides get_cstrides(){
     //return strides.chunk(strides.size()-3);
@@ -219,7 +234,7 @@ namespace GElib{
 
     SO3partB_array rotate(const SO3element& r) const{
       CtensorB D(WignerMatrix<float>(getl(),r),dev);
-      SO3partB_array R=SO3partB_array::zero(get_adims(),getl(),getn(),dev);
+      SO3partB_array R=SO3partB_array::zeros_like(*this);
 
       auto dv=D.view2D();
       auto xv=fused_view().view3();
@@ -270,7 +285,8 @@ namespace GElib{
     
     SO3partB_array CGproduct(const SO3partB_array& y, const int l) const{
       assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
-      SO3partB_array R=SO3partB_array::zero(get_adims(),l,getn()*y.getn(),get_dev());
+      SO3partB_array R=SO3partB_array::zeros_like(*this);
+      //SO3partB_array R=SO3partB_array::zero(get_adims(),l,getn()*y.getn(),get_dev());
       R.add_CGproduct(*this,y);
       return R;
     }
@@ -300,7 +316,8 @@ namespace GElib{
     SO3partB_array BlockedCGproduct(const SO3partB_array& y, const int bsize, const int l) const{
       assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
       assert(getn()==y.getn());
-      SO3partB_array R=SO3partB_array::zero(get_adims(),l,getn()*bsize,get_dev());
+      SO3partB_array R=SO3partB_array::zeros_like(*this);
+      //SO3partB_array R=SO3partB_array::zero(get_adims(),l,getn()*bsize,get_dev());
       R.add_BlockedCGproduct(*this,y,bsize);
       return R;
     }
@@ -343,7 +360,8 @@ namespace GElib{
     SO3partB_array CGsquare(const int l) const{
       assert(l>=0 && l<=2*getl());
       int parity=(2*getl()-l)%2;
-      SO3partB_array R=SO3partB_array::zero(get_adims(),l,getn()*(getn()+1-2*parity)/2,get_dev());
+      SO3partB_array R=SO3partB_array::zeros_like(*this);
+      //SO3partB_array R=SO3partB_array::zero(get_adims(),l,getn()*(getn()+1-2*parity)/2,get_dev());
       R.add_CGsquare(*this);
       return R;
     }
@@ -373,7 +391,7 @@ namespace GElib{
     }
 
     string repr(const string indent="") const{
-      return "<GElib::SO3partB_array of type ("+get_adims().str()+","+to_string(getl())+","+to_string(getn())+")>";
+      return "<GElib::SO3partB_array of type ("+to_string(getb())+","+get_adims().str()+","+to_string(getl())+","+to_string(getn())+")>";
     }
     
     friend ostream& operator<<(ostream& stream, const SO3partB_array& x){

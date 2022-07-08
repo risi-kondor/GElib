@@ -15,10 +15,11 @@ int main(int argc, char** argv){
 
   int N=2;
   int B=2;
-  Gdims adims({2,2});
+  int b=2;
+  Gdims adims({2});
 
-  SO3partB_array u=SO3partB_array::gaussian(adims,2,2);
-  SO3partB_array v=SO3partB_array::gaussian(adims,2,2);
+  SO3partB_array u=SO3partB_array::gaussian(b,adims,2,2);
+  SO3partB_array v=SO3partB_array::gaussian(b,adims,2,2);
   printl("u",u)<<endl;
   printl("v",v)<<endl;
 

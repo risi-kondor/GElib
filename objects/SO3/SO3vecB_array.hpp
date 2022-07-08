@@ -67,6 +67,20 @@ namespace GElib{
 	parts.push_back(new SO3partB_array(_adims,l,2*l+1,fill,_dev));
     }
 
+    template<typename FILLTYPE, typename = typename 
+	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
+    SO3vecB_array(const int b, const Gdims& _adims, const SO3type& tau, const FILLTYPE fill, const int _dev){
+      for(int l=0; l<tau.size(); l++)
+	parts.push_back(new SO3partB_array(b,_adims,l,tau[l],fill,_dev));
+    }
+
+    template<typename FILLTYPE, typename = typename 
+	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
+    SO3vecB_array(const int b, const Gdims& _adims, const int maxl, const FILLTYPE fill, const int _dev=0){
+      for(int l=0; l<=maxl; l++)
+	parts.push_back(new SO3partB_array(b,_adims,l,2*l+1,fill,_dev));
+    }
+
     
     // ---- Named constructors --------------------------------------------------------------------------------
 
@@ -89,12 +103,30 @@ namespace GElib{
     }
   
 
+    static SO3vecB_array zero(const int b, const Gdims& _adims, const SO3type& tau, const int _dev=0){
+      return SO3vecB_array(b,_adims,tau,cnine::fill_zero(),_dev);
+    }
+  
+    static SO3vecB_array gaussian(const int b, const Gdims& _adims, const SO3type& tau, const int _dev=0){
+      return SO3vecB_array(b,_adims,tau,cnine::fill_gaussian(),_dev);
+    }
+
+
+    static SO3vecB_array Fzero(const int b, const Gdims& _adims, const int maxl, const int _dev=0){
+      return SO3vecB_array(b,_adims,maxl,cnine::fill_zero(),_dev);
+    }
+  
+    static SO3vecB_array Fgaussian(const int b, const Gdims& _adims, const int maxl, const int _dev=0){
+      return SO3vecB_array(b,_adims,maxl,cnine::fill_gaussian(),_dev);
+    }
+  
+
     static SO3vecB_array zeros_like(const SO3vecB_array& x){
-      return SO3vecB_array::zero(x.get_adims(),x.get_tau(),x.get_dev());
+      return SO3vecB_array::zero(x.getb(),x.get_adims(),x.get_tau(),x.get_dev());
     }
 
     static SO3vecB_array gaussian_like(const SO3vecB_array& x){
-      return SO3vecB_array::gaussian(x.get_adims(),x.get_tau(),x.get_dev());
+      return SO3vecB_array::gaussian(x.getb(),x.get_adims(),x.get_tau(),x.get_dev());
     }
 
 
@@ -189,10 +221,15 @@ namespace GElib{
   public: // ---- Access --------------------------------------------------------------------------------------------
   
 
-    //Gdims get_adims() const{
-    //if(parts.size()>0) return parts[0]->get_adims();
-    //return 0;
-    //}
+    int getb() const{
+      if(parts.size()>0) return parts[0]->getb();
+      return 0;
+    }
+
+    Gdims get_adims() const{
+      if(parts.size()>0) return parts[0]->get_adims();
+      return 0;
+    }
 
     SO3type get_tau() const{
       SO3type tau;
@@ -257,7 +294,9 @@ namespace GElib{
 
     SO3vecB_array CGproduct(const SO3vecB_array& y, const int maxl=-1) const{
       assert(get_adims()==y.get_adims());
-      SO3vecB_array R=SO3vecB_array::zero(get_adims(),GElib::CGproduct(get_tau(),y.get_tau(),maxl),get_dev());
+      cout<<get_adims()<<endl;
+      SO3vecB_array R=SO3vecB_array::zero(getb(),get_adims(),GElib::CGproduct(get_tau(),y.get_tau(),maxl),get_dev());
+      cout<<R.repr()<<endl;
       R.add_CGproduct(*this,y);
       return R;
     }
@@ -331,7 +370,7 @@ namespace GElib{
     SO3vecB_array BlockedCGproduct(const SO3vecB_array& y, const int bsize, const int maxl=-1) const{
       assert(get_adims()==y.get_adims());
 
-      SO3vecB_array R=SO3vecB_array::zero(get_adims(),GElib::BlockedCGproduct(get_tau(),y.get_tau(),bsize,maxl),get_dev());
+      SO3vecB_array R=SO3vecB_array::zero(getb(),get_adims(),GElib::BlockedCGproduct(get_tau(),y.get_tau(),bsize,maxl),get_dev());
       R.add_BlockedCGproduct(*this,y,bsize);
       return R;
     }
@@ -418,7 +457,7 @@ namespace GElib{
 
 
     SO3vecB_array CGsquare(const int maxl=-1) const{
-      SO3vecB_array R=SO3vecB_array::zero(get_adims(),GElib::CGsquare(get_tau(),maxl),get_dev());
+      SO3vecB_array R=SO3vecB_array::zero(getb(),get_adims(),GElib::CGsquare(get_tau(),maxl),get_dev());
       R.add_CGsquare(*this);
       return R;
     }
@@ -456,7 +495,7 @@ namespace GElib{
     SO3vecB_array Fproduct(const SO3vecB_array& y, int maxl=-1) const{
       assert(y.get_adims()==get_adims());
       if(maxl<0) maxl=get_maxl()+y.get_maxl();
-      SO3vecB_array R=SO3vecB_array::Fzero(get_adims(),maxl,get_dev());
+      SO3vecB_array R=SO3vecB_array::Fzero(getb(),get_adims(),maxl,get_dev());
       R.add_Fproduct(*this,y);
       return R;
     }
@@ -465,7 +504,7 @@ namespace GElib{
     SO3vecB_array FproductB(const SO3vecB_array& y, int maxl=-1) const{
       assert(y.get_adims()==get_adims());
       if(maxl<0) maxl=get_maxl()+y.get_maxl();
-      SO3vecB_array R=SO3vecB_array::Fzero(get_adims(),maxl,get_dev());
+      SO3vecB_array R=SO3vecB_array::Fzero(getb(),get_adims(),maxl,get_dev());
       R.add_FproductB(*this,y);
       return R;
     }
@@ -554,7 +593,7 @@ namespace GElib{
 
     SO3vecB_array Fmodsq(int maxl=-1) const{
       if(maxl<0) maxl=2*get_maxl();
-      SO3vecB_array R=SO3vecB_array::Fzero(get_adims(),maxl,get_dev());
+      SO3vecB_array R=SO3vecB_array::Fzero(getb(),get_adims(),maxl,get_dev());
       R.add_Fmodsq(*this,*this);
       return R;
     }
@@ -627,7 +666,7 @@ namespace GElib{
     }
 
     string repr(const string indent="") const{
-      return "<GElib::SO3vecB_array of type("+get_adims().str()+","+get_tau().str()+")>";
+      return "<GElib::SO3vecB_array of type("+to_string(getb())+","+get_adims().str()+","+get_tau().str()+")>";
     }
     
     friend ostream& operator<<(ostream& stream, const SO3vecB_array& x){

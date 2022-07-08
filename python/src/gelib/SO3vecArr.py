@@ -35,39 +35,37 @@ class SO3vecArr:
 
 
     @staticmethod
-    def zeros(_adims,_tau,_dev=0):
+    def zeros(b,_adims,_tau,device='cpu'):
         "Construct a zero SO3vec object of given type _tau."
         R=SO3vecArr()
         for l in range(0,len(_tau)):
-            R.parts.append(torch.zeros(_adims+[2*l+1,_tau[l]],dtype=torch.cfloat))
+            R.parts.append(torch.zeros([b]+_adims+[2*l+1,_tau[l]],dtype=torch.cfloat,device=device))
             #R.parts.append(SO3partArr.zeros(_adims,l,_tau[l],_dev))
         return R
 
     @staticmethod
-    def randn(_adims,_tau,_dev=0):
+    def randn(b,_adims,_tau,device='cpu'):
         "Construct a random SO3vec array of given type _tau."
         R=SO3vecArr()
         for l in range(0,len(_tau)):
-            R.parts.append(torch.randn(_adims+[2*l+1,_tau[l]],dtype=torch.cfloat))
+            R.parts.append(torch.randn([b]+_adims+[2*l+1,_tau[l]],dtype=torch.cfloat,device=device))
             #R.parts.append(SO3partArr.randn(_adims,l,_tau[l],_dev))
         return R
 
     @staticmethod
-    def Fzeros(_adims,maxl,_dev=0):
+    def Fzeros(b,_adims,maxl,device='cpu'):
         "Construct an SO3vec array corresponding the to the Forier matrices 0,1,...maxl of b functions on SO(3)."
         R=SO3vecArr()
         for l in range(0,maxl+1):
-            R.parts.append(torch.zeros(_adims+[2*l+1,2*l+1],dtype=torch.cfloat))
-            #R.parts.append(SO3partArr.Fzeros(_adims,l,_dev))
+            R.parts.append(torch.zeros([b]+_adims+[2*l+1,2*l+1],dtype=torch.cfloat,device=device))
         return R
 
     @staticmethod
-    def Frandn(_adims,maxl,_dev=0):
+    def Frandn(b,_adims,maxl,device='cpu'):
         "Construct a zero SO3Fvec array with l ranging from 0 to maxl."
         R=SO3vecArr()
         for l in range(0,maxl+1):
-            R.parts.append(torch.randn(_adims+[2*l+1,2*l+1],dtype=torch.cfloat))
-            #R.parts.append(SO3partArr.Frandn(_adims,l,_dev))            
+            R.parts.append(torch.randn([b]+_adims+[2*l+1,2*l+1],dtype=torch.cfloat,device=device))
         return R
 
     @staticmethod
@@ -89,9 +87,12 @@ class SO3vecArr:
     ## ---- Access -------------------------------------------------------------------------------------------
 
 
+    def getb(self):
+        return parts[0].size(0)
+
     def get_adims(self):
         assert len(parts)>0 
-        return list(parts[0].size()[0:parts[0].dim()-2])
+        return list(parts[0].size()[1:parts[0].dim()-2])
 
     def tau(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
@@ -139,7 +140,6 @@ class SO3vecArr:
         r=SO3vecArr()
         for l in range(0,len(self.parts)):
             r.parts.append(SO3partB_array.view(self.parts[l]).rotate(R).torch())
-            #r.parts.append(self.parts[l].rotate(R))
         return r
 
 
@@ -244,19 +244,17 @@ def CGproductType(x,y,maxl=-1):
     return r
 
 
-def MakeZeroSO3partArrs(adims,tau,_dev=0):
+def MakeZeroSO3partArrs(badims,tau,_dev=0):
     R=[]
     for l in range(0,len(tau)):
-        R.append(torch.zeros(adims+[2*l+1,tau[l]],dtype=torch.cfloat))
-        #R.append(SO3partArr.zeros(adims,l,tau[l],_dev))
+        R.append(torch.zeros(badims+[2*l+1,tau[l]],dtype=torch.cfloat))
     return R
 
 
-def makeZeroSO3FpartArrs(adims,maxl,_dev=0):
+def makeZeroSO3FpartArrs(badims,maxl,_dev=0):
     R=[]
     for l in range(0,maxl+1):
-        R.append(torch.zeros(adims+[2*l+1,2*l+1],dtype=torch.cfloat))
-#        R.append(SO3part.Fzeros(adims,l,_dev))
+        R.append(torch.zeros(badims+[2*l+1,2*l+1],dtype=torch.cfloat))
     return R
 
 
