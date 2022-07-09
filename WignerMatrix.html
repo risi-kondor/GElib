@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Clebsch-Gordan matrices" href="SO3CG.html" /><link rel="prev" title="Introduction" href="intro.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Clebsch–Gordan matrices" href="SO3CG.html" /><link rel="prev" title="Introduction" href="intro.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>Wigner matrices - GElib documentation</title>
@@ -158,10 +158,11 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Wigner matrices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch-Gordan matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch–Gordan matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
 </ul>
@@ -200,7 +201,7 @@ Thus, the irrep indexed by <img alt="\ell" class="math" src="_images/math/b63508
 <p>The <code class="docutils literal notranslate"><span class="pre">WignerMatrix(l,phi,theta,psi)</span></code> function returns the matrix of the <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/>'th irrep
 corresponding to the Euler angles <img alt="(\phi,\theta,\psi)" class="math" src="_images/math/360e0faa1a98c2db28b5f9623272a2a4703ece1f.svg"/>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">WignerMatrix</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">torch</span><span class="o">.</span><span class="n">view_as_complex</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
 <span class="go">tensor([[-0.3877-4.4888e-01j, -0.6416+9.1454e-02j, -0.1804+3.9428e-01j, 0.1045+1.6275e-01j,  0.0528+0.0000e+00j],</span>
 <span class="go">        [ 0.6416-9.1454e-02j, -0.0258+5.6447e-02j,  0.3009+4.6856e-01j, 0.4782-1.4901e-08j,  0.1045-1.6275e-01j],</span>
 <span class="go">        [-0.1804+3.9428e-01j, -0.3009-4.6856e-01j, -0.0621+0.0000e+00j, 0.3009-4.6856e-01j, -0.1804-3.9428e-01j],</span>
@@ -223,7 +224,7 @@ corresponding to the Euler angles <img alt="(\phi,\theta,\psi)" class="math" src
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Clebsch-Gordan matrices</div>
+                <div class="title">Clebsch–Gordan matrices</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>

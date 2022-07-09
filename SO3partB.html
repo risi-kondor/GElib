@@ -158,10 +158,11 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="WignerMatrix.html">Wigner matrices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch-Gordan matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch–Gordan matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
 </ul>
@@ -201,10 +202,7 @@ The irreducible representations of SO(3) are sometimes referred to as Wigner D-m
 However, to aid in parallelizing certain operations, the
 <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> class in GElib also admits a “batch dimension”, <img alt="b" class="math" src="_images/math/24f427669c3588bc442fbc57b978a87764e7d849.svg"/>.
 Therefore, <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is implemented as a
-<code class="docutils literal notranslate"><span class="pre">(b,2l+1,n,2)</span></code> -dimensional single precision <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> object,
-where the last dimension corresponds to the real/imaginary parts.
-This format may be converted to PyTorch’s new complex tensor format with
-<code class="docutils literal notranslate"><span class="pre">torch.view_as_complex()</span></code>, while <code class="docutils literal notranslate"><span class="pre">torch.view_as_real()</span></code> converts in the opposite direction.</p>
+<code class="docutils literal notranslate"><span class="pre">(b,2l+1,n)</span></code> -dimensional single precision complex <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>.</p>
 <p>The following code constructs an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> object holding <code class="docutils literal notranslate"><span class="pre">n=3</span></code> Gaussian distributed random vectors corresponding
 to the <code class="docutils literal notranslate"><span class="pre">l=2</span></code> irrep of SO(3) (batch size 1) and prints it out in GElib’s own compact format.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
@@ -217,8 +215,8 @@ to the <code class="docutils literal notranslate"><span class="pre">l=2</span></
 </pre></div>
 </div>
 <p>A zero <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> would be constructed similarly using the <code class="docutils literal notranslate"><span class="pre">gelib.SO3part.zeros(b,l,n)</span></code> constructor.
-In both cases the optional <code class="docutils literal notranslate"><span class="pre">dev</span></code> argument selects whether the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is
-placed on the CPU (<code class="docutils literal notranslate"><span class="pre">dev=0</span></code>) or the GPU (<code class="docutils literal notranslate"><span class="pre">dev=1</span></code>).
+In both cases, similar to <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>s,  the optional <code class="docutils literal notranslate"><span class="pre">device</span></code> argument selects whether the
+<code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is  placed on the CPU (<code class="docutils literal notranslate"><span class="pre">device='cpu'</span></code>) or the GPU (<code class="docutils literal notranslate"><span class="pre">device='cuda'</span></code>).
 The batch dimension, <code class="docutils literal notranslate"><span class="pre">b</span></code>, the order <code class="docutils literal notranslate"><span class="pre">l</span></code>, and multiplicity <code class="docutils literal notranslate"><span class="pre">n</span></code> of the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> are read out as follows.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">.</span><span class="n">getb</span><span class="p">()</span>
 <span class="go">1</span>

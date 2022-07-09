@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3partArr" href="SO3partArr.html" /><link rel="prev" title="SO3part" href="SO3partB.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3 weights" href="SO3weights.html" /><link rel="prev" title="SO3part" href="SO3partB.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>SO3vec - GElib documentation</title>
@@ -158,10 +158,11 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="WignerMatrix.html">Wigner matrices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch-Gordan matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch–Gordan matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
 </ul>
@@ -193,26 +194,26 @@
           <section id="so3vec">
 <h1>SO3vec<a class="headerlink" href="#so3vec" title="Permalink to this headline">¶</a></h1>
 <p>An <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> object represents a general SO(3)-covariant vector, stored
-as a sequence of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.
+as a sequence of complex PyTorch tensors.
 Similarly to <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>, <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> also has a batch dimension.</p>
-<p>The <cite>type</cite> of an <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> is a list specifying the multiplicity of each of its parts.
+<p>The <cite>type</cite> of an <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> is a list specifying the number of fragments in each of its parts.
 For example, the following creates a random <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> of type (2,3,1).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span>
-<span class="go">&lt;gelib_torchC.SO3vec object at 0x7f974337bb70&gt;</span>
+<span class="go">&lt;GElib::SO3vecB of type (2,3,1)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 <span class="go">Part l=0:</span>
-<span class="go">  [ (0.289356,1.54426) (-1.34567,1.53707) ]</span>
+<span class="go">  [ (0.132629,0.950553) (0.719683,1.16923) ]</span>
 
 
 <span class="go">Part l=1:</span>
-<span class="go">  [ (-1.01328,-0.592903) (-1.11794,0.749696) (-0.734772,1.43901) ]</span>
-<span class="go">  [ (0.541032,1.58891) (-1.55468,-0.30842) (-0.937764,0.634763) ]</span>
-<span class="go">  [ (0.871103,-0.726917) (0.787215,-1.39109) (2.66829,0.85663) ]</span>
+<span class="go">  [ (-0.308873,1.34239) (-0.0749153,0.787603) (0.124809,-0.68182) ]</span>
+<span class="go">  [ (-0.395814,-0.452225) (-0.301379,-0.498362) (0.368224,0.251531) ]</span>
+<span class="go">  [ (1.73902,-0.423323) (-0.411957,0.293598) (-1.11078,-0.537569) ]</span>
 
 
 <span class="go">Part l=2:</span>
-<span class="go">  [ (-0.440433,-0.919034) (-0.700111,-0.901544) (1.29377,-0.482789) (-1.26476,-1.61195) (-1.42624,-0.967444) ]</span>
+<span class="go">  [ (0.295592,-0.0414616) (1.63098,0.730143) (-0.0242692,0.707672) (0.771041,-0.809959) (0.763403,0.260789) ]</span>
 </pre></div>
 </div>
 <p>The batch dimension and type of an SO(3)-vector can be accessed as follows.</p>
@@ -224,9 +225,9 @@ For example, the following creates a random <code class="docutils literal notran
 </div>
 <p>The invidual parts are stored in the <code class="docutils literal notranslate"><span class="pre">parts</span></code> member variable</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="go">  [ (-1.01328,-0.592903) (-1.11794,0.749696) (-0.734772,1.43901) ]</span>
-<span class="go">  [ (0.541032,1.58891) (-1.55468,-0.30842) (-0.937764,0.634763) ]</span>
-<span class="go">  [ (0.871103,-0.726917) (0.787215,-1.39109) (2.66829,0.85663) ]</span>
+<span class="go">tensor([[[-0.3089+1.3424j, -0.0749+0.7876j,  0.1248-0.6818j],</span>
+<span class="go">         [-0.3958-0.4522j, -0.3014-0.4984j,  0.3682+0.2515j],</span>
+<span class="go">         [ 1.7390-0.4233j, -0.4120+0.2936j, -1.1108-0.5376j]]])</span>
 </pre></div>
 </div>
 <div class="line-block">
@@ -373,12 +374,12 @@ on the GPU and the result is placed on the same device.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="SO3partArr.html">
+          <a class="next-page" href="SO3weights.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">SO3partArr</div>
+                <div class="title">SO3 weights</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>

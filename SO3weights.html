@@ -2,10 +2,12 @@
 <html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3partArr" href="SO3partArr.html" /><link rel="prev" title="SO3vec" href="SO3vecB.html" />
 
-    <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/><title>Index - GElib documentation</title>
-<link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
+        <title>SO3 weights - GElib documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=0254c309f5cadf746f1a613e7677379ac9c8cdcd" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=16fb25fabf47304eee183a5e9af80b1ba98259b1" />
     
@@ -153,14 +155,14 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="WignerMatrix.html">Wigner matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch–Gordan matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3 weights</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
 </ul>
@@ -189,10 +191,67 @@
           </label>
         </div>
         <article role="main">
-          
-<section class="genindex-section">
-  <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"></div>
+          <section id="so3-weights">
+<h1>SO3 weights<a class="headerlink" href="#so3-weights" title="Permalink to this headline">¶</a></h1>
+<p>It can be shown that the most general <cite>linear</cite> equivariant operation for <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects
+is to linearly mix the fragments belonging to the same <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> amongst themselves.
+In matrix language, this corresponds to multiplying each constituent <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> by a
+complex matrix of the appropriate dimensions from the right.
+The <code class="docutils literal notranslate"><span class="pre">SO3weights</span></code> class is a container for a sequence of such matrices corresponding to each part.</p>
+<p>A zero or random <code class="docutils literal notranslate"><span class="pre">SO3weights</span></code> object <code class="docutils literal notranslate"><span class="pre">W</span></code> can be constructed by specifying the row and column dimensions
+of the matrices, i.e., the input and output type of the transformation <img alt="u\mapsto v\cdot W" class="math" src="_images/math/02434a625775bbd44546ad011dc97715acd753d2.svg"/>.
+For example, the following intiializes an <code class="docutils literal notranslate"><span class="pre">SO3weights</span></code>  object that can transform a vector of
+type (1,2,2) to a vector of type (3,2,1).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3weights</span><span class="o">.</span><span class="n">randn</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go">tensor 0:</span>
+<span class="go">  [ (-0.460932,-0.24965) (1.04747,-0.113222) (-1.19098,-0.230981) ]</span>
+
+<span class="go">tensor 1:</span>
+<span class="go">  [ (1.00428,-0.897704) (-1.37185,1.08807) ]</span>
+<span class="go">  [ (-1.81899,-1.16288) (0.156111,0.516122) ]</span>
+
+<span class="go">tensor 2:</span>
+<span class="go">  [ (0.635841,0.17247) ]</span>
+<span class="go">  [ (1.44829,0.592355) ]</span>
+</pre></div>
+</div>
+<p>If we define an <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> of the appropriate type, <code class="docutils literal notranslate"><span class="pre">w</span></code> can be directly applied to it.
+Naturally, the same weight matrix is applied to each slice of <code class="docutils literal notranslate"><span class="pre">u</span></code> corresponding
+to different values of the batch index.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">u</span><span class="o">*</span><span class="n">w</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">Part l=0:</span>
+<span class="go">  [ (1.0454,-0.168498) (-1.53694,1.47214) (2.19084,-1.09811) ]</span>
+
+
+<span class="go">Part l=1:</span>
+<span class="go">  [ (-2.23171,0.0901575) (0.648155,1.02873) ]</span>
+<span class="go">  [ (-1.88365,2.93436) (1.65895,-0.630005) ]</span>
+<span class="go">  [ (1.1317,-1.46948) (-1.4877,0.956643) ]</span>
+
+
+<span class="go">Part l=2:</span>
+<span class="go">  [ (0.852567,-3.69071) (1.38565,-2.07584) (-0.87405,1.31016) (1.69347,1.64524) (-1.23533,2.00124) ]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">SO3weights</span></code> class also supports some basic arithmetic operations such as addition, multiplication
+by scalars, and so on.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w2</span><span class="o">=</span><span class="n">w</span><span class="o">*</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">2.</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">w2</span><span class="p">)</span>
+<span class="go">tensor 0:</span>
+<span class="go">  [ (-1.47271,0.681177) (0.377892,0.0660075) (1.51043,2.94915) ]</span>
+
+<span class="go">tensor 1:</span>
+<span class="go">  [ (2.48892,-0.946779) (0.433693,-0.771083) ]</span>
+<span class="go">  [ (-2.26782,2.61198) (-1.01805,-4.51223) ]</span>
+
+<span class="go">tensor 2:</span>
+<span class="go">  [ (0.968962,-2.40745) ]</span>
+<span class="go">  [ (-0.650463,0.465023) ]</span>
+</pre></div>
+</div>
 </section>
 
         </article>
@@ -200,8 +259,26 @@
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="SO3partArr.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">SO3partArr</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="SO3vecB.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">SO3vec</div>
+                
+              </div>
+            </a>
         </div>
 
         <div class="related-information">
@@ -209,7 +286,11 @@
             Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
               and
               <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-              <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+              <a href="https://github.com/pradyunsg/furo">Furo theme</a>. |
+            <a class="muted-link" href="_sources/SO3weights.rst.txt"
+               rel="nofollow">
+              Show Source
+            </a>
         </div>
         
       </footer>

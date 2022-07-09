@@ -199,6 +199,8 @@ representation <img alt="D^{(\ell_1)}\otimes D^{(\ell_2)}" class="math" src="_im
 </div></div><p>called the Clebsch–Gordan decomposition.
 The submatrix of <img alt="C_{\ell_1,\ell_2}" class="math" src="_images/math/eb363aec611ca77bc23901b8a20ea01dbb11cfc3.svg"/> corresponding to a particular value of <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/> we will denote
 <img alt="C_{\ell_1,\ell_2,\ell}" class="math" src="_images/math/c634fe43088a3063e0547d5b4a49af82625a3557.svg"/>.</p>
+<p>Taking the Clebsch–Gordan product of two (or more) <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code>s is an equivariant operation and is an
+important building block of group equivariant neural networks.</p>
 <p>The function <code class="docutils literal notranslate"><span class="pre">SO3ClebschGordanTensor(l1,l2,l)</span></code> returns <img alt="C_{\ell_1,\ell_2,\ell}" class="math" src="_images/math/c634fe43088a3063e0547d5b4a49af82625a3557.svg"/> as a third order tensor.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3CGtensor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span>

@@ -158,10 +158,11 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="WignerMatrix.html">Wigner matrices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch-Gordan matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch–Gordan matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3vecArr</a></li>
 </ul>
@@ -194,69 +195,69 @@
 <h1>SO3vecArr<a class="headerlink" href="#so3vecarr" title="Permalink to this headline">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> is the arrayed counterpart of the <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> class, stored as a
 list of <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> s.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">randn</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span>
-<span class="go">&lt;GElib::SO3vecB_array of type((2,2),(2,3,1))&gt;</span>
+<span class="go">&lt;GElib::SO3vecB_array of type(1,(2,2),(2,3,1))&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 <span class="go">Part l=0:</span>
-<span class="go">  Cell(0,0)</span>
+<span class="go">  Cell(0,0,0)</span>
 <span class="go">  [ (-1.67126,-0.419833) (-2.07704,-0.409032) ]</span>
 
-<span class="go">  Cell(0,1)</span>
+<span class="go">  Cell(0,0,1)</span>
 <span class="go">  [ (0.399491,0.698713) (-1.36641,0.138502) ]</span>
 
-<span class="go">  Cell(1,0)</span>
+<span class="go">  Cell(0,1,0)</span>
 <span class="go">  [ (0.296908,-0.669854) (0.873029,-0.26619) ]</span>
 
-<span class="go">  Cell(1,1)</span>
+<span class="go">  Cell(0,1,1)</span>
 <span class="go">  [ (1.39529,-0.0214446) (0.0659465,-0.840586) ]</span>
 
 
 <span class="go">Part l=1:</span>
-<span class="go">  Cell(0,0)</span>
+<span class="go">  Cell(0,0,0)</span>
 <span class="go">  [ (1.23563,0.231609) (-0.706519,-0.289283) (-0.175813,0.139454) ]</span>
 <span class="go">  [ (1.07154,-0.0482395) (0.201686,0.238003) (2.18152,-1.02785) ]</span>
 <span class="go">  [ (-0.204963,-0.643517) (1.13979,-1.28142) (-1.97073,-0.0872069) ]</span>
 
-<span class="go">  Cell(0,1)</span>
+<span class="go">  Cell(0,0,1)</span>
 <span class="go">  [ (-1.41811,-0.385749) (0.845764,0.314845) (0.157016,0.813198) ]</span>
 <span class="go">  [ (-0.0473072,0.489402) (-0.48208,-0.175419) (-0.713555,-1.36876) ]</span>
 <span class="go">  [ (-1.43885,0.282084) (0.548364,0.765744) (-1.33589,-0.124562) ]</span>
 
-<span class="go">  Cell(1,0)</span>
+<span class="go">  Cell(0,1,0)</span>
 <span class="go">  [ (-0.416213,-2.10858) (-0.436183,-1.95774) (-0.4028,0.206586) ]</span>
 <span class="go">  [ (0.605511,-1.35408) (-1.04419,1.03389) (-0.443257,-1.82339) ]</span>
 <span class="go">  [ (1.78785,-1.41791) (-1.03278,0.820731) (0.38561,0.0195039) ]</span>
 
-<span class="go">  Cell(1,1)</span>
+<span class="go">  Cell(0,1,1)</span>
 <span class="go">  [ (0.487334,-0.34982) (-0.655663,1.94033) (-0.246383,-1.03738) ]</span>
 <span class="go">  [ (0.61681,-0.212469) (1.16121,1.27737) (0.658922,-2.23992) ]</span>
 <span class="go">  [ (-0.379091,-0.174235) (-0.430056,0.523456) (0.657717,0.141875) ]</span>
 
 
 <span class="go">Part l=2:</span>
-<span class="go">  Cell(0,0)</span>
+<span class="go">  Cell(0,0,0)</span>
 <span class="go">  [ (1.40848,-0.838271) ]</span>
 <span class="go">  [ (2.1893,-0.384493) ]</span>
 <span class="go">  [ (-1.21339,-0.393357) ]</span>
 <span class="go">  [ (1.87515,0.716365) ]</span>
 <span class="go">  [ (-0.0917885,-0.0592561) ]</span>
 
-<span class="go">  Cell(0,1)</span>
+<span class="go">  Cell(0,0,1)</span>
 <span class="go">  [ (-0.599226,0.901921) ]</span>
 <span class="go">  [ (-0.657987,1.73258) ]</span>
 <span class="go">  [ (0.95926,1.65543) ]</span>
 <span class="go">  [ (1.75915,-1.78865) ]</span>
 <span class="go">  [ (0.534479,-1.64673) ]</span>
 
-<span class="go">  Cell(1,0)</span>
+<span class="go">  Cell(0,1,0)</span>
 <span class="go">  [ (-0.497837,-0.619745) ]</span>
 <span class="go">  [ (-0.0603971,-0.613755) ]</span>
 <span class="go">  [ (-0.181712,-0.923199) ]</span>
 <span class="go">  [ (-1.34202,0.259467) ]</span>
 <span class="go">  [ (-1.03544,-1.12516) ]</span>
 
-<span class="go">  Cell(1,1)</span>
+<span class="go">  Cell(0,1,1)</span>
 <span class="go">  [ (1.7281,0.0535397) ]</span>
 <span class="go">  [ (-0.287769,-0.284569) ]</span>
 <span class="go">  [ (-1.21629,0.981768) ]</span>
@@ -272,7 +273,7 @@ reductions and broadcast operations.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cnine</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">);</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span><span class="o">=</span><span class="n">cnine</span><span class="o">.</span><span class="n">Rmask1</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">randn</span><span class="p">([</span><span class="mi">3</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vecArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">3</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Y</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
 </pre></div>
 </div>
