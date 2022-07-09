@@ -304,17 +304,17 @@ def CGproductType(x,y,maxl=-1):
     return r
 
 
-def MakeZeroSO3partArrs(badims,tau,_dev=0):
+def MakeZeroSO3partArrs(badims,tau,device):
     R=[]
     for l in range(0,len(tau)):
-        R.append(torch.zeros(badims+[2*l+1,tau[l]],dtype=torch.cfloat))
+        R.append(torch.zeros(badims+[2*l+1,tau[l]],dtype=torch.cfloat,device=device))
     return R
 
 
-def makeZeroSO3FpartArrs(badims,maxl,_dev=0):
+def makeZeroSO3FpartArrs(badims,maxl,device):
     R=[]
     for l in range(0,maxl+1):
-        R.append(torch.zeros(badims+[2*l+1,2*l+1],dtype=torch.cfloat))
+        R.append(torch.zeros(badims+[2*l+1,2*l+1],dtype=torch.cfloat,device=device))
     return R
 
 
@@ -335,8 +335,7 @@ class SO3vecArr_CGproductFn(torch.autograd.Function):
 
         adims=list(args[0].size()[0:args[0].dim()-2])
         tau=CGproductType(tau_type(args[0:k1]),tau_type(args[k1:k1+k2]),maxl)
-        dev=int(args[0].is_cuda)
-        r=MakeZeroSO3partArrs(adims,tau,dev)
+        r=MakeZeroSO3partArrs(adims,tau,args[0].device)
 
         _x=_SO3vecB_array.view(args[0:k1]);
         _y=_SO3vecB_array.view(args[k1:k1+k2]);
@@ -383,8 +382,7 @@ class SO3vecArr_DiagCGproductFn(torch.autograd.Function):
 
         adims=list(args[0].size()[0:args[0].dim()-2])
         tau=DiagCGproductType(tau_type(args[0:k1]),tau_type(args[k1:k1+k2]),maxl)
-        dev=int(args[0].is_cuda)
-        r=MakeZeroSO3partArrs(adims,tau,dev)
+        r=MakeZeroSO3partArrs(adims,tau,args[0].device)
 
         _x=_SO3vecB_array.view(args[0:k1]);
         _y=_SO3vecB_array.view(args[k1:k1+k2]);
@@ -433,9 +431,8 @@ class SO3vecArr_FproductFn(torch.autograd.Function): #todo
             maxl=k1+k2-2
         else:
             maxl=_maxl
-        dev=int(args[0].is_cuda)
 
-        r=makeZeroSO3FpartArrs(adims,maxl,dev)
+        r=makeZeroSO3FpartArrs(adims,maxl,args[0].device)
 
         _x=_SO3vecB_array.view(args[0:k1]);
         _y=_SO3vecB_array.view(args[k1:k1+k2]);
@@ -484,9 +481,8 @@ class SO3vec_FmodsqFn(torch.autograd.Function): #todo
             maxl=k1+k1-2
         else:
             maxl=_maxl
-        dev=int(args[0].is_cuda)
 
-        r=makeZeroSO3FpartArrs(adims,maxl,dev)
+        r=makeZeroSO3FpartArrs(adims,maxl,args[0].device)
 
         _x=_SO3vecB_array.view(args[0:k1]);
         #_y=_SO3vecB_array.view(args[k1:k1+k2]);
