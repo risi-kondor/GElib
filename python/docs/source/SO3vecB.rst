@@ -4,7 +4,7 @@ SO3vec
 
 
 An ``SO3vec`` object represents a general SO(3)-covariant vector, stored 
-as a sequence of PyTorch tensors. 
+as a sequence of complex PyTorch tensors. 
 Similarly to ``SO3part``, ``SO3vec`` also has a batch dimension. 
 
 The `type` of an ``SO3vec`` is a list specifying the number of fragments in each of its parts. 

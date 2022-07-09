@@ -28,8 +28,8 @@ to the ``l=2`` irrep of SO(3) (batch size 1) and prints it out in GElib's own co
  [ (-1.8357,-1.70148) (-0.851959,-1.31661) (0.824596,-0.197399) ]
 
 A zero ``SO3part`` would be constructed similarly using the ``gelib.SO3part.zeros(b,l,n)`` constructor. 
-In both cases the optional ``dev`` argument selects whether the ``SO3part`` is  
-placed on the CPU (``dev=0``) or the GPU (``dev=1``). 
+In both cases, similar to ``torch.tensor``\s,  the optional ``device`` argument selects whether the 
+``SO3part`` is  placed on the CPU (``device='cpu'``) or the GPU (``device='cuda'``). 
 The batch dimension, ``b``, the order ``l``, and multiplicity ``n`` of the ``SO3part`` are read out as follows.
 
 .. code-block:: python
