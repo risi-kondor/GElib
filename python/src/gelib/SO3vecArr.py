@@ -88,12 +88,28 @@ class SO3vecArr:
 
 
     def getb(self):
-        return parts[0].size(0)
+        return self.parts[0].size(0)
 
     def get_adims(self):
-        assert len(parts)>0 
-        return list(parts[0].size()[1:parts[0].dim()-2])
+        assert len(self.parts)>0 
+        return list(self.parts[0].size()[1:self.parts[0].dim()-2])
 
+    def get_aadims(self):
+        assert len(self.parts)>0 
+        return list(self.parts[0].size()[0:self.parts[0].dim()-2])
+
+    def getN(self):
+        t=1
+        for i in range(0,self.parts[0].dim()-2):
+            t*=self.parts[0].size(i)
+        return t
+                       
+    def getNarr(self):
+        t=1
+        for i in range(1,self.parts[0].dim()-2):
+            t*=self.parts[0].size(i)
+        return t
+                       
     def tau(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
         r=[]
@@ -125,6 +141,13 @@ class SO3vecArr:
     ## ---- Operations ---------------------------------------------------------------------------------------
 
 
+    def rotate(self,R):
+        "Apply the group element to this vector"
+        r=SO3vecArr()
+        for l in range(0,len(self.parts)):
+            r.parts.append(SO3partB_array.view(self.parts[l]).rotate(R).torch())
+        return r
+
     def __add__(self, y):
        if(isinstance(y,SO3vecArr)):
            if(len(self.parts)!=len(y.parts)):
@@ -135,13 +158,50 @@ class SO3vecArr:
            return R
        raise TypeError("Not an SO3vecArr object.")
 
-    def rotate(self,R):
-        "Apply the group element to this vector"
-        r=SO3vecArr()
-        for l in range(0,len(self.parts)):
-            r.parts.append(SO3partB_array.view(self.parts[l]).rotate(R).torch())
-        return r
+    def __mul__(self, w):
+        if(isinstance(w,SO3weights)):
+            if(len(self.parts)!=len(w.parts)):
+                raise IndexError("SO3vecArr and SO3weights have different number of parts.")
+            R=SO3vecArr()
+            aadims=self.get_aadims()
+            N=self.getN()
+            for l in range(len(self.parts)):
+                n=self.parts[l].size(-1)
+                m=w.parts[l].size(1)
+                x=self.parts[l].reshape([N*(2*l+1),n])
+                R.parts.append(torch.matmul(x,w.parts[l]).reshape(aadims+[2*l+1,m]))
+            return R
+        if(isinstance(w,SO3weightsArr)):
+            if(len(self.parts)!=len(w.parts)):
+                raise IndexError("SO3vecArr and SO3weightsArr have different number of parts.")
+            R=SO3vecArr()
+            adims=self.get_adims()
+            assert(w.get_adims()==adims)
+            N=self.getNarr()
+            for l in range(len(self.parts)):
+                b=self.getb()
+                n=w.parts[l].size(-2)
+                m=w.parts[l].size(-1)
+                x=self.parts[l].reshape([b,N,(2*l+1),n])
+                t=torch.einsum('bami,aij->bamj',x,w.parts[l].reshape([N,n,m]))
+                R.parts.append(t.reshape([b]+adims+[2*l+1,m]))
+            return R
+        if(isinstance(w,torch.Tensor)):
+            R=SO3vecArr()
+            for l in range(len(self.parts)):
+                R.parts.append(torch.matmul(self.parts[l],w))
+            return R
+        raise TypeError("SO3vecArr can only be multiplied by a scalar tensor, an SO3weights or an SOweightsArr.")
 
+    def mix1(self, w):
+        if(isinstance(w,SO3weights)):
+            if(len(self.parts)!=len(w.parts)):
+                raise IndexError("SO3vecArr and SO3weights have different number of parts.")
+            R=SO3vecArr()
+            for l in range(len(self.parts)):
+                R.parts.append(torch.einsum('bimk,ij->bjmk',self.parts[l],w.parts[l]))
+            return R
+        raise TypeError("SO3vecArr can only be mixed with an SO3weights.")
 
     def odot(self,y):
         assert(len(self.parts)==len(y.parts))

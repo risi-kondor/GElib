@@ -106,7 +106,7 @@ class SO3vec:
 
 
     def getb(self):
-        return parts[0].size(0)
+        return self.parts[0].size(0)
 
     def tau(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
@@ -200,7 +200,6 @@ class SO3vec:
                 n=self.parts[l].size(2)
                 m=w.parts[l].size(1)
                 x=self.parts[l].reshape([b*(2*l+1),n])
-                #y=torch.view_as_complex(w.parts[l])
                 R.parts.append(torch.matmul(x,w.parts[l]).reshape([b,2*l+1,m]))
             return R
         if(isinstance(w,torch.Tensor)):
