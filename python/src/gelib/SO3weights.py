@@ -12,7 +12,7 @@ import torch
 from cnine import ctensorb 
 from gelib_base import SO3partB as _SO3partB
 from gelib_base import SO3vecB as _SO3vecB
-from gelib_base import SO3weights as _SO3weights
+#from gelib_base import SO3weights as _SO3weights
 #from gelib_base import SO3Fvec as _SO3Fvec
 
 from gelib import *
@@ -119,9 +119,11 @@ class SO3weights:
     # ---- I/O ----------------------------------------------------------------------------------------------
 
     def __repr__(self):
-        u=_SO3weights.view(self.parts)
-        return u.__repr__()
+        return "unimpl"
+        #u=_SO3weights.view(self.parts)
+        #return u.__repr__()
 
     def __str__(self):
-        u = _SO3weights.view(self.parts)
-        return u.__str__()
+        return "unimpl"
+        #u = _SO3weights.view(self.parts)
+        #return u.__str__()
