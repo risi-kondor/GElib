@@ -1,16 +1,16 @@
-ROOTDIR=../../..
+ROOTDIR=../../../..
 include $(ROOTDIR)/common.txt
 
-INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions   
-INCLUDE+=-I$(SO2DIR) -I$(SO2DIR)/functions 
+INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions \
+-I$(SO3DIR)/programs    
 
-TESTS=$(patsubst %.cpp,%,$(wildcard *.cpp))
+TESTS= testSO3CGprogram1
 
 ifdef WITH_CUDA
 TESTS+=
 endif 
 
-DEPS=$(SO3DIR)/*.hpp 
+DEPS=$(SO3DIR)/*.hpp $(SO3DIR)/programs/*.hpp 
 
 EXECS= 
 
@@ -19,19 +19,22 @@ CUDA_EXTERNS=
 
 ifdef WITH_CUDA
 INCLUDE+=-I$(CUDA_HOME)/include
-CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partA_CGproduct.o $(GELIB_CUDADIR)/SO3partA_DiagCGproduct.o \
-$(CNINE_ROOT)/cuda/CtensorA_add.o 
 CUDA_OBJECTS+= #$(GELIB_CUDADIR)/GElib_base.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partB_addCGproduct.o $(GELIB_CUDADIR)/SO3partB_addCGproduct_back0.o $(GELIB_CUDADIR)/SO3partB_addCGproduct_back1.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3Fpart_addFproduct.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back0.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back1.o 
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
 endif 
 
-$(TESTS): %: %.cpp $(DEPS)
+
+
+# -------------------------------------------------------------------------------------------------------------
+
+
+testSO3CGprogram1: testSO3CGprogram1.cpp $(DEPS) 
 ifdef WITH_CUDA
-	$(NVCC) $(NVCCFLAGS) -o $@ $@.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+	$(NVCC) $(NVCCFLAGS) -o testSO3CGprogram1 testSO3CGprogram1.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
-	$(CC) -o $@ $@.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+	$(CC) -o testSO3CGprogram1 testSO3CGprogram1.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
 endif
 
 

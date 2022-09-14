@@ -185,6 +185,14 @@ namespace GElib{
     return CGproduct(a,t4,_maxl);
   }
 
+  
+  inline SO3type CGproduct(const std::vector<SO3type>& v, const int maxl){
+    assert(v.size()>1);
+    SO3type R=CGproduct(v[0],v[1],maxl);
+    for(int i=2; i<v.size(); i++)
+      R=CGproduct(R,v[i]);
+    return R;
+  }
 
   inline SO3type BlockedCGproduct(const SO3type& t1, const SO3type& t2, const int bsize, int _maxl=-1){
     if(_maxl==-1) _maxl=1000;

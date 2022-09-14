@@ -2,7 +2,8 @@ include $(ROOTDIR)/config.txt
 
 CNINE_INCLUDES=-I$(CNINE_ROOT)/include 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/scalar -I$(CNINE_ROOT)/objects/tensor 
-CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_views -I$(CNINE_ROOT)/objects/tensor_array 
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_views -I$(CNINE_ROOT)/objects/tensor_views/functions  
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_array 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/backendA -I$(CNINE_ROOT)/objects/backendB 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_array/cell_maps -I$(CNINE_ROOT)/objects/tensor_array/cell_ops 
 
@@ -17,11 +18,13 @@ COMBINATORIALDIR=$(ROOTDIR)/objects/combinatorial
 GROUPSDIR=$(ROOTDIR)/objects/groups
 SNDIR=$(ROOTDIR)/objects/Sn
 
-CFLAGS= -std=c++11 -O3 # -ferror-limit=1  
+CFLAGS= -std=c++11 -O3 -ferror-limit=1  
 INCLUDE= -I $(ROOTDIR)/include 
 LIBS= -lstdc++ -lm -lpthread 
 
-
+MACROS+=-DGELIB_COPY_WARNINGS
+MACROS+=-DGELIB_MOVE_WARNINGS
+MACROS+=-DGELIB_CONVERT_WARNINGS
 
 MACROS=
 

@@ -25,122 +25,121 @@ class SO3part(torch.Tensor):
     """
 
     def __init__(self, _T):
-        self = _T
+        self=_T
+        #super().__init__()
 
     # ---- Static constructors -----------------------------------------------------------------------------
 
     @classmethod
-    def zeros(self, b, l, n, _dev=0):
+    def zeros(self, b, l, n, device='cpu'):
         """
         Create an SO(3)-part consisting of b lots of n vectors transforming according to the l'th irrep of SO(3).
         The vectors are initialized to zero, resulting in an b*(2+l+1)*n dimensional complex tensor of zeros.
         """
-        if _dev == 0:
-            return SO3part(torch.zeros([b, 2*l+1, n, 2]))
-        else:
-            return SO3part(torch.zeros([b, 2*l+1, n, 2])).cuda()
+        return torch.view_as_complex(SO3part(torch.zeros([b, 2*l+1, n,2],device=device)))
+        #if _dev == 0:
+        #else:
+        #    return torch.view_as_complex(SO3part(torch.zeros([b, 2*l+1, n,2]))).cuda()
 
     @classmethod
-    def randn(self, b, l, n, _dev=0):
+    def randn(self, b, l, n, device='cpu'):
         """
         Create an SO(3)-part consisting of b lots of n vectors transforming according to the l'th irrep of SO(3).
         The vectors are initialized as random gaussian vectors, resulting in an b*(2+l+1)*n dimensional random
         complex tensor.
         """
-        if _dev == 0:
-            return SO3part(torch.randn([b, 2*l+1, n, 2]))
-        else:
-            return SO3part(torch.randn([b, 2*l+1, n, 2])).cuda()
+        return torch.view_as_complex(SO3part(torch.randn([b, 2*l+1, n,2],device=device)))
+        #if _dev == 0:
+        #else:
+        #    return torch.view_as_complex(SO3part(torch.randn([b, 2*l+1, n,2]))).cuda()
 
     @classmethod
-    def spharm(self, l, x, y, z, _dev=0):
+    def spharm(self, l, x, y, z, device='cpu'):
         """
         Return the spherical harmonics of the vector (x,y,z)
         """
-        R = SO3part.zeros(1, l, 1)
+        R = SO3part.zeros(1, l, 1, device=device)
         _SO3partB.view(R).add_spharm(x, y, z)
-        if _dev > 0:
-            return R.cuda()
-        return R
 
     @classmethod
-    def spharm(self, l, X, _dev=0):
+    def spharm(self, l, X, device='cpu'):
         """
         Return the spherical harmonics of the vector (x,y,z)
         """
         assert(X.dim()==3)
-        R = SO3part.zeros(X.size(0), l, X.size(2))
+        R = SO3part.zeros(X.size(0), l, X.size(2), device=device)
         _SO3partB.view(R).add_spharm(X)
-        if _dev > 0:
-            return R.cuda()
-        return R
 
     @classmethod
-    def spharmB(self, l, X, _dev=0):
+    def spharmB(self, l, X, device='cpu'):
         """
         Return the spherical harmonics of each row of the matrix X.
         """
-        R = SO3part.zeros(X.size(0), l, 1)
+        R = SO3part.zeros(X.size(0), l, 1, device=device)
         _SO3partB.view(R).add_spharmB(X)
-        if _dev > 0:
-            return R.cuda()
-        return R
 
     @classmethod
-    def spharM(self, b, l, n, x, y, z, _dev=0):
+    def spharM(self, b, l, n, x, y, z, device='cpu'):
         """
         Return the spherical harmonics of the vector (x,y,z)
         """
-        R = SO3part.zeros(b, l, n)
+        R = SO3part.zeros(b, l, n, device=device)
         _SO3partB.view(R).add_spharm(x, y, z)
-        if _dev > 0:
-            return R.cuda()
-        return R
 
     @classmethod
-    def Fzeros(self, b, l, _dev=0):
+    def Fzeros(self, b, l, device='cpu'):
         """
         Create an SO(3)-part corresponding to the l'th matrix in the Fourier transform of a function on SO(3).
         This gives a b*(2+l+1)*(2l+1) dimensional complex tensor. 
         """
-        if _dev == 0:
-            return SO3part(torch.zeros([b, 2*l+1, 2*l+1, 2]))
-        else:
-            return SO3part(torch.zeros([b, 2*l+1, 2*l+1, 2])).cuda()
+        return torch.view_as_complex(SO3part(torch.zeros([b, 2*l+1, 2*l+1,2],device=device)))
 
     @classmethod
-    def Frandn(self, b, l, _dev=0):
+    def Frandn(self, b, l, device='cpu'):
         """
         Create an SO(3)-part corresponding to the l'th matrix in the Fourier transform of a function on SO(3).
         This gives a b*(2+l+1)*(2l+1) dimensional complex random tensor. 
         """
-        if _dev == 0:
-            return SO3part(torch.randn([b, 2*l+1, 2*l+1, 2]))
-        else:
-            return SO3part(torch.randn([b, 2*l+1, 2*l+1, 2])).cuda()
+        return torch.view_as_complex(SO3part(torch.randn([b, 2*l+1, 2*l+1], device=device)))
 
+    @classmethod
+    def zeros_like(self,x):
+        return torch.view_as_complex(SO3part(torch.zeros_like(torch.view_as_real(x))))
+    
+    @classmethod
+    def randn_like(self,x):
+        return torch.view_as_complex(SO3part(torch.randn_like(torch.view_as_real(x))))
+    
+                   
     # ---- Access ------------------------------------------------------------------------------------------
 
+
     def getb(self):
-        return self.size(2)
+        return self.size(0)
 
     def getl(self):
         return (self.size(1)-1)/2
 
     def getn(self):
-        return self.size(3)
+        return self.size(2)
+
 
     # ---- Operations --------------------------------------------------------------------------------------
 
+
     def rotate(self, R):
         A = _SO3partB.view(self).apply(R)
-        return SO3part(A.torch())
+        return torch.view_as_complex(SO3part(torch.view_as_real(A.torch())))
 
-    def apply(self, R):
-        return SO3part(_SO3partB.view(self).apply(R).torch())
+    #def apply(self, R):
+    #    return SO3part(_SO3partB.view(self).apply(R).torch())
 
 
     # ---- Products -----------------------------------------------------------------------------------------
+
+
+    def odot(self,y):
+            return torch.sum(torch.mul(torch.view_as_real(self),torch.view_as_real(y)))
 
     def CGproduct(self, y, l):
         """
@@ -179,8 +178,7 @@ class SO3part_CGproductFn(torch.autograd.Function):
         ctx.save_for_backward(x,y)
 
         b = x.size(0)
-        dev = int(x.is_cuda)
-        r = SO3part.zeros(b,l,x.size(2)*y.size(2),dev)
+        r = SO3part.zeros(b,l,x.size(2)*y.size(2),x.device)
 
         _x = _SO3partB.view(x)
         _y = _SO3partB.view(y)
@@ -219,8 +217,7 @@ class SO3part_DiagCGproductFn(torch.autograd.Function):
         ctx.save_for_backward(x,y)
 
         b = x.size(0)
-        dev = int(x.is_cuda)
-        r = SO3part.zeros(b,l,x.size(2),dev)
+        r = SO3part.zeros(b,l,x.size(2),x.device)
 
         _x = _SO3partB.view(x)
         _y = _SO3partB.view(y)

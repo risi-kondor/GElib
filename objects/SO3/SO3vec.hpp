@@ -122,10 +122,28 @@ namespace GElib{
 
 
     SO3vec(const SO3vec& x):
-      GELIB_SO3VEC_IMPL(x){}
+      GELIB_SO3VEC_IMPL(x){
+      GELIB_COPY_WARNING();
+    }
 
     SO3vec(SO3vecB&& x):
-      GELIB_SO3VEC_IMPL(std::move(x)){}
+      GELIB_SO3VEC_IMPL(std::move(x)){
+      GELIB_MOVE_WARNING();
+    }
+
+
+    // ---- Conversions ---------------------------------------------------------------------------------------
+
+
+    SO3vec(const GELIB_SO3VEC_IMPL& x):
+      GELIB_SO3VEC_IMPL(x){
+      GELIB_CONVERT_WARNING();
+    }
+
+    SO3vec(GELIB_SO3VEC_IMPL&& x):
+      GELIB_SO3VEC_IMPL(std::move(x)){
+      GELIB_MCONVERT_WARNING();
+    }
 
 
     // ---- Transport -----------------------------------------------------------------------------------------
@@ -184,6 +202,10 @@ namespace GElib{
 
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
+
+    static string classname(){
+      return "GElib::SO3vec";
+    }
 
     string repr(const string indent="") const{
       return "<GElib::SO3vec of type"+get_tau().str()+">";

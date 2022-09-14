@@ -22,9 +22,9 @@ from gelib import *
 
 def WignerMatrix(l,phi,theta,psi,_dev=0):
     if _dev==0:
-        r=torch.zeros(2*l+1,2*l+1,2)
+        r=torch.zeros(2*l+1,2*l+1,dtype=torch.cfloat)
     else:
-        r=torch.zeros(2*l+1,2*l+1,2).cuda()
+        r=torch.zeros(2*l+1,2*l+1,dtype=torch.cfloat).cuda()
     _r=ctensorb.view(r)
     gelib_base.add_WignerMatrix_to(_r,l,phi,theta,psi)
     return r

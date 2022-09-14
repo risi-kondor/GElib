@@ -12,7 +12,7 @@ import torch
 from cnine import ctensorb 
 from gelib_base import SO3partB as _SO3partB
 from gelib_base import SO3vecB as _SO3vecB
-#from gelib_base import SO3weights as _SO3weights
+from gelib_base import SO3weights as _SO3weights
 #from gelib_base import SO3Fvec as _SO3Fvec
 
 from gelib import *
@@ -59,16 +59,18 @@ class SO3weights:
         return R
 
     @classmethod
-    def Fzeros(self, maxl, device='cpu'):
+    def Fzeros(self, _tau1, _tau2, device='cpu'):
         R = SO3weights()
-        for l in range(0, maxl+1):
+        assert len(_tau1)==len(_tau2)
+        for l in range(0, len(_tau1)):
             R.parts.append(torch.zeros([2*l+1,2*l+1],dtype=torch.cfloat,device=device))
         return R
 
     @classmethod
-    def Frandn(self, maxl, device='cpu'):
+    def Frandn(self, _tau1, _tau2, device='cpu'):
         R = SO3weights()
-        for l in range(0, maxl+1):
+        assert len(_tau1)==len(_tau2)
+        for l in range(0, len(_tau1)):
             R.parts.append(torch.randn([2*l+1,2*l+1],dtype=torch.cfloat,device=device))
         return R
 
@@ -119,11 +121,9 @@ class SO3weights:
     # ---- I/O ----------------------------------------------------------------------------------------------
 
     def __repr__(self):
-        return "unimpl"
-        #u=_SO3weights.view(self.parts)
-        #return u.__repr__()
+        u=_SO3weights.view(self.parts)
+        return u.__repr__()
 
     def __str__(self):
-        return "unimpl"
-        #u = _SO3weights.view(self.parts)
-        #return u.__str__()
+        u = _SO3weights.view(self.parts)
+        return u.__str__()
