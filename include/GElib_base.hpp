@@ -20,13 +20,51 @@ using namespace std;
 #define _GELIB_VERSION "0.0.0 5/3/22"
 
 #define GELIB_ASSERT(condition, message) if (!(condition)) {cout<<message<<endl; assert ((condition)); exit(-1); }
+#define GELIB_CHECK(condition,err) if(!condition) {{cnine::CoutLock lk; cerr<<"GElib error in function '"<<__PRETTY_FUNCTION__<<"' : "<<err<<endl;} exit(1);};
 #define GELIB_UNIMPL() printf("GElib error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
 //#define GELIB_CPUONLY() if(dev!=0) {printf("GElib error: CUDA code for \"%s\" not implemented.\n",__PRETTY_FUNCTION__); exit(-1);}
 #define GELIB_ERROR(cmd) {CoutLock lk; cerr<<"GElib error in function '"<<__PRETTY_FUNCTION__<<"' : "<<cmd<<endl;} exit(1);
 
-#define GELIB_CHECK(condition,err) if(!condition) {{cnine::CoutLock lk; cerr<<"GElib error in function '"<<__PRETTY_FUNCTION__<<"' : "<<err<<endl;} exit(1);};
+// ---- Copy, assign and convert warnings --------------------------------------------------------------------
 
 
+#ifdef GELIB_COPY_WARNINGS
+#define GELIB_COPY_WARNING() cout<<"\e[1mGElib:\e[0m "<<classname()<<" copied."<<endl;
+#else 
+#define GELIB_COPY_WARNING()
+#endif 
+
+#ifdef GELIB_MOVE_WARNINGS
+#define GELIB_MOVE_WARNING() cout<<"\e[1mGElib:\e[0m "<<classname()<<" moved."<<endl;
+#define GELIB_MCONVERT_WARNING(x) cout<<"\e[1mGElib:\e[0m "<<x.classname()<<" move converted to "<<classname()<<"."<<endl;
+#else 
+#define GELIB_MOVE_WARNING()
+#define GELIB_MCONVERT_WARNING(x)
+#endif 
+
+#ifdef GELIB_ASSIGN_WARNINGS
+#define GELIB_ASSIGN_WARNING() cout<<"\e[1mGElib:\e[0m "<<classname()<<" assigned."<<endl;
+#define GELIB_MASSIGN_WARNING() cout<<"\e[1mGElib:\e[0m "<<classname()<<" move assigned."<<endl;
+#else 
+#define GELIB_ASSIGN_WARNING()
+#define GELIB_MASSIGN_WARNING()
+#endif 
+
+#ifdef GELIB_CONVERT_WARNINGS
+#define GELIB_CONVERT_WARNING(x) cout<<"\e[1mGElib:\e[0m "<<x.classname()<<" converted to "<<classname()<<"."<<endl;
+#else 
+#define GELIB_CONVERT_WARNING(x)
+#endif 
+
+
+// --------------------------------------------------------------------------------------------------
+
+
+#ifdef GELIB_RANGE_CHECKING
+#define GELIB_CHECK_RANGE(expr) expr
+#else 
+#define GELIB_CHECK_RANGE(expr)
+#endif 
 
 namespace GElib{
 
@@ -51,6 +89,8 @@ namespace GElib{
 
 
 }
+
+
 
 
 #define GENET_CHECK_NBU(a,b,cmd) if(a!=b) {{CoutLock lk; cerr<<"GEnet error in function "<<cmd<<": bundle dimensions do not match."<<endl;} exit(1);}

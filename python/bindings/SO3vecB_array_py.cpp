@@ -12,18 +12,17 @@
 py::class_<SO3vecB_array>(m,"SO3vecB_array",
   "Class to store an array of SO3-vectors")
 
-  .def_static("zero",[](const Gdims& adims, const SO3type& tau, const int dev){
-      return SO3vecB_array::zero(adims,tau,dev);}, 
-    py::arg("adims"), py::arg("tau"), py::arg("device")=0)
-  .def_static("zero",[](const vector<int>& av, const SO3type& tau, const int dev){
-      return SO3vecB_array::zero(Gdims(av),tau,dev);},
-    py::arg("adims"),py::arg("tau"),py::arg("device")=0)
+  .def_static("zero",[](const int b, const Gdims& adims, const SO3type& tau, const int dev){
+      return SO3vecB_array::zero(b,adims,tau,dev);}, 
+    py::arg("b"),py::arg("adims"), py::arg("tau"), py::arg("device")=0)
+  .def_static("zero",[](const int b, const vector<int>& av, const SO3type& tau, const int dev){
+      return SO3vecB_array::zero(b,Gdims(av),tau,dev);},
+    py::arg("b"),py::arg("adims"),py::arg("tau"),py::arg("device")=0)
 
   .def_static("view",[](vector<at::Tensor>& v){
       SO3vecB_array r;
       for(auto& p: v)
 	r.parts.push_back(static_cast<SO3partB_array*>(SO3partB_array::viewp(p,-2)));
-      //r.parts.push_back(static_cast<SO3partB_array*>(SO3partB_array::viewp(p)));
       return r;
     })
 
@@ -32,6 +31,15 @@ py::class_<SO3vecB_array>(m,"SO3vecB_array",
   .def("addCGproduct",&SO3vecB_array::add_CGproduct,py::arg("x"),py::arg("y"))
   .def("addCGproduct_back0",&SO3vecB_array::add_CGproduct_back0,py::arg("g"),py::arg("y"))
   .def("addCGproduct_back1",&SO3vecB_array::add_CGproduct_back1,py::arg("g"),py::arg("x"))
+
+  .def("addDiagCGproduct",&SO3vecB_array::add_DiagCGproduct,py::arg("x"),py::arg("y"))
+  .def("addDiagCGproduct_back0",&SO3vecB_array::add_DiagCGproduct_back0,py::arg("g"),py::arg("y"))
+  .def("addDiagCGproduct_back1",&SO3vecB_array::add_DiagCGproduct_back1,py::arg("g"),py::arg("x"))
+
+  .def("Fproduct",&SO3vecB_array::Fproduct,py::arg("y"),py::arg("maxl")=-1)
+  .def("addFproduct",&SO3vecB_array::add_Fproduct,py::arg("x"),py::arg("y"),py::arg("method")=0)
+  .def("addFproduct_back0",&SO3vecB_array::add_Fproduct_back0,py::arg("g"),py::arg("y"),py::arg("method")=0)
+  .def("addFproduct_back1",&SO3vecB_array::add_Fproduct_back1,py::arg("g"),py::arg("x"))
 
 //.def("gather",&SO3vecB_array::add_gather,py::arg("x"),py::arg("mask"))
   .def("gather",[](SO3vecB_array& x, const SO3vecB_array& y, const cnine::Rmask1& mask){

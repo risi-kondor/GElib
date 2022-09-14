@@ -12,29 +12,22 @@
 pybind11::class_<SO3partB_array>(m,"SO3partB_array",
   "Class to store an array of SO3part objects.")
 
-  .def_static("zero",[](const Gdims& adims, const int l, const int n, const int dev){
-      return SO3partB_array::zero(adims,l,n,dev);}, 
-    py::arg("adims"), py::arg("l"), py::arg("n"), py::arg("device")=0)
-  .def_static("zero",[](const vector<int>& av, const int l, int n, const int dev){
-      return SO3partB_array::zero(Gdims(av),l,n,dev);},
-    py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
+  .def_static("zero",[](const int b, const Gdims& adims, const int l, const int n, const int dev){
+      return SO3partB_array::zero(b,adims,l,n,dev);}, 
+    py::arg("b"), py::arg("adims"), py::arg("l"), py::arg("n"), py::arg("device")=0)
+  .def_static("zero",[](const int b, const vector<int>& av, const int l, int n, const int dev){
+      return SO3partB_array::zero(b,Gdims(av),l,n,dev);},
+    py::arg("b"), py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
 
-  .def_static("ones",[](const Gdims& adims, const int l, const int n, const int dev){
-      return SO3partB_array::ones(adims,l,n,dev);}, 
-    py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
-  .def_static("ones",[](const vector<int>& av, const int l, const int n, const int dev){
-      return SO3partB_array::ones(Gdims(av),l,n,dev);},
-    py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
-
-  .def_static("gaussian",[](const Gdims& adims, const int l, const int n, const int dev){
-      return SO3partB_array::gaussian(adims,l,n,dev);}, 
-    py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
-  .def_static("gaussian",[](const vector<int>& av, const int l, const int n, const int dev){
-      return SO3partB_array::gaussian(Gdims(av),l,n,dev);},
-    py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
+  .def_static("gaussian",[](const int b, const Gdims& adims, const int l, const int n, const int dev){
+      return SO3partB_array::gaussian(b,adims,l,n,dev);}, 
+    py::arg("b"), py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
+  .def_static("gaussian",[](const int b, const vector<int>& av, const int l, const int n, const int dev){
+      return SO3partB_array::gaussian(b,Gdims(av),l,n,dev);},
+    py::arg("b"), py::arg("adims"),py::arg("l"),py::arg("n"),py::arg("device")=0)
 
 //.def_static("view",[](at::Tensor& x){return SO3partB_array(cnine::CtensorB::view(x));})
-  .def_static("view",[](at::Tensor& x){return SO3partB_array::view(x,-2);})
+  .def_static("view",[](at::Tensor& x){return SO3partB_array(SO3partB_array::view(x,-2));})
   .def("torch",[](const SO3partB_array& x){return x.torch();})
 
   .def("get_adims",[](const SO3partB_array& x){return vector<int>(x.get_adims());})
@@ -62,13 +55,18 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
 //.def("widen",&SO3partB_array::widen)
 //.def("reduce",&SO3partB_array::reduce)
 
-  .def("apply",&SO3partB_array::rotate)
+//.def("apply",&SO3partB_array::rotate)
+  .def("rotate",[](const SO3partB_array& x, const SO3element& R){return SO3partB_array(x.rotate(R));})
 
   .def("gather",&SO3partB_array::add_gather,py::arg("x"),py::arg("mask"))
 
   .def("addCGproduct",&SO3partB_array::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
   .def("addCGproduct_back0",&SO3partB_array::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
   .def("addCGproduct_back1",&SO3partB_array::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
+
+  .def("addDiagCGproduct",&SO3partB_array::add_DiagCGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
+  .def("addDiagCGproduct_back0",&SO3partB_array::add_DiagCGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
+  .def("addDiagCGproduct_back1",&SO3partB_array::add_DiagCGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
 
   .def("device",&SO3partB_array::get_device)
   .def("to",&SO3partB_array::to_device)

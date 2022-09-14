@@ -28,73 +28,76 @@ class SO3partArr(torch.Tensor):
 
     
     @staticmethod
-    def zeros(_adims,l,n,_dev=0):
+    def zeros(b,_adims,l,n,device='cpu'):
         """
         Create an SO(3)-part consisting of N*b lots of n vectors transforming according to the l'th irrep of SO(3).
         The vectors are initialized to zero, resulting in an b*(2+l+1)*n dimensional complex tensor of zeros.
         """        
-        if _dev==0:
-            return SO3partArr(torch.zeros(_adims+[2*l+1,n,2]))
-        else:
-            return SO3partArr(torch.zeros(_adims+[2*l+1,n,2])).cuda()
+        return torch.view_as_complex(SO3partArr(torch.zeros([b]+_adims+[2*l+1,n,2],device=device)))
 
 
     @staticmethod
-    def randn(_adims,l,n,_dev=0):
+    def randn(b,_adims,l,n,device='cpu'):
         """
         Create an SO(3)-part consisting of N*b lots of n vectors transforming according to the l'th irrep of SO(3).
         The vectors are initialized as random gaussian vectors, resulting in an b*(2+l+1)*n dimensional random
         complex tensor.
         """
-        if _dev==0:        
-            return SO3partArr(torch.randn(_adims+[2*l+1,n,2]))
-        else:
-            return SO3partArr(torch.randn(_adims+[2*l+1,n,2],device='cuda'))
+        return torch.view_as_complex(SO3partArr(torch.randn([b]+_adims+[2*l+1,n,2],device=device)))
 
 
     @staticmethod
-    def Fzeros(_adims,l,_dev=0):
+    def Fzeros(b,_adims,l,device='cpu'):
         """
         Create an SO(3)-part corresponding to the l'th matrix in the Fourier transform of a function on SO(3).
         This gives a N*b*(2+l+1)*(2l+1) dimensional complex tensor. 
         """
-        if _dev==0:        
-            return SO3partArr(torch.zeros(_adims+[2*l+1,2*l+1,2]))
-        else:
-            return SO3partArr(torch.zeros(_adims+[2*l+1,2*l+1,2])).cuda()
+        return torch.view_as_complex(SO3partArr(torch.zeros([b]+_adims+[2*l+1,2*l+1,2],device=device)))
 
 
     @staticmethod
-    def Frandn(_adims,l,_dev=0):
+    def Frandn(b,_adims,l,device='cpu'):
         """
         Create an SO(3)-part corresponding to the l'th matrix in the Fourier transform of a function on SO(3).
         This gives a b*(2+l+1)*(2l+1) dimensional complex random tensor. 
         """
-        if _dev==0:        
-            return SO3partArr(torch.randn(_adims+[2*l+1,2*l+1,2]))
-        else:
-            return SO3partArr(torch.randn(_adims+[2*l+1,2*l+1,2],device='cuda'))
+        return torch.view_as_complex(SO3partArr(torch.randn([b]+_adims+[2*l+1,2*l+1,2],device=device)))
+
+
+    @classmethod
+    def zeros_like(self,x):
+        return torch.view_as_complex(SO3partArr(torch.zeros_like(torch.view_as_real(x))))
+    
+    @classmethod
+    def randn_like(self,x):
+        return torch.view_as_complex(SO3partArr(torch.randn_like(torch.view_as_real(x))))
 
 
     ## ---- Access ------------------------------------------------------------------------------------------
 
 
+    def getb(self):
+        return self.size(0)
+
     def get_adims(self):
-        return list(self.size()[0:self.dim()-3])
+        return list(self.size()[1:self.dim()-2])
 
     def getl(self):
-        return (self.size(-3)-1)/2
+        return (self.size(-2)-1)/2
 
     def getn(self):
-        return self.size(-2)
+        return self.size(-1)
 
 
     ## ---- Operations --------------------------------------------------------------------------------------
 
 
-    def rotate(self,R):
-        return SO3partArr(_SO3partB_array.view(self).apply(R).torch())
+    def odot(self,y):
+            return torch.sum(torch.mul(torch.view_as_real(self),torch.view_as_real(y)))
 
+    def rotate(self,R):
+        A= _SO3partB_array.view(self).rotate(R).torch()
+        return torch.view_as_complex(SO3partArr(torch.view_as_real(A)))
 
     def gather(self,_mask):
         """
@@ -145,9 +148,7 @@ class SO3partArr_CGproductFn(torch.autograd.Function):
         ctx.l=l
         ctx.save_for_backward(x,y)
 
-        adims = x.get_adims()
-        dev = int(x.is_cuda)
-        r = SO3partArr.zeros(adims,l,x.getn()*y.getn(),dev)
+        r = SO3partArr.zeros(x.getb(),x.get_adims(),l,x.getn()*y.getn(),x.device)
 
         _x = _SO3partB_array.view(x)
         _y = _SO3partB_array.view(y)
@@ -185,9 +186,7 @@ class SO3partArr_DiagCGproductFn(torch.autograd.Function):
         assert x.size(2)==y.size(2)
         ctx.save_for_backward(x,y)
 
-        adims = x.get_adims()
-        dev = int(x.is_cuda)
-        r = SO3part.zeros(adims,l,x.getn(),dev)
+        r = SO3partArr.zeros(x.getb(),x.get_adims(),l,x.getn(),x.device)
 
         _x = _SO3partB_array.view(x)
         _y = _SO3partB_array.view(y)
@@ -223,11 +222,9 @@ class SO3partArr_GatherFn(torch.autograd.Function):
     def forward(ctx,_mask,x):
 
         ctx.mask=_mask
-        adims = x.get_adims() #change this
         l=x.getl()
         n=x.getn()
-        dev=int(x.is_cuda)
-        r=SO3partArr.zeros(adims,l,n,dev)
+        r=SO3partArr.zeros(x.getb(),x.get_adims(),l,n,x.device) # TODO
         
         _x=_SO3partB_array.view(x)
         _r=_SO3partB_array.view(r)

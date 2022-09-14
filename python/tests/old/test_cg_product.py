@@ -24,4 +24,5 @@ class TestCGlayer(object):
         x_out_rot = G.SO3vec.zeros_like(x_out)
         for i in range(maxl+1 ):
             x_out_rot.parts[i] = x_out.parts[i].detach().apply(R)
+            print(i)
             assert (torch.allclose(x_out_rot.parts[i] , x_rot_out.parts[i], rtol=1e-4, atol=1e-5))

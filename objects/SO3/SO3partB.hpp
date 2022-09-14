@@ -13,6 +13,7 @@
 
 #include "CtensorB.hpp"
 #include "SO3part3_view.hpp"
+//#include "FakeGrad.hpp"
 //#include "SO3Fpart3_view.hpp"
 
 #include "SO3part_addCGproductFn.hpp"
@@ -44,7 +45,8 @@ namespace GElib{
   // An SO3partB is a  b x (2l+1) x n   dimensional complex tensor.
 
 
-  class SO3partB: public cnine::CtensorB{
+  class SO3partB: public cnine::CtensorB 
+  {
   public:
 
     typedef cnine::device device;
@@ -53,6 +55,16 @@ namespace GElib{
 
     
     using CtensorB::CtensorB;
+
+#ifdef WITH_FAKE_GRAD
+    SO3partB* grad=nullptr;
+#endif 
+
+    ~SO3partB(){
+#ifdef WITH_FAKE_GRAD
+      if(!is_view) delete grad;
+#endif 
+    }
 
 
   public: // ---- Constructors -------------------------------------------------------------------------------
@@ -93,21 +105,42 @@ namespace GElib{
       return SO3partB(b,l,2*l+1,cnine::fill_gaussian(),_dev);}
 
 
+  public: // ---- Copying ------------------------------------------------------------------------------------
+    // only needed for grad
+
+    #ifdef WITH_FAKE_GRAD
+    SO3partB(const SO3partB& x):
+      CtensorB(x){
+      GELIB_COPY_WARNING();
+      if(x.grad) grad=new SO3partB(*x.grad);
+    }
+      
+    SO3partB(SO3partB&& x):
+      CtensorB(std::move(x)){
+      GELIB_MOVE_WARNING();
+      grad=x.grad;
+      x.grad=nullptr;
+    }
+    #endif 
+
   public: // ---- Conversions --------------------------------------------------------------------------------
 
 
     SO3partB(const CtensorB& x):
       CtensorB(x){
+      GELIB_CONVERT_WARNING(x);
       assert(dims.size()==3);
       assert(dims(1)%2==1);
     }
       
     SO3partB(CtensorB&& x):
       CtensorB(std::move(x)){
+      GELIB_MCONVERT_WARNING(x);
       assert(dims.size()==3);
       assert(dims(1)%2==1);
     }
       
+
   public: // ---- Transport -----------------------------------------------------------------------------------
 
 
@@ -171,13 +204,33 @@ namespace GElib{
   public: // ---- Cumulative Operations ----------------------------------------------------------------------
 
 
-    void add_mprod(const SO3partB& x, const CtensorB& M){
-      const int B=getb();
-      assert(x.getb()==B);
-      auto view=view3();
-      auto xview=x.view3();
-      auto Mview=M.view2();
-      cnine::MultiLoop(B,[&](const int b){view.slice0(b).add_matmul_AA(xview.slice0(b),Mview);});
+    //void add_mprod(const SO3partB& x, const CtensorB& M){
+    //const int B=getb();
+    //assert(x.getb()==B);
+    //auto view=view3();
+    //auto xview=x.view3();
+    //auto Mview=M.view2();
+    //cnine::MultiLoop(B,[&](const int b){view.slice0(b).add_matmul_AA(xview.slice0(b),Mview);});
+    //}
+
+    SO3partB mprod(const CtensorB& y){
+      assert(y.ndims()==2);
+      assert(y.dims(0)==getn());
+      SO3partB R=SO3partB::zero(getb(),getl(),y.dims(1),dev);
+      R.add_mprod(*this,y);
+      return R;
+    }
+
+    void add_mprod(const SO3partB& x, const CtensorB& w){
+      view3().fuse01().add_matmul(x.view3().fuse01(),w.view2());
+    }
+
+    void add_mprod_back0(const SO3partB& rg, const CtensorB& w){
+      view3().fuse01().add_matmul_AH(rg.view3().fuse01(),w.view2());
+    }
+
+    void add_mprod_back1_into(CtensorB& yg, const SO3partB& x) const{
+      yg.view2().add_matmul_HA(x.view3().fuse01(),view3().fuse01());
     }
 
 
@@ -200,6 +253,9 @@ namespace GElib{
 
       return R;
     }
+
+
+  public: // ---- Cumulative operations ---------------------------------------------------------------------
 
 
   public: // ---- Spherical harmonics -----------------------------------------------------------------------
@@ -357,6 +413,7 @@ namespace GElib{
 
     // ---- BlockedCGproduct 
 
+
     SO3partB BlockedCGproduct(const SO3partB& y, const int bsize, const int l) const{
       assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
       assert(getn()==y.getn());
@@ -380,6 +437,7 @@ namespace GElib{
 
     // ---- DiagCGproduct 
 
+
     SO3partB DiagCGproduct(const SO3partB& y, const int l) const{
       return BlockedCGproduct(y,1,l);
     }
@@ -398,6 +456,7 @@ namespace GElib{
 
 
     // ---- CGsquare
+
 
     SO3partB CGsquare(const int l) const{
       assert(l>=0 && l<=2*getl());
@@ -441,7 +500,34 @@ namespace GElib{
     }
 
 
+  public: // ---- Experimental -------------------------------------------------------------------------------
+
+
+
+    #ifdef WITH_FAKE_GRAD
+    void add_to_grad(const SO3partB& x){
+      if(grad) grad->add(x);
+      else grad=new SO3partB(x);
+    }
+
+    SO3partB& get_grad(){
+      if(!grad) grad=new SO3partB(SO3partB::zeros_like(*this));
+      return *grad;
+    }
+
+    SO3partB view_of_grad(){
+      if(!grad) grad=new SO3partB(SO3partB::zeros_like(*this));
+      return SO3partB(grad->CtensorB::view());
+    }
+    #endif 
+
+
   public: // ---- I/O ----------------------------------------------------------------------------------------
+
+
+    string classname() const{
+      return "GElib::SO3partB";
+    }
 
     string repr(const string indent="") const{
       return "<GElib::SO3partB(l="+to_string(getl())+",n="+to_string(getn())+")>";

@@ -39,6 +39,7 @@ def main():
                      cwd + cnine_folder + '/objects/backendA',
                      cwd + cnine_folder + '/objects/backendB',
                      cwd + cnine_folder + '/objects/tensor_views',
+                     cwd + cnine_folder + '/objects/tensor_views/functions',
                      cwd + cnine_folder + '/objects/tensor_array',
                      cwd + cnine_folder + '/objects/tensor_array/cell_maps',
                      cwd + cnine_folder + '/objects/tensor_array/cell_ops',
@@ -63,12 +64,19 @@ def main():
                          '-D_WITH_ATEN',
                          '-DCNINE_RANGE_CHECKING',
                          '-DCNINE_SIZE_CHECKING',
-                         '-DCNINE_DEVICE_CHECKING'
+                         '-DCNINE_DEVICE_CHECKING',
+                         '-DGELIB_COPY_WARNINGS',
+#                         '-DGELIB_MOVE_WARNINGS',
+                         '-DGELIB_CONVERT_WARNINGS',
+                         '-DGELIB_RANGE_CHECKING',
+                         '-DWITH_FAKE_GRAD'
                          ]
 
     _nvcc_compile_args = ['-D_WITH_CUDA',
                           '-D_WITH_CUBLAS',
                           '-D_DEF_CGCMEM',
+                          '-DGELIB_RANGE_CHECKING',
+                          '-DWITH_FAKE_GRAD'
                           # '-rdc=true'
                           ]
 
@@ -89,7 +97,8 @@ def main():
         _cxx_compile_args.extend(['-D_WITH_CUDA', '-D_WITH_CUBLAS'])
 
     _depends = ['setup.py',
-                'src/gelib.cpp'
+                'src/gelib.cpp',
+                'bindings/*.cpp'
     #             'SO3part_py.cpp',
     #             'SO3vec_py.cpp',
     #             'SO3partArray_py.cpp',
@@ -121,7 +130,7 @@ def main():
             # '../cuda/SO3Fpart_addFproduct.cu',
             # '../cuda/SO3Fpart_addFproduct_back0.cu',
             # '../cuda/SO3Fpart_addFproduct_back1.cu',
-            'src/gelib/GElib_py.cpp'
+            'bindings/GElib_py.cpp'
         ],
             include_dirs=_include_dirs,
             extra_compile_args={
@@ -130,7 +139,7 @@ def main():
             depends=_depends
         )]
     else:
-        ext_modules = [CppExtension('gelib_base', ['src/gelib/GElib_py.cpp'],
+        ext_modules = [CppExtension('gelib_base', ['bindings/GElib_py.cpp'],
                                     include_dirs=_include_dirs,
                                     # sources=sources,
                                     extra_compile_args={

@@ -84,7 +84,6 @@ y=gelib.SO3vec.randn(b,tau)
 z=gelib.CGproduct(x,y)
 print("CG-product:")
 print(z.rotate(R))
-print(999)
 
 xr=x.rotate(R)
 yr=y.rotate(R)

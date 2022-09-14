@@ -13,11 +13,12 @@ int main(int argc, char** argv){
   GElibSession session;
   cout<<endl;
 
-  Gdims adims({2,1});
+  int b=2;
+  Gdims adims({1});
   SO3type tau({2,2});
 
-  SO3vecB_array u=SO3vecB_array::gaussian(adims,tau);
-  SO3vecB_array v=SO3vecB_array::gaussian(adims,tau);
+  SO3vecB_array u=SO3vecB_array::gaussian(b,adims,tau);
+  SO3vecB_array v=SO3vecB_array::gaussian(b,adims,tau);
   //printl("u",u)<<endl;
   //printl("v",v)<<endl;
 
