@@ -37,9 +37,6 @@ class SO3part(torch.Tensor):
         The vectors are initialized to zero, resulting in an b*(2+l+1)*n dimensional complex tensor of zeros.
         """
         return torch.view_as_complex(SO3part(torch.zeros([b, 2*l+1, n,2],device=device)))
-        #if _dev == 0:
-        #else:
-        #    return torch.view_as_complex(SO3part(torch.zeros([b, 2*l+1, n,2]))).cuda()
 
     @classmethod
     def randn(self, b, l, n, device='cpu'):
@@ -49,9 +46,6 @@ class SO3part(torch.Tensor):
         complex tensor.
         """
         return torch.view_as_complex(SO3part(torch.randn([b, 2*l+1, n,2],device=device)))
-        #if _dev == 0:
-        #else:
-        #    return torch.view_as_complex(SO3part(torch.randn([b, 2*l+1, n,2]))).cuda()
 
     @classmethod
     def spharm(self, l, x, y, z, device='cpu'):
@@ -60,6 +54,7 @@ class SO3part(torch.Tensor):
         """
         R = SO3part.zeros(1, l, 1, device=device)
         _SO3partB.view(R).add_spharm(x, y, z)
+        return R
 
     @classmethod
     def spharm(self, l, X, device='cpu'):
@@ -69,6 +64,7 @@ class SO3part(torch.Tensor):
         assert(X.dim()==3)
         R = SO3part.zeros(X.size(0), l, X.size(2), device=device)
         _SO3partB.view(R).add_spharm(X)
+        return R
 
     @classmethod
     def spharmB(self, l, X, device='cpu'):
@@ -77,6 +73,7 @@ class SO3part(torch.Tensor):
         """
         R = SO3part.zeros(X.size(0), l, 1, device=device)
         _SO3partB.view(R).add_spharmB(X)
+        return R
 
     @classmethod
     def spharM(self, b, l, n, x, y, z, device='cpu'):
@@ -85,6 +82,7 @@ class SO3part(torch.Tensor):
         """
         R = SO3part.zeros(b, l, n, device=device)
         _SO3partB.view(R).add_spharm(x, y, z)
+        return R
 
     @classmethod
     def Fzeros(self, b, l, device='cpu'):
