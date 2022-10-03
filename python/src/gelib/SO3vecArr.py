@@ -426,7 +426,7 @@ class SO3vecArr_FproductFn(torch.autograd.Function): #todo
         ctx.k2=k2
         ctx.save_for_backward(*args)
 
-        adims=list(args[0].size()[0:args[0].dim()-3])
+        adims=list(args[0].size()[0:args[0].dim()-2])
         if _maxl==-1:
             maxl=k1+k2-2
         else:
@@ -468,7 +468,7 @@ class SO3vecArr_FproductFn(torch.autograd.Function): #todo
         return tuple(grads)
 
 
-class SO3vec_FmodsqFn(torch.autograd.Function): #todo
+class SO3vecArr_FmodsqFn(torch.autograd.Function): #todo
 
     @staticmethod
     def forward(ctx,k1,_maxl,*args):
@@ -476,7 +476,7 @@ class SO3vec_FmodsqFn(torch.autograd.Function): #todo
         #ctx.k2=k1
         ctx.save_for_backward(*args)
 
-        adims=list(args[0].size()[0:args[0].dim()-3])
+        adims=list(args[0].size()[0:args[0].dim()-2])
         if _maxl==-1:
             maxl=k1+k1-2
         else:
