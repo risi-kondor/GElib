@@ -44,7 +44,7 @@ def main():
                      cwd + cnine_folder + '/objects/tensor_array/cell_maps',
                      cwd + cnine_folder + '/objects/tensor_array/cell_ops',
                      cwd + '/../include',
-                     cwd + '/../combinatorial',
+#                     cwd + '/../combinatorial',
                      cwd + '/../objects/SO2',
                      cwd + '/../objects/SO2/functions',
                      cwd + '/../objects/SO3',
