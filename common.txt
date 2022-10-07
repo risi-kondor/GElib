@@ -14,9 +14,9 @@ SO2DIR=$(ROOTDIR)/objects/SO2
 SO3DIR=$(ROOTDIR)/objects/SO3
 GELIB_CUDADIR=$(ROOTDIR)/cuda
 
-COMBINATORIALDIR=$(ROOTDIR)/objects/combinatorial
-GROUPSDIR=$(ROOTDIR)/objects/groups
-SNDIR=$(ROOTDIR)/objects/Sn
+# COMBINATORIALDIR=$(ROOTDIR)/objects/combinatorial
+# GROUPSDIR=$(ROOTDIR)/objects/groups
+# SNDIR=$(ROOTDIR)/objects/Sn
 
 CFLAGS= -std=c++11 -O3 -ferror-limit=1  
 INCLUDE= -I $(ROOTDIR)/include 
