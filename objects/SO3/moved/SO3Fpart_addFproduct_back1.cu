@@ -1,15 +1,14 @@
-// This file is part of GElib, a C++/CUDA library for group
-// equivariant tensor operations. 
-// 
-// Copyright (c) 2022s, Imre Risi Kondor
-//
-// This Source Code Form is subject to the terms of the Mozilla
-// Public License v. 2.0. If a copy of the MPL was not distributed
-// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+/*
+ * This file is part of the GElib-cuda library
+ * 
+ * Copyright (c) 2022, Imre Risi Kondor
+ *
+ * All rights reserved. Copying, distributing, modifying or using 
+ * this file without the copyright holder's permission is prohibited. 
+*/ 
 
-
-#ifndef _SO3Fpart_addFproduct_cu
-#define _SO3Fpart_addFproduct_cu
+#ifndef _SO3Fpart_addFproduct_back1_cu
+#define _SO3Fpart_addFproduct_back1_cu
 
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -17,17 +16,13 @@
 //#include <thrust/tuple.h>
 
 #include "SO3_CGbank.hpp"
-#include "Ctensor2_view.hpp"
 #include "Ctensor3_view.hpp"
 
-//__device__ __constant__ unsigned char cg_cmem[32276]; 
 
 extern GElib::SO3_CGbank SO3_cgbank;
 
 
-
-
-__device__ int loadg3(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
+__device__ int loadg5(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
   int s1=x.s1;
@@ -46,7 +41,7 @@ __device__ int loadg3(const cnine::Ctensor3_view& x, float* dest, const int b, c
 }
 
 
-__device__ int saveg3(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
+__device__ int saveg5(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
   int s1=x.s1;
@@ -64,7 +59,8 @@ __device__ int saveg3(const cnine::Ctensor3_view& x, float* source, const int b,
   return offs;
 }
 
-__device__ int loadg3c(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
+
+__device__ int loadg5c(const cnine::Ctensor3_view& x, float* dest, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
   int s1=x.s1;
@@ -83,8 +79,7 @@ __device__ int loadg3c(const cnine::Ctensor3_view& x, float* dest, const int b, 
 }
 
 
-/*
-__device__ int saveg3c(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
+__device__ int saveg5c(const cnine::Ctensor3_view& x, float* source, const int b, const int t){
   int I=x.n1;
   int J=x.n2;
   int s1=x.s1;
@@ -101,14 +96,13 @@ __device__ int saveg3c(const cnine::Ctensor3_view& x, float* source, const int b
   }
   return offs;
 }
-*/
 
 
-__global__ void SO3Fpart_addFproduct_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
+
+__global__ void SO3Fpart_addFproduct_back1_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
   const cnine::Ctensor3_view y, const int Cptr, float* cptr_global, const int conj){
 
   extern __shared__ unsigned char _shared[]; 
-  //const float* C_ptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
   const int b=blockIdx.x;
   const int t=threadIdx.x;
 
@@ -124,115 +118,33 @@ __global__ void SO3Fpart_addFproduct_kernel(const cnine::Ctensor3_view r, const 
   else cptr=cptr_global;
 
   float* xpr=reinterpret_cast<float*>(_shared);
-  float* xpi=xpr+x.n1*x.n2;
-  loadg3(x,xpr,b,t);
+  float* xpi=xpr+loadg5(x,xpr,b,t);
 
   float* ypr=xpr+((2*xn*xn-1)/32+1)*32;
-  float* ypi=ypr+y.n1*y.n2;
-  if(conj==0) loadg3(y,ypr,b,t);
-  else loadg3c(y,ypr,b,t);
+  float* ypi;
+  if(conj==0) ypi=ypr+loadg5(y,ypr,b,t);
+  else ypi=ypr+loadg5c(y,ypr,b,t);
 
   float* rpr=ypr+((2*yn*yn-1)/32+1)*32;
-  float* rpi=rpr+r.n1*r.n2;
-  loadg3(r,rpr,b,t);
+  float* rpi=rpr+loadg5(r,rpr,b,t);
 
   __syncthreads();
 
   if(t<xn*yn){
 
     int i1=t/yn;
-    xpr=xpr+i1;
-    xpi=xpi+i1;
+    float* _xpr=xpr+i1;
+    float* _xpi=xpi+i1;
     
     int i2=t%yn;
-    ypr=ypr+i2;
-    ypi=ypi+i2;
+    float* _ypr=ypr+i2;
+    float* _ypi=ypi+i2;
     
     int i=i1+i2-l1-l2+l;
     float* _rpr=rpr+i;
     float* _rpi=rpi+i;
 
     if(i>=0 && i<rn){
-
-      float c0=cptr[i1*yn+i2]*xn*yn/rn;
-      
-      for(int m1=-l1; m1<=l1; m1++){
-	const float x_r=xpr[xn*(m1+l1)];
-	const float x_i=xpi[xn*(m1+l1)];
-	int lower=-l-m1; if(lower<-l2) lower=-l2;
-	int upper=l-m1; if(upper>l2) upper=l2;
-	for(int m2=lower; m2<=upper; m2++){
-	  float c=cptr[(m1+l1)*yn+m2+l2];
-	  const float y_r=ypr[yn*(m2+l2)];
-	  const float y_i=ypi[yn*(m2+l2)];
-	  //_rpr[rn*(m1+m2+l)]+=c0*c*(x_r*y_r-x_i*y_i); 
-	  //_rpi[rn*(m1+m2+l)]+=c0*c*(x_r*y_i+x_i*y_r);
-	  atomicAdd(_rpr+rn*(m1+m2+l),c0*c*(x_r*y_r-x_i*y_i)); 
-	  atomicAdd(_rpi+rn*(m1+m2+l),c0*c*(x_r*y_i+x_i*y_r));
-	}
- 
-      }
-    }
-  }
-
-  __syncthreads();
-  
-  saveg3(r,rpr,b,t);
-
-}
-
-
-__global__ void SO3Fpart_addFproduct_large_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
-  const cnine::Ctensor3_view y, const int Cptr, float* cptr_global, const int conj){
-
-  extern __shared__ unsigned char _shared[]; 
-  //const float* C_ptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
-  const int b=blockIdx.x;
-  const int t=threadIdx.x;
-
-  int l1=(x.n1-1)/2;
-  int l2=(y.n1-1)/2;
-  int l=(r.n1-1)/2;
-  int xn=x.n2;
-  int yn=y.n2;
-  int rn=r.n2;
-
-  float* cptr;
-  if(Cptr>=0) cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
-  else cptr=cptr_global;
-
-  float* xpr=reinterpret_cast<float*>(_shared);
-  float* xpi=xpr+x.n1*x.n2;
-  loadg3(x,xpr,b,t);
-
-  float* ypr=xpr+((2*xn*xn-1)/32+1)*32;
-  float* ypi=ypr+y.n1*y.n2;
-  if(conj==0) loadg3(y,ypr,b,t);
-  else loadg3c(y,ypr,b,t);
-
-  float* rpr=ypr+((2*yn*yn-1)/32+1)*32;
-  float* rpi=rpr+r.n1*r.n2;
-  loadg3(r,rpr,b,t);
-
-  //int tn=xn*yn;
-  //float* tpr=rpr+((2*rn*rn-1)/32+1)*32;
-  //float* tpi=tpr+tn*rn;
-
-  __syncthreads();
-
-  if(t<rn){
-    int i=t;
-    float* _rpr=rpr+i+rn*l;
-    float* _rpi=rpi+i+rn*l;
-
-    for(int i1=max(0,i-l-l2+l1); i1<min(xn,i-l+l2+l1+1); i1++){
-      float* _xpr=xpr+i1;
-      float* _xpi=xpi+i1;
-
-      int i2=i-l-(i1-l1)+l2;
-      float* _ypr=ypr+i2+yn*l2;
-      float* _ypi=ypi+i2+yn*l2;
-
       float c0=cptr[i1*yn+i2]*xn*yn/rn;
       
       for(int m1=-l1; m1<=l1; m1++){
@@ -240,17 +152,91 @@ __global__ void SO3Fpart_addFproduct_large_kernel(const cnine::Ctensor3_view r, 
 	const float x_i=_xpi[xn*(m1+l1)];
 	int lower=-l-m1; if(lower<-l2) lower=-l2;
 	int upper=l-m1; if(upper>l2) upper=l2;
-
 	for(int m2=lower; m2<=upper; m2++){
 	  float c=cptr[(m1+l1)*yn+m2+l2];
-	  const float y_r=_ypr[yn*(m2)];
-	  const float y_i=_ypi[yn*(m2)];
-	  _rpr[rn*(m1+m2)]+=c0*c*(x_r*y_r-x_i*y_i); 
-	  _rpi[rn*(m1+m2)]+=c0*c*(x_r*y_i+x_i*y_r);
-	  //atomicAdd(_rpr+rn*(m1+m2+l),c0*c*(x_r*y_r-x_i*y_i)); 
-	  //atomicAdd(_rpi+rn*(m1+m2+l),c0*c*(x_r*y_i+x_i*y_r));
+	  const float g_r=_rpr[rn*(m1+m2+l)];
+	  const float g_i=_rpi[rn*(m1+m2+l)];
+	  //_ypr[yn*(m2+l2)]+=c*(g_r*x_r+g_i*x_i);
+	  //_ypi[yn*(m2+l2)]+=c*(-g_r*x_i+g_i*x_r);
+	  atomicAdd(_ypr+yn*(m2+l2),c0*c*(g_r*x_r+g_i*x_i));
+	  atomicAdd(_ypi+yn*(m2+l2),c0*c*(-g_r*x_i+g_i*x_r));
 	}
  
+      }
+    }
+  }
+
+  __syncthreads();
+  
+  if(conj==0) saveg5(y,ypr,b,t);
+  else saveg5c(y,ypr,b,t);
+
+}
+
+
+__global__ void SO3Fpart_addFproduct_back1_large_kernel(const cnine::Ctensor3_view r, const cnine::Ctensor3_view x, 
+  const cnine::Ctensor3_view y, const int Cptr, float* cptr_global, const int conj){
+
+  extern __shared__ unsigned char _shared[]; 
+  const int b=blockIdx.x;
+  const int t=threadIdx.x;
+
+  int l1=(x.n1-1)/2;
+  int l2=(y.n1-1)/2;
+  int l=(r.n1-1)/2;
+  int xn=x.n2;
+  int yn=y.n2;
+  int rn=r.n2;
+
+  float* cptr;
+  if(Cptr>=0) cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
+  else cptr=cptr_global;
+
+  float* xpr=reinterpret_cast<float*>(_shared);
+  float* xpi=xpr+loadg5(x,xpr,b,t);
+
+  float* ypr=xpr+((2*xn*xn-1)/32+1)*32;
+  float* ypi;
+  if(conj==0) ypi=ypr+loadg5(y,ypr,b,t);
+  else ypi=ypr+loadg5c(y,ypr,b,t);
+
+  float* rpr=ypr+((2*yn*yn-1)/32+1)*32;
+  float* rpi=rpr+loadg5(r,rpr,b,t);
+
+  __syncthreads();
+
+  if(t<yn){
+
+    int i2=t;
+    float* _ypr=ypr+i2;
+    float* _ypi=ypi+i2;
+    
+    for(int i1=0; i1<xn; i1++){
+      float* _xpr=xpr+i1;
+      float* _xpi=xpi+i1;
+   
+      int i=i1+i2-l1-l2+l;
+      float* _rpr=rpr+i;
+      float* _rpi=rpi+i;
+
+      if(i>=0 && i<rn){
+	float c0=cptr[i1*yn+i2]*xn*yn/rn;
+	
+	for(int m1=-l1; m1<=l1; m1++){
+	  const float x_r=_xpr[xn*(m1+l1)];
+	  const float x_i=_xpi[xn*(m1+l1)];
+	  int lower=-l-m1; if(lower<-l2) lower=-l2;
+	  int upper=l-m1; if(upper>l2) upper=l2;
+	  for(int m2=lower; m2<=upper; m2++){
+	    float c=cptr[(m1+l1)*yn+m2+l2];
+	    const float g_r=_rpr[rn*(m1+m2+l)];
+	    const float g_i=_rpi[rn*(m1+m2+l)];
+	    _ypr[yn*(m2+l2)]+=c*(g_r*x_r+g_i*x_i);
+	    _ypi[yn*(m2+l2)]+=c*(-g_r*x_i+g_i*x_r);
+	    //atomicAdd(_ypr+yn*(m2+l2),c0*c*(g_r*x_r+g_i*x_i));
+	    //atomicAdd(_ypi+yn*(m2+l2),c0*c*(-g_r*x_i+g_i*x_r));
+	  }
+	} 
       }
 
     }
@@ -258,21 +244,26 @@ __global__ void SO3Fpart_addFproduct_large_kernel(const cnine::Ctensor3_view r, 
 
   __syncthreads();
   
-  saveg3(r,rpr,b,t);
+  if(conj==0) saveg5(y,ypr,b,t);
+  else saveg5c(y,ypr,b,t);
 
 }
+
 
 
 namespace GElib{
 
 
-  void SO3Fpart_addFproduct_cu(const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, const cnine::Ctensor3_view& y, 
+  void SO3Fpart_addFproduct_back1_cu(const cnine::Ctensor3_view& y, const cnine::Ctensor3_view& r, const cnine::Ctensor3_view& x, 
     const int conj, const int method, const cudaStream_t& stream){
 
     const int xl=(x.n1-1)/2;
     const int yl=(y.n1-1)/2;
     const int l=(r.n1-1)/2;
+
     const int b=r.n0;
+    assert(x.n0==b);
+    assert(y.n0==b);
 
     float* cptr=nullptr;
     int Cptr=SO3_cgbank.getfC(xl,yl,l)/4;
@@ -283,24 +274,23 @@ namespace GElib{
       cnine::roundup(y.n1*y.n2*2,32)/32+
       cnine::roundup(r.n1*r.n2*2,32)/32;
 
+
     if(nlines<=384){
 
       if(method==0){
 
-	SO3Fpart_addFproduct_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
-	  (r,x,y,Cptr,cptr,conj);
-	return; 
+      SO3Fpart_addFproduct_back1_kernel<<<b,cnine::roundup(x.n2*y.n2,32),nlines*128,stream>>>
+	(r,x,y,Cptr,cptr,conj);
 
       }else{
 
-	SO3Fpart_addFproduct_large_kernel<<<b,cnine::roundup(std::max(std::max(x.n2,y.n2),r.n2),32),nlines*128,stream>>>
-	  (r,x,y,Cptr,cptr,conj);
-	return; 
+	SO3Fpart_addFproduct_back1_large_kernel<<<b,cnine::roundup(std::max(std::max(x.n2,y.n2),r.n2),32),nlines*128,stream>>>
+	(r,x,y,Cptr,cptr,conj);
 
       }
+    }else{
+      cout<<"error"<<endl;
     }
-
-    cout<<"error"<<endl;
 
   }    
 
