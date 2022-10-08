@@ -15,8 +15,8 @@ def main():
     # os.environ['CUDA_HOME']='/usr/local/cuda'
     #os.environ["CC"] = "clang"
 
-    compile_with_cuda = True 
-    # compile_with_cuda = False
+    #compile_with_cuda = True 
+    compile_with_cuda = False
 
     copy_warnings = False
     torch_convert_warnings = False
@@ -31,6 +31,7 @@ def main():
 
     cwd = os.getcwd()
     cnine_folder = "/../../cnine/"
+    ext_cuda_folder = "../../GElib-cuda/cuda"
 
     _include_dirs = [cwd + cnine_folder + '/include',
                      cwd + cnine_folder + '/include/cmaps',
@@ -99,10 +100,6 @@ def main():
     _depends = ['setup.py',
                 'src/gelib.cpp',
                 'bindings/*.cpp'
-    #             'SO3part_py.cpp',
-    #             'SO3vec_py.cpp',
-    #             'SO3partArray_py.cpp',
-    #             'SO3vecArray_py.cpp',
     #             'build/*/*'
                 ]
 
@@ -120,16 +117,8 @@ def main():
             '../../cnine/include/Cnine_base.cu',
             '../../cnine/cuda/TensorView_accumulators.cu',
             '../../cnine/cuda/BasicCtensorProducts.cu',
-            '../cuda/SO3CGproducts_combo.cu',
-            # '../cuda/GElib_base.cu',
-            # '../cuda/SO3partA_CGproduct.cu',
-            # '../cuda/SO3partA_DiagCGproduct.cu',
-            # '../cuda/SO3partB_addCGproduct.cu',
-            # '../cuda/SO3partB_addCGproduct_back0.cu',
-            # '../cuda/SO3partB_addCGproduct_back1.cu',
-            # '../cuda/SO3Fpart_addFproduct.cu',
-            # '../cuda/SO3Fpart_addFproduct_back0.cu',
-            # '../cuda/SO3Fpart_addFproduct_back1.cu',
+            #'../cuda/SO3CGproducts_combo.cu',
+            ext_cuda_folder+'../cuda/SO3CGproducts_combo.cu',
             'bindings/GElib_py.cpp'
         ],
             include_dirs=_include_dirs,
