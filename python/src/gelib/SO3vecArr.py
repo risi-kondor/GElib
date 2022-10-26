@@ -525,8 +525,8 @@ class SO3vecArr_GatherFn(torch.autograd.Function):
         ctx.mask=args[0]
         ctx.adims=list(args[1].size()[0:args[1].dim()-3])
         tau=tau_type(args[1:])
-        dev=int(args[1].is_cuda)
-        r=MakeZeroSO3partArrs(ctx.adims,tau,dev)
+        #dev=int(args[1].is_cuda)
+        r=MakeZeroSO3partArrs(ctx.adims,tau,args[1].device)
         
         _x=_SO3vecB_array.view(args[1:])
         _r=_SO3vecB_array.view(r)
