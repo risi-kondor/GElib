@@ -523,14 +523,14 @@ class SO3vecArr_GatherFn(torch.autograd.Function):
     def forward(ctx,*args):
 
         ctx.mask=args[0]
-        ctx.adims=list(args[1].size()[0:args[1].dim()-3])
+        ctx.adims=list(args[1].size()[0:args[1].dim()-2])
         tau=tau_type(args[1:])
         #dev=int(args[1].is_cuda)
         r=MakeZeroSO3partArrs(ctx.adims,tau,args[1].device)
         
         _x=_SO3vecB_array.view(args[1:])
         _r=_SO3vecB_array.view(r)
-        _r.gather(_x,args[0])
+        _r.add_gather(_x,args[0])
 
         return tuple(r)
 

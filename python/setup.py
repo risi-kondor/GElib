@@ -19,7 +19,7 @@ def main():
     compile_with_cuda = False
 
     copy_warnings = False
-    torch_convert_warnings = False
+    torch_convert_warnings = True
 
     # ------------------------------------------------------------------------------------------------------------
     
@@ -66,9 +66,6 @@ def main():
                          '-DCNINE_RANGE_CHECKING',
                          '-DCNINE_SIZE_CHECKING',
                          '-DCNINE_DEVICE_CHECKING',
-                         '-DGELIB_COPY_WARNINGS',
-#                         '-DGELIB_MOVE_WARNINGS',
-                         '-DGELIB_CONVERT_WARNINGS',
                          '-DGELIB_RANGE_CHECKING',
                          '-DWITH_FAKE_GRAD'
                          ]
@@ -86,7 +83,10 @@ def main():
             '-DCNINE_COPY_WARNINGS',
             '-DCNINE_ASSIGN_WARNINGS',
             '-DCNINE_MOVE_WARNINGS',
-            '-DCNINE_MOVEASSIGN_WARNINGS'
+            '-DCNINE_MOVEASSIGN_WARNINGS',
+            '-DGELIB_COPY_WARNINGS',
+            '-DGELIB_MOVE_WARNINGS',
+            '-DGELIB_CONVERT_WARNINGS'
         ])
 
     if torch_convert_warnings:

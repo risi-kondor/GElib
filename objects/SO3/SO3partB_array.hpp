@@ -71,7 +71,9 @@ namespace GElib{
     template<typename FILLTYPE, typename = typename 
 	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
     SO3partB_array(const int b, const Gdims& _adims, const int l, const int n, const FILLTYPE& dummy, const int _dev=0):
-      CtensorArrayB(_adims.prepend(b),{2*l+1,n},dummy,_dev){}
+      CtensorArrayB(_adims.prepend(b),{2*l+1,n},dummy,_dev){
+      batched=true;
+    }
 
     
 
@@ -113,12 +115,14 @@ namespace GElib{
 
 
     SO3partB_array(const SO3partB_array& x):
-      CtensorArrayB(x,-2){
+      CtensorArrayB(x){
+      //CtensorArrayB(x,-2){
       GELIB_COPY_WARNING();
     }
       
     SO3partB_array(SO3partB_array&& x):
-      CtensorArrayB(std::move(x),-2){
+      CtensorArrayB(std::move(x)){
+      //CtensorArrayB(std::move(x),-2){
       GELIB_MOVE_WARNING();
     }
 
@@ -133,6 +137,16 @@ namespace GElib{
       
     SO3partB_array(CtensorB&& x):
       CtensorArrayB(std::move(x),-2){
+      GELIB_MCONVERT_WARNING(x);
+    }
+
+    SO3partB_array(const CtensorArrayB& x):
+      CtensorArrayB(x){
+      GELIB_CONVERT_WARNING(x);
+    }
+      
+    SO3partB_array(CtensorArrayB&& x):
+      CtensorArrayB(std::move(x)){
       GELIB_MCONVERT_WARNING(x);
     }
 
@@ -254,9 +268,16 @@ namespace GElib{
   public: // ---- Cumulative Operations ----------------------------------------------------------------------
 
 
-    //void add_gather(const SO3partB_array& x, const cnine::Rmask1& mask){
-    //CtensorB::add_gather(x,mask);
-    //}
+    void add_gather(const SO3partB_array& x, const cnine::Rmask1& mask){
+      if(!batched) CtensorArrayB::add_gather(x,mask);
+      else{
+	CNINE_ASSRT(dims[0]==x.dims[0]);
+	for(int i=0; i<dims[0]; i++){
+	  //cout<<"ddd"<<x.viewd()<<endl;
+	  cnine::Aggregator(viewd().slice0(i),x.viewd().slice0(i),mask);
+	}
+      }
+    }
 
     /*
     SO3partB_array mprod(const CtensorB& y){

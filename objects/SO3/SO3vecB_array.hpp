@@ -133,6 +133,27 @@ namespace GElib{
   public: // ---- Copying -------------------------------------------------------------------------------------------
 
 
+    SO3vecB_array(const SO3vecB_array& x):
+      SO3vecB_base(x){
+      GELIB_COPY_WARNING();
+    }
+
+    SO3vecB_array(SO3vecB_array&& x):
+      SO3vecB_base(std::move(x)){
+      GELIB_MOVE_WARNING();
+    }
+
+    SO3vecB_array& operator=(const SO3vecB_array& x){
+      SO3vecB_base::operator=(x);
+      return *this;
+    }
+
+    SO3vecB_array& operator=(SO3vecB_array&& x){
+      SO3vecB_base::operator=(std::move(x));
+      return *this;
+    }
+
+    /*
     SO3vecB_array(const SO3vecB_array& x){
       GELIB_COPY_WARNING();
       for(auto& p:x.parts)
@@ -157,6 +178,7 @@ namespace GElib{
       SO3vecB_base::operator=(std::move(x));
       return *this;
     }
+    */
 
 
   public: // ---- Conversions ------------------------------------------------------------------------------------
@@ -294,9 +316,7 @@ namespace GElib{
 
     SO3vecB_array CGproduct(const SO3vecB_array& y, const int maxl=-1) const{
       assert(get_adims()==y.get_adims());
-      cout<<get_adims()<<endl;
       SO3vecB_array R=SO3vecB_array::zero(getb(),get_adims(),GElib::CGproduct(get_tau(),y.get_tau(),maxl),get_dev());
-      cout<<R.repr()<<endl;
       R.add_CGproduct(*this,y);
       return R;
     }

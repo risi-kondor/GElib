@@ -22,7 +22,7 @@ py::class_<SO3vecB_array>(m,"SO3vecB_array",
   .def_static("view",[](vector<at::Tensor>& v){
       SO3vecB_array r;
       for(auto& p: v)
-	r.parts.push_back(static_cast<SO3partB_array*>(SO3partB_array::viewp(p,-2)));
+	r.parts.push_back(static_cast<SO3partB_array*>(SO3partB_array::viewp(p,-2,true)));
       return r;
     })
 
@@ -42,7 +42,7 @@ py::class_<SO3vecB_array>(m,"SO3vecB_array",
   .def("addFproduct_back1",&SO3vecB_array::add_Fproduct_back1,py::arg("g"),py::arg("x"))
 
 //.def("gather",&SO3vecB_array::add_gather,py::arg("x"),py::arg("mask"))
-  .def("gather",[](SO3vecB_array& x, const SO3vecB_array& y, const cnine::Rmask1& mask){
+  .def("add_gather",[](SO3vecB_array& x, const SO3vecB_array& y, const cnine::Rmask1& mask){
       x.add_gather(y,mask);},py::arg("x"),py::arg("mask"))
 
   .def("device",&SO3vecB_array::get_device)

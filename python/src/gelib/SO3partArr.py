@@ -83,7 +83,7 @@ class SO3partArr(torch.Tensor):
         return list(self.size()[1:self.dim()-2])
 
     def getl(self):
-        return (self.size(-2)-1)/2
+        return int((self.size(-2)-1)/2)
 
     def getn(self):
         return self.size(-1)
@@ -103,7 +103,7 @@ class SO3partArr(torch.Tensor):
         """
         Gather the elements of this SO3partArr into a new SO3partArr according to the mask
         """
-        return SO3partArr(SO3partArr_GatherFn.apply(_mask,self))
+        return SO3partArr_GatherFn.apply(_mask,self)
 
 
     # ---- Products -----------------------------------------------------------------------------------------
@@ -228,7 +228,7 @@ class SO3partArr_GatherFn(torch.autograd.Function):
         
         _x=_SO3partB_array.view(x)
         _r=_SO3partB_array.view(r)
-        _r.gather(_x,_mask)
+        _r.add_gather(_x,_mask)
 
         return r
 
