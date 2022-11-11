@@ -21,21 +21,23 @@ namespace GElib{
   typedef SO3vecB_array SO3mvec_base;
 
   class SO3mvec: public SO3mvec_base 
-#ifdef WITH_FAKE_GRAD
-	       ,public cnine::FakeGrad<SO3mvec>
-#endif
-{
-  public:
-
   #ifdef WITH_FAKE_GRAD
-  ~SO3mvec(){
-    if(!is_view) delete grad;
-  }
+	       ,public cnine::FakeGrad<SO3mvec>
   #endif
-
+  {
+  public:
+    
+    #ifdef WITH_FAKE_GRAD
+    ~SO3mvec(){
+      if(!is_view) delete grad;
+  }
+    #endif
+    
 
     using SO3mvec_base::SO3mvec_base;
     //using SO3vecB_array::SO3vecB_array;
+    
+    SO3mvec(){}
 
 
     public: // ---- Constructors ------------------------------------------------------------------------------
