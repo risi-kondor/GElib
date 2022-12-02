@@ -10,6 +10,7 @@
 
 
 import torch
+from cnine import rtensor as _rtensor
 from gelib_base import SO3partB_array as _SO3partB_array
 
 
@@ -82,6 +83,9 @@ class SO3partArr(torch.Tensor):
     def get_adims(self):
         return list(self.size()[1:self.dim()-2])
 
+    def get_nadims(self):
+        return self.dim()-2
+
     def getl(self):
         return int((self.size(-2)-1)/2)
 
@@ -104,6 +108,9 @@ class SO3partArr(torch.Tensor):
         Gather the elements of this SO3partArr into a new SO3partArr according to the mask
         """
         return SO3partArr_GatherFn.apply(_mask,self)
+
+    def conterpolate(self,M):
+        return SO3partArr_Conterpolate2dFn.apply(self,M)
 
 
     # ---- Products -----------------------------------------------------------------------------------------
@@ -249,6 +256,36 @@ class SO3partArr_GatherFn(torch.autograd.Function):
 
         return tuple([None]+r)
 
+
+class SO3partArr_ConterpolateFn(torch.autograd.Function): 
+
+    @staticmethod
+    def forward(ctx,x,M):
+        ctx.nadims=x.get_nadims()
+        ctx.M=M
+        _x=_SO3partB_array.view(x)
+        _M=_rtensor.view(M)
+        if(x.get_nadims()==2):
+            r=SO3partArr.zeros(x.getb(),x.get_adims()+M.size()[:-2],x.getl(),x.getn())
+            _r=_SO3partB_array.view(r)
+            _r.add_conterpolate2d(_x,_M)
+        if(x.get_nadims()==3):
+            r=SO3partArr.zeros(x.getb(),x.get_adims()+M.size()[:-3],x.getl(),x.getn())
+            _r=_SO3partB_array.view(r)
+            _r.add_conterpolate3d(_x,_M)
+        return r
+
+    @staticmethod
+    def backward(ctx,g):
+        _g=_SO3partB_array.view(g)
+        _M=_rtensor.view(ctx.M)
+        gx=SO3partArr.zeros(g.getb(),g.get_adims()[:ctx.nadims],g.getl(),g.getn())
+        _gx=_SO3partB_array.view(gx)
+        if(ctx.nadims==2):
+            _gx.add_conterpolate2d_back(_g,_M)
+        if(ctx.nadims==3):
+            _gx.add_conterpolate3d_back(_g,_M)
+        return gx,None
 
 
 

@@ -300,6 +300,21 @@ namespace GElib{
       yg.view2().add_matmul_HA(x.view3().fuse01(),view3().fuse01());
     }
     */
+    
+    /*
+    add_convolve(const SO3partB_array& x, const CSRmatrix<float>& M){
+      GELIB_ASSRT(batched==x.batched);
+      GELIB_ASSRT(ak==x.ak);
+
+      if(ak-batched==2){
+	if(batched){
+	  Rtensor5_view rv(arr,);
+	}
+      }
+
+    }
+    */
+
 
   public: // ---- CG-products --------------------------------------------------------------------------------
 

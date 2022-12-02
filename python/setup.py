@@ -36,6 +36,7 @@ def main():
     _include_dirs = [cwd + cnine_folder + '/include',
                      cwd + cnine_folder + '/include/cmaps',
                      cwd + cnine_folder + '/objects/scalar',
+                     cwd + cnine_folder + '/objects/matrix',
                      cwd + cnine_folder + '/objects/tensor',
                      cwd + cnine_folder + '/objects/backendA',
                      cwd + cnine_folder + '/objects/backendB',

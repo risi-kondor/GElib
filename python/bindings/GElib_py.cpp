@@ -35,6 +35,10 @@
 
 #include "SO3CGtensor.hpp"
 
+#include "CtensorConvolve2d.hpp"
+//#include "CtensorConvolve2dSparse.hpp"
+#include "CtensorConvolve3d.hpp"
+
 //std::default_random_engine rndGen;
 
 GElib::GElibSession session;
