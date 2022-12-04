@@ -84,7 +84,7 @@ class SO3partArr(torch.Tensor):
         return list(self.size()[1:self.dim()-2])
 
     def get_nadims(self):
-        return self.dim()-2
+        return self.dim()-3
 
     def getl(self):
         return int((self.size(-2)-1)/2)
@@ -110,7 +110,7 @@ class SO3partArr(torch.Tensor):
         return SO3partArr_GatherFn.apply(_mask,self)
 
     def conterpolate(self,M):
-        return SO3partArr_Conterpolate2dFn.apply(self,M)
+        return SO3partArr_ConterpolateFn.apply(self,M)
 
 
     # ---- Products -----------------------------------------------------------------------------------------
@@ -266,11 +266,11 @@ class SO3partArr_ConterpolateFn(torch.autograd.Function):
         _x=_SO3partB_array.view(x)
         _M=_rtensor.view(M)
         if(x.get_nadims()==2):
-            r=SO3partArr.zeros(x.getb(),x.get_adims()+M.size()[:-2],x.getl(),x.getn())
+            r=SO3partArr.zeros(x.getb(),x.get_adims()+list(M.size()[:-2]),x.getl(),x.getn())
             _r=_SO3partB_array.view(r)
             _r.add_conterpolate2d(_x,_M)
         if(x.get_nadims()==3):
-            r=SO3partArr.zeros(x.getb(),x.get_adims()+M.size()[:-3],x.getl(),x.getn())
+            r=SO3partArr.zeros(x.getb(),x.get_adims()+list(M.size()[:-3]),x.getl(),x.getn())
             _r=_SO3partB_array.view(r)
             _r.add_conterpolate3d(_x,_M)
         return r
