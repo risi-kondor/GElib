@@ -5,9 +5,9 @@ A.requires_grad_()
 M=torch.randn(3,3,3,3)
 B=A.conterpolate(M)
 print(B.size())
-print(B)
+#print(B)
 
-#B.backward(B)
-#print(A.grad)
+B.backward(B)
+print(A.grad)
 
 

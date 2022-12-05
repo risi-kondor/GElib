@@ -271,6 +271,7 @@ class SO3partArr_ConterpolateFn(torch.autograd.Function):
             _r.add_conterpolate2d(_x,_M)
         if(x.get_nadims()==3):
             r=SO3partArr.zeros(x.getb(),x.get_adims()+list(M.size()[:-3]),x.getl(),x.getn())
+            print(r.size())
             _r=_SO3partB_array.view(r)
             _r.add_conterpolate3d(_x,_M)
         return r

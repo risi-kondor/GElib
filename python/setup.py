@@ -118,6 +118,8 @@ def main():
             '../../cnine/include/Cnine_base.cu',
             '../../cnine/cuda/TensorView_accumulators.cu',
             '../../cnine/cuda/BasicCtensorProducts.cu',
+            '../../cnine/cuda/RtensorConvolve2d.cu',
+            '../../cnine/cuda/RtensorConvolve3d.cu',
             '../cuda/SO3CGproducts_combo.cu',
             #ext_cuda_folder+'../cuda/SO3CGproducts_combo.cu',
             'bindings/GElib_py.cpp'

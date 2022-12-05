@@ -157,7 +157,7 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
 
       Ctensor6_view rv(r.arr,r.arr+r.coffs,
 	r.dims[0],r.dims[1],r.dims[2],r.dims[3],aoutd,r.dims(-2)*r.dims(-1),
-	r.strides[0],r.strides[1],r.strides[2],r.dims[3],r.strides(-3),r.strides(-1));
+	r.strides[0],r.strides[1],r.strides[2],r.strides[3],r.strides(-3),r.strides(-1));
       
       Rtensor5_view Mv(M.arr,aoutd,M.dims(-3),M.dims(-2),M.dims(-1),1,
 	M.strides(-4),M.strides(-3),M.strides(-2),M.strides(-1),M.strides(-1));
