@@ -15,23 +15,23 @@ def main():
     # os.environ['CUDA_HOME']='/usr/local/cuda'
     #os.environ["CC"] = "clang"
 
-    #compile_with_cuda = True 
-    compile_with_cuda = False
+    compile_with_cuda = True 
+    #compile_with_cuda = False
 
     copy_warnings = False
     torch_convert_warnings = True
 
     # ------------------------------------------------------------------------------------------------------------
     
-    if 'CUDAHOME' in os.environ:
-        print("CUDA found at "+os.environ['CUDAHOME'])
+    if 'CUDA_HOME' in os.environ:
+        print("CUDA found at "+os.environ['CUDA_HOME'])
     else:
         print("No CUDA found, installing without GPU support.")
         compile_with_cuda=False
 
     cwd = os.getcwd()
     cnine_folder = "/../../cnine/"
-    ext_cuda_folder = "../../GElib-cuda/cuda"
+    ext_cuda_folder = "../../GElib-cuda/cuda/"
 
     _include_dirs = [cwd + cnine_folder + '/include',
                      cwd + cnine_folder + '/include/cmaps',
@@ -118,10 +118,11 @@ def main():
             '../../cnine/include/Cnine_base.cu',
             '../../cnine/cuda/TensorView_accumulators.cu',
             '../../cnine/cuda/BasicCtensorProducts.cu',
+            '../../cnine/cuda/RtensorUtils.cu',
             '../../cnine/cuda/RtensorConvolve2d.cu',
             '../../cnine/cuda/RtensorConvolve3d.cu',
-            '../cuda/SO3CGproducts_combo.cu',
-            #ext_cuda_folder+'../cuda/SO3CGproducts_combo.cu',
+            #'../cuda/SO3CGproducts_combo.cu',
+            ext_cuda_folder+'SO3CGproducts_combo.cu',
             'bindings/GElib_py.cpp'
         ],
             include_dirs=_include_dirs,
