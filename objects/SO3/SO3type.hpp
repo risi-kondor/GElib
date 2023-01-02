@@ -61,7 +61,13 @@ namespace GElib{
     }
     
     void set(const int l, const int m){
+      if(l>=size()) resize(l+1);
       (*this)[l]=m;
+    }
+
+    void inc(const int l, const int m){
+      if(l>=size()) resize(l+1);
+      (*this)[l]+=m;
     }
 
     bool operator<(const SO3type& x){

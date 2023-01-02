@@ -126,7 +126,7 @@ namespace GElib{
       GELIB_COPY_WARNING();
     }
 
-    SO3vec(SO3vecB&& x):
+    SO3vec(SO3vec&& x):
       GELIB_SO3VEC_IMPL(std::move(x)){
       GELIB_MOVE_WARNING();
     }
