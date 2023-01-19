@@ -456,6 +456,22 @@ namespace GElib{
     // ---- Diagonal CG-products -----------------------------------------------------------------------------
 
 
+    SO3vecB_array DiagCGproduct(const SO3vecB_array& y, const int maxl=-1) const{
+       return BlockedCGproduct(y,1,maxl);
+    }
+
+    void add_DiagCGproduct(const SO3vecB_array& x, const SO3vecB_array& y){
+       add_BlockedCGproduct(x,y,1);
+    }
+
+    void add_DiagCGproduct_back0(const SO3vecB_array& g, const SO3vecB_array& y){
+       add_BlockedCGproduct_back0(g,y,1);
+    }
+
+    void add_DiagCGproduct_back1(const SO3vecB_array& g, const SO3vecB_array& x){
+      add_BlockedCGproduct_back1(g,x,1);
+    }
+
     /*
     SO3vecB_array DiagCGsquare(const int maxl=-1) const{
       SO3vecB_array R=SO3vecB_array::zero(getb(),GElib::DiagCGproduct(get_tau(),get_tau(),1,get_maxl()),get_dev());
