@@ -346,14 +346,13 @@ namespace GElib{
     }
 
 
-    // ---- BlockedCGproduct 
+    // ---- BlockedCGproduct ---------------------------------------------------------------------------------
 
 
     SO3partB_array BlockedCGproduct(const SO3partB_array& y, const int bsize, const int l) const{
       assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
       assert(getn()==y.getn());
       SO3partB_array R=SO3partB_array::zeros_like(*this);
-      //SO3partB_array R=SO3partB_array::zero(get_adims(),l,getn()*bsize,get_dev());
       R.add_BlockedCGproduct(*this,y,bsize);
       return R;
     }

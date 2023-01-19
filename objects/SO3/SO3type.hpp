@@ -200,6 +200,16 @@ namespace GElib{
     return R;
   }
 
+  inline SO3type DiagCGproduct(const SO3type& t1, const SO3type& t2, int _maxl=-1){
+    if(_maxl==-1) _maxl=1000;
+    SO3type tau(cnine::size_spec(std::min(t1.maxl()+t2.maxl(),_maxl)+1));
+    for(int l1=0; l1<=t1.maxl(); l1++)
+      for(int l2=0; l2<=t2.maxl(); l2++)
+	for(int l=std::abs(l2-l1); l<=l1+l2 && l<=_maxl; l++)
+	  tau[l]+=t1(l1);
+    return tau;
+  }
+  
   inline SO3type BlockedCGproduct(const SO3type& t1, const SO3type& t2, const int bsize, int _maxl=-1){
     if(_maxl==-1) _maxl=1000;
     SO3type tau(cnine::size_spec(std::min(t1.maxl()+t2.maxl(),_maxl)+1));
@@ -210,7 +220,6 @@ namespace GElib{
     return tau;
   }
   
-
   inline SO3type CGsquare(const SO3type& t, int _maxl=-1){
     if(_maxl==-1) _maxl=1000;
     SO3type tau(cnine::size_spec(std::min(2*t.maxl(),_maxl)+1));

@@ -456,21 +456,55 @@ namespace GElib{
     // ---- Diagonal CG-products -----------------------------------------------------------------------------
 
 
-    SO3vecB_array DiagCGproduct(const SO3vecB_array& y, const int maxl=-1) const{
-      return BlockedCGproduct(y,1,maxl);
+    /*
+    SO3vecB_array DiagCGsquare(const int maxl=-1) const{
+      SO3vecB_array R=SO3vecB_array::zero(getb(),GElib::DiagCGproduct(get_tau(),get_tau(),1,get_maxl()),get_dev());
+      R.add_DiagCGsquare(*this);
+      return R;
     }
 
-    void add_DiagCGproduct(const SO3vecB_array& x, const SO3vecB_array& y){
-      add_BlockedCGproduct(x,y,1);
-    }
+    void add_DiagCGsquare(const SO3vecB_array& x){
+      GELIB_ASSRT(get_tau()==GElib::DiagCGproduct(x.get_tau(),x.get_tau(),get_maxl()));
 
-    void add_DiagCGproduct_back0(const SO3vecB_array& g, const SO3vecB_array& y){
-      add_BlockedCGproduct_back0(g,y,1);
+      int L1=x.get_maxl(); 
+      int L=get_maxl();
+      vector<int> offs(parts.size(),0);
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L1; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    parts[l]->add_DiagCGproduct(*x.parts[l1],*x.parts[l2],offs[l]);
+	    offs[l]+=(x.parts[l1]->getn());
+	  }
+	}
+      }
     }
+      
+    void add_DiagCGsquare_back(const SO3vecB_array& g, const SO3vecB_array& y, const int bsize){
+      GELIB_ASSRT(y.get_tau()==get_tau());
+      GELIB_ASSRT(g.get_tau()==GElib::DiagCGproduct(get_tau(),get_tau(),g.get_maxl()));
 
-    void add_DiagCGproduct_back1(const SO3vecB_array& g, const SO3vecB_array& x){
-      add_BlockedCGproduct_back1(g,x,1);
+      int L1=get_maxl(); 
+      int L=g.get_maxl();
+      vector<int> offs(g.parts.size(),0);
+      vector<int> offs2(g.parts.size(),0);
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L1; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    parts[l1]->add_DiagCGproduct_back0(*g.parts[l],*y.parts[l2],offs[l]);
+	    parts[l2]->add_DiagCGproduct_back1(*g.parts[l],*y.parts[l1],offs2[l]);
+	    offs[l]+=(parts[l1]->getn())*bsize;
+	    offs2[l]+=(parts[l2]->getn())*bsize;
+	  }
+	}
+      }
     }
+    */
+
+
+    // ---- Diagonal CG-squares ------------------------------------------------------------------------------
+
 
 
   public: // ---- CG-squares ----------------------------------------------------------------------------------
