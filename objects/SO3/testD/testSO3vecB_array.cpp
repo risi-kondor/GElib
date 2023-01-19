@@ -100,6 +100,26 @@ int main(int argc, char** argv){
     SO3vecB_array wgc=wg.to_device(1);
     #endif
 
+    cout<<"----------- back0 -----------------------"<<endl;
+    
+    ug.add_DiagCGproduct_back0(wg,v);
+    printl("ug",ug);
+    
+    #ifdef _WITH_CUDA
+    ugc.add_DiagCGproduct_back0(wgc,vc);
+    printl("ugc",ugc);
+    #endif
+    
+  cout<<"----------- back1 -----------------------"<<endl;
+  
+  vg.add_DiagCGproduct_back1(wg,u);
+  printl("vg",vg);
+  
+  #ifdef _WITH_CUDA
+  vgc.add_DiagCGproduct_back1(wgc,uc);
+  printl("vgc",vgc);
+  #endif 
+
   }
 
 }
