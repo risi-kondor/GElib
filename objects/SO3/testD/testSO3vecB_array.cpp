@@ -110,15 +110,15 @@ int main(int argc, char** argv){
     printl("ugc",ugc);
     #endif
     
-  cout<<"----------- back1 -----------------------"<<endl;
-  
-  vg.add_DiagCGproduct_back1(wg,u);
-  printl("vg",vg);
-  
-  #ifdef _WITH_CUDA
-  vgc.add_DiagCGproduct_back1(wgc,uc);
-  printl("vgc",vgc);
-  #endif 
+    cout<<"----------- back1 -----------------------"<<endl;
+    
+    vg.add_DiagCGproduct_back1(wg,u);
+    printl("vg",vg);
+    
+    #ifdef _WITH_CUDA
+    vgc.add_DiagCGproduct_back1(wgc,uc);
+    printl("vgc",vgc);
+    #endif 
 
   }
 
