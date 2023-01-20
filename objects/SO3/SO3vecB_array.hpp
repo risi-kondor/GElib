@@ -70,8 +70,9 @@ namespace GElib{
     template<typename FILLTYPE, typename = typename 
 	     std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
     SO3vecB_array(const int b, const Gdims& _adims, const SO3type& tau, const FILLTYPE fill, const int _dev){
-      for(int l=0; l<tau.size(); l++)
+      for(int l=0; l<tau.size(); l++){
 	parts.push_back(new SO3partB_array(b,_adims,l,tau[l],fill,_dev));
+      }
     }
 
     template<typename FILLTYPE, typename = typename 
