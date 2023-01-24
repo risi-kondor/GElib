@@ -83,6 +83,7 @@ namespace GElib{
 
   // ---- Helpers --------------------------------------------------------------------------------------------
 
+  /*
   inline ostream& operator<<(ostream& stream, const vector<int>& v){
     stream<<"(";
     for(int i=0; i<v.size()-1; i++)
@@ -90,6 +91,7 @@ namespace GElib{
     if(v.size()>0) stream<<v[v.size()-1]<<")";
     return stream;
   }
+  */
 
 
 }
