@@ -542,7 +542,7 @@ namespace GElib{
       int L=get_maxl();
       vector<int> offs(parts.size(),0);
 	
-      for(int l=0; l+l%2<=L; l++){
+      for(int l=0; l<=L1 && l+l%2<=L; l++){
 	parts[l+l%2]->add_BlockedCGproduct(*x.parts[l],*y.parts[l],1,offs[l+l%2]);
 	offs[l+l%2]+=x.parts[l]->getn();
       }

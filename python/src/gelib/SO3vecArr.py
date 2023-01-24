@@ -241,6 +241,15 @@ class SO3vecArr:
         return r
 
 
+    def DDiagCGproduct(self,y,maxl=-1):
+        """
+        Compute the reduced diagonal Clesbsch--Gordan product of this SO3vecArr with another SO3vecArr y.
+        """
+        r=SO3vecArr()
+        r.parts=list(SO3vecArr_DDiagCGproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
+        return r
+
+
     def Fproduct(self,y,maxl=-1):
         """
         Compute the Fourier space product of this SO3Fvec with another SO3Fvec y.
@@ -279,6 +288,12 @@ class SO3vecArr:
 
 def CGproduct(x,y,maxl=-1):
     return x.CGproduct(y,maxl)
+    
+def DiagCGproduct(x,y,maxl=-1):
+    return x.DiagCGproduct(y,maxl)
+    
+def DDiagCGproduct(x,y,maxl=-1):
+    return x.DDiagCGproduct(y,maxl)
     
 def Fproduct(x,y,maxl=-1):
     return x.Fproduct(y,maxl)
@@ -414,6 +429,50 @@ class SO3vecArr_DiagCGproductFn(torch.autograd.Function):
 
         _xg.addDiagCGproduct_back0(_g,_y)
         _yg.addDiagCGproduct_back1(_g,_x)
+
+        return tuple(grads)
+
+
+class SO3vecArr_DDiagCGproductFn(torch.autograd.Function): 
+
+    @staticmethod
+    def forward(ctx,k1,k2,maxl,*args):
+        ctx.k1=k1
+        ctx.k2=k2
+        ctx.save_for_backward(*args)
+
+        adims=list(args[0].size()[0:args[0].dim()-2])
+        tau=DDiagCGproductType(tau_type(args[0:k1]),maxl)
+        r=MakeZeroSO3partArrs(adims,tau,args[0].device)
+        
+        _x=_SO3vecB_array.view(args[0:k1]);
+        _y=_SO3vecB_array.view(args[k1:k1+k2]);
+        _r=_SO3vecB_array.view(r)
+        _r.addDDiagCGproduct(_x,_y)
+
+        return tuple(r)
+
+    @staticmethod
+    def backward(ctx,*args):
+
+        k1=ctx.k1
+        k2=ctx.k2
+        inputs=ctx.saved_tensors
+        assert len(inputs)==k1+k2, "Wrong number of saved tensors."
+
+        grads=[None,None,None]
+        for i in range(k1+k2):
+            grads.append(torch.zeros_like(inputs[i]))
+
+        _x=_SO3vecB_array.view(inputs[0:k1]);
+        _y=_SO3vecB_array.view(inputs[k1:k1+k2]);
+
+        _g=_SO3vecB_array.view(args);
+        _xg=_SO3vecB_array.view(grads[3:k1+3]);
+        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3]);
+
+        _xg.addDDiagCGproduct_back0(_g,_y)
+        _yg.addDDiagCGproduct_back1(_g,_x)
 
         return tuple(grads)
 
