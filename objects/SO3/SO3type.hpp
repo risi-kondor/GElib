@@ -220,6 +220,14 @@ namespace GElib{
     return tau;
   }
   
+  inline SO3type DDiagCGproduct(const SO3type& t, int _maxl=-1){
+    if(_maxl==-1) _maxl=1000;
+    SO3type tau(cnine::size_spec(std::min(t.maxl()+t.maxl()%2,_maxl)+1));
+    for(int l=0; l+l%2<=tau.maxl(); l++)
+      tau[l+l%2]+=t[l];
+    return tau;
+  }
+  
   inline SO3type CGsquare(const SO3type& t, int _maxl=-1){
     if(_maxl==-1) _maxl=1000;
     SO3type tau(cnine::size_spec(std::min(2*t.maxl(),_maxl)+1));

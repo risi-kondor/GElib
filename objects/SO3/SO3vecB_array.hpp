@@ -472,6 +472,8 @@ namespace GElib{
       add_BlockedCGproduct_back1(g,x,1);
     }
 
+    
+
     /*
     SO3vecB_array DiagCGsquare(const int maxl=-1) const{
       SO3vecB_array R=SO3vecB_array::zero(getb(),GElib::DiagCGproduct(get_tau(),get_tau(),1,get_maxl()),get_dev());
@@ -521,7 +523,58 @@ namespace GElib{
 
     // ---- Diagonal CG-squares ------------------------------------------------------------------------------
 
+    // ---- DDiag CG-products ------------------------------------------------------------------------------
 
+
+    SO3vecB_array DDiagCGproduct(const SO3vecB_array& y, const int maxl=-1) const{
+      SO3vecB_array R=SO3vecB_array::zero(getb(),get_adims(),GElib::DDiagCGproduct(get_tau(),maxl),get_dev());
+      R.add_DDiagCGproduct(*this,y);
+      return R;
+    }
+
+    void add_DDiagCGproduct(const SO3vecB_array& x, const SO3vecB_array& y){
+      assert(x.get_adims()==y.get_adims());
+      assert(x.get_tau()==y.get_tau());
+      assert(get_tau()==GElib::DDiagCGproduct(x.get_tau(),get_maxl()));
+
+      int L1=x.get_maxl(); 
+      int L=get_maxl();
+      vector<int> offs(parts.size(),0);
+	
+      for(int l=0; l+l%2<=L; l++){
+	parts[l+l%2]->add_BlockedCGproduct(*x.parts[l],*y.parts[l],1,offs[l+l%2]);
+	offs[l+l%2]+=x.parts[l]->getn();
+      }
+    }
+
+    void add_DDiagCGproduct_back0(const SO3vecB_array& g, const SO3vecB_array& y){
+      assert(get_adims()==y.get_adims());
+      assert(get_tau()==y.get_tau());
+      assert(g.get_tau()==GElib::DDiagCGproduct(get_tau(),g.get_maxl()));
+
+      int L1=get_maxl(); 
+      vector<int> offs(g.parts.size(),0);
+	
+      for(int l=0; l<=L1; l++){
+	parts[l]->add_BlockedCGproduct_back0(*g.parts[l+l%2],*y.parts[l],1,offs[l+l%2]);
+	offs[l+l%2]+=(parts[l]->getn());
+      }
+    }
+
+    void add_DDiagCGproduct_back1(const SO3vecB_array& g, const SO3vecB_array& x){
+      assert(get_adims()==x.get_adims());
+      assert(get_tau()==x.get_tau());
+      assert(g.get_tau()==GElib::DDiagCGproduct(get_tau(),g.get_maxl()));
+
+      int L1=get_maxl(); 
+      vector<int> offs(g.parts.size(),0);
+	
+      for(int l=0; l<=L1; l++){
+	parts[l]->add_BlockedCGproduct_back1(*g.parts[l+l%2],*x.parts[l],1,offs[l+l%2]);
+	offs[l+l%2]+=(parts[l]->getn());
+      }
+    }
+      
 
   public: // ---- CG-squares ----------------------------------------------------------------------------------
 

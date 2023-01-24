@@ -546,6 +546,16 @@ def DiagCGproductType(x, y, maxl=-1):
     return r
 
 
+def DDiagCGproductType(x, maxl=-1):
+    if maxl == -1:
+        maxl = len(x)+(1-len(x)%2)-1
+    maxl = min(maxl, len(x)+(1-len(x)%2)-1)
+    r = [0]*(maxl+1)
+    for l in range(0, len(x)):
+        r[l+l%2] += x[l]
+    return r
+
+
 def MakeZeroSO3parts(b, tau, device):
     R = []
     for l in range(0, len(tau)):
