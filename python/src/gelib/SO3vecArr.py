@@ -602,7 +602,7 @@ class SO3vecArr_GatherFn(torch.autograd.Function):
 
         _x=_SO3vecB_array.view(args)
         _r=_SO3vecB_array.view(r)
-        _r.gather(_x,ctx.mask.inv())
+        _r.add_gather(_x,ctx.mask.inv())
 
         return tuple([None]+r)
 
