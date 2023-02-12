@@ -47,6 +47,18 @@ class SO3partArr(torch.Tensor):
         return torch.view_as_complex(SO3partArr(torch.randn([b]+_adims+[2*l+1,n,2],device=device)))
 
 
+    @classmethod
+    def spharm(self, l, X, device='cpu'):
+        """
+        Return the spherical harmonics of the vector (x,y,z)
+        """
+        assert(X.size(-2)==3)
+        R =SO3partArr.zeros(X.size(0),list(X.size())[1:X.dim()-2], l, X.size(-1), device='cpu')
+        _SO3partB_array.view(R).add_spharm(X)
+        R.to(device)
+        return R
+
+
     @staticmethod
     def Fzeros(b,_adims,l,device='cpu'):
         """

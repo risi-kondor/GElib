@@ -597,7 +597,7 @@ class SO3vecArr_GatherFn(torch.autograd.Function):
     def backward(ctx,*args):
 
         tau=tau_type(args)
-        dev=int(args[0].is_cuda)
+        dev=args[0].device
         r=MakeZeroSO3partArrs(ctx.adims,tau,dev)
 
         _x=_SO3vecB_array.view(args)

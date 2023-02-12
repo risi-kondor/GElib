@@ -15,6 +15,7 @@
 #include "SO3part3_view.hpp"
 #include "SO3partB.hpp"
 
+#include "SO3part_addSpharmFn.hpp"
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
 #include "SO3part_addCGproduct_back1Fn.hpp"
@@ -314,6 +315,33 @@ namespace GElib{
 
     }
     */
+
+
+  public: // ---- Spherical harmonics -----------------------------------------------------------------------
+
+
+    static SO3partB_array spharm(const int l, const cnine::RtensorA& x, const int _dev=0, const bool _batched=0){
+      if(_batched){
+	assert(x.ndims()>=4);
+	SO3partB_array R(x.dims[0],x.dims.chunk(1,x.ndims()-3),l,x.dims(-1),cnine::fill_zero());
+	R.add_spharm(x);
+	//SO3part_addSpharmFn()(R.part3_view(),x.view());
+	if(_dev>0) return SO3partB_array(R,_dev);
+	return R;
+      }
+      assert(x.ndims()>=3);
+      SO3partB_array R(x.dims.chunk(0,x.ndims()-2),l,x.dims(-1),cnine::fill_zero());
+      R.add_spharm(x);
+      //SO3part_addSpharmFn()(R.part3_view(),x.view());
+      if(_dev>0) return SO3partB_array(R,_dev);
+      return R;
+    }
+
+
+    void add_spharm(const cnine::RtensorA& x){
+      auto v=part3_view();
+      SO3part_addSpharmFn()(v,x.viewx().fuse_all_but_last_two());
+    }
 
 
   public: // ---- CG-products --------------------------------------------------------------------------------

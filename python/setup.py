@@ -15,8 +15,8 @@ def main():
     # os.environ['CUDA_HOME']='/usr/local/cuda'
     #os.environ["CC"] = "clang"
 
-    compile_with_cuda = True 
-    # compile_with_cuda = False
+    # compile_with_cuda = True 
+    compile_with_cuda = False
 
     copy_warnings = False
     torch_convert_warnings = True

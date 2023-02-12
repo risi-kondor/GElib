@@ -262,7 +262,7 @@ namespace GElib{
 
 
     static SO3partB spharm(const int b, const int l, const int n, const float x, const float y, const float z, const int _dev=0){
-      SO3partB R=SO3partB(b,l,n,cnine::fill_raw(),_dev);
+      SO3partB R=SO3partB(b,l,n,cnine::fill_zero());
       R.add_spharm(x,y,z);
       if(_dev>0) return SO3partB(R,_dev);
       return R;
@@ -326,21 +326,21 @@ namespace GElib{
 	    float a=sqrt(((float)(2*l+1))/(M_PI*4.0));
 	    for(int j=0; j<n; j++)
 	      v.inc(b,l,j,a);
-	    return;
-	  }
+	  }else{
 
-	  complex<float> cphi(vx/len2,vy/len2);
-	  cnine::Gtensor<float> P=SO3_sphGen(l,vz/length);
-	  vector<complex<float> > phase(l+1);
-	  phase[0]=complex<float>(1.0,0);
-	  for(int m=1; m<=l; m++)
-	    phase[m]=cphi*phase[m-1];
-      
-	  for(int m=0; m<=l; m++){
-	    complex<float> a=phase[m]*complex<float>(P(l,m)); // *(1-2*(m%2))
-	    complex<float> aa=complex<float>(1-2*(m%2))*std::conj(a);
-	    v.inc(b,l+m,j,a);
-	    if(m>0) v.inc(b,l-m,j,aa);
+	    complex<float> cphi(vx/len2,vy/len2);
+	    cnine::Gtensor<float> P=SO3_sphGen(l,vz/length);
+	    vector<complex<float> > phase(l+1);
+	    phase[0]=complex<float>(1.0,0);
+	    for(int m=1; m<=l; m++)
+	      phase[m]=cphi*phase[m-1];
+	    
+	    for(int m=0; m<=l; m++){
+	      complex<float> a=phase[m]*complex<float>(P(l,m)); // *(1-2*(m%2))
+	      complex<float> aa=complex<float>(1-2*(m%2))*std::conj(a);
+	      v.inc(b,l+m,j,a);
+	      if(m>0) v.inc(b,l-m,j,aa);
+	    }
 	  }
 
 	}

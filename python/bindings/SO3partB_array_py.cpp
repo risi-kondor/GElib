@@ -62,6 +62,10 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
   .def("add_gather",[](SO3partB_array& r, const SO3partB_array& x, const cnine::Rmask1& mask){
       r.add_gather(x,mask);})
 
+  .def("add_spharm",[](SO3partB_array& obj, at::Tensor& _X){
+      RtensorA X=RtensorA::view(_X);
+      obj.add_spharm(X);})
+
   .def("addCGproduct",&SO3partB_array::add_CGproduct,py::arg("x"),py::arg("y"),py::arg("offs")=0)
   .def("addCGproduct_back0",&SO3partB_array::add_CGproduct_back0,py::arg("g"),py::arg("y"),py::arg("offs")=0)
   .def("addCGproduct_back1",&SO3partB_array::add_CGproduct_back1,py::arg("g"),py::arg("x"),py::arg("offs")=0)
