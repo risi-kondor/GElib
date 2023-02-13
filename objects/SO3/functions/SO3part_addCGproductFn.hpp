@@ -44,6 +44,7 @@ namespace GElib{
       const int B=_x.n0;
       const int dev=_r.dev;
 
+      cout<<_r.dev<<_x.dev<<_y.dev<<endl;
       CNINE_CHECK_DEV3(_r,_x,_y)
       CNINE_CHECK_BATCH3(_r,_x,_y)
 
