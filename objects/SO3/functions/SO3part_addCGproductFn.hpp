@@ -15,6 +15,7 @@
 #include "CtensorB.hpp"
 #include "SO3part3_view.hpp"
 #include "MultiLoop.hpp"
+#include "GElibTimer.hpp"
 
 extern GElib::SO3_CGbank SO3_cgbank;
 extern GElib::SO3_SPHgen SO3_sphGen;
@@ -49,6 +50,8 @@ namespace GElib{
 
       assert(_offs+N1*N2<=_r.n2);
       assert(l>=abs(l1-l2) && l<=l1+l2);
+
+      LoggedTimer("CGproduct("+to_string(l1)+","+to_string(l2)+","+to_string(l)+")[b="+to_string(B)+",n1="+to_string(N1)+",n2="+to_string(N2)+"]");
 
       if(dev==0){
 
