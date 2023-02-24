@@ -17,7 +17,7 @@
 #include "CtensorB_multiArray.hpp"
 #include "SO3partB_array.hpp"
 #include "SO3element.hpp"
-
+#include "GElibTimer.hpp"
 
 namespace GElib{
 
@@ -317,6 +317,7 @@ namespace GElib{
 
     SO3vecB_array CGproduct(const SO3vecB_array& y, const int maxl=-1) const{
       assert(get_adims()==y.get_adims());
+      LoggedTimer("*CGproduct("+get_tau().str()+","+y.get_tau().str()+","+to_string(maxl)+")[b="+to_string(getb())+","+get_adims().str()+",dev="+to_string(get_dev())+"]");
       SO3vecB_array R=SO3vecB_array::zero(getb(),get_adims(),GElib::CGproduct(get_tau(),y.get_tau(),maxl),get_dev());
       R.add_CGproduct(*this,y);
       return R;
