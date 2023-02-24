@@ -13,8 +13,8 @@ int main(int argc, char** argv){
   GElibSession session;
   cout<<endl;
 
-  int b=2;
-  Gdims adims({1});
+  int b=128;
+  Gdims adims({10});
   SO3type tau({2,2});
 
   SO3vecB_array u=SO3vecB_array::gaussian(b,adims,tau);
