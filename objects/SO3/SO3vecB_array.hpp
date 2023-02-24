@@ -317,7 +317,6 @@ namespace GElib{
 
     SO3vecB_array CGproduct(const SO3vecB_array& y, const int maxl=-1) const{
       assert(get_adims()==y.get_adims());
-      LoggedTimer("*CGproduct("+get_tau().str()+","+y.get_tau().str()+","+to_string(maxl)+")[b="+to_string(getb())+","+get_adims().str()+",dev="+to_string(get_dev())+"]");
       SO3vecB_array R=SO3vecB_array::zero(getb(),get_adims(),GElib::CGproduct(get_tau(),y.get_tau(),maxl),get_dev());
       R.add_CGproduct(*this,y);
       return R;
@@ -326,6 +325,7 @@ namespace GElib{
 
     void add_CGproduct(const SO3vecB_array& x, const SO3vecB_array& y){
       assert(get_tau()==GElib::CGproduct(x.get_tau(),y.get_tau(),get_maxl()));
+      LoggedTimer("*CGproduct("+x.get_tau().str()+","+y.get_tau().str()+","+get_tau().str()+")[b="+to_string(getb())+","+get_adims().str()+",dev="+to_string(get_dev())+"]");
 
       int L1=x.get_maxl(); 
       int L2=y.get_maxl();
