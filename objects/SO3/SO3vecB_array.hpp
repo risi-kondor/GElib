@@ -325,7 +325,7 @@ namespace GElib{
 
     void add_CGproduct(const SO3vecB_array& x, const SO3vecB_array& y){
       assert(get_tau()==GElib::CGproduct(x.get_tau(),y.get_tau(),get_maxl()));
-      LoggedTimer timer("*CGproduct("+x.get_tau().str()+","+y.get_tau().str()+","+get_tau().str()+")[b="+to_string(getb())+","+get_adims().str()+",dev="+to_string(get_dev())+"]");
+      LoggedTimer timer("CGproduct("+x.get_tau().str()+","+y.get_tau().str()+","+get_tau().str()+")[b="+to_string(getb())+","+get_adims().str()+",dev="+to_string(get_dev())+"]");
 
       int L1=x.get_maxl(); 
       int L2=y.get_maxl();
@@ -350,7 +350,7 @@ namespace GElib{
       
     void add_CGproduct_back0(const SO3vecB_array& g, const SO3vecB_array& y){
       assert(g.get_tau()==GElib::CGproduct(get_tau(),y.get_tau(),g.get_maxl()));
-      LoggedTimer timer("*CGproduct_back0("+get_tau().str()+","+y.get_tau().str()+","+g.get_tau().str()+")[b="+to_string(getb())+","+get_adims().str()+",dev="+to_string(get_dev())+"]");
+      LoggedTimer timer("CGproduct_back0("+get_tau().str()+","+y.get_tau().str()+","+g.get_tau().str()+")[b="+to_string(getb())+","+get_adims().str()+",dev="+to_string(get_dev())+"]");
 
       int L1=get_maxl(); 
       int L2=y.get_maxl();
@@ -370,7 +370,7 @@ namespace GElib{
       
     void add_CGproduct_back1(const SO3vecB_array& g, const SO3vecB_array& x){
       assert(g.get_tau()==GElib::CGproduct(x.get_tau(),get_tau(),g.get_maxl()));
-      LoggedTimer timer("*CGproduct_back1("+x.get_tau().str()+","+get_tau().str()+","+g.get_tau().str()+")[b="+to_string(getb())+","+get_adims().str()+",dev="+to_string(get_dev())+"]");
+      LoggedTimer timer("CGproduct_back1("+x.get_tau().str()+","+get_tau().str()+","+g.get_tau().str()+")[b="+to_string(getb())+","+get_adims().str()+",dev="+to_string(get_dev())+"]");
 
       int L1=x.get_maxl(); 
       int L2=get_maxl();

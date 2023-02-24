@@ -25,6 +25,7 @@ namespace GElib{
   public:
 
     string task;
+    int n_ops=0;
     chrono::time_point<chrono::system_clock> t0;
 
     LoggedTimer(string _task=""):
@@ -32,9 +33,18 @@ namespace GElib{
       t0=chrono::system_clock::now();
     }
 
+    LoggedTimer(string _task, const int _ops):
+      task(_task){
+      t0=chrono::system_clock::now();
+      n_ops=_ops;
+    }
+
     ~LoggedTimer(){
       auto elapsed=chrono::duration<double,std::milli>(chrono::system_clock::now()-t0).count();
-      if(gelib_log) (*gelib_log)(task+" "+to_string(elapsed)+" ms");
+      if(gelib_log){
+	if(n_ops>0) (*gelib_log)(task+" "+to_string(elapsed)+" ms"+" ["+to_string((int)(((float)n_ops)/elapsed/1000.0))+" mflops]");
+	else (*gelib_log)(task+" "+to_string(elapsed)+" ms");
+      }
     }
 
   };
