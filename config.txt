@@ -7,8 +7,8 @@ CNINE_ROOT=$(ROOTDIR)/../cnine/
 
 # ---- CUDA OPTIONS ----------------------------------
 
-# WITH_CUDA=t
-# CUDA_HOME=/usr/local/cuda
+WITH_CUDA=t
+CUDA_HOME=/usr/local/cuda
 
 WITH_CUBLAS=t
 

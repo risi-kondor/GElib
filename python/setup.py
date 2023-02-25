@@ -15,19 +15,19 @@ def main():
     # os.environ['CUDA_HOME']='/usr/local/cuda'
     #os.environ["CC"] = "clang"
 
-    # compile_with_cuda = True 
-    compile_with_cuda = False
+    compile_with_cuda = True 
+    # compile_with_cuda = False
 
     copy_warnings = False
     torch_convert_warnings = True
 
     # ------------------------------------------------------------------------------------------------------------
     
-    if 'CUDA_HOME' in os.environ:
-        print("CUDA found at "+os.environ['CUDA_HOME'])
-    else:
-        print("No CUDA found, installing without GPU support.")
-        compile_with_cuda=False
+#    if 'CUDA_HOME' in os.environ:
+#        print("CUDA found at "+os.environ['CUDA_HOME'])
+#    else:
+#        print("No CUDA found, installing without GPU support.")
+#        compile_with_cuda=False
 
     cwd = os.getcwd()
     cnine_folder = "/../../cnine/"

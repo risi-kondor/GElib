@@ -14,8 +14,8 @@ int main(int argc, char** argv){
   cout<<endl;
 
   int b=128;
-  Gdims adims({100});
-  SO3type tau({2,2});
+  Gdims adims({10});
+  SO3type tau({32,32,32});
 
   SO3vecB_array u=SO3vecB_array::gaussian(b,adims,tau);
   SO3vecB_array v=SO3vecB_array::gaussian(b,adims,tau);
@@ -23,7 +23,7 @@ int main(int argc, char** argv){
   //printl("v",v)<<endl;
 
   SO3vecB_array w=u.CGproduct(v,2);
-  cout<<w<<endl;
+  //cout<<w<<endl;
 
   cout<<endl; 
 
@@ -35,7 +35,7 @@ int main(int argc, char** argv){
   //printl("vc",vc)<<endl;
 
   SO3vecB_array wc=uc.CGproduct(vc,2);
-  cout<<wc<<endl;
+  //cout<<wc<<endl;
 #endif 
   
   SO3vecB_array ug=SO3vecB_array::zeros_like(u);
@@ -51,25 +51,25 @@ int main(int argc, char** argv){
   cout<<"----------- back0 -----------------------"<<endl;
 
   ug.add_CGproduct_back0(wg,v);
-  printl("ug",ug);
+  //printl("ug",ug);
 
 #ifdef _WITH_CUDA
   ugc.add_CGproduct_back0(wgc,vc);
-  printl("ugc",ugc);
+  //printl("ugc",ugc);
 #endif
 
   cout<<"----------- back1 -----------------------"<<endl;
 
   vg.add_CGproduct_back1(wg,u);
-  printl("vg",vg);
+  //printl("vg",vg);
 
 #ifdef _WITH_CUDA
   vgc.add_CGproduct_back1(wgc,uc);
-  printl("vgc",vgc);
+  //printl("vgc",vgc);
 #endif 
 
 
-  if(true){
+  if(false){
 
     cout<<"----------- DiagCGproduct -----------------------"<<endl;
 
