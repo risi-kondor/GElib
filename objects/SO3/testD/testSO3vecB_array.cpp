@@ -16,9 +16,10 @@ int main(int argc, char** argv){
   cout<<endl;
 
   int b=128;
-  Gdims adims({1});
-  //SO3type tau({32,32,32,32});
-  SO3type tau({128,128,128});
+  Gdims adims({50});
+  SO3type tau({32,32,32});
+  //SO3type tau({128,128,128});
+  //SO3type tau({256,256,256});
 
   SO3vecB_array u=SO3vecB_array::gaussian(b,adims,tau);
   SO3vecB_array v=SO3vecB_array::gaussian(b,adims,tau);
