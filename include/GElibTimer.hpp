@@ -42,7 +42,7 @@ namespace GElib{
     ~LoggedTimer(){
       auto elapsed=chrono::duration<double,std::milli>(chrono::system_clock::now()-t0).count();
       if(gelib_log){
-	if(n_ops>0) (*gelib_log)(task+" "+to_string(elapsed)+" ms"+" ["+to_string((int)(((float)n_ops)/elapsed/1000.0))+" mflops]");
+	if(n_ops>0) (*gelib_log)(task+" "+to_string(elapsed)+" ms"+" ["+to_string((int)(((float)n_ops)/elapsed/1000.0))+" Mflops]");
 	else (*gelib_log)(task+" "+to_string(elapsed)+" ms");
       }
     }
