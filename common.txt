@@ -6,6 +6,7 @@ CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_views -I$(CNINE_ROOT)/objects/ten
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_array 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/backendA -I$(CNINE_ROOT)/objects/backendB 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_array/cell_maps -I$(CNINE_ROOT)/objects/tensor_array/cell_ops 
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/labeled 
 
 CNINE_CUDADIR=$(CNINE_ROOT)/cuda
 
