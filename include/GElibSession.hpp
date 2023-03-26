@@ -13,8 +13,10 @@
 #define _GElibSession
 
 #include "CnineSession.hpp"
+#include "GElibConfig.hpp"
 #include "GElibLog.hpp"
 
+extern GElib::GElibConfig* gelib_config;
 extern GElib::GElibLog* gelib_log;
 
 namespace GElib{
@@ -34,6 +36,7 @@ namespace GElib{
       #endif
 
       cnine_session=new cnine::cnine_session(_nthreads);
+      gelib_config=new GElibConfig();
       gelib_log=new GElibLog();
     }
 
@@ -41,6 +44,7 @@ namespace GElib{
     ~GElibSession(){
       cout<<"Shutting down GElib."<<endl;
       delete gelib_log;
+      delete gelib_config;
       delete cnine_session;
     }
     

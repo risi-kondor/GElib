@@ -8,14 +8,18 @@ using namespace GElib;
 
 typedef CtensorB ctensor;
 
+extern GElib::GElibConfig* gelib_config;
+
 
 int main(int argc, char** argv){
   GElibSession session;
   cout<<endl;
 
   int b=128;
-  Gdims adims({10});
+  Gdims adims({50});
   SO3type tau({32,32,32});
+  //SO3type tau({128,128,128});
+  //SO3type tau({256,256,256});
 
   SO3vecB_array u=SO3vecB_array::gaussian(b,adims,tau);
   SO3vecB_array v=SO3vecB_array::gaussian(b,adims,tau);
@@ -35,6 +39,9 @@ int main(int argc, char** argv){
   //printl("vc",vc)<<endl;
 
   SO3vecB_array wc=uc.CGproduct(vc,2);
+  gelib_config->SO3part_CGkernels_explicit=false;
+  SO3vecB_array wcb=uc.CGproduct(vc,2);
+
   //cout<<wc<<endl;
 #endif 
   

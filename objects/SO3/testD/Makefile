@@ -19,6 +19,8 @@ EXECS=
 CUDA_OBJECTS=  
 CUDA_EXTERNS=
 
+NVCCFLAGS+=-arch=sm_86 --resource-usage --verbose 
+
 ifdef WITH_CUDA
 INCLUDE+=-I$(CUDA_HOME)/include
 CUDA_OBJECTS+=$(CNINE_CUDADIR)/RtensorUtils.o $(CNINE_CUDADIR)/TensorView_accumulators.o  
