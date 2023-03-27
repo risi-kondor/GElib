@@ -14,14 +14,16 @@
 
 #include "GElib_base.hpp"
 #include "SO3partArrayPackView.hpp"
-#include "TensorPack.hpp"
+//#include "TensorPack.hpp"
+#include "TensorPackVirtual.hpp"
 
 
 namespace GElib{
 
 
   template<typename TYPE>
-  class SO3partArrayPack: virtual public SO3partArrayPackView<TYPE>, virtual public cnine::TensorPack<TYPE>{
+  //class SO3partArrayPack: virtual public cnine::TensorPack<TYPE>, virtual public SO3partArrayPackView<TYPE>{
+  class SO3partArrayPack: public cnine::TensorPackVirtual<complex<TYPE>, SO3partArrayPackView<TYPE> >{
   public:
 
     typedef cnine::device device;
@@ -30,11 +32,17 @@ namespace GElib{
 
     typedef cnine::Gdims Gdims;
     typedef cnine::TensorPackDir TensorPackDir;
-    typedef cnine::TensorPack<TYPE> TensorPack;
+    typedef cnine::TensorPackVirtual<complex<TYPE>, SO3partArrayPackView<TYPE> > VirtualTensorPack;
 
-    using cnine::TensorPack<TYPE>::arr;
+    using VirtualTensorPack::VirtualTensorPack;
+    using VirtualTensorPack::arr;
+    using VirtualTensorPack::move_to_device;
 
-    using cnine::TensorPack<TYPE>::move_to_device;
+    //using cnine::TensorPackVirtual<TYPE, SO3partArrayPackView<TYPE> >::TensorPackVirtual; 
+
+    //using cnine::TensorPackVirtual<TYPE, SO3partArrayPackView<TYPE> >::arr; 
+    
+    //using cnine::TensorPackVirtual<TYPE, SO3partArrayPackView<TYPE> >::move_to_device;
 
 
     ~SO3partArrayPack(){
@@ -76,20 +84,27 @@ namespace GElib{
 
     
     static SO3partArrayPack<TYPE> zero(const int n, const Gdims& _dims, const int l, const int c, const int _dev=0){
-      return SO3partArrayPack<TYPE>(TensorPack(TensorPackDir(_dims.cat({2*l+1,c}),n),cnine::fill_zero(),_dev));}
+      return SO3partArrayPack<TYPE>(TensorPackDir(_dims.cat({2*l+1,c}),n),cnine::fill_zero(),_dev);}
     
     static SO3partArrayPack<TYPE> sequential(const int n, const Gdims& _dims, const int l, const int c, const int _dev=0){
-      return SO3partArrayPack<TYPE>(TensorPack(TensorPackDir(_dims.cat({2*l+1,c}),n),cnine::fill_sequential(),_dev));}
+      return SO3partArrayPack<TYPE>(TensorPackDir(_dims.cat({2*l+1,c}),n),cnine::fill_sequential(),_dev);}
     
     static SO3partArrayPack<TYPE> gaussian(const int n, const Gdims& _dims, const int l, const int c, const int _dev=0){
-      return SO3partArrayPack<TYPE>(cnine::TensorPack<TYPE>(TensorPackDir(_dims.cat({2*l+1,c}),n),cnine::fill_gaussian(),_dev));}
+      return SO3partArrayPack<TYPE>(TensorPackDir(_dims.cat({2*l+1,c}),n),cnine::fill_gaussian(),_dev);}
+    //return SO3partArrayPack<TYPE>(TensorPack(TensorPackDir(_dims.cat({2*l+1,c}),n),cnine::fill_gaussian(),_dev));}
     
 
     // ---- Conversions ---------------------------------------------------------------------------------------
 
 
-    SO3partArrayPack(const TensorPack& x):
-      TensorPack(x){}
+    //SO3partArrayPack(const cnine::TensorPackVirtual<TYPE, SO3partArrayPackView<TYPE> >& x):
+    SO3partArrayPack(const VirtualTensorPack& x):
+      VirtualTensorPack(x){}
+
+
+  public: // ---- Access --------------------------------------------------------------------------------------
+
+
 
   };
 

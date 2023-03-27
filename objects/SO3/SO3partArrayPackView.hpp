@@ -14,24 +14,36 @@
 
 #include "GElib_base.hpp"
 #include "TensorPackView.hpp"
+#include "SO3partArrayView.hpp"
 
 
 namespace GElib{
 
-  template<typename TYPE>
-  class SO3partArrayPackView: virtual public cnine::TensorPackView<TYPE>{
+  template<typename RTYPE>
+  class SO3partArrayPackView: public cnine::TensorPackView<complex<RTYPE> >{
   public:
 
     typedef cnine::device device;
     typedef cnine::fill_pattern fill_pattern;
     typedef cnine::CoutLock CoutLock;
-
     typedef cnine::Gdims Gdims;
 
+    typedef cnine::TensorPackView<complex<RTYPE> > TensorPackView;
+
+    using TensorPackView::TensorPackView;
+    using TensorPackView::dims;
+    using TensorPackView::strides;
+    using TensorPackView::arr;
 
 
-    // ---- Constructors -------------------------------------------------------------------------------------
+  public: // ---- Constructors --------------------------------------------------------------------------------
 
+  public: // ---- Access --------------------------------------------------------------------------------------
+
+
+    SO3partArrayView<RTYPE> operator()(const int i){
+      return cnine::TensorView<complex<RTYPE> >(arr,dims(i),strides(i));
+    }
 
   };
 
