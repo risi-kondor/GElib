@@ -14,13 +14,14 @@
 
 #include "GElib_base.hpp"
 #include "TensorPackView.hpp"
+#include "TensorArrayPackView.hpp"
 #include "SO3partArrayView.hpp"
 
 
 namespace GElib{
 
   template<typename RTYPE>
-  class SO3partArrayPackView: public cnine::TensorPackView<complex<RTYPE> >{
+  class SO3partArrayPackView: public cnine::TensorArrayPackView<complex<RTYPE> >{
   public:
 
     typedef cnine::device device;
@@ -28,12 +29,14 @@ namespace GElib{
     typedef cnine::CoutLock CoutLock;
     typedef cnine::Gdims Gdims;
 
-    typedef cnine::TensorPackView<complex<RTYPE> > TensorPackView;
+    //typedef cnine::TensorPackView<complex<RTYPE> > TensorPackView;
+    typedef cnine::TensorArrayPackView<complex<RTYPE> > TensorArrayPackView;
 
-    using TensorPackView::TensorPackView;
-    using TensorPackView::dims;
-    using TensorPackView::strides;
-    using TensorPackView::arr;
+    using TensorArrayPackView::TensorArrayPackView;
+    using TensorArrayPackView::dims;
+    using TensorArrayPackView::strides;
+    using TensorArrayPackView::arr;
+    using TensorArrayPackView::size;
 
 
   public: // ---- Constructors --------------------------------------------------------------------------------
@@ -41,9 +44,38 @@ namespace GElib{
   public: // ---- Access --------------------------------------------------------------------------------------
 
 
-    SO3partArrayView<RTYPE> operator()(const int i){
-      return cnine::TensorView<complex<RTYPE> >(arr,dims(i),strides(i));
+    SO3partArrayView<RTYPE> operator[](const int i) const{
+      return SO3partArrayView<RTYPE>(arr,dims(i),strides(i));
     }
+
+
+    //SO3partArrayView<RTYPE> operator()(const int i){
+    //return cnine::TensorView<complex<RTYPE> >(arr,dims(i),strides(i));
+    //}
+
+
+  public: // ---- I/O ----------------------------------------------------------------------------------------
+
+
+    string classname() const{
+      return "SO3partArrayPackView";
+    }
+
+    string str(const string indent="") const{
+      ostringstream oss;
+      for(int i=0; i<size(); i++){
+	oss<<indent<<"Array "<<i<<":"<<endl;
+	oss<<(*this)[i].str(indent+"  ")<<endl;
+      }
+      return oss.str();
+    }
+
+
+    friend ostream& operator<<(ostream& stream, const SO3partArrayPackView& v){
+      stream<<v.str(); return stream;}
+
+
+    
 
   };
 
