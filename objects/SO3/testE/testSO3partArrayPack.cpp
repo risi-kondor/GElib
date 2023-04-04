@@ -29,4 +29,12 @@ int main(int argc, char** argv){
   SO3partArrayPack<float> u=SO3partArrayPack<float>::sequential(2,adims,2,5);
   cout<<u<<endl;
 
+  //u.set_zero();
+  //cout<<u<<endl;
+  
+  u.add(u);
+  cout<<u<<endl;
+
+  //u.add_mprod(u,u);
+
 }

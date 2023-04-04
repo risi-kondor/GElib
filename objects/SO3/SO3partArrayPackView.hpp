@@ -17,6 +17,7 @@
 #include "TensorArrayPackView.hpp"
 #include "SO3partArrayView.hpp"
 
+// SO3partArrayPackView > TensorArrayPackView > TensorPackView 
 
 namespace GElib{
 
@@ -37,6 +38,7 @@ namespace GElib{
     using TensorArrayPackView::strides;
     using TensorArrayPackView::arr;
     using TensorArrayPackView::size;
+    using TensorArrayPackView::offset;
 
 
   public: // ---- Constructors --------------------------------------------------------------------------------
@@ -45,7 +47,7 @@ namespace GElib{
 
 
     SO3partArrayView<RTYPE> operator[](const int i) const{
-      return SO3partArrayView<RTYPE>(arr,dims(i),strides(i));
+      return SO3partArrayView<RTYPE>(arr+offset(i),dims(i),strides(i).set_offset(0));
     }
 
 
