@@ -35,6 +35,8 @@ int main(int argc, char** argv){
   u.add(u);
   cout<<u<<endl;
 
+  cout<<TensorPack<float>::sequential(2,{3,3})<<endl;
+
   //u.add_mprod(u,u);
 
 }

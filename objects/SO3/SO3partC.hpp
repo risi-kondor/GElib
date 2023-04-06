@@ -28,8 +28,15 @@ namespace GElib{
     typedef cnine::Gdims Gdims;
 
     typedef cnine::TensorVirtual<complex<TYPE>, SO3partView<TYPE> > TensorVirtual;
-
     using TensorVirtual::TensorVirtual;
+    using TensorVirtual::dims;
+
+
+    using TensorVirtual::operator*;
+
+    //using TensorVirtual::getl;
+    using SO3partView<TYPE>::getl;
+    using SO3partView<TYPE>::getn;
 
 
   public: // ---- Constructors -------------------------------------------------------------------------------
@@ -52,7 +59,60 @@ namespace GElib{
       return SO3partC<TYPE>(Gdims({2*l+1,n}),cnine::fill_gaussian(),_dev);}
     
 
+  public: // ---- Access -------------------------------------------------------------------------------------
+
+
+    //int getl() const{
+    //return (dims(0)-1)/2;
+    //}
+
+    //int getn() const{
+    //return dims(1);
+    //}
+
+    bool is_F() const{
+      return (dims(0)==dims(1));
+    }
+
+
+  public: // ---- Operations ---------------------------------------------------------------------------------
+
+
+    
+  public: // ---- CG-products --------------------------------------------------------------------------------
+
+    
+
+
+  public: // ---- I/O ----------------------------------------------------------------------------------------
+
+
+    string classname() const{
+      return "GElib::SO3partC";
+    }
+
+    string repr(const string indent="") const{
+      return "<GElib::SO3partC(l="+to_string(getl())+",n="+to_string(getn())+")>";
+    }
+    
+    friend ostream& operator<<(ostream& stream, const SO3partC& x){
+      stream<<x.str(); return stream;
+    }
+
+
   };
+
+
+  template<typename TYPE>
+  inline SO3partC<TYPE> CGproduct(const SO3partView<TYPE>& x, const SO3partView<TYPE>& y, const int l){
+      assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
+      SO3partC<TYPE> R=SO3partC<TYPE>::zero(l,x.getn()*y.getn(),x.device());
+      R.add_CGproduct(x,y);
+      return R;
+    }
+
+
+
 
 }
 

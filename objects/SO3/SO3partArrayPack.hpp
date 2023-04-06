@@ -46,14 +46,14 @@ namespace GElib{
     }
 
 
-    // ---- Constructors -------------------------------------------------------------------------------------
+  public: // ---- Constructors --------------------------------------------------------------------------------
 
 
     SO3partArrayPack(const Gdims& _dims, const int l, const int n, const int N, const int _dev=0):
       SO3partArrayPack(TensorPackDir(_dims.cat({2*l+1,n}),N),_dev){}
 
 
-    // ---- Named constructors -------------------------------------------------------------------------------
+  public: // ---- Named constructors --------------------------------------------------------------------------
 
     
     static SO3partArrayPack<TYPE> zero(const int n, const Gdims& _dims, const int l, const int c, const int _dev=0){
@@ -66,11 +66,12 @@ namespace GElib{
       return SO3partArrayPack<TYPE>(TensorPackDir(_dims.cat({2*l+1,c}),n),cnine::fill_gaussian(),_dev);}
     
 
-    // ---- Conversions ---------------------------------------------------------------------------------------
+  public: // ---- Conversions ---------------------------------------------------------------------------------
 
 
     SO3partArrayPack(const VirtualTensorPack& x):
       VirtualTensorPack(x){}
+
 
 
   public: // ---- Access --------------------------------------------------------------------------------------

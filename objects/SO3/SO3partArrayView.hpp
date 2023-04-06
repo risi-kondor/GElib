@@ -13,30 +13,75 @@
 #define _GElibSO3partArrayView
 
 #include "GElib_base.hpp"
-#include "TensorView.hpp"
+#include "TensorArrayView.hpp"
 #include "SO3partView.hpp"
+#include "SO3part_view.hpp"
 
 namespace GElib{
 
   template<typename RTYPE>
-  class SO3partArrayView: public cnine::TensorView<complex<RTYPE> >{
+  class SO3partArrayView: public cnine::TensorArrayView<complex<RTYPE> >{
   public:
 
     typedef cnine::Gdims Gdims;
     typedef cnine::Gindex Gindex;
-    typedef cnine::TensorView<complex<RTYPE> > TensorView;
+    typedef cnine::TensorArrayView<complex<RTYPE> > TensorArrayView;
 
-    using TensorView::dims;
-    using TensorView::strides;
-    using TensorView::dev;
+    using TensorArrayView::arr;
+    using TensorArrayView::dims;
+    using TensorArrayView::strides;
+    using TensorArrayView::dev;
 
-    using TensorView::TensorView;
-    using TensorView::ndims;
-    using TensorView::slice;
+    using TensorArrayView::TensorArrayView;
+    using TensorArrayView::device;
+    using TensorArrayView::ndims;
+    using TensorArrayView::getN;
+    using TensorArrayView::slice;
 
     
+
+  public: // ---- Conversions --------------------------------------------------------------------------------
+
+
+    SO3partArrayView(const TensorArrayView& x):
+      TensorArrayView(x){}
+
+    operator SO3part3_view() const{
+      return SO3part3_view(arr.template ptr_as<RTYPE>(),{getN(),dims(-2),dims(-1)},{2*strides(-3),2*strides(-2),2*strides(-1)},1,device());
+    }
+
+
   public: // ---- Access --------------------------------------------------------------------------------------
+
     
+    int getl() const{
+      return (dims.back(1)-1)/2;
+    }
+
+    int getn() const{
+      return dims.back(0);
+    }
+
+    Gdims get_adims() const{
+      return dims.chunk(0,dims.size()-2);
+    }
+
+
+  public: // ---- CG-products --------------------------------------------------------------------------------
+
+    
+    void add_CGproduct(const SO3partArrayView& x, const SO3partArrayView& y, const int _offs=0){
+      SO3part_addCGproductFn()(*this,x,y,_offs);
+    }
+
+    void add_CGproduct_back0(const SO3partArrayView& g, const SO3partArrayView& y, const int _offs=0){
+      SO3part_addCGproduct_back0Fn()(*this,g,y,_offs);
+    }
+
+    void add_CGproduct_back1(const SO3partArrayView& g, const SO3partArrayView& x, const int _offs=0){
+      SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
+    }
+
 
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
