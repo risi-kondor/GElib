@@ -357,10 +357,26 @@ namespace GElib{
 
 
     void add_CGproduct(const SO3partB_array& x, const SO3partB_array& y, const int _offs=0){
-      auto v=this->part3_view();
-      //cout<<v.n0<<v.n1<<v.n2<<endl;
-      SO3part_addCGproductFn()(v,x.part3_view(),y.part3_view(),_offs);
-      //cout<<*this<<endl;
+      auto adims=get_adims();
+      auto xadims=x.get_adims();
+      auto yadims=y.get_adims();
+
+      if(adims==xadims && adims==yadims){
+	auto v=this->part3_view();
+	SO3part_addCGproductFn()(v,x.part3_view(),y.part3_view(),_offs);
+	return; 
+      }
+
+      /*
+      if(adims.size()==2){
+	if(xadims.size()==1 && yadims.size()==2 && xadims[0]==yadims[0]){
+	  CNINE_ASSRT(adims[0]==yadims[0] && adims[1]==yadims[1]);
+	  for(int i=0; i<yadims[1]; i++){
+	    SO3part_addCGproductFn()(this->viewx().slice1(i),x.part3_view(),y.part3_view(),_offs);
+	  }
+	}
+      }
+      */
     }
 
     void add_CGproduct_back0(const SO3partB_array& g, const SO3partB_array& y, const int _offs=0){

@@ -54,14 +54,14 @@ namespace GElib{
   public: // ---- Named constructors --------------------------------------------------------------------------
 
     
-    static SO3partArrayC<TYPE> zero(const Gdims& _dims, const int l, const int c, const int _dev=0){
-      return TensorArrayVirtual(_dims,{2*l+1,c},cnine::fill_zero(),_dev);}
+    static SO3partArrayC zero(const Gdims& _dims, const int l, const int c, const int _dev=0){
+      return SO3partArrayC(_dims,{2*l+1,c},cnine::fill_zero(),_dev);}
     
-    static SO3partArrayC<TYPE> sequential(const Gdims& _dims, const int l, const int c, const int _dev=0){
-      return TensorArrayVirtual(_dims,{2*l+1,c},cnine::fill_sequential(),_dev);}
+    static SO3partArrayC sequential(const Gdims& _dims, const int l, const int c, const int _dev=0){
+      return SO3partArrayC(_dims,{2*l+1,c},cnine::fill_sequential(),_dev);}
     
-    static SO3partArrayC<TYPE> gaussian(const Gdims& _dims, const int l, const int c, const int _dev=0){
-      return TensorArrayVirtual(_dims,{2*l+1,c},cnine::fill_gaussian(),_dev);}
+    static SO3partArrayC gaussian(const Gdims& _dims, const int l, const int c, const int _dev=0){
+      return SO3partArrayC(_dims,{2*l+1,c},cnine::fill_gaussian(),_dev);}
     
 
   public: // ---- Conversions ---------------------------------------------------------------------------------

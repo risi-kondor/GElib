@@ -37,6 +37,8 @@ namespace GElib{
     using TensorArrayPackView::dims;
     using TensorArrayPackView::strides;
     using TensorArrayPackView::arr;
+    using TensorArrayPackView::ak;
+
     using TensorArrayPackView::size;
     using TensorArrayPackView::offset;
 
@@ -47,13 +49,8 @@ namespace GElib{
 
 
     SO3partArrayView<RTYPE> operator[](const int i) const{
-      return SO3partArrayView<RTYPE>(arr+offset(i),dims(i),strides(i));//.set_offset(0));
+      return SO3partArrayView<RTYPE>(arr+offset(i),ak,dims(i),strides(i));
     }
-
-
-    //SO3partArrayView<RTYPE> operator()(const int i){
-    //return cnine::TensorView<complex<RTYPE> >(arr,dims(i),strides(i));
-    //}
 
 
   public: // ---- I/O ----------------------------------------------------------------------------------------

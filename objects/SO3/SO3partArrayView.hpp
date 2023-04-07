@@ -25,16 +25,23 @@ namespace GElib{
 
     typedef cnine::Gdims Gdims;
     typedef cnine::Gindex Gindex;
-    typedef cnine::TensorArrayView<complex<RTYPE> > TensorArrayView;
 
+    typedef cnine::TensorArrayView<complex<RTYPE> > TensorArrayView;
+    typedef SO3partView<RTYPE> SO3partView;
+    
     using TensorArrayView::arr;
     using TensorArrayView::dims;
     using TensorArrayView::strides;
     using TensorArrayView::dev;
+    using TensorArrayView::ak;
 
     using TensorArrayView::TensorArrayView;
     using TensorArrayView::device;
     using TensorArrayView::ndims;
+    using TensorArrayView::get_adims;
+    using TensorArrayView::get_ddims;
+    using TensorArrayView::get_astrides;
+    using TensorArrayView::get_dstrides;
     using TensorArrayView::getN;
     using TensorArrayView::slice;
 
@@ -62,8 +69,25 @@ namespace GElib{
       return dims.back(0);
     }
 
-    Gdims get_adims() const{
-      return dims.chunk(0,dims.size()-2);
+
+    SO3partView operator()(const int i0){
+      CNINE_ASSRT(ak==1);
+      return SO3partView(arr+strides[0]*i0,get_ddims(),get_dstrides());
+    }
+
+    SO3partView operator()(const int i0, const int i1){
+      CNINE_ASSRT(ak==2);
+      return SO3partView(arr+strides[0]*i0+strides[1]*i1,get_ddims(),get_dstrides());
+    }
+
+    SO3partView operator()(const int i0, const int i1, const int i2){
+      CNINE_ASSRT(ak==3);
+      return SO3partView(arr+strides[0]*i0+strides[1]*i1+strides[2]*i2,get_ddims(),get_dstrides());
+    }
+
+    SO3partView operator()(const Gindex& ix){
+      CNINE_ASSRT(ix.size()==ak);
+      return SO3partView(arr+strides(ix),get_ddims(),get_dstrides());
     }
 
 
@@ -108,6 +132,10 @@ namespace GElib{
 	});
 
       return oss.str();
+    }
+
+    friend ostream& operator<<(ostream& stream, const SO3partArrayView& x){
+      stream<<x.str(); return stream;
     }
 
   };

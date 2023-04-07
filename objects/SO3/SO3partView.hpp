@@ -83,6 +83,9 @@ namespace GElib{
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
 
+    friend ostream& operator<<(ostream& stream, const SO3partView& x){
+      stream<<x.str(); return stream;
+    }
     
   };
 

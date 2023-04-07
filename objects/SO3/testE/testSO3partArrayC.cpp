@@ -1,5 +1,6 @@
 #include "GElib_base.cpp"
 #include "SO3partArrayC.hpp"
+#include "SO3partC.hpp"
 #include "GElibSession.hpp"
 
 
@@ -25,6 +26,11 @@ int main(int argc, char** argv){
 
   SO3partArrayC<float> w=CGproduct(u,v,2);
   cout<<w<<endl;
+
+  cout<<u(0)<<endl;
+
+  SO3partC<float> a=SO3partC<float>::sequential(2,3);
+  cout<<SO3partArrayC<float>(a,{2,2})<<endl;
 
   cout<<endl; 
 }
