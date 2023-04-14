@@ -17,6 +17,7 @@ int main(int argc, char** argv){
   int B=2;
   int b=2;
   Gdims adims({2});
+  Gdims bdims({3,2});
 
   SO3partB_array u=SO3partB_array::gaussian(b,adims,2,2);
   SO3partB_array v=SO3partB_array::gaussian(b,adims,2,2);
@@ -25,6 +26,10 @@ int main(int argc, char** argv){
 
   SO3partB_array w=u.CGproduct(v,2);
   cout<<w<<endl;
+
+  SO3partB_array z=SO3partB_array::gaussian(b,bdims,2,2);
+  SO3partB_array x=z.ReducedCGproduct(v,2);
+  cout<<x<<endl;
 
   cout<<endl; 
 }

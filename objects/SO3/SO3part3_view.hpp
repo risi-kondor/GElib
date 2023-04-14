@@ -50,16 +50,14 @@ namespace GElib{
     //SO3part3_view(float* _arr, float* _arrc): 
     //arr(_arr), arrc(_arrc){}
 
-    /*
     SO3part3_view(float* _arr, float* _arrc, const int _n0, const int _n1, const int _n2, 
-      const int _s0, const int _s1, const int _s2): 
-      arr(_arr), arrc(_arrc), n0(_n0), n1(_n1), n2(_n2), s0(_s0), s1(_s1), s2(_s2){
-      assert(n0%2==1);
+      const int _s0, const int _s1, const int _s2, const int _dev=0): 
+      Ctensor3_view(_arr,_arrc,_n0,_n1,_n2,_s0,_s1,_s2,_dev){
+      assert(n1%2==1);
       l=(n1-1)/2;
       ar=arr+l*s1;
       ac=arrc+l*s1;
     }
-    */
 
     SO3part3_view(float* _arr, const int _n0, const int _n1, const int _n2, 
       const int _s0, const int _s1, const int _s2, const int _coffs=1, const int _dev=0): 
@@ -79,6 +77,17 @@ namespace GElib{
       ar=arr+l*s1;
       ac=arrc+l*s1;
     }
+
+    SO3part3_view(const Ctensor3_view& x):
+      Ctensor3_view(x){
+      assert(n1%2==1);
+      l=(n1-1)/2;
+      ar=arr+l*s1;
+      ac=arrc+l*s1;
+    }
+
+  public: // ---- Conversions ------------------------------------------------------------------------------
+
 
 
   public: // ---- Access ------------------------------------------------------------------------------------

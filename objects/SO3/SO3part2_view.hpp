@@ -78,6 +78,14 @@ namespace GElib{
       //cout<<"diff="<<ac-ar<<endl;
     }
 
+    SO3part2_view(const Ctensor2_view& x):
+      Ctensor2_view(x){
+      assert(n0%2==1);
+      l=(n0-1)/2;
+      ar=arr+l*s0;
+      ac=arrc+l*s0;
+    }
+
 
   public: // ---- Access ------------------------------------------------------------------------------------
 

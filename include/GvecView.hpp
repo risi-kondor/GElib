@@ -55,6 +55,10 @@ namespace GElib{
   public: // ---- Access ------------------------------------------------------------------------------------
 
 
+    //int getb() const{
+    //return parts.begin()->second.getb();
+    //}
+
     PART operator()(const KEY& l) const{
       auto it=parts.find(l);
       assert(it!=parts.end());
@@ -87,6 +91,8 @@ namespace GElib{
     }
 
   };
+
+  
 
   
 }

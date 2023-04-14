@@ -9,11 +9,12 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _GElibSO3partView
-#define _GElibSO3partView
+#ifndef _GElibSO3partViewB
+#define _GElibSO3partViewB
 
 #include "GElib_base.hpp"
-#include "TensorView.hpp"
+#include "BatchedTensorView.hpp"
+#include "SO3partView.hpp"
 
 #include "SO3part3_view.hpp"
 
@@ -25,29 +26,30 @@
 namespace GElib{
 
   template<typename RTYPE>
-  class SO3partView: public cnine::TensorView<complex<RTYPE> >{
+  class SO3partViewB: public cnine::BatchedTensorView<complex<RTYPE> >{
   public:
 
-    typedef cnine::TensorView<complex<RTYPE> > TensorView;
+    typedef cnine::BatchedTensorView<complex<RTYPE> > BatchedTensorView;
 
-    using TensorView::TensorView;
-    using TensorView::arr;
-    using TensorView::dims;
-    using TensorView::strides;
+    using BatchedTensorView::BatchedTensorView;
+    using BatchedTensorView::arr;
+    using BatchedTensorView::dims;
+    using BatchedTensorView::strides;
+    using BatchedTensorView::getb;
 
-    using TensorView::device;
+    using BatchedTensorView::device;
 
     
 
   public: // ---- Conversions --------------------------------------------------------------------------------
 
 
-    SO3partView(const TensorView& x):
-      TensorView(x){}
+    SO3partViewB(const BatchedTensorView& x):
+      BatchedTensorView(x){}
 
     operator SO3part3_view() const{
-      return SO3part3_view(arr.template ptr_as<RTYPE>(),{1,dims[0],dims[1]},{2*strides[0]*dims[0],2*strides[0],2*strides[1]},1,device());
-      //return SO3part3_view(arr.template ptr_as<RTYPE>(),{1,dims[0],dims[1]},strides.reals(),1,device());
+      return SO3part3_view(arr.template ptr_as<RTYPE>(),{dims[0],dims[1],dims[2]},
+	{2*strides[0]*dims[0],2*strides[0],2*strides[1],2*strides[2],2*strides[2]},1,device());
     }
 
 
@@ -55,35 +57,38 @@ namespace GElib{
 
     
     int getl() const{
-      return (dims(0)-1)/2;
+      return (dims[1]-1)/2;
     }
 
     int getn() const{
-      return dims(1);
+      return dims[2];
+    }
+
+    SO3partView<RTYPE> batch(const int i) const{
+      return SO3partView<RTYPE>(arr+strides[0]*i,dims.chunk(1),strides.chunk(1));
     }
 
 
   public: // ---- CG-products --------------------------------------------------------------------------------
 
     
-    void add_CGproduct(const SO3partView& x, const SO3partView& y, const int _offs=0){
+    void add_CGproduct(const SO3partViewB& x, const SO3partViewB& y, const int _offs=0){
       SO3part_addCGproductFn()(*this,x,y,_offs);
     }
 
-    void add_CGproduct_back0(const SO3partView& g, const SO3partView& y, const int _offs=0){
+    void add_CGproduct_back0(const SO3partViewB& g, const SO3partViewB& y, const int _offs=0){
       SO3part_addCGproduct_back0Fn()(*this,g,y,_offs);
     }
 
-    void add_CGproduct_back1(const SO3partView& g, const SO3partView& x, const int _offs=0){
+    void add_CGproduct_back1(const SO3partViewB& g, const SO3partViewB& x, const int _offs=0){
       SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
     }
-
 
 
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
 
-    friend ostream& operator<<(ostream& stream, const SO3partView& x){
+    friend ostream& operator<<(ostream& stream, const SO3partViewB& x){
       stream<<x.str(); return stream;
     }
     

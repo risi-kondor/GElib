@@ -30,7 +30,7 @@ int main(int argc, char** argv){
   cout<<u(0)<<endl;
 
   SO3partC<float> a=SO3partC<float>::sequential(2,3);
-  cout<<SO3partArrayC<float>(a,{2,2})<<endl;
+  cout<<SO3partArrayC<float>({2,2},a)<<endl;
 
   cout<<endl; 
 }

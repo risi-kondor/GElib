@@ -19,16 +19,16 @@ int main(int argc, char** argv){
 
   cout<<v.part(1)<<endl;
 
-  //cout<<v+v<<endl;
-  //SO3vecC<float> w(v);
-  //w.add(v);
-  //cout<<v<<endl;
+  cout<<v+v<<endl;
+  SO3vecC<float> w(v);
+  w.add(v);
+  cout<<v<<endl;
 
   //Tensor<complex<float> > M=Tensor<complex<float> >::gaussian({5,5});
   //cout<<M*u<<endl;
   //cout<<u*M<<endl;
 
-  //SO3partC<float> w=CGproduct(u,v,2);
-  //cout<<w<<endl;
+  SO3vecC<float> w=CGproduct(u,v);
+  cout<<w<<endl;
 
 }

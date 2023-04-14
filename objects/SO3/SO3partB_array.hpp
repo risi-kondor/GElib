@@ -12,7 +12,10 @@
 #define _SO3partB_array
 
 #include "CtensorArrayB.hpp"
+#include "Ctensor4_view.hpp"
+#include "Ctensor5_view.hpp"
 #include "SO3part3_view.hpp"
+#include "SO3part4_view.hpp"
 #include "SO3partB.hpp"
 
 #include "SO3part_addSpharmFn.hpp"
@@ -201,6 +204,16 @@ namespace GElib{
     }
     */
 
+    cnine::Ctensor4_view view4() const{
+      return cnine::Ctensor4_view(arr,arr+coffs,dims.total()/(dims(-3)*dims(-2)*dims(-1)),dims(-3),dims(-2),dims(-1),
+	strides(-4),strides(-3),strides(-2),strides(-1),dev);
+    }
+
+    cnine::Ctensor5_view view5() const{
+      return cnine::Ctensor5_view(arr,arr+coffs,dims.total()/(dims(-4)*dims(-3)*dims(-2)*dims(-1)),dims(-4),dims(-3),dims(-2),dims(-1),
+	strides(-5),strides(-4),strides(-3),strides(-2),strides(-1),dev);
+    }
+
     SO3partB fused_view(){
       return SO3partB(view_fusing_first(ak));
     }
@@ -215,6 +228,17 @@ namespace GElib{
       else return SO3part3_view(arrg,Gdims({getN(),dims.back(1),dims.back(0)}),
 	Gstrides({strides.back(2),strides.back(1),strides.back(0)}),coffs,dev);
     }
+
+    /*
+    SO3part4_view part4_view() const{
+      GELIB_ASSRT(dims.size()>=4);
+      cout<<getN()<<dims<<endl;
+      if(dev==0) return SO3part4_view(arr,Gdims({getN()/dims.back(2),dims.back(2),dims.back(1),dims.back(0)}),
+	Gstrides({strides.back(3),strides.back(2),strides.back(1),strides.back(0)}),coffs);
+      else return SO3part4_view(arrg,Gdims({getN()/dims.back(2),dims.back(2),dims.back(1),dims.back(0)}),
+	Gstrides({strides.back(3),strides.back(2),strides.back(1),strides.back(0)}),coffs,dev);
+    }
+    */
 
     /*
     SO3part3_view cell_view(const int i) const{
@@ -349,8 +373,18 @@ namespace GElib{
     
     SO3partB_array CGproduct(const SO3partB_array& y, const int l) const{
       assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
-      SO3partB_array R=SO3partB_array::zeros_like(*this);
-      //SO3partB_array R=SO3partB_array::zero(get_adims(),l,getn()*y.getn(),get_dev());
+      //SO3partB_array R=SO3partB_array::zeros_like(*this);
+      SO3partB_array R=SO3partB_array::zero(getb(),get_adims(),l,getn()*y.getn(),get_dev());
+      R.add_CGproduct(*this,y);
+      return R;
+    }
+
+
+    SO3partB_array ReducedCGproduct(const SO3partB_array& y, const int l) const{
+      assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
+      //SO3partB_array R=SO3partB_array::zeros_like(*this);
+      Gdims adims=get_adims().mvprod(y.get_adims());
+      SO3partB_array R=SO3partB_array::zero(getb(),adims,l,getn()*y.getn(),get_dev());
       R.add_CGproduct(*this,y);
       return R;
     }
@@ -360,14 +394,25 @@ namespace GElib{
       auto adims=get_adims();
       auto xadims=x.get_adims();
       auto yadims=y.get_adims();
+      int d=adims.size();
 
       if(adims==xadims && adims==yadims){
 	auto v=this->part3_view();
 	SO3part_addCGproductFn()(v,x.part3_view(),y.part3_view(),_offs);
 	return; 
       }
+      
+      // matrix/vector case
+      if(yadims.size()==d && xadims.size()==d+1 && 
+	adims.chunk(0,d-1)==xadims.chunk(0,d-1) &&
+	yadims.chunk(0,d-1)==xadims.chunk(0,d-1) &&
+	adims(-1)==xadims(-2) && yadims(-1)==xadims(-1)){
+	SO3part_addCGproductFn()(view4(),x.view5(),y.view4(),_offs);
+	return;
+      }
 
-      /*
+      cout<<"Error dimension mismatch in add_CGproduct"<<endl;
+	      /*
       if(adims.size()==2){
 	if(xadims.size()==1 && yadims.size()==2 && xadims[0]==yadims[0]){
 	  CNINE_ASSRT(adims[0]==yadims[0] && adims[1]==yadims[1]);
@@ -377,6 +422,8 @@ namespace GElib{
 	}
       }
       */
+
+
     }
 
     void add_CGproduct_back0(const SO3partB_array& g, const SO3partB_array& y, const int _offs=0){
