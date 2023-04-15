@@ -44,7 +44,6 @@ namespace GElib{
     using TensorArrayView::get_dstrides;
     using TensorArrayView::getN;
     using TensorArrayView::slice;
-
     
 
   public: // ---- Conversions --------------------------------------------------------------------------------
@@ -54,7 +53,8 @@ namespace GElib{
       TensorArrayView(x){}
 
     operator SO3part3_view() const{
-      return SO3part3_view(arr.template ptr_as<RTYPE>(),{getN(),dims(-2),dims(-1)},{2*strides(-3),2*strides(-2),2*strides(-1)},1,device());
+      return SO3part3_view(arr.template ptr_as<RTYPE>(),{getN(),dims(-2),dims(-1)},
+	{2*strides(-3),2*strides(-2),2*strides(-1)},1,device());
     }
 
 
@@ -91,22 +91,6 @@ namespace GElib{
     }
 
 
-  public: // ---- CG-products --------------------------------------------------------------------------------
-
-    
-    void add_CGproduct(const SO3partArrayView& x, const SO3partArrayView& y, const int _offs=0){
-      SO3part_addCGproductFn()(*this,x,y,_offs);
-    }
-
-    void add_CGproduct_back0(const SO3partArrayView& g, const SO3partArrayView& y, const int _offs=0){
-      SO3part_addCGproduct_back0Fn()(*this,g,y,_offs);
-    }
-
-    void add_CGproduct_back1(const SO3partArrayView& g, const SO3partArrayView& x, const int _offs=0){
-      SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
-    }
-
-
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
 
@@ -114,12 +98,21 @@ namespace GElib{
       return "SO3partArrayView";
     }
 
-    string describe() const{
-      ostringstream oss;
-      oss<<"SO3partArrayView"<<dims<<" "<<strides<<""<<endl;
-      return oss.str();
+    string repr(const string indent="") const{
+      return "<GElib::SO3partArray(adims="+get_adims.str()+",l="+to_string(getl())+",n="+to_string(getn())+")>";
+    }
+    
+    friend ostream& operator<<(ostream& stream, const SO3partArrayView& x){
+      stream<<x.str(); return stream;
     }
 
+  };
+
+}
+
+
+#endif 
+    /*
     string str(const string indent="") const{
       CNINE_CPUONLY();
       GELIB_ASSRT(ndims()>2);
@@ -133,14 +126,27 @@ namespace GElib{
 
       return oss.str();
     }
-
-    friend ostream& operator<<(ostream& stream, const SO3partArrayView& x){
-      stream<<x.str(); return stream;
+    */
+    /*
+    string describe() const{
+      ostringstream oss;
+      oss<<"SO3partArrayView"<<dims<<" "<<strides<<""<<endl;
+      return oss.str();
     }
+    */
+    //public: // ---- CG-products --------------------------------------------------------------------------------
 
-  };
+    
+    //void add_CGproduct(const SO3partArrayView& x, const SO3partArrayView& y, const int _offs=0){
+    //SO3part_addCGproductFn()(*this,x,y,_offs);
+    //}
 
-}
+    //void add_CGproduct_back0(const SO3partArrayView& g, const SO3partArrayView& y, const int _offs=0){
+    //SO3part_addCGproduct_back0Fn()(*this,g,y,_offs);
+    //}
+
+    //void add_CGproduct_back1(const SO3partArrayView& g, const SO3partArrayView& x, const int _offs=0){
+    //SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
+    //}
 
 
-#endif 

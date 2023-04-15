@@ -1,7 +1,7 @@
 #include "GElib_base.cpp"
 #include "GElibSession.hpp"
 #include "Tensor.hpp"
-#include "SO3partCB.hpp"
+#include "BatchedSO3part.hpp"
 
 using namespace cnine;
 using namespace GElib;
@@ -11,18 +11,22 @@ int main(int argc, char** argv){
   cout<<endl;
 
   int b=3;
-  int n=4;
+  int l=2;
+  int n=2;
 
-  SO3partCB<float> u=SO3partCB<float>::sequential(b,2,n);
-  SO3partCB<float> v=SO3partCB<float>::sequential(b,2,n);
+  BatchedSO3part<float> u=BatchedSO3part<float>::sequential(b,l,n);
+  BatchedSO3part<float> v=BatchedSO3part<float>::gaussian(b,l,n);
   cout<<u.repr()<<endl;
   cout<<u<<endl;
+  cout<<v<<endl;
 
   //Tensor<complex<float> > M=Tensor<complex<float> >::gaussian({5,5});
   //cout<<M*u<<endl;
   //cout<<u*M<<endl;
 
-  SO3partCB<float> w=CGproduct(u,v,2);
+  BatchedSO3part<float> w=CGproduct(u,v,2);
   cout<<w<<endl;
+
+  cout<<DiagCGproduct(u,v,2)<<endl;
 
 }

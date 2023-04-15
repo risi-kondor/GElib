@@ -19,7 +19,7 @@
 #include "BatchedSO3vecView.hpp"
 
 // BatchedSO3vec<RTYPE> -> Gvec<BatchedSO3vecView<RTYPE> > -> BatchedSO3vecView<RTYPE> -> 
-// BatchedGvecView<int,SO3partViewB<RTYPE>,BatchedSO3vecView<RTYPE> > -> GvecView<<int,SO3partViewB<RTYPE> > 
+// BatchedGvecView<int,BatchedSO3partView<RTYPE>,BatchedSO3vecView<RTYPE> > -> GvecView<<int,BatchedSO3partView<RTYPE> > 
 
 namespace GElib{
 
@@ -46,7 +46,7 @@ namespace GElib{
     BatchedSO3vec(const int _b, const SO3type& _tau, const FILLTYPE& fill, const int _dev=0){
       for(int l=0; l<_tau.size(); l++){
 	Gdims dims({2*l+1,_tau[l]});
-	parts[l]=new SO3partViewB<RTYPE>(_b,dims,fill,_dev);
+	parts[l]=new BatchedSO3partView<RTYPE>(_b,dims,fill,_dev);
       }
     }
 

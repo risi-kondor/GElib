@@ -16,6 +16,7 @@
 //#include "TensorView.hpp"
 #include "TensorVirtual.hpp"
 #include "SO3partView.hpp"
+#include "SO3templates.hpp"
 
 
 namespace GElib{
@@ -91,10 +92,6 @@ namespace GElib{
       return "GElib::SO3partC";
     }
 
-    string repr(const string indent="") const{
-      return "<GElib::SO3partC(l="+to_string(getl())+",n="+to_string(getn())+")>";
-    }
-    
     friend ostream& operator<<(ostream& stream, const SO3partC& x){
       stream<<x.str(); return stream;
     }
@@ -107,7 +104,16 @@ namespace GElib{
   inline SO3partC<TYPE> CGproduct(const SO3partView<TYPE>& x, const SO3partView<TYPE>& y, const int l){
       assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
       SO3partC<TYPE> R=SO3partC<TYPE>::zero(l,x.getn()*y.getn(),x.device());
-      R.add_CGproduct(x,y);
+      add_CGproduct(R,x,y);
+      return R;
+    }
+
+  template<typename TYPE>
+  inline SO3partC<TYPE> DiagCGproduct(const SO3partView<TYPE>& x, const SO3partView<TYPE>& y, const int l){
+      assert(x.getn()==y.getn());
+      assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
+      SO3partC<TYPE> R=SO3partC<TYPE>::zero(l,x.getn(),x.device());
+      add_DiagCGproduct(R,x,y);
       return R;
     }
 

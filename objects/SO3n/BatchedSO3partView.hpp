@@ -9,8 +9,8 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _GElibSO3partViewB
-#define _GElibSO3partViewB
+#ifndef _GElibBatchedSO3partView
+#define _GElibBatchedSO3partView
 
 #include "GElib_base.hpp"
 #include "BatchedTensorView.hpp"
@@ -26,7 +26,7 @@
 namespace GElib{
 
   template<typename RTYPE>
-  class SO3partViewB: public cnine::BatchedTensorView<complex<RTYPE> >{
+  class BatchedSO3partView: public cnine::BatchedTensorView<complex<RTYPE> >{
   public:
 
     typedef cnine::BatchedTensorView<complex<RTYPE> > BatchedTensorView;
@@ -35,21 +35,20 @@ namespace GElib{
     using BatchedTensorView::arr;
     using BatchedTensorView::dims;
     using BatchedTensorView::strides;
+
     using BatchedTensorView::getb;
-
     using BatchedTensorView::device;
-
     
 
   public: // ---- Conversions --------------------------------------------------------------------------------
 
 
-    SO3partViewB(const BatchedTensorView& x):
+    BatchedSO3partView(const BatchedTensorView& x):
       BatchedTensorView(x){}
 
     operator SO3part3_view() const{
       return SO3part3_view(arr.template ptr_as<RTYPE>(),{dims[0],dims[1],dims[2]},
-	{2*strides[0]*dims[0],2*strides[0],2*strides[1],2*strides[2],2*strides[2]},1,device());
+	{2*strides[0],2*strides[1],2*strides[2]},1,device());
     }
 
 
@@ -69,26 +68,14 @@ namespace GElib{
     }
 
 
-  public: // ---- CG-products --------------------------------------------------------------------------------
-
-    
-    void add_CGproduct(const SO3partViewB& x, const SO3partViewB& y, const int _offs=0){
-      SO3part_addCGproductFn()(*this,x,y,_offs);
-    }
-
-    void add_CGproduct_back0(const SO3partViewB& g, const SO3partViewB& y, const int _offs=0){
-      SO3part_addCGproduct_back0Fn()(*this,g,y,_offs);
-    }
-
-    void add_CGproduct_back1(const SO3partViewB& g, const SO3partViewB& x, const int _offs=0){
-      SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
-    }
-
-
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
 
-    friend ostream& operator<<(ostream& stream, const SO3partViewB& x){
+    string repr(const string indent="") const{
+      return "<GElib::BatchedSO3part(b="+to_string(getb())+",l="+to_string(getl())+",n="+to_string(getn())+")>";
+    }
+    
+    friend ostream& operator<<(ostream& stream, const BatchedSO3partView& x){
       stream<<x.str(); return stream;
     }
     
@@ -98,3 +85,22 @@ namespace GElib{
 
 
 #endif 
+
+
+    //public: // ---- CG-products --------------------------------------------------------------------------------
+
+    
+    //void add_CGproduct(const BatchedSO3partView& x, const BatchedSO3partView& y, const int _offs=0){
+    //SO3part_addCGproductFn()(*this,x,y,_offs);
+    //}
+
+    //void add_CGproduct_back0(const BatchedSO3partView& g, const BatchedSO3partView& y, const int _offs=0){
+    //SO3part_addCGproduct_back0Fn()(*this,g,y,_offs);
+    //}
+
+    //void add_CGproduct_back1(const BatchedSO3partView& g, const BatchedSO3partView& x, const int _offs=0){
+    //SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
+    // }
+
+
+

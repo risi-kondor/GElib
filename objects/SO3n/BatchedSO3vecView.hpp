@@ -13,7 +13,7 @@
 
 #include "GElib_base.hpp"
 #include "BatchedGvecView.hpp"
-#include "SO3partViewB.hpp"
+#include "BatchedSO3partView.hpp"
 #include "SO3vecView.hpp"
 #include "BatchedSO3vecView.hpp"
 
@@ -21,10 +21,10 @@
 namespace GElib{
 
   template<typename RTYPE>
-  class BatchedSO3vecView: public BatchedGvecView<int,SO3partViewB<RTYPE>,SO3vecView<RTYPE> >{
+  class BatchedSO3vecView: public BatchedGvecView<int,BatchedSO3partView<RTYPE>,SO3vecView<RTYPE> >{
   public:
 
-    typedef BatchedGvecView<int,SO3partViewB<RTYPE>,SO3vecView<RTYPE> > BatchedGvecView;
+    typedef BatchedGvecView<int,BatchedSO3partView<RTYPE>,SO3vecView<RTYPE> > BatchedGvecView;
     typedef SO3partView<RTYPE> SO3partView;
 
     using BatchedGvecView::BatchedGvecView;

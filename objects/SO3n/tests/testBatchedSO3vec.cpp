@@ -17,14 +17,14 @@ int main(int argc, char** argv){
   cout<<u<<endl;
 
   BatchedSO3vec<float> v=BatchedSO3vec<float>::sequential(b,tau);
-  //cout<<v<<endl;
+  cout<<v<<endl;
 
-  //cout<<v.part(1)<<endl;
+  cout<<v.part(1)<<endl;
 
-  //cout<<v+v<<endl;
+  cout<<v+v<<endl;
   BatchedSO3vec<float> w(v);
   w.add(v);
-  //cout<<v<<endl;
+  cout<<v<<endl;
 
   //Tensor<complex<float> > M=Tensor<complex<float> >::gaussian({5,5});
   //cout<<M*u<<endl;

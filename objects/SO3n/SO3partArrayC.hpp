@@ -8,13 +8,15 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _GElibSO3partArray
-#define _GElibSO3partArray
+#ifndef _GElibSO3partArrayC
+#define _GElibSO3partArrayC
 
 #include "GElib_base.hpp"
 #include "SO3partArrayView.hpp"
 //#include "TensorPack.hpp"
 #include "TensorArrayVirtual.hpp"
+#include "SO3partC.hpp"
+#include "SO3templates.hpp"
 
 
 namespace GElib{
@@ -84,7 +86,17 @@ namespace GElib{
     assert(x.get_adims()==y.get_adims());
     assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
     SO3partArrayC<TYPE> R=SO3partArrayC<TYPE>::zero(x.get_adims(),l,x.getn()*y.getn(),x.device());
-    R.add_CGproduct(x,y);
+    add_CGproduct(R,x,y);
+    return R;
+  }
+
+  template<typename TYPE>
+  inline SO3partArrayC<TYPE> DiagCGproduct(const SO3partArrayView<TYPE>& x, const SO3partArrayView<TYPE>& y, const int l){
+    assert(x.getn()==y.getn());
+    assert(x.get_adims()==y.get_adims());
+    assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
+    SO3partArrayC<TYPE> R=SO3partArrayC<TYPE>::zero(x.get_adims(),l,x.getn(),x.device());
+    add_DiagCGproduct(R,x,y);
     return R;
   }
 

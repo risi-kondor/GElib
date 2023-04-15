@@ -28,7 +28,7 @@ int main(int argc, char** argv){
   //cout<<M*u<<endl;
   //cout<<u*M<<endl;
 
-  SO3vecC<float> w=CGproduct(u,v);
-  cout<<w<<endl;
+  //SO3vecC<float> z=CGproduct(u,v);
+  //cout<<z<<endl;
 
 }
