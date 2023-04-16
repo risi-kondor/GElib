@@ -21,6 +21,12 @@
 
 namespace GElib{
 
+  class SO3part_t{};
+  class SO3vec_t{};
+
+
+  //template<typename TYPE0, typename TYPE1, typename = typename 
+  //std::enable_if<std::is_base_of<SO3part_t, TYPE1>::value, TYPE1>::type>
   template<typename TYPE0, typename TYPE1>
   void add_CGproduct(const TYPE0& r, const TYPE1& x, const TYPE1& y, const int offs=0){
     SO3part_addCGproductFn()(r,x,y,offs);
@@ -52,6 +58,27 @@ namespace GElib{
     SO3part_addBlockedCGproduct_back1Fn()(r,x,y,1,offs);
   }
 
+
+  //template<typename VTYPE0, typename VTYPE1, typename = typename 
+  //std::enable_if<std::is_base_of<SO3vec_t, VTYPE1>::value, VTYPE1>::type>
+  template<typename TYPE0, typename TYPE1>
+  void add_vCGproduct(const TYPE0& r, const TYPE1& x, const TYPE1& y){
+    int L=r.get_maxl();
+    vector<int> offs(L+1,0);
+
+    for(auto& p:x.parts){
+      auto& P1=*p.second;
+      int l1=P1.getl();
+      for(auto& q:y.parts){
+	auto& P2=*q.second;
+	int l2=P2.getl();
+	for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	  add_CGproduct(r.part(l),P1,P2,offs[l]);
+	  offs[l]+=P1.getn()*P2.getn();
+	}
+      }
+    }
+  }
 
 
 }

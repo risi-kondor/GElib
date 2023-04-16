@@ -34,6 +34,21 @@ namespace GElib{
   public: // ---- Access ------------------------------------------------------------------------------------
 
 
+    int get_maxl() const{
+      int r=0;
+      for(auto& p:parts)
+	r=std::max(r,p.first);
+      return r;
+    }
+    
+    SO3type get_tau() const{
+      SO3type tau(parts.size(),cnine::fill_raw());
+      for(auto& p:parts)
+	tau[p.first]=p.second->getn();
+      return tau;
+    }
+
+
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
 

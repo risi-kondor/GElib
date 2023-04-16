@@ -1,4 +1,3 @@
-
 // This file is part of GElib, a C++/CUDA library for group
 // equivariant tensor operations. 
 // 
@@ -24,6 +23,9 @@ namespace GElib{
     SO3type(){};
 
     //SO3type(const int L): vector<int>(L+1,0){}
+
+    SO3type(const int n, const cnine::fill_raw& dummy):
+      vector<int>(n,0){}
 
     SO3type(const cnine::size_spec& _size): 
       vector<int>(_size.n,0){}

@@ -57,14 +57,19 @@ namespace GElib{
   public: // ---- Access ------------------------------------------------------------------------------------
 
 
+    int device() const{
+      if(parts.size()==0) return 0;
+      return parts.begin()->second->device();
+    }
+
     int nadims() const{
       GELIB_ASSRT(parts.size()>0);
-      return parts.begin()->ak;
+      return parts.begin()->second->ak;
     }
 
     Gdims get_adims() const{
       GELIB_ASSRT(parts.size()>0);
-      return parts.begin()->get_adims();
+      return parts.begin()->second->get_adims();
     }
 
 

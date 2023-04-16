@@ -12,7 +12,7 @@ int main(int argc, char** argv){
   Gdims adims({2,2});
   SO3type tau({2,2,2});
 
-  SO3vecArrayC<float> u=SO3vecArrayC<float>::zero(adims,tau);
+  SO3vecArrayC<float> u=SO3vecArrayC<float>::gaussian(adims,tau);
   cout<<u<<endl;
 
   SO3vecArrayC<float> v=SO3vecArrayC<float>::sequential(adims,tau);
@@ -25,7 +25,7 @@ int main(int argc, char** argv){
   //cout<<M*u<<endl;
   //cout<<u*M<<endl;
 
-  //SO3partC<float> w=CGproduct(u,v,2);
-  //cout<<w<<endl;
+  SO3vecArrayC<float> w=CGproduct(u,v,2);
+  cout<<w<<endl;
 
 }

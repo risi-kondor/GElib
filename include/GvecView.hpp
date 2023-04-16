@@ -59,6 +59,11 @@ namespace GElib{
     //return parts.begin()->second.getb();
     //}
 
+    int device() const{
+      if(parts.size()==0) return 0;
+      return parts.begin()->second->device();
+    }
+
     PART operator()(const KEY& l) const{
       auto it=parts.find(l);
       assert(it!=parts.end());

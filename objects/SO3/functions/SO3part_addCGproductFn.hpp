@@ -68,7 +68,7 @@ namespace GElib{
 	      for(int n2=0; n2<N2; n2++){
 		for(int m1=-l1; m1<=l1; m1++){
 		  for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
-		    //cout<<"   "<<n1<<" "<<n2<<" "<<m1<<" "<<m2<<endl;
+		    //cout<<"   "<<n1<<" "<<n2<<" "<<m1<<" "<<m2<<" "<<x(m1,n1)<<y(m2,n2)<<C(m1+l1,m2+l2)*x(m1,n1)*y(m2,n2)<<endl;
 		    r.inc(m1+m2,offs+n2,C(m1+l1,m2+l2)*x(m1,n1)*y(m2,n2));
 		  }
 		}
@@ -76,7 +76,6 @@ namespace GElib{
 	      offs+=N2;
 	    }
 	  });
-
       }
       else CUDA_STREAM(SO3partB_addCGproduct_cu(_r,_x,_y,_offs,stream));
 

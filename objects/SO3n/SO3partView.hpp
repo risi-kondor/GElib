@@ -14,14 +14,14 @@
 
 #include "GElib_base.hpp"
 #include "TensorView.hpp"
-
 #include "SO3part3_view.hpp"
+#include "SO3templates.hpp"
 
 
 namespace GElib{
 
   template<typename RTYPE>
-  class SO3partView: public cnine::TensorView<complex<RTYPE> >{
+  class SO3partView: public cnine::TensorView<complex<RTYPE> >, public SO3part_t{
   public:
 
     typedef cnine::TensorView<complex<RTYPE> > TensorView;

@@ -81,6 +81,15 @@ namespace GElib{
     return r;
   }
 
+  template<typename TYPE>
+  inline BatchedSO3vec<TYPE> CGproduct(const BatchedSO3vecView<TYPE>& x, const BatchedSO3vecView<TYPE>& y, const int maxl=-1){
+    GELIB_ASSRT(x.getb()==y.getb());
+    BatchedSO3vec<TYPE> R=BatchedSO3vec<TYPE>::zero(x.getb(),
+      GElib::CGproduct(x.get_tau(),y.get_tau(),maxl),x.device());
+    add_vCGproduct(R,x,y);
+    return R;
+  }
+
 
 }
 

@@ -11,7 +11,7 @@ int main(int argc, char** argv){
 
   SO3type tau({2,2,2});
 
-  SO3vecC<float> u=SO3vecC<float>::zero(tau);
+  SO3vecC<float> u=SO3vecC<float>::gaussian(tau);
   cout<<u<<endl;
 
   SO3vecC<float> v=SO3vecC<float>::sequential(tau);
@@ -28,7 +28,7 @@ int main(int argc, char** argv){
   //cout<<M*u<<endl;
   //cout<<u*M<<endl;
 
-  //SO3vecC<float> z=CGproduct(u,v);
-  //cout<<z<<endl;
+  SO3vecC<float> z=CGproduct(u,v);
+  cout<<z<<endl;
 
 }

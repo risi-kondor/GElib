@@ -8,28 +8,27 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _GElibSO3vecView
-#define _GElibSO3vecView
+#ifndef _GElibBatchedSO3vecArrayView
+#define _GElibBatchedSO3vecArrayView
 
 #include "GElib_base.hpp"
-#include "GvecView.hpp"
+#include "BatchedGvecArrayView.hpp"
 #include "SO3type.hpp"
-#include "SO3partView.hpp"
-#include "SO3templates.hpp"
+#include "BatchedSO3partArrayView.hpp"
+#include "BatchedSO3vecView.hpp"
 
 
 namespace GElib{
 
-
   template<typename RTYPE>
-  class SO3vecView: public GvecView<int,SO3partView<RTYPE> >, public SO3vec_t{
+  class BatchedSO3vecArrayView: public BatchedGvecArrayView<int,BatchedSO3partArrayView<RTYPE>,BatchedSO3vecView<RTYPE> >{
   public:
 
-    typedef GvecView<int,SO3partView<RTYPE> > GvecView;
-    typedef SO3partView<RTYPE> SO3partView;
+    typedef BatchedGvecArrayView<int,BatchedSO3partArrayView<RTYPE>,BatchedSO3vecView<RTYPE> > BatchedGvecArrayView;
+    typedef BatchedSO3partArrayView<RTYPE> BatchedSO3partArrayView;
 
-    using GvecView::GvecView;
-    using GvecView::parts;
+    using BatchedGvecArrayView::BatchedGvecArrayView;
+    using BatchedGvecArrayView::parts;
 
 
   public: // ---- Access ------------------------------------------------------------------------------------
@@ -54,7 +53,7 @@ namespace GElib{
 
 
     static string classname(){
-      return "GElib::SO3vecView";
+      return "GElib::BatchedSO3vecArrayView";
     }
 
     string str(const string indent="") const{
@@ -73,7 +72,7 @@ namespace GElib{
       //return "<GElib::SO3vecV of type "+get_tau().str()+">";
     }
     
-    friend ostream& operator<<(ostream& stream, const SO3vecView& x){
+    friend ostream& operator<<(ostream& stream, const BatchedSO3vecArrayView& x){
       stream<<x.str(); return stream;
     }
 
