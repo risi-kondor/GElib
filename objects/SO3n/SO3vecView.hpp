@@ -13,23 +13,23 @@
 
 #include "GElib_base.hpp"
 #include "GvecView.hpp"
-#include "SO3type.hpp"
 #include "SO3partView.hpp"
+#include "SO3type.hpp"
 #include "SO3templates.hpp"
 
 
 namespace GElib{
 
-
   template<typename RTYPE>
-  class SO3vecView: public GvecView<int,SO3partView<RTYPE> >, public SO3vec_t{
+  class SO3vecView: public GvecView<int,SO3partView<RTYPE>,SO3vecView<RTYPE> >{
   public:
 
-    typedef GvecView<int,SO3partView<RTYPE> > GvecView;
+    typedef GvecView<int,SO3partView<RTYPE>,SO3vecView<RTYPE> > GvecView;
     typedef SO3partView<RTYPE> SO3partView;
 
     using GvecView::GvecView;
     using GvecView::parts;
+    using GvecView::str;
 
 
   public: // ---- Access ------------------------------------------------------------------------------------
@@ -50,22 +50,33 @@ namespace GElib{
     }
 
 
+  public: // ---- CG-products --------------------------------------------------------------------------------
+
+
+    void add_CGproduct(const SO3vecView<float>& x, const SO3vecView<float>& y){
+      vCGproduct<SO3vecView,SO3partView>(*this,x,y,
+	[&](const SO3partView& r, const SO3partView& x, const SO3partView& y, const int offs){
+	  r.add_CGproduct(x,y,offs);});
+    }
+
+    void add_CGproduct_back0(const SO3vecView<float>& g, const SO3vecView<float>& y){
+      vCGproduct<SO3vecView,SO3partView>(g,*this,y,
+	[&](const SO3partView& g, const SO3partView& gx, const SO3partView& y, const int offs){
+	  gx.add_CGproduct(g,y,offs);});
+    }
+
+    void add_CGproduct_back1(const SO3vecView<float>& g, const SO3vecView<float>& x){
+      vCGproduct<SO3vecView,SO3partView>(g,x,*this,
+	[&](const SO3partView& g, const SO3partView& x, const SO3partView& gy, const int offs){
+	  gy.add_CGproduct(g,x,offs);});
+    }
+
+
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
 
     static string classname(){
       return "GElib::SO3vecView";
-    }
-
-    string str(const string indent="") const{
-      ostringstream oss;
-	for(int l=0; l<parts.size(); l++){
-	  //if(!parts[l]) continue;
-	  oss<<indent<<"Part l="<<l<<":\n";
-	  oss<<(*this)(l).str(indent+"  ");
-	  oss<<endl;
-	}
-      return oss.str();
     }
 
     string repr(const string indent="") const{
@@ -85,3 +96,22 @@ namespace GElib{
 }
 
 #endif 
+
+
+    /*
+    string str(const string indent="") const{
+      ostringstream oss;
+      for_each_batch([&](const int b, const VEC& x){
+	  oss<<indent<<"Batch "<<b<<":"<<endl;
+	  oss<<indent<<x<<endl;
+	});
+      //for(int l=0; l<parts.size(); l++){
+	//if(!parts[l]) continue;
+      //oss<<indent<<"Part l="<<l<<":\n";
+      //oss<<(*this)(l).str(indent+"  ");
+      //oss<<endl;
+      //}
+      return oss.str();
+    }
+    */
+

@@ -15,7 +15,7 @@ def main():
     # os.environ['CUDA_HOME']='/usr/local/cuda'
     #os.environ["CC"] = "clang"
 
-    compile_with_cuda = True 
+    compile_with_cuda = False  
     # compile_with_cuda = False
 
     copy_warnings = False
@@ -45,13 +45,18 @@ def main():
                      cwd + cnine_folder + '/objects/tensor_array',
                      cwd + cnine_folder + '/objects/tensor_array/cell_maps',
                      cwd + cnine_folder + '/objects/tensor_array/cell_ops',
+                     cwd + cnine_folder + '/objects/labeled',
+                     cwd + cnine_folder + '/objects/ntensor',
+                     cwd + cnine_folder + '/objects/ntensor/functions',
                      cwd + '/../include',
                      cwd + '/../cuda',
                      cwd + '/../objects/SO2',
                      cwd + '/../objects/SO2/functions',
                      cwd + '/../objects/SO3',
                      cwd + '/../objects/SO3/cell_ops',
-                     cwd + '/../objects/SO3/functions'
+                     cwd + '/../objects/SO3/functions',
+                     cwd + '/../objects/SO3n',
+                     cwd + '/../objects/SO3n/functions'
                      ]
 
 

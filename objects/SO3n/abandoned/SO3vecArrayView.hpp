@@ -8,27 +8,27 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _GElibBatchedSO3vecArrayView
-#define _GElibBatchedSO3vecArrayView
+#ifndef _GElibSO3vecArrayView
+#define _GElibSO3vecArrayView
 
 #include "GElib_base.hpp"
-#include "BatchedGvecArrayView.hpp"
+#include "GvecArrayView.hpp"
 #include "SO3type.hpp"
-#include "BatchedSO3partArrayView.hpp"
-#include "BatchedSO3vecView.hpp"
+#include "SO3partArrayView.hpp"
+#include "SO3vecView.hpp"
 
 
 namespace GElib{
 
   template<typename RTYPE>
-  class BatchedSO3vecArrayView: public BatchedGvecArrayView<int,BatchedSO3partArrayView<RTYPE>,BatchedSO3vecView<RTYPE> >{
+  class SO3vecArrayView: public GvecArrayView<int,SO3partArrayView<RTYPE>,SO3vecView<RTYPE> >{
   public:
 
-    typedef BatchedGvecArrayView<int,BatchedSO3partArrayView<RTYPE>,BatchedSO3vecView<RTYPE> > BatchedGvecArrayView;
-    typedef BatchedSO3partArrayView<RTYPE> BatchedSO3partArrayView;
+    typedef GvecArrayView<int,SO3partArrayView<RTYPE>,SO3vecView<RTYPE> > GvecArrayView;
+    typedef SO3partArrayView<RTYPE> SO3partArrayView;
 
-    using BatchedGvecArrayView::BatchedGvecArrayView;
-    using BatchedGvecArrayView::parts;
+    using GvecArrayView::GvecArrayView;
+    using GvecArrayView::parts;
 
 
   public: // ---- Access ------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ namespace GElib{
 
 
     static string classname(){
-      return "GElib::BatchedSO3vecArrayView";
+      return "GElib::SO3vecArrayView";
     }
 
     string str(const string indent="") const{
@@ -72,7 +72,7 @@ namespace GElib{
       //return "<GElib::SO3vecV of type "+get_tau().str()+">";
     }
     
-    friend ostream& operator<<(ostream& stream, const BatchedSO3vecArrayView& x){
+    friend ostream& operator<<(ostream& stream, const SO3vecArrayView& x){
       stream<<x.str(); return stream;
     }
 
@@ -84,3 +84,10 @@ namespace GElib{
 }
 
 #endif 
+    //SO3partArrayView operator()(const int l) const{
+    //auto it=parts.find(l);
+    //assert(it!=parts.end());
+    //return SO3partArrayView(*it->second);
+    //}
+
+

@@ -12,9 +12,6 @@
 #define _GElibGvec
 
 #include "GElib_base.hpp"
-#include "SO3partArrayView.hpp"
-//#include "TensorPack.hpp"
-#include "TensorArrayVirtual.hpp"
 
 
 namespace GElib{

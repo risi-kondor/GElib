@@ -16,14 +16,14 @@
 
 namespace GElib{
 
-  template<typename KEY, typename PART, typename CELL>
+  template<typename KEY, typename PAview, typename VAview, typename Vview>
   class GvecArrayView{
   public:
 
     typedef cnine::Gdims Gdims;
     typedef cnine::Gindex Gindex;
 
-    mutable unordered_map<KEY,PART*> parts;
+    mutable unordered_map<KEY,PAview*> parts;
 
     GvecArrayView(){}
 
@@ -39,7 +39,7 @@ namespace GElib{
     GvecArrayView(const GvecArrayView& x){
       GELIB_COPY_WARNING();
       for(auto& p:x.parts)
-	parts[p.first]=new PART(*p.second);
+	parts[p.first]=new PAview(*p.second);
     }
     
     GvecArrayView(GvecArrayView&& x):
@@ -56,7 +56,11 @@ namespace GElib{
 
   public: // ---- Access ------------------------------------------------------------------------------------
 
-
+    
+    int getb() const{
+      return parts.begin()->second->getb();
+    }
+    
     int device() const{
       if(parts.size()==0) return 0;
       return parts.begin()->second->device();
@@ -73,41 +77,49 @@ namespace GElib{
     }
 
 
-    PART operator()(const KEY& l) const{
-      auto it=parts.find(l);
-      assert(it!=parts.end());
-      return PART(*it->second);
+    VAview batch(const int b) const{
+      CNINE_CHECK_RANGE(b<getb());
+      VAview R;
+      for(auto& p:parts)
+	R.parts[p.first]=new PAview(p.second->batch(b));
+      return R;
     }
 
-    PART part(const KEY& l) const{
+    PAview operator()(const KEY& l) const{
       auto it=parts.find(l);
       assert(it!=parts.end());
-      return PART(*it->second);
+      return PAview(*it->second);
     }
 
-    CELL cell(const int i0) const{
-      CELL R;
+    PAview part(const KEY& l) const{
+      auto it=parts.find(l);
+      assert(it!=parts.end());
+      return PAview(*it->second);
+    }
+
+    Vview cell(const int i0) const{
+      Vview R;
       for(auto& p:parts)
 	R.parts[p.first]=new decltype(R.part(0))((*p.second)(i0));
       return R;
     }
 
-    CELL cell(const int i0, const int i1) const{
-      CELL R;
+    Vview cell(const int i0, const int i1) const{
+      Vview R;
       for(auto& p:parts)
 	R.parts[p.first]=new decltype(R.part(0))((*p.second)(i0,i1));
       return R;
     }
 
-    CELL cell(const int i0, const int i1, const int i2) const{
-      CELL R;
+    Vview cell(const int i0, const int i1, const int i2) const{
+      Vview R;
       for(auto& p:parts)
 	R.parts[p.first]=new decltype(R.part(0))((*p.second)(i0,i1,i2));
       return R;
     }
 
-    CELL cell(const Gindex& ix) const{
-      CELL R;
+    Vview cell(const Gindex& ix) const{
+      Vview R;
       for(auto& p:parts)
 	R.parts[p.first]=new decltype(R.part(0))((*p.second)(ix));
       return R;
@@ -117,12 +129,18 @@ namespace GElib{
   public: // ---- Lambdas ------------------------------------------------------------------------------------
 
 
-    void for_each_part(const std::function<void(const KEY&, const PART&)>& lambda) const{
+    void for_each_batch(const std::function<void(const int, const VAview& x)>& lambda) const{
+      int B=getb();
+      for(int b=0; b<B; b++)
+	lambda(b,batch(b));
+    }
+
+    void for_each_part(const std::function<void(const KEY&, const PAview&)>& lambda) const{
       for(auto& p:parts) 
 	lambda(p.first,*p.second);
     }
 
-    void for_each_cell(const std::function<void(const Gindex&, const CELL&)>& lambda) const{
+    void for_each_cell(const std::function<void(const Gindex&, const Vview&)>& lambda) const{
       get_adims().for_each_index([&](const Gindex& ix){
 	  lambda(ix,cell(ix));});
     }
@@ -137,13 +155,32 @@ namespace GElib{
       }
     }
 
-    void add(const CELL& x){
-      for(auto p: parts){
-	p.second->add(x.part(p.first));
-      }
-    }
+    //void add(const Vview& x){
+    //for(auto p: parts){
+    //p.second->add(x.part(p.first));
+    //}
+    //}
 
     
+  public: // ---- I/O ----------------------------------------------------------------------------------------
+
+
+    string str(const string indent="") const{
+      ostringstream oss;
+      if(getb()>1){
+	for_each_batch([&](const int b, const GvecArrayView& x){
+	    oss<<indent<<"Batch "<<b<<":"<<endl;
+	    oss<<x.str(indent+"  ");
+	  });
+      }else{
+	for_each_part([&](const int p, const PAview& x){
+	    oss<<indent<<"Part "<<p<<":"<<endl;
+	    oss<<x.str(indent+"  ");
+	  });
+      }
+      return oss.str();
+    }
+
 
 
 

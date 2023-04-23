@@ -13,8 +13,11 @@
 #include <pybind11/stl.h>
 #include <pybind11/complex.h>
 
+#define _WITH_FAKE_GRAD
+
 #include "GElib_base.cpp"
 #include "GElibSession.hpp"
+#include "diff_class.hpp"
 
 #include "RtensorObj.hpp"
 
@@ -34,6 +37,9 @@
 #include "SO3vecB_array.hpp"
 
 #include "SO3CGtensor.hpp"
+
+#include "SO3partC.hpp"
+#include "SO3vecC.hpp"
 
 #include "CtensorConvolve2d.hpp"
 //#include "CtensorConvolve2dSparse.hpp"
@@ -114,6 +120,9 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
 
   #include "SO3partB_array_py.cpp"
   #include "SO3vecB_array_py.cpp"
+
+  #include "SO3part_py.cpp"
+
 
   //#include "CtensorB_py.cpp"
 

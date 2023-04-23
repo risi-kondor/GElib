@@ -8,27 +8,28 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _GElibBatchedSO3vecView
-#define _GElibBatchedSO3vecView
+#ifndef _GElibSO3vecView
+#define _GElibSO3vecView
 
 #include "GElib_base.hpp"
-#include "BatchedGvecView.hpp"
-#include "BatchedSO3partView.hpp"
-#include "SO3vecView.hpp"
-#include "BatchedSO3vecView.hpp"
+#include "GvecView.hpp"
+#include "SO3type.hpp"
+#include "SO3partView.hpp"
+#include "SO3templates.hpp"
 
 
 namespace GElib{
 
+
   template<typename RTYPE>
-  class BatchedSO3vecView: public BatchedGvecView<int,BatchedSO3partView<RTYPE>,SO3vecView<RTYPE> >{
+  class SO3vecView: public GvecView<int,SO3partView<RTYPE> >, public SO3vec_t{
   public:
 
-    typedef BatchedGvecView<int,BatchedSO3partView<RTYPE>,SO3vecView<RTYPE> > BatchedGvecView;
+    typedef GvecView<int,SO3partView<RTYPE> > GvecView;
     typedef SO3partView<RTYPE> SO3partView;
 
-    using BatchedGvecView::BatchedGvecView;
-    using BatchedGvecView::parts;
+    using GvecView::GvecView;
+    using GvecView::parts;
 
 
   public: // ---- Access ------------------------------------------------------------------------------------
@@ -53,32 +54,26 @@ namespace GElib{
 
 
     static string classname(){
-      return "GElib::BatchedSO3vecView";
+      return "GElib::SO3vecView";
     }
 
-    /*
     string str(const string indent="") const{
       ostringstream oss;
-      for_each_batch([&](const int b, const VEC& x){
-	  oss<<indent<<"Batch "<<b<<":"<<endl;
-	  oss<<indent<<x<<endl;
-	});
-      //for(int l=0; l<parts.size(); l++){
-	//if(!parts[l]) continue;
-      //oss<<indent<<"Part l="<<l<<":\n";
-      //oss<<(*this)(l).str(indent+"  ");
-      //oss<<endl;
-      //}
+	for(int l=0; l<parts.size(); l++){
+	  //if(!parts[l]) continue;
+	  oss<<indent<<"Part l="<<l<<":\n";
+	  oss<<(*this)(l).str(indent+"  ");
+	  oss<<endl;
+	}
       return oss.str();
     }
-    */
 
     string repr(const string indent="") const{
       return "";
       //return "<GElib::SO3vecV of type "+get_tau().str()+">";
     }
     
-    friend ostream& operator<<(ostream& stream, const BatchedSO3vecView& x){
+    friend ostream& operator<<(ostream& stream, const SO3vecView& x){
       stream<<x.str(); return stream;
     }
 

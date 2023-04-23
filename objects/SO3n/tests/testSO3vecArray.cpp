@@ -1,6 +1,6 @@
 #include "GElib_base.cpp"
 #include "GElibSession.hpp"
-#include "BatchedSO3vecArray.hpp"
+#include "SO3vecArrayC.hpp"
 
 using namespace cnine;
 using namespace GElib;
@@ -10,13 +10,13 @@ int main(int argc, char** argv){
   cout<<endl;
 
   int b=2;
-  Gdims adims({2,2});
-  SO3type tau({2,2,2});
+  Gdims adims({2});
+  SO3type tau({2,2});
 
-  BatchedSO3vecArray<float> u=BatchedSO3vecArray<float>::gaussian(2,adims,tau);
+  SO3vecArray<float> u=SO3vecArray<float>::gaussian(2,adims,tau);
   cout<<u<<endl;
 
-  BatchedSO3vecArray<float> v=BatchedSO3vecArray<float>::sequential(2,adims,tau);
+  SO3vecArray<float> v=SO3vecArray<float>::sequential(2,adims,tau);
   cout<<v<<endl;
 
   //cout<<v.part(1)<<endl;
@@ -26,7 +26,7 @@ int main(int argc, char** argv){
   //cout<<M*u<<endl;
   //cout<<u*M<<endl;
 
-  BatchedSO3vecArray<float> w=CGproduct(u,v,2);
+  SO3vecArray<float> w=CGproduct(u,v,2);
   cout<<w<<endl;
 
 }

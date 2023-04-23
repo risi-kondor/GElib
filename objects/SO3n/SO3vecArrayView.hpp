@@ -21,10 +21,10 @@
 namespace GElib{
 
   template<typename RTYPE>
-  class SO3vecArrayView: public GvecArrayView<int,SO3partArrayView<RTYPE>,SO3vecView<RTYPE> >{
+  class SO3vecArrayView: public GvecArrayView<int,SO3partArrayView<RTYPE>,SO3vecArrayView<RTYPE>,SO3vecView<RTYPE> >{
   public:
 
-    typedef GvecArrayView<int,SO3partArrayView<RTYPE>,SO3vecView<RTYPE> > GvecArrayView;
+    typedef GvecArrayView<int,SO3partArrayView<RTYPE>,SO3vecArrayView<RTYPE>,SO3vecView<RTYPE> > GvecArrayView;
     typedef SO3partArrayView<RTYPE> SO3partArrayView;
 
     using GvecArrayView::GvecArrayView;
@@ -40,7 +40,7 @@ namespace GElib{
 	r=std::max(r,p.first);
       return r;
     }
-    
+
     SO3type get_tau() const{
       SO3type tau(parts.size(),cnine::fill_raw());
       for(auto& p:parts)
@@ -49,22 +49,33 @@ namespace GElib{
     }
 
 
+  public: // ---- CG-products --------------------------------------------------------------------------------
+
+
+    void add_CGproduct(const SO3vecArrayView& x, const SO3vecArrayView& y){
+      vCGproduct<SO3vecArrayView,SO3partArrayView>(*this,x,y,
+	[&](const SO3partArrayView& r, const SO3partArrayView& x, const SO3partArrayView& y, const int offs){
+	  r.add_CGproduct(x,y,offs);});
+    }
+
+    void add_CGproduct_back0(const SO3vecArrayView& g, const SO3vecArrayView& y){
+      vCGproduct<SO3vecArrayView,SO3partArrayView>(g,*this,y,
+	[&](const SO3partArrayView& g, const SO3partArrayView& gx, const SO3partArrayView& y, const int offs){
+	  gx.add_CGproduct(g,y,offs);});
+    }
+
+    void add_CGproduct_back1(const SO3vecArrayView& g, const SO3vecArrayView& x){
+      vCGproduct<SO3vecArrayView,SO3partArrayView>(g,x,*this,
+	[&](const SO3partArrayView& g, const SO3partArrayView& x, const SO3partArrayView& gy, const int offs){
+	  gy.add_CGproduct(g,x,offs);});
+    }
+
+
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
 
     static string classname(){
       return "GElib::SO3vecArrayView";
-    }
-
-    string str(const string indent="") const{
-      ostringstream oss;
-	for(int l=0; l<parts.size(); l++){
-	  //if(!parts[l]) continue;
-	  oss<<indent<<"Part l="<<l<<":\n";
-	  oss<<(*this)(l).str(indent+"  ");
-	  oss<<endl;
-	}
-      return oss.str();
     }
 
     string repr(const string indent="") const{
@@ -84,10 +95,17 @@ namespace GElib{
 }
 
 #endif 
-    //SO3partArrayView operator()(const int l) const{
-    //auto it=parts.find(l);
-    //assert(it!=parts.end());
-    //return SO3partArrayView(*it->second);
-    //}
 
 
+    /*
+    string str(const string indent="") const{
+      ostringstream oss;
+	for(int l=0; l<parts.size(); l++){
+	  //if(!parts[l]) continue;
+	  oss<<indent<<"Part l="<<l<<":\n";
+	  oss<<(*this)(l).str(indent+"  ");
+	  oss<<endl;
+	}
+      return oss.str();
+    }
+    */

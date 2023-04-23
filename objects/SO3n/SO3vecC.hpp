@@ -12,15 +12,17 @@
 #define _GElibSO3vecC
 
 #include "GElib_base.hpp"
-#include "TensorVirtual.hpp"
 #include "Gvec.hpp"
 #include "SO3vecView.hpp"
 
+// SO3vec<RTYPE> -> Gvec<SO3vecView<RTYPE> > -> SO3vecView<RTYPE> -> 
+// BatchedGvecView<int,BatchedSO3partView<RTYPE>,SO3vecView<RTYPE> > -> GvecView<<int,BatchedSO3partView<RTYPE> > 
 
 namespace GElib{
 
   template<typename RTYPE>
-  class SO3vecC:public Gvec<SO3vecView<RTYPE> >{
+  class SO3vec: public Gvec<SO3vecView<RTYPE> >, 
+		public cnine::diff_class<SO3vec<RTYPE> >{
   public:
 
     typedef cnine::Gdims Gdims;
@@ -28,23 +30,31 @@ namespace GElib{
 
     typedef cnine::MemArr<complex<RTYPE> > MemArr;
     typedef Gvec<SO3vecView<RTYPE> > Gvec;
+    typedef cnine::diff_class<SO3vec<RTYPE> > diff_class; 
 
-    using Gvec::Gvec;
     using Gvec::parts;
 
+    using diff_class::grad; 
+    using diff_class::add_to_grad; 
+
+
+    ~SO3vec(){
+#ifdef WITH_FAKE_GRAD
+      if(grad) delete grad;
+#endif 
+    }
 
 
   public: // ---- Constructors -------------------------------------------------------------------------------
 
 
-    SO3vecC(){}
+    SO3vec(){}
 
-    template<typename FILLTYPE, typename = typename 
-	     std::enable_if<std::is_base_of<cnine::fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
-    SO3vecC(const SO3type& _tau, const FILLTYPE& fill, const int _dev=0){
+    template<typename FILLTYPE, typename = typename std::enable_if<std::is_base_of<cnine::fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
+    SO3vec(const int _b, const SO3type& _tau, const FILLTYPE& fill, const int _dev=0){
       for(int l=0; l<_tau.size(); l++){
 	Gdims dims({2*l+1,_tau[l]});
-	parts[l]=new SO3partView<RTYPE>(dims,fill,_dev);
+	parts[l]=new SO3partView<RTYPE>(_b,dims,fill,_dev);
       }
     }
 
@@ -52,16 +62,16 @@ namespace GElib{
   public: // ---- Named constructors -------------------------------------------------------------------------
 
 
-    static SO3vecC zero(const SO3type& _tau, const int _dev=0){
-      return SO3vecC(_tau,cnine::fill_zero(),_dev);
+    static SO3vec zero(const int _b, const SO3type& _tau, const int _dev=0){
+      return SO3vec(_b,_tau,cnine::fill_zero(),_dev);
     }
 
-    static SO3vecC sequential(const SO3type& _tau, const int _dev=0){
-      return SO3vecC(_tau,cnine::fill_sequential(),_dev);
+    static SO3vec sequential(const int _b, const SO3type& _tau, const int _dev=0){
+      return SO3vec(_b,_tau,cnine::fill_sequential(),_dev);
     }
 
-    static SO3vecC gaussian(const SO3type& _tau, const int _dev=0){
-      return SO3vecC(_tau,cnine::fill_gaussian(),_dev);
+    static SO3vec gaussian(const int _b, const SO3type& _tau, const int _dev=0){
+      return SO3vec(_b,_tau,cnine::fill_gaussian(),_dev);
     }
 
 
@@ -73,25 +83,18 @@ namespace GElib{
 
 
   template<typename RTYPE>
-  inline SO3vecC<RTYPE> operator+(const SO3vecC<RTYPE>& x, const SO3vecC<RTYPE>& y){
-    SO3vecC<RTYPE> r(x);
+  inline SO3vec<RTYPE> operator+(const SO3vec<RTYPE>& x, const SO3vec<RTYPE>& y){
+    SO3vec<RTYPE> r(x);
     r.add(y);
     return r;
   }
 
-
-  //template<typename RTYPE>
-  //inline SO3vecC<RTYPE> operator+(const SO3vecC<RTYPE>& x, const SO3vecC<RTYPE>& y){
-  //SO3vecC<RTYPE> r(x);
-  //r.add(y);
-  //return r;
-  //}
-
-
   template<typename TYPE>
-  inline SO3vecC<TYPE> CGproduct(const SO3vecView<TYPE>& x, const SO3vecView<TYPE>& y, const int maxl=-1){
-    SO3vecC<TYPE> R=SO3vecC<TYPE>::zero(GElib::CGproduct(x.get_tau(),y.get_tau(),maxl),x.device());
-    add_vCGproduct(R,x,y);
+  inline SO3vec<TYPE> CGproduct(const SO3vecView<TYPE>& x, const SO3vecView<TYPE>& y, const int maxl=-1){
+    GELIB_ASSRT(x.getb()==y.getb());
+    SO3vec<TYPE> R=SO3vec<TYPE>::zero(x.getb(),GElib::CGproduct(x.get_tau(),y.get_tau(),maxl),x.device());
+    R.add_CGproduct(x,y);
+    //add_vCGproduct(R,x,y);
     return R;
   }
 

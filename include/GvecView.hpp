@@ -16,11 +16,11 @@
 
 namespace GElib{
 
-  template<typename KEY, typename PART>
+  template<typename KEY, typename Pview, typename Vview>
   class GvecView{
   public:
 
-    mutable unordered_map<KEY,PART*> parts;
+    mutable map<KEY,Pview*> parts;
 
     GvecView(){}
 
@@ -36,7 +36,7 @@ namespace GElib{
     GvecView(const GvecView& x){
       GELIB_COPY_WARNING();
       for(auto& p:x.parts)
-	parts[p.first]=new PART(*p.second);
+	parts[p.first]=new Pview(*p.second);
     }
     
     GvecView(GvecView&& x):
@@ -55,36 +55,50 @@ namespace GElib{
   public: // ---- Access ------------------------------------------------------------------------------------
 
 
-    //int getb() const{
-    //return parts.begin()->second.getb();
-    //}
+    int getb() const{
+      return parts.begin()->second->getb();
+    }
+
+    Vview batch(const int b) const{
+      CNINE_CHECK_RANGE(b<getb());
+      Vview R;
+      for(auto& p:parts)
+	R.parts[p.first]=new Pview(p.second->batch(b));
+      //R.parts[p.first]=p.second->batch(b).clone();
+      return R;
+    }
 
     int device() const{
       if(parts.size()==0) return 0;
       return parts.begin()->second->device();
     }
 
-    PART operator()(const KEY& l) const{
+    Pview operator()(const KEY& l) const{
       auto it=parts.find(l);
       assert(it!=parts.end());
-      return PART(*it->second);
+      return Pview(*it->second);
     }
 
-    PART part(const KEY& l) const{
+    Pview part(const KEY& l) const{
       auto it=parts.find(l);
       assert(it!=parts.end());
-      return PART(*it->second);
+      return Pview(*it->second);
     }
 
 
   public: // ---- Lambdas ------------------------------------------------------------------------------------
 
 
-    void for_each_part(const std::function<void(const KEY&, const PART&)>& lambda) const{
+    void for_each_part(const std::function<void(const KEY&, const Pview&)>& lambda) const{
       for(auto& p:parts) 
 	lambda(p.first,*p.second);
     }
 
+    void for_each_batch(const std::function<void(const int, const Vview& x)>& lambda) const{
+      int B=getb();
+      for(int b=0; b<B; b++)
+	lambda(b,batch(b));
+    }
 
   public: // ---- Cumulative operations ----------------------------------------------------------------------
 
@@ -94,6 +108,31 @@ namespace GElib{
 	p.second->add(x.part(p.first));
       }
     }
+
+
+  public: // ---- I/O ----------------------------------------------------------------------------------------
+
+
+    string str(const string indent="") const{
+      ostringstream oss;
+      if(getb()>1){
+	for_each_batch([&](const int b, const GvecView& x){
+	    oss<<indent<<"Batch "<<b<<":"<<endl;
+	    oss<<x.str(indent+"  ");
+	  });
+      }else{
+	for_each_part([&](const int p, const Pview& x){
+	    oss<<indent<<"Part "<<p<<":"<<endl;
+	    oss<<x.str(indent);
+	  });
+      }
+      return oss.str();
+    }
+
+    friend ostream& operator<<(ostream& stream, const GvecView& x){
+      stream<<x.str(); return stream;
+    }
+
 
   };
 

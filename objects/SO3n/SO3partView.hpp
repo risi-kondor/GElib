@@ -13,18 +13,31 @@
 #define _GElibSO3partView
 
 #include "GElib_base.hpp"
-#include "TensorView.hpp"
+#include "BatchedTensorView.hpp"
+#include "TensorTemplates.hpp"
 #include "SO3part3_view.hpp"
 #include "SO3templates.hpp"
+
+#include "SO3part_addCGproductFn.hpp"
+#include "SO3part_addCGproduct_back0Fn.hpp"
+#include "SO3part_addCGproduct_back1Fn.hpp"
+
+#include "SO3part_addRCGproductFn.hpp"
+#include "SO3part_addRCGproduct_back0Fn.hpp"
+#include "SO3part_addRCGproduct_back1Fn.hpp"
+
+#include "SO3part_addBlockedCGproductFn.hpp"
+#include "SO3part_addBlockedCGproduct_back0Fn.hpp"
+#include "SO3part_addBlockedCGproduct_back1Fn.hpp"
 
 
 namespace GElib{
 
   template<typename RTYPE>
-  class SO3partView: public cnine::TensorView<complex<RTYPE> >, public SO3part_t{
+  class SO3partView: public cnine::BatchedTensorView<complex<RTYPE> >{
   public:
 
-    typedef cnine::TensorView<complex<RTYPE> > TensorView;
+    typedef cnine::BatchedTensorView<complex<RTYPE> > TensorView;
 
     using TensorView::TensorView;
     using TensorView::arr;
@@ -32,12 +45,9 @@ namespace GElib{
     using TensorView::strides;
 
     using TensorView::device;
-
+    using TensorView::bbatch;
+    using TensorView::getb;
     
-    SO3partView* clone() const{
-      return new SO3partView(*this);
-    }
-
 
   public: // ---- Conversions --------------------------------------------------------------------------------
 
@@ -45,9 +55,12 @@ namespace GElib{
     SO3partView(const TensorView& x):
       TensorView(x){}
 
+    //SO3partView(const cnine::TensorView<complex<RTYPE> >& x):
+    //TensorView(x){}
+
     operator SO3part3_view() const{
-      return SO3part3_view(arr.template ptr_as<RTYPE>(),{1,dims[0],dims[1]},
-	{2*strides[0]*dims[0],2*strides[0],2*strides[1]},1,device());
+      return SO3part3_view(arr.template ptr_as<RTYPE>(),{dims[0],dims[1],dims[2]},
+	{2*strides[0],2*strides[1],2*strides[2]},1,device());
     }
 
 
@@ -55,11 +68,38 @@ namespace GElib{
 
     
     int getl() const{
-      return (dims(0)-1)/2;
+      return (dims[1]-1)/2;
     }
 
     int getn() const{
-      return dims(1);
+      return dims[2];
+    }
+
+    SO3partView<RTYPE> batch(const int i) const{
+      return bbatch(i);
+      //return SO3partView<RTYPE>(arr+strides[0]*i,dims.chunk(1),strides.chunk(1));
+    }
+
+
+  public: // ---- CG-products --------------------------------------------------------------------------------
+
+    
+    void add_CGproduct(const SO3partView& x, const SO3partView& y, const int _offs=0) const{
+      cnine::reconcile_batches<SO3partView>(*this,x,y,
+	[&](const auto& r, const auto& x, const auto& y){SO3part_addCGproductFn()(r,x,y,_offs);},
+	[&](const auto& r, const auto& x, const auto& y){SO3part_addRCGproductFn()(r,x,y,_offs);});
+    }
+
+    void add_CGproduct_back0(const SO3partView& g, const SO3partView& y, const int _offs=0){
+      cnine::reconcile_batches<SO3partView>(*this,g,y,
+	[&](const auto& xg, const auto& g, const auto& y){SO3part_addCGproduct_back0Fn()(xg,g,y,_offs);},
+	[&](const auto& xg, const auto& g, const auto& y){SO3part_addRCGproduct_back0Fn()(xg,g,y,_offs);});
+    }
+
+    void add_CGproduct_back1(const SO3partView& g, const SO3partView& x, const int _offs=0){
+      cnine::reconcile_batches<SO3partView>(*this,g,x,
+	[&](const auto& yg, const auto& g, const auto& x){SO3part_addCGproduct_back1Fn()(yg,g,x,_offs);},
+	[&](const auto& yg, const auto& g, const auto& x){SO3part_addRCGproduct_back1Fn()(yg,g,x,_offs);});
     }
 
 
@@ -67,12 +107,12 @@ namespace GElib{
 
 
     string repr(const string indent="") const{
-      return "<GElib::SO3part(l="+to_string(getl())+",n="+to_string(getn())+")>";
+      return "<GElib::SO3part(b="+to_string(getb())+",l="+to_string(getl())+",n="+to_string(getn())+")>";
     }
-    
-    friend ostream& operator<<(ostream& stream, const SO3partView& x){
-      stream<<x.str(); return stream;
-    }
+
+    //friend ostream& operator<<(ostream& stream, const SO3partView& x){
+    //stream<<x.str(); return stream;
+    //}
     
   };
 
@@ -80,19 +120,25 @@ namespace GElib{
 
 
 #endif 
-    //public: // ---- CG-products --------------------------------------------------------------------------------
 
-    
-    //void add_CGproduct(const SO3partView& x, const SO3partView& y, const int _offs=0){
-    //SO3part_addCGproductFn()(*this,x,y,_offs);
-    //}
 
-    //void add_CGproduct_back0(const SO3partView& g, const SO3partView& y, const int _offs=0){
-    //SO3part_addCGproduct_back0Fn()(*this,g,y,_offs);
-    //}
 
-    //void add_CGproduct_back1(const SO3partView& g, const SO3partView& x, const int _offs=0){
-    //SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
-    //}
 
+   /*
+    string str(const string indent="") const{
+      ostringstream oss;
+      if(getb()>1){
+	for_each_batch([&](const int b, const VEC& x){
+	    oss<<indent<<"Batch "<<b<<":"<<endl;
+	    oss<<indent+"  "<<x<<endl;
+	  });
+	return;
+      }
+      for_each_part([&](const int p, const Pview& x){
+	  oss<<indent<<"Part "<<p<<":"<<endl;
+	  oss<<indent<<x<<endl;
+	});
+      return oss.str();
+    }
+    */
 

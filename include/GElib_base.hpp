@@ -27,7 +27,8 @@ using namespace std;
 #define GELIB_CHECK(condition,err) if(!condition) {{cnine::CoutLock lk; cerr<<"GElib error in function '"<<__PRETTY_FUNCTION__<<"' : "<<err<<endl;} exit(1);};
 #define GELIB_UNIMPL() printf("GElib error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
 //#define GELIB_CPUONLY() if(dev!=0) {printf("GElib error: CUDA code for \"%s\" not implemented.\n",__PRETTY_FUNCTION__); exit(-1);}
-#define GELIB_ERROR(cmd) {cnine::CoutLock lk; cerr<<"GElib error in function '"<<__PRETTY_FUNCTION__<<"' : "<<cmd<<endl;} exit(1);
+#define GELIB_ERROR(msg) throw std::runtime_error("GElib error in "+string(__PRETTY_FUNCTION__)+" : "+msg+".");
+//{cout<<33333<<endl; cnine::CoutLock lk; cout<<"GElib error in function '"<<__PRETTY_FUNCTION__<<"' : "<<cmd<<endl; exit(1);}
 
 // ---- Copy, assign and convert warnings --------------------------------------------------------------------
 

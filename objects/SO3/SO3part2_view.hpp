@@ -14,6 +14,7 @@
 
 #include "CtensorB.hpp"
 #include "Ctensor2_view.hpp"
+#include "TensorView.hpp"
 
 //#include "SO3_CGbank.hpp"
 //#include "SO3_SPHgen.hpp"
@@ -79,6 +80,14 @@ namespace GElib{
     }
 
     SO3part2_view(const Ctensor2_view& x):
+      Ctensor2_view(x){
+      assert(n0%2==1);
+      l=(n0-1)/2;
+      ar=arr+l*s0;
+      ac=arrc+l*s0;
+    }
+
+    SO3part2_view(const cnine::TensorView<complex<float> >& x):
       Ctensor2_view(x){
       assert(n0%2==1);
       l=(n0-1)/2;
