@@ -12,17 +12,19 @@
 py::class_<SO3partArray<float> >(m,"SO3partArray",
   "Class to store an array consisting of n vectors transforming according to a specific irreducible representation of SO(3)")
 
-  .def(pybind11::init<const at::Tensor&>())
     
-  .def_static("raw",[](const int b, const int l, const int n, const int dev){
-    return SO3partArray<float>::raw(b,l,n,dev);}, py::arg("b"), py::arg("l"), py::arg("n")=1, py::arg("device")=0)
-  .def_static("zero",[](const int b, const int l, const int n, const int dev){
-      return SO3partArray<float>::zero(b,l,n,dev);}, py::arg("b"), py::arg("l"), py::arg("n")=1, py::arg("device")=0)
-  .def_static("gaussian",[](const int b, const int l, const int n, const int dev){
-      return SO3partArray<float>::gaussian(b,l,n,dev);}, py::arg("b"), py::arg("l"), py::arg("n")=1, py::arg("device")=0)
+  .def_static("raw",[](const int b, const vector<int>& adims, const int l, const int n, const int dev){
+      return SO3partArray<float>::raw(b,adims,l,n,dev);}, 
+    py::arg("b"), py::arg("adims"), py::arg("l"), py::arg("n")=1, py::arg("device")=0)
+  .def_static("zero",[](const int b, const vector<int>& adims, const int l, const int n, const int dev){
+      return SO3partArray<float>::zero(b,adims,l,n,dev);}, 
+    py::arg("b"), py::arg("adims"), py::arg("l"), py::arg("n")=1, py::arg("device")=0)
+  .def_static("gaussian",[](const int b, const vector<int>& adims, const int l, const int n, const int dev){
+      return SO3partArray<float>::gaussian(b,adims,l,n,dev);}, 
+    py::arg("b"), py::arg("adims"), py::arg("l"), py::arg("n")=1, py::arg("device")=0)
 
 //.def(pybind11::init([](const at::Tensor& x){return SO3partArray<float>(cnine::CtensorB(x));}))
-//  .def_static("view",[](at::Tensor& x){return SO3partArray<float>(cnine::CtensorB::view(x));})
+  .def(pybind11::init<const at::Tensor&>())
   .def("torch",[](const SO3partArray<float>& x){return x.torch();})
 
   .def("add_to_grad",[](SO3partArray<float>& r, const SO3partArray<float>& x){r.add_to_grad(x);})
@@ -31,8 +33,14 @@ py::class_<SO3partArray<float> >(m,"SO3partArray",
   .def("__len__",[](const SO3partArray<float>& obj){return 1;})
   .def("device",&SO3partArray<float>::device)
   .def("getb",&SO3partArray<float>::getb)
+  //.def("get_adims",[](const SO3partArray<float>& x){return vector<int>(x.get_adims());})
+  .def("get_adims",&SO3partArray<float>::get_adims) 
   .def("getl",&SO3partArray<float>::getl)
   .def("getn",&SO3partArray<float>::getn)
+
+  .def("cell",[](SO3partArray<float>& r, vector<int>& ix){return SO3part<float>(r.cell(ix));})
+  .def("get_cell_back",[](SO3partArray<float>& r, vector<int>& ix, SO3part<float>& x){
+      r.get_grad()(ix).add(x.get_grad());})
 
 //.def("mprod",&SO3partArray<float>B::mprod)
 //  .def("add_mprod",&SO3partArray<float>B::add_mprod)

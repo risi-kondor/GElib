@@ -16,6 +16,7 @@
 
 namespace GElib{
 
+  // make this a subclass of GvecView? 
   template<typename KEY, typename PAview, typename VAview, typename Vview>
   class GvecArrayView{
   public:
@@ -54,9 +55,28 @@ namespace GElib{
     }
 
 
+  public: // ---- ATen --------------------------------------------------------------------------------------
+
+    
+    #ifdef _WITH_ATEN
+    
+    vector<at::Tensor> torch() const{
+      vector<at::Tensor> R;
+      for_each_part([&](const KEY& key, const PAview& part){
+	  R.push_back(part.torch());});
+      return R;
+    }
+
+    #endif 
+
+
   public: // ---- Access ------------------------------------------------------------------------------------
 
     
+    int size() const{
+      return parts.size();
+    }
+
     int getb() const{
       return parts.begin()->second->getb();
     }
@@ -78,7 +98,7 @@ namespace GElib{
 
 
     VAview batch(const int b) const{
-      CNINE_CHECK_RANGE(b<getb());
+      //CNINE_CHECK_RANGE(b<getb());
       VAview R;
       for(auto& p:parts)
 	R.parts[p.first]=new PAview(p.second->batch(b));

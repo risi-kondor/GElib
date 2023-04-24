@@ -30,6 +30,9 @@ py::class_<SO3vec<float> >(m,"SO3vec")
   .def("getb",&SO3vec<float>::getb)
   .def("get_tau",&SO3vec<float>::get_tau)
 
+  .def("part",[](SO3vec<float>& r, int l){return SO3part<float>(r.part(l));})
+  .def("add_to_part_grad_of",[](SO3vec<float>& r, int l, SO3part<float>& x){r.get_grad().part(l).add(x.get_grad());})
+
   .def("add_CGproduct",[](SO3vec<float>& r, const SO3vec<float>& x, const SO3vec<float>& y){
       r.add_CGproduct(x,y);},py::arg("x"),py::arg("y"))
   .def("add_CGproduct_back0",[](SO3vec<float>& r, SO3vec<float>& g, const SO3vec<float>& y){

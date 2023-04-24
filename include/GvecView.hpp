@@ -79,7 +79,7 @@ namespace GElib{
     }
 
     Vview batch(const int b) const{
-      CNINE_CHECK_RANGE(b<getb());
+      //CNINE_CHECK_RANGE(b<getb());
       Vview R;
       for(auto& p:parts)
 	R.parts[p.first]=new Pview(p.second->batch(b));

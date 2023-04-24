@@ -26,6 +26,10 @@
 #include "SO3part_addRCGproduct_back0Fn.hpp"
 #include "SO3part_addRCGproduct_back1Fn.hpp"
 
+#include "SO3part_addBlockedCGproductFn.hpp"
+#include "SO3part_addBlockedCGproduct_back0Fn.hpp"
+#include "SO3part_addBlockedCGproduct_back1Fn.hpp"
+
 
 namespace GElib{
 
@@ -46,6 +50,7 @@ namespace GElib{
     using BatchedTensorArrayView::ak;
 
     using BatchedTensorArrayView::BatchedTensorArrayView;
+    //using BatchedTensorArrayView::operator=;
     using BatchedTensorArrayView::device;
     using BatchedTensorArrayView::ndims;
     using BatchedTensorArrayView::nadims;
@@ -57,13 +62,26 @@ namespace GElib{
     using BatchedTensorArrayView::get_dstrides;
     using BatchedTensorArrayView::getN;
     using BatchedTensorArrayView::slice;
+
     
+  public: // ---- Constructors for non-view child classes ---------------------------------------------------
+
+
+    SO3partArrayView(const int b, const Gdims& _adims, const int l, const int n, const int _dev=0):
+      BatchedTensorArrayView(b,_adims,Gdims({2*l+1,n}),_dev){}
+
+    template<typename FILLTYPE, typename = typename 
+	     std::enable_if<std::is_base_of<cnine::fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
+    SO3partArrayView(const int b, const Gdims& _adims, const int l, const int n, const FILLTYPE& fill, const int _dev=0):
+      BatchedTensorArrayView(b,_adims,Gdims({2*l+1,n}),fill,_dev){}
+
+
 
   public: // ---- Conversions --------------------------------------------------------------------------------
 
 
-    SO3partArrayView(const cnine::TensorArrayView<complex<RTYPE> >& x):
-      BatchedTensorArrayView(x){}
+    //SO3partArrayView(const cnine::TensorArrayView<complex<RTYPE> >& x):
+    //BatchedTensorArrayView(x){}
 
     //SO3partArrayView(const cnine::TensorView<complex<RTYPE> >& x):
     //BatchedTensorArrayView(x){
@@ -116,6 +134,27 @@ namespace GElib{
     }
 
 
+    SO3partView cell(const int i0){
+      CNINE_ASSRT(ak==2);
+      return SO3partView(arr+strides[1]*i0,get_ddims(),get_dstrides());
+    }
+
+    SO3partView cell(const int i0, const int i1){
+      CNINE_ASSRT(ak==3);
+      return SO3partView(arr+strides[1]*i0+strides[2]*i1,get_ddims(),get_dstrides());
+    }
+
+    SO3partView cell(const int i0, const int i1, const int i2){
+      CNINE_ASSRT(ak==4);
+      return SO3partView(arr+strides[1]*i0+strides[2]*i1+strides[3]*i2,get_ddims(),get_dstrides());
+    }
+
+    SO3partView cell(const Gindex& ix){
+      CNINE_ASSRT(ix.size()==ak);
+      return SO3partView(arr+strides.chunk(1)(ix),get_ddims(),get_dstrides());
+    }
+
+
   public: // ---- CG-products --------------------------------------------------------------------------------
 
     
@@ -135,6 +174,34 @@ namespace GElib{
       cnine::reconcile_batched_array<SO3partArrayView>(*this,g,x,
 	[&](const auto& yg, const auto& g, const auto& x){SO3part_addCGproduct_back1Fn()(yg,g,x,_offs);},
 	[&](const auto& yg, const auto& g, const auto& x){SO3part_addRCGproduct_back1Fn()(yg,g,x,_offs);});
+    }
+
+
+    void add_DiagCGproduct(const SO3partArrayView& x, const SO3partArrayView& y, const int _offs=0) const{
+      cnine::reconcile_batched_array<SO3partArrayView>(*this,x,y,
+	[&](const auto& r, const auto& x, const auto& y){SO3part_addBlockedCGproductFn()(r,x,y,1,_offs);},
+	[&](const auto& r, const auto& x, const auto& y){
+	  GELIB_UNIMPL();
+	  //SO3part_addRBlockedCGproductFn()(r,x,y,1,_offs);
+	});
+    }
+
+    void add_DiagCGproduct_back0(const SO3partArrayView& g, const SO3partArrayView& y, const int _offs=0){
+      cnine::reconcile_batched_array<SO3partArrayView>(*this,g,y,
+	[&](const auto& xg, const auto& g, const auto& y){SO3part_addBlockedCGproduct_back0Fn()(xg,g,y,1,_offs);},
+	[&](const auto& xg, const auto& g, const auto& y){
+	  GELIB_UNIMPL();
+	  //SO3part_addRBlockedCGproduct_back0Fn()(xg,g,y,1,_offs);
+	});
+    }
+
+    void add_DiagCGproduct_back1(const SO3partArrayView& g, const SO3partArrayView& x, const int _offs=0){
+      cnine::reconcile_batched_array<SO3partArrayView>(*this,g,x,
+	[&](const auto& yg, const auto& g, const auto& x){SO3part_addBlockedCGproduct_back1Fn()(yg,g,x,1,_offs);},
+	[&](const auto& yg, const auto& g, const auto& x){
+	  GELIB_UNIMPL();
+	  //SO3part_addRBlockedCGproduct_back1Fn()(yg,g,x,1,_offs);
+	});
     }
 
 

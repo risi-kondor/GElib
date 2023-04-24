@@ -21,26 +21,32 @@
 namespace GElib{
 
 
+  // SO3partArray > TensorArrayVirtual > SO3partArrayView > BatchedTensorArrayView > 
+  // TensorArrayView > TensorView 
+
   template<typename TYPE>
   class SO3partArray: public cnine::TensorArrayVirtual<complex<TYPE>, SO3partArrayView<TYPE> >,
 		      public cnine::diff_class<SO3partArray<TYPE> >{
     
   public:
 
-    typedef cnine::device device;
+    //typedef cnine::device device;
     typedef cnine::fill_pattern fill_pattern;
     typedef cnine::fill_zero fill_zero;
 
     typedef cnine::Gdims Gdims;
     typedef cnine::TensorArrayVirtual<complex<TYPE>, SO3partArrayView<TYPE> > TensorArrayVirtual;
+    typedef SO3partArrayView<TYPE> SO3partArrayView;
 
     using TensorArrayVirtual::TensorArrayVirtual;
     using TensorArrayVirtual::arr;
+    //using TensorArrayVirtual::device;
     using TensorArrayVirtual::move_to_device;
 
-    //using cnine::TensorVirtual<TYPE, SO3partArrayView<TYPE> >::TensorVirtual; 
-    //using cnine::TensorVirtual<TYPE, SO3partArrayView<TYPE> >::arr; 
-    //using cnine::TensorVirtual<TYPE, SO3partArrayView<TYPE> >::move_to_device;
+    using SO3partArrayView::getl;
+    using SO3partArrayView::getn;
+    //using SO3partArrayView::dim;
+    //using SO3partArrayView::device;
 
 
     ~SO3partArray(){
@@ -50,12 +56,15 @@ namespace GElib{
   public: // ---- Constructors --------------------------------------------------------------------------------
 
 
-    SO3partArray(const int _b, const Gdims& _dims, const int l, const int n, const int _dev=0):
-      TensorArrayVirtual(_b,_dims,{2*l+1,n},_dev){}
-
+    //SO3partArray(const int _b, const Gdims& _dims, const int l, const int n, const int _dev=0):
+    //TensorArrayVirtual(_b,_dims,{2*l+1,n},_dev){}
+    
 
   public: // ---- Named constructors --------------------------------------------------------------------------
 
+    
+    static SO3partArray raw(const int _b, const Gdims& _dims, const int l, const int c, const int _dev=0){
+      return SO3partArray(_b,_dims,{2*l+1,c},cnine::fill_raw(),_dev);}
     
     static SO3partArray zero(const int _b, const Gdims& _dims, const int l, const int c, const int _dev=0){
       return SO3partArray(_b,_dims,{2*l+1,c},cnine::fill_zero(),_dev);}
@@ -64,11 +73,14 @@ namespace GElib{
       return SO3partArray(_b,_dims,{2*l+1,c},cnine::fill_sequential(),_dev);}
     
     static SO3partArray gaussian(const int _b, const Gdims& _dims, const int l, const int c, const int _dev=0){
-      return SO3partArray(_b,_dims,{2*l+1,c},cnine::fill_gaussian(),_dev);}
+      return SO3partArray(_b,_dims,{2*l+1,c},cnine::fill_gaussian(),_dev);
+      //return SO3partArrayView(_b,_dims,l,c,cnine::fill_gaussian(),_dev);
+      //return TensorArrayVirtual(_dims.prepend(_b),Gdims({2*l+1,c}),cnine::fill_gaussian(),_dev);
+    }
     
 
     static SO3partArray* new_zeros_like(const SO3partArray& x){
-      return new SO3partArray(x.getb(),x.get_adims(),x.getl(),x.getn(),cnine::fill_zero(),x.device());
+      return new SO3partArray(x.getb(),x.get_adims(),Gdims({2*x.getl()+1,x.getn()}),cnine::fill_zero(),x.device());
     }
 
 
@@ -79,6 +91,17 @@ namespace GElib{
     //TensorArrayVirtual(x){}
 
 
+  public: // ---- ATen --------------------------------------------------------------------------------------
+
+
+    #ifdef _WITH_ATEN
+
+    SO3partArray(const at::Tensor& T):
+      TensorArrayVirtual(T.dim()-2,T){}
+
+    #endif 
+
+    
   public: // ---- Access --------------------------------------------------------------------------------------
 
 

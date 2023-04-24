@@ -1,4 +1,4 @@
-d// This file is part of GElib, a C++/CUDA library for group
+// This file is part of GElib, a C++/CUDA library for group
 // equivariant tensor operations. 
 // 
 // Copyright (c) 2023, Imre Risi Kondor
@@ -11,13 +11,13 @@ d// This file is part of GElib, a C++/CUDA library for group
 py::class_<SO3vecArray<float> >(m,"SO3vecArray")
 
     
-  .def_static("zero",[](const int b, const SO3type& tau, const int dev){
-    return SO3vecArray<float>::zero(b,tau,dev);}, 
-    py::arg("b"), py::arg("tau"), py::arg("device")=0)
+  .def_static("zero",[](const int b, const vector<int>& adims, const SO3type& tau, const int dev){
+      return SO3vecArray<float>::zero(b,adims,tau,dev);}, 
+    py::arg("b"), py::arg("adims"), py::arg("tau"), py::arg("device")=0)
 
-  .def_static("gaussian",[](const int b, const SO3type& tau, const int dev){
-    return SO3vecArray<float>::gaussian(b,tau,dev);}, 
-    py::arg("b"), py::arg("tau"), py::arg("device")=0)
+  .def_static("gaussian",[](const int b, const vector<int>& adims, const SO3type& tau, const int dev){
+      return SO3vecArray<float>::gaussian(b,adims,tau,dev);}, 
+    py::arg("b"), py::arg("adims"), py::arg("tau"), py::arg("device")=0)
 
   .def(pybind11::init<const vector<at::Tensor>&>())
   .def("torch",[](const SO3vecArray<float>& x){return x.torch();})
@@ -28,7 +28,16 @@ py::class_<SO3vecArray<float> >(m,"SO3vecArray")
   .def("__len__",[](const SO3vecArray<float>& r){return r.size();})
   .def("device",&SO3vecArray<float>::device)
   .def("getb",&SO3vecArray<float>::getb)
+  .def("get_adims",&SO3vecArray<float>::get_adims)
   .def("get_tau",&SO3vecArray<float>::get_tau)
+
+  .def("part",[](SO3vecArray<float>& r, int l){return SO3partArray<float>(r.part(l));})
+  .def("get_part_back",[](SO3vecArray<float>& r, int l, SO3partArray<float>& x){
+      r.get_grad().part(l).add(x.get_grad());})
+
+  .def("cell",[](SO3vecArray<float>& r, vector<int>& ix){return SO3vec<float>(r.cell(ix));})
+  .def("get_cell_back",[](SO3vecArray<float>& r, vector<int>& ix, SO3vec<float>& x){
+      r.get_grad().cell(ix).add(x.get_grad());})
 
   .def("add_CGproduct",[](SO3vecArray<float>& r, const SO3vecArray<float>& x, const SO3vecArray<float>& y){
       r.add_CGproduct(x,y);},py::arg("x"),py::arg("y"))

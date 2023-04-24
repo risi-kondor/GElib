@@ -11,8 +11,11 @@ import torch
 from gelib_base import SO3type as _SO3type
 from gelib_base import SO3part as _SO3part
 from gelib_base import SO3vec as _SO3vec
+from gelib_base import SO3partArray as _SO3partArray
+from gelib_base import SO3vecArray as _SO3vecArray
 
-from gelib import SO3partC as SO3partC
+from gelib import SO3partArrC as SO3partArrC
+from gelib import SO3vecC as SO3vecC
 
 
 def device_id(device):
@@ -36,29 +39,29 @@ def device_id(device):
 # ----------------------------------------------------------------------------------------------------------
 
 
-class SO3vecC(torch.Tensor):
+class SO3vecArrC(torch.Tensor):
 
     @classmethod
     def dummy(self):
-        R=SO3vecC(1)
+        R=SO3vecArrC(1)
         #R.obj=_ptensors0.dummy()
         return R
 
     @classmethod
-    def zeros(self,b,_tau,device='cpu'):
+    def zeros(self,b,adims,_tau,device='cpu'):
         R=SO3vecC(1)
-        R.obj=_SO3vec.zero(b,_SO3type(_tau),device_id(device))
+        R.obj=_SO3vecArray.zero(b,adims,_SO3type(_tau),device_id(device))
         return R
 
     @classmethod
-    def randn(self,b,_tau,device='cpu'):
-        R=SO3vecC(1)
-        R.obj=_SO3vec.gaussian(b,_SO3type(_tau),device_id(device))
+    def randn(self,b,adims,_tau,device='cpu'):
+        R=SO3vecArrC(1)
+        R.obj=_SO3vecArray.gaussian(b,adims,_SO3type(_tau),device_id(device))
         return R
 
     @classmethod
     def from_torch(self,T):
-        return SO3vecC_fromTorchFn.apply(T)
+        return SO3vecArrC_fromTorchFn.apply(T)
 
 
     # ---- Access ------------------------------------------------------------------------------------------
@@ -70,6 +73,9 @@ class SO3vecC(torch.Tensor):
     def getb(self):
         return self.obj.getb()
 
+    def get_adims(self):
+        return self.obj.get_adims()
+
     def getl(self):
         return self.obj.getl()
 
@@ -77,16 +83,19 @@ class SO3vecC(torch.Tensor):
         return self.obj.getn()
 
     def __getitem__(self,i):
-        return SO3vecC_getPartFn.apply(self,i)
+        return SO3vecArrC_getPartFn.apply(self,i)
+
+    def cell(self,ix):
+        return SO3vecArrC_getCellFn.apply(self,ix)
 
 
     def get_grad(self):
-        R=SO3vecC(1)
+        R=SO3vecArrC(1)
         R.obj=self.obj.get_grad()
         return R
 
     def torch(self):
-        return SO3vecC_toTorchFn.apply(self)
+        return SO3vecArrC_toTorchFn.apply(self)
 
 
     # ---- I/O ----------------------------------------------------------------------------------------------
@@ -104,12 +113,12 @@ class SO3vecC(torch.Tensor):
 # ----------------------------------------------------------------------------------------------------------
 
 
-class SO3vecC_fromTorchFn(torch.autograd.Function):
+class SO3vecArrC_fromTorchFn(torch.autograd.Function):
 
     @staticmethod
     def forward(ctx,*args):
-        r=SO3vecC(1)
-        r.obj=_SO3vec(*args)
+        r=SO3vecArrC(1)
+        r.obj=_SO3vecArray(*args)
         ctx.r=r
         return r
 
@@ -118,7 +127,7 @@ class SO3vecC_fromTorchFn(torch.autograd.Function):
         return tuple(ctx.r.obj.get_grad().torch())
 
 
-class SO3vecC_toTorchFn(torch.autograd.Function):
+class SO3vecArrC_toTorchFn(torch.autograd.Function):
 
     @staticmethod
     def forward(ctx,x):
@@ -127,15 +136,15 @@ class SO3vecC_toTorchFn(torch.autograd.Function):
  
     @staticmethod
     def backward(ctx,*g):
-        ctx.x.obj.add_to_grad(_SO3vec(*g))
-        return SO3vecC.dummy()
+        ctx.x.obj.add_to_grad(_SO3vecArray(*g))
+        return SO3vecArrC.dummy()
+    
 
-
-class SO3vecC_getPartFn(torch.autograd.Function):
+class SO3vecArrC_getPartFn(torch.autograd.Function):
 
     @staticmethod
     def forward(ctx,x,l):
-        r=SO3partC(1)
+        r=SO3partArrC(1)
         r.obj=x.obj.part(l)
         ctx.x=x
         ctx.r=r
@@ -144,7 +153,24 @@ class SO3vecC_getPartFn(torch.autograd.Function):
     @staticmethod
     def backward(ctx,g):
         ctx.x.obj.get_part_back(ctx.r.getl(),ctx.r.obj)
-        return SO3vecC.dummy(), None
+        return SO3vecArrC.dummy(), None
+
+
+class SO3vecArrC_getCellFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,x,ix):
+        r=SO3vecC(1)
+        r.obj=x.obj.cell(ix)
+        ctx.x=x
+        ctx.r=r
+        ctx.ix=ix
+        return r
+
+    @staticmethod
+    def backward(ctx,g):
+        ctx.x.obj.get_cell_back(ctx.ix,ctx.r.obj)
+        return SO3vecArrC.dummy(), None
 
 
 

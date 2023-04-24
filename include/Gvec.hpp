@@ -12,7 +12,7 @@
 #define _GElibGvec
 
 #include "GElib_base.hpp"
-
+#include "GvecView.hpp"
 
 namespace GElib{
 
@@ -34,6 +34,25 @@ namespace GElib{
     }
     
     Gvec& operator=(const Gvec& x){
+      GELIB_ASSIGN_WARNING();
+      for(auto& p:parts)
+	delete p->second;
+      parts.clear();
+      for(auto& p:x.parts)
+	parts[p.first]=static_cast<decltype(BASE::part(0))*>(p.second->clone());
+    }
+
+
+  public: // ---- Conversions ---------------------------------------------------------------------------------
+
+
+    Gvec(const BASE& x){
+      GELIB_COPY_WARNING();
+      for(auto& p:x.parts)
+	parts[p.first]=static_cast<decltype(BASE::part(0))*>(p.second->clone());
+    }
+    
+    Gvec& operator=(const BASE& x){
       GELIB_ASSIGN_WARNING();
       for(auto& p:parts)
 	delete p->second;

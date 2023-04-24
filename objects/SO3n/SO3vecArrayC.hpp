@@ -31,8 +31,11 @@ namespace GElib{
 
     typedef cnine::MemArr<complex<RTYPE> > MemArr;
     typedef GvecArray<SO3vecArrayView<RTYPE> > GvecArray;
+    typedef SO3vecArrayView<RTYPE> SO3vecArrayView;
 
     using GvecArray::parts;
+
+    using SO3vecArrayView::torch;
 
 
 
@@ -69,6 +72,21 @@ namespace GElib{
     static SO3vecArray* new_zeros_like(const SO3vecArray& x){
       return new SO3vecArray(x.getb(),x.get_adims(),x.get_tau(),cnine::fill_zero(),x.device());
     }
+
+
+  public: // ---- ATen --------------------------------------------------------------------------------------
+
+    
+    #ifdef _WITH_ATEN
+
+    SO3vecArray(const vector<at::Tensor>& v){
+      for(auto& p:v)
+	parts[(p.size(p.dim()-2)-1)/2]=new SO3partArrayView<RTYPE>(p.dim()-2,p);
+    }
+
+    #endif 
+
+
 
   };
 

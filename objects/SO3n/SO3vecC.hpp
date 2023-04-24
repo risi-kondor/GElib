@@ -32,6 +32,7 @@ namespace GElib{
     typedef Gvec<SO3vecView<RTYPE> > Gvec;
     typedef cnine::diff_class<SO3vec<RTYPE> > diff_class; 
 
+    using Gvec::Gvec;
     using Gvec::parts;
 
     using diff_class::grad; 
@@ -91,6 +92,8 @@ namespace GElib{
     }
 
     #endif 
+
+
 
   };
 
