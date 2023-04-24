@@ -16,12 +16,14 @@
 #include "TensorVirtual.hpp"
 #include "GvecArray.hpp"
 #include "SO3vecArrayView.hpp"
+#include "diff_class.hpp"
 
 
 namespace GElib{
 
   template<typename RTYPE>
-  class SO3vecArray:public GvecArray<SO3vecArrayView<RTYPE> >{
+  class SO3vecArray:public GvecArray<SO3vecArrayView<RTYPE> >,
+		    public cnine::diff_class<SO3vecArray<RTYPE> >{
   public:
 
     typedef cnine::Gdims Gdims;
@@ -63,6 +65,10 @@ namespace GElib{
       return SO3vecArray(b,_adims,_tau,cnine::fill_gaussian(),_dev);
     }
 
+
+    static SO3vecArray* new_zeros_like(const SO3vecArray& x){
+      return new SO3vecArray(x.getb(),x.get_adims(),x.get_tau(),cnine::fill_zero(),x.device());
+    }
 
   };
 

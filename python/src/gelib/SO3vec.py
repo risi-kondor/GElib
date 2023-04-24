@@ -1,4 +1,3 @@
-
 # This file is part of GElib, a C++/CUDA library for group
 # equivariant tensor operations. 
 # 

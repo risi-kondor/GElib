@@ -12,18 +12,19 @@
 #define _GElibSO3partArray
 
 #include "GElib_base.hpp"
-#include "SO3partArrayC.hpp"
 #include "SO3partArrayView.hpp"
-//#include "TensorPack.hpp"
 #include "TensorArrayVirtual.hpp"
 #include "SO3templates.hpp"
+#include "diff_class.hpp"
 
 
 namespace GElib{
 
 
   template<typename TYPE>
-  class SO3partArray: public cnine::TensorArrayVirtual<complex<TYPE>, SO3partArrayView<TYPE> >{
+  class SO3partArray: public cnine::TensorArrayVirtual<complex<TYPE>, SO3partArrayView<TYPE> >,
+		      public cnine::diff_class<SO3partArray<TYPE> >{
+    
   public:
 
     typedef cnine::device device;
@@ -65,6 +66,11 @@ namespace GElib{
     static SO3partArray gaussian(const int _b, const Gdims& _dims, const int l, const int c, const int _dev=0){
       return SO3partArray(_b,_dims,{2*l+1,c},cnine::fill_gaussian(),_dev);}
     
+
+    static SO3partArray* new_zeros_like(const SO3partArray& x){
+      return new SO3partArray(x.getb(),x.get_adims(),x.getl(),x.getn(),cnine::fill_zero(),x.device());
+    }
+
 
   public: // ---- Conversions ---------------------------------------------------------------------------------
 

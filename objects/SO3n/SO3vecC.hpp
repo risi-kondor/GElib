@@ -75,6 +75,22 @@ namespace GElib{
     }
 
 
+    static SO3vec* new_zeros_like(const SO3vec& x){
+      return new SO3vec(x.getb(),x.get_tau(),cnine::fill_zero(),x.device());
+    }
+
+
+  public: // ---- ATen --------------------------------------------------------------------------------------
+
+    
+    #ifdef _WITH_ATEN
+
+    SO3vec(const vector<at::Tensor>& v){
+      for(auto& p:v)
+	parts[(p.size(1)-1)/2]=new SO3partView<RTYPE>(p);
+    }
+
+    #endif 
 
   };
 

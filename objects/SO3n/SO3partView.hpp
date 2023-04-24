@@ -103,6 +103,35 @@ namespace GElib{
     }
 
 
+
+    void add_DiagCGproduct(const SO3partView& x, const SO3partView& y, const int _offs=0) const{
+      cnine::reconcile_batches<SO3partView>(*this,x,y,
+	[&](const auto& r, const auto& x, const auto& y){SO3part_addBlockedCGproductFn()(r,x,y,1,_offs);},
+	[&](const auto& r, const auto& x, const auto& y){
+	  GELIB_UNIMPL();
+	  //SO3part_addRCGproductFn()(r,x,y,_offs);
+	});
+    }
+
+    void add_DiagCGproduct_back0(const SO3partView& g, const SO3partView& y, const int _offs=0){
+      cnine::reconcile_batches<SO3partView>(*this,g,y,
+	[&](const auto& xg, const auto& g, const auto& y){SO3part_addBlockedCGproduct_back0Fn()(xg,g,y,1,_offs);},
+	[&](const auto& xg, const auto& g, const auto& y){
+	  GELIB_UNIMPL();
+	  //SO3part_addRCGproduct_back0Fn()(xg,g,y,_offs);
+	});
+    }
+
+    void add_DiagCGproduct_back1(const SO3partView& g, const SO3partView& x, const int _offs=0){
+      cnine::reconcile_batches<SO3partView>(*this,g,x,
+	[&](const auto& yg, const auto& g, const auto& x){SO3part_addBlockedCGproduct_back1Fn()(yg,g,x,1,_offs);},
+	[&](const auto& yg, const auto& g, const auto& x){
+	  GELIB_UNIMPL();
+	  //SO3part_addRCGproduct_back1Fn()(yg,g,x,_offs);
+	});
+    }
+
+
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
 

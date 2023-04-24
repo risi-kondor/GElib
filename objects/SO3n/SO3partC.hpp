@@ -86,7 +86,11 @@ namespace GElib{
     
     static SO3part gaussian(const int b, const int l, const int n, const int _dev=0){
       return SO3part(b,Gdims({2*l+1,n}),cnine::fill_gaussian(),_dev);}
-    
+
+
+    static SO3part* new_zeros_like(const SO3part& x){
+      return new SO3part(x.getb(),Gdims({2*x.getl()+1,x.getn()}),cnine::fill_zero(),x.device());}
+
 
   public: // ---- Access -------------------------------------------------------------------------------------
 

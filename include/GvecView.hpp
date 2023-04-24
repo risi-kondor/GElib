@@ -52,8 +52,27 @@ namespace GElib{
     }
 
 
+  public: // ---- ATen --------------------------------------------------------------------------------------
+
+    
+    #ifdef _WITH_ATEN
+    
+    vector<at::Tensor> torch() const{
+      vector<at::Tensor> R;
+      for_each_part([&](const KEY& key, const Pview& part){
+	  R.push_back(part.torch());});
+      return R;
+    }
+
+    #endif 
+
+
   public: // ---- Access ------------------------------------------------------------------------------------
 
+
+    int size() const{
+      return parts.size();
+    }
 
     int getb() const{
       return parts.begin()->second->getb();
