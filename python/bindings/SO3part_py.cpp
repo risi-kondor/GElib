@@ -34,6 +34,10 @@ py::class_<SO3part<float> >(m,"SO3part",
   .def("getl",&SO3part<float>::getl)
   .def("getn",&SO3part<float>::getn)
 
+  .def("batch",[](SO3part<float>& r, int b){return r.batch(b);})
+  .def("get_batch_back",[](SO3part<float>& r, int b, SO3part<float>& x){
+      r.get_grad().batch(b).add(x.get_grad());})
+
 //.def("mprod",&SO3part<float>B::mprod)
 //  .def("add_mprod",&SO3part<float>B::add_mprod)
 //  .def("add_mprod_back0",&SO3part<float>B::add_mprod_back0)

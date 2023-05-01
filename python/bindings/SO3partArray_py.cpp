@@ -38,6 +38,10 @@ py::class_<SO3partArray<float> >(m,"SO3partArray",
   .def("getl",&SO3partArray<float>::getl)
   .def("getn",&SO3partArray<float>::getn)
 
+  .def("batch",[](SO3partArray<float>& r, int b){return r.batch(b);})
+  .def("get_batch_back",[](SO3partArray<float>& r, int b, SO3partArray<float>& x){
+      r.get_grad().batch(b).add(x.get_grad());})
+
   .def("cell",[](SO3partArray<float>& r, vector<int>& ix){return SO3part<float>(r.cell(ix));})
   .def("get_cell_back",[](SO3partArray<float>& r, vector<int>& ix, SO3part<float>& x){
       r.get_grad()(ix).add(x.get_grad());})

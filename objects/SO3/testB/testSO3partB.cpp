@@ -13,6 +13,11 @@ int main(int argc, char** argv){
   GElibSession session(4);
   cout<<endl;
 
+  //long long a=9;
+  short a;
+  cout<<sizeof(a)<<endl;
+
+
   const int B=2;
 
   SO3partB u=SO3partB::gaussian(B,2,2);

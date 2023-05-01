@@ -50,6 +50,50 @@ namespace GElib{
   };
 
 
+  class CGproductTimer{
+  public:
+
+    string task;
+    int l1,l2,l;
+    int b,n1,n2,dev;
+    int n_ops=0;
+    chrono::time_point<chrono::system_clock> t0;
+
+    //LoggedTimer(string _task=""):
+    //task(_task){
+    //t0=chrono::system_clock::now();
+    //}
+
+    //LoggedTimer(string _task, const int _ops):
+    //task(_task){
+    //t0=chrono::system_clock::now();
+    //n_ops=_ops;
+    //}
+
+    CGproductTimer(const int _l1, const int _l2, const int _l, const int _b, 
+      const int _n1, const int _n2, const int _dev, const int _ops):
+      l1(_l1),l2(_l2),l(_l),b(_b),n1(_n1),n2(_n2),dev(_dev),n_ops(_ops){ 
+      t0=chrono::system_clock::now();
+    }
+
+    ~CGproductTimer(){
+      auto elapsed=chrono::duration<double,std::milli>(chrono::system_clock::now()-t0).count();
+      if(gelib_log){
+	(*gelib_log)("CGproduct("+to_string(l1)+","+to_string(l2)+","+to_string(l)+")[b="+
+	  to_string(b)+",n1="+to_string(n1)+",n2="+to_string(n2)+",dev="+to_string(dev)+"] "+
+	  to_string(elapsed)+" ms"+" ["+to_string((int)(((float)n_ops)/elapsed/1000.0))+" Mflops]");
+	if(elapsed>0)
+	  gelib_log->ofs2<<l1<<","<<l2<<","<<l<<","<<b<<","<<n1<<","<<n2<<","<<dev<<","<<elapsed<<","<<
+	    (int)(((float)n_ops)/elapsed/1000.0)<<endl;
+	else
+	  gelib_log->ofs2<<l1<<","<<l2<<","<<l<<","<<b<<","<<n1<<","<<n2<<","<<dev<<","<<elapsed<<","<<0<<endl;
+	
+      }
+    }
+
+  };
+
+
 }
 
 #endif 

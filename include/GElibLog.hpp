@@ -21,16 +21,20 @@ namespace GElib{
   public:
 
     ofstream ofs;
+    ofstream ofs2;
 
     GElibLog(const string filename="GElib.log"){
       ofs.open(filename);
       auto time = std::chrono::system_clock::now();
       std::time_t timet = std::chrono::system_clock::to_time_t(time);
       ofs<<"GElib log opened "<<std::ctime(&timet)<<endl;
+
+      ofs2.open("CGproducts.csv");
     }
 
     ~GElibLog(){
       ofs.close();
+      ofs2.close();
     }
 
     void operator()(const string msg){
@@ -42,6 +46,8 @@ namespace GElib{
       //ofs<<std::asctime(std::localtime(&timet))<<"  ";
       ofs<<os<<msg<<endl;
     }
+
+    void operator()(){}
 
   };
 

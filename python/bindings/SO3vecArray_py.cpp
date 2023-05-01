@@ -31,6 +31,10 @@ py::class_<SO3vecArray<float> >(m,"SO3vecArray")
   .def("get_adims",&SO3vecArray<float>::get_adims)
   .def("get_tau",&SO3vecArray<float>::get_tau)
 
+  .def("batch",[](SO3vecArray<float>& r, int b){return r.batch(b);})
+  .def("get_batch_back",[](SO3vecArray<float>& r, int b, SO3vecArray<float>& x){
+      r.get_grad().batch(b).add(x.get_grad());})
+
   .def("part",[](SO3vecArray<float>& r, int l){return SO3partArray<float>(r.part(l));})
   .def("get_part_back",[](SO3vecArray<float>& r, int l, SO3partArray<float>& x){
       r.get_grad().part(l).add(x.get_grad());})

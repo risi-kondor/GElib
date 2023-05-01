@@ -30,6 +30,10 @@ py::class_<SO3vec<float> >(m,"SO3vec")
   .def("getb",&SO3vec<float>::getb)
   .def("get_tau",&SO3vec<float>::get_tau)
 
+  .def("batch",[](SO3vec<float>& r, int b){return r.batch(b);})
+  .def("get_batch_back",[](SO3vec<float>& r, int b, SO3vec<float>& x){
+      r.get_grad().batch(b).add(x.get_grad());})
+
   .def("part",[](SO3vec<float>& r, int l){return SO3part<float>(r.part(l));})
   .def("add_to_part_grad_of",[](SO3vec<float>& r, int l, SO3part<float>& x){r.get_grad().part(l).add(x.get_grad());})
 

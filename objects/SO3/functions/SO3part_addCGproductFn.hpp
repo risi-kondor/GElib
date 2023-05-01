@@ -53,9 +53,10 @@ namespace GElib{
       assert(_offs+N1*N2<=_r.n2);
       assert(l>=abs(l1-l2) && l<=l1+l2);
 
-      LoggedTimer timer("  CGproduct("+to_string(l1)+","+to_string(l2)+","+to_string(l)+")[b="+
-	to_string(B)+",n1="+to_string(N1)+",n2="+to_string(N2)+",dev="+to_string(dev)+"]",B*(2*l1+1)*(2*l2+1)*N1*N2);
-
+      //LoggedTimer timer("  CGproduct("+to_string(l1)+","+to_string(l2)+","+to_string(l)+")[b="+
+      //to_string(B)+",n1="+to_string(N1)+",n2="+to_string(N2)+",dev="+to_string(dev)+"]",B*(2*l1+1)*(2*l2+1)*N1*N2);
+      CGproductTimer(l1,l2,l,B,N1,N2,dev,B*(2*l1+1)*(2*l2+1)*N1*N2);
+      
       if(dev==0){
 
 	auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
