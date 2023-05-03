@@ -30,12 +30,12 @@ namespace GElib{
     typedef cnine::GstridesB GstridesB;
 
     typedef cnine::MemArr<complex<RTYPE> > MemArr;
-    typedef GvecArray<SO3vecArrayView<RTYPE> > GvecArray;
-    typedef SO3vecArrayView<RTYPE> SO3vecArrayView;
+    typedef GvecArray<SO3vecArrayView<RTYPE> > _GvecArray;
+    typedef SO3vecArrayView<RTYPE> _SO3vecArrayView;
 
-    using GvecArray::parts;
+    using _GvecArray::parts;
 
-    using SO3vecArrayView::torch;
+    using _SO3vecArrayView::torch;
 
 
 

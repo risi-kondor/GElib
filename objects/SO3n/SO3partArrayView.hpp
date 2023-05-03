@@ -41,7 +41,7 @@ namespace GElib{
     typedef cnine::Gindex Gindex;
 
     typedef cnine::BatchedTensorArrayView<complex<RTYPE> > BatchedTensorArrayView;
-    typedef SO3partView<RTYPE> SO3partView;
+    typedef SO3partView<RTYPE> _SO3partView;
     
     using BatchedTensorArrayView::arr;
     using BatchedTensorArrayView::dims;
@@ -113,45 +113,45 @@ namespace GElib{
     }
 
 
-    SO3partView operator()(const int i0){
+    _SO3partView operator()(const int i0){
       CNINE_ASSRT(ak==2);
-      return SO3partView(arr+strides[1]*i0,get_ddims(),get_dstrides());
+      return _SO3partView(arr+strides[1]*i0,get_ddims(),get_dstrides());
     }
 
-    SO3partView operator()(const int i0, const int i1){
+    _SO3partView operator()(const int i0, const int i1){
       CNINE_ASSRT(ak==3);
-      return SO3partView(arr+strides[1]*i0+strides[2]*i1,get_ddims(),get_dstrides());
+      return _SO3partView(arr+strides[1]*i0+strides[2]*i1,get_ddims(),get_dstrides());
     }
 
-    SO3partView operator()(const int i0, const int i1, const int i2){
+    _SO3partView operator()(const int i0, const int i1, const int i2){
       CNINE_ASSRT(ak==4);
-      return SO3partView(arr+strides[1]*i0+strides[2]*i1+strides[3]*i2,get_ddims(),get_dstrides());
+      return _SO3partView(arr+strides[1]*i0+strides[2]*i1+strides[3]*i2,get_ddims(),get_dstrides());
     }
 
-    SO3partView operator()(const Gindex& ix){
+    _SO3partView operator()(const Gindex& ix){
       CNINE_ASSRT(ix.size()==ak);
-      return SO3partView(arr+strides.chunk(1)(ix),get_ddims(),get_dstrides());
+      return _SO3partView(arr+strides.chunk(1)(ix),get_ddims(),get_dstrides());
     }
 
 
-    SO3partView cell(const int i0){
+    _SO3partView cell(const int i0){
       CNINE_ASSRT(ak==2);
-      return SO3partView(arr+strides[1]*i0,get_ddims(),get_dstrides());
+      return _SO3partView(arr+strides[1]*i0,get_ddims(),get_dstrides());
     }
 
-    SO3partView cell(const int i0, const int i1){
+    _SO3partView cell(const int i0, const int i1){
       CNINE_ASSRT(ak==3);
-      return SO3partView(arr+strides[1]*i0+strides[2]*i1,get_ddims(),get_dstrides());
+      return _SO3partView(arr+strides[1]*i0+strides[2]*i1,get_ddims(),get_dstrides());
     }
 
-    SO3partView cell(const int i0, const int i1, const int i2){
+    _SO3partView cell(const int i0, const int i1, const int i2){
       CNINE_ASSRT(ak==4);
-      return SO3partView(arr+strides[1]*i0+strides[2]*i1+strides[3]*i2,get_ddims(),get_dstrides());
+      return _SO3partView(arr+strides[1]*i0+strides[2]*i1+strides[3]*i2,get_ddims(),get_dstrides());
     }
 
-    SO3partView cell(const Gindex& ix){
+    _SO3partView cell(const Gindex& ix){
       CNINE_ASSRT(ix.size()==ak);
-      return SO3partView(arr+strides.chunk(1)(ix),get_ddims(),get_dstrides());
+      return _SO3partView(arr+strides.chunk(1)(ix),get_ddims(),get_dstrides());
     }
 
 

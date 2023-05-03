@@ -30,16 +30,16 @@ namespace GElib{
     typedef cnine::Gdims Gdims;
 
     typedef cnine::TensorVirtual<complex<TYPE>, SO3partView<TYPE> > VTensor;
-    typedef SO3partView<TYPE> SO3partView;
+    // typedef SO3partView<TYPE> Pview;
     typedef cnine::diff_class<SO3part<TYPE> > diff_class;
 
     using VTensor::VTensor;
     using VTensor::dims;
     using VTensor::operator*;
 
-    using SO3partView::getl;
-    using SO3partView::getn;
-    using SO3partView::dim;
+    using SO3partView<TYPE>::getl;
+    using SO3partView<TYPE>::getn;
+    using SO3partView<TYPE>::dim;
 
     using diff_class::grad;
     using diff_class::add_to_grad;

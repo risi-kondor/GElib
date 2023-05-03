@@ -36,17 +36,17 @@ namespace GElib{
 
     typedef cnine::Gdims Gdims;
     typedef cnine::TensorArrayVirtual<complex<TYPE>, SO3partArrayView<TYPE> > TensorArrayVirtual;
-    typedef SO3partArrayView<TYPE> SO3partArrayView;
+    typedef SO3partArrayView<TYPE> _SO3partArrayView;
 
     using TensorArrayVirtual::TensorArrayVirtual;
     using TensorArrayVirtual::arr;
     //using TensorArrayVirtual::device;
     using TensorArrayVirtual::move_to_device;
 
-    using SO3partArrayView::getl;
-    using SO3partArrayView::getn;
-    //using SO3partArrayView::dim;
-    //using SO3partArrayView::device;
+    using _SO3partArrayView::getl;
+    using _SO3partArrayView::getn;
+    //using _SO3partArrayView::dim;
+    //using _SO3partArrayView::device;
 
 
     ~SO3partArray(){
@@ -74,7 +74,7 @@ namespace GElib{
     
     static SO3partArray gaussian(const int _b, const Gdims& _dims, const int l, const int c, const int _dev=0){
       return SO3partArray(_b,_dims,{2*l+1,c},cnine::fill_gaussian(),_dev);
-      //return SO3partArrayView(_b,_dims,l,c,cnine::fill_gaussian(),_dev);
+      //return _SO3partArrayView(_b,_dims,l,c,cnine::fill_gaussian(),_dev);
       //return TensorArrayVirtual(_dims.prepend(_b),Gdims({2*l+1,c}),cnine::fill_gaussian(),_dev);
     }
     
@@ -137,15 +137,15 @@ namespace GElib{
 
 
     /*
-    void add_CGproduct(const SO3partArrayView& x, const SO3partArrayView& y, const int _offs=0){
+    void add_CGproduct(const _SO3partArrayView& x, const _SO3partArrayView& y, const int _offs=0){
       SO3part_addCGproductFn()(*this,x,y,_offs);
     }
 
-    void add_CGproduct_back0(const SO3partArrayView& g, const SO3partArrayView& y, const int _offs=0){
+    void add_CGproduct_back0(const _SO3partArrayView& g, const _SO3partArrayView& y, const int _offs=0){
       SO3part_addCGproduct_back0Fn()(*this,g,y,_offs);
     }
 
-    void add_CGproduct_back1(const SO3partArrayView& g, const SO3partArrayView& x, const int _offs=0){
+    void add_CGproduct_back1(const _SO3partArrayView& g, const _SO3partArrayView& x, const int _offs=0){
       SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
     }
     */

@@ -24,12 +24,12 @@ namespace GElib{
   class SO3vecView: public GvecView<int,SO3partView<RTYPE>,SO3vecView<RTYPE> >{
   public:
 
-    typedef GvecView<int,SO3partView<RTYPE>,SO3vecView<RTYPE> > GvecView;
-    typedef SO3partView<RTYPE> SO3partView;
+    typedef GvecView<int,SO3partView<RTYPE>,SO3vecView<RTYPE> > _GvecView;
+    typedef SO3partView<RTYPE> _SO3partView;
 
-    using GvecView::GvecView;
-    using GvecView::parts;
-    using GvecView::str;
+    using _GvecView::_GvecView;
+    using _GvecView::parts;
+    using _GvecView::str;
 
 
   public: // ---- Access ------------------------------------------------------------------------------------
@@ -54,20 +54,20 @@ namespace GElib{
 
 
     void add_CGproduct(const SO3vecView<float>& x, const SO3vecView<float>& y){
-      vCGproduct<SO3vecView,SO3partView>(*this,x,y,
-	[&](const SO3partView& r, const SO3partView& x, const SO3partView& y, const int offs){
+      vCGproduct<SO3vecView,_SO3partView>(*this,x,y,
+	[&](const _SO3partView& r, const _SO3partView& x, const _SO3partView& y, const int offs){
 	  r.add_CGproduct(x,y,offs);});
     }
 
     void add_CGproduct_back0(const SO3vecView<float>& g, const SO3vecView<float>& y){
-      vCGproduct<SO3vecView,SO3partView>(g,*this,y,
-	[&](const SO3partView& g, const SO3partView& gx, const SO3partView& y, const int offs){
+      vCGproduct<SO3vecView,_SO3partView>(g,*this,y,
+	[&](const _SO3partView& g, const _SO3partView& gx, const _SO3partView& y, const int offs){
 	  gx.add_CGproduct(g,y,offs);});
     }
 
     void add_CGproduct_back1(const SO3vecView<float>& g, const SO3vecView<float>& x){
-      vCGproduct<SO3vecView,SO3partView>(g,x,*this,
-	[&](const SO3partView& g, const SO3partView& x, const SO3partView& gy, const int offs){
+      vCGproduct<SO3vecView,_SO3partView>(g,x,*this,
+	[&](const _SO3partView& g, const _SO3partView& x, const _SO3partView& gy, const int offs){
 	  gy.add_CGproduct(g,x,offs);});
     }
 

@@ -20,7 +20,7 @@ int main(int argc, char** argv){
 
   const int B=2;
 
-  SO3partB u=SO3partB::gaussian(B,2,2);
+  SO3partB u=SO3partB::gaussian(B,3,2);
   SO3partB v=SO3partB::gaussian(B,2,2);
   printl("u",u)<<endl;
   printl("v",v)<<endl;

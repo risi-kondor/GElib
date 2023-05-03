@@ -13,8 +13,12 @@ int main(int argc, char** argv){
   GElibSession session;
   cout<<endl;
 
+  SO3vecB z=SO3vecB::gaussian({2,1,2});
+  cout<<z<<endl;
+  cout<<z.get_type()<<endl;
+
   int b=1;
-  SO3type tau({2,2});
+  SO3type tau({1,1});
 
   SO3vecB u=SO3vecB::gaussian(1,tau);
   SO3vecB v=SO3vecB::gaussian(1,tau);

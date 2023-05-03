@@ -129,7 +129,7 @@ namespace GElib{
 	  });
 
       }
-      else CUDA_STREAM(SO3partB_addReducingCGproduct_cu(_r,_x,_y,_offs,stream));
+      //else CUDA_STREAM(SO3partB_addReducingCGproduct_cu(_r,_x,_y,_offs,stream));
 
     }
 

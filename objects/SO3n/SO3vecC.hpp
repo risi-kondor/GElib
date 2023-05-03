@@ -29,11 +29,11 @@ namespace GElib{
     typedef cnine::GstridesB GstridesB;
 
     typedef cnine::MemArr<complex<RTYPE> > MemArr;
-    typedef Gvec<SO3vecView<RTYPE> > Gvec;
+    typedef Gvec<SO3vecView<RTYPE> > _Gvec;
     typedef cnine::diff_class<SO3vec<RTYPE> > diff_class; 
 
-    using Gvec::Gvec;
-    using Gvec::parts;
+    using _Gvec::_Gvec;
+    using _Gvec::parts;
 
     using diff_class::grad; 
     using diff_class::add_to_grad; 

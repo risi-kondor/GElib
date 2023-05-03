@@ -24,12 +24,12 @@ namespace GElib{
   class SO3vecArrayView: public GvecArrayView<int,SO3partArrayView<RTYPE>,SO3vecArrayView<RTYPE>,SO3vecView<RTYPE> >{
   public:
 
-    typedef GvecArrayView<int,SO3partArrayView<RTYPE>,SO3vecArrayView<RTYPE>,SO3vecView<RTYPE> > GvecArrayView;
-    typedef SO3partArrayView<RTYPE> SO3partArrayView;
+    typedef GvecArrayView<int,SO3partArrayView<RTYPE>,SO3vecArrayView<RTYPE>,SO3vecView<RTYPE> > _GvecArrayView;
+    typedef SO3partArrayView<RTYPE> _SO3partArrayView;
 
-    using GvecArrayView::GvecArrayView;
-    using GvecArrayView::parts;
-    using GvecArrayView::torch;
+    using _GvecArrayView::_GvecArrayView;
+    using _GvecArrayView::parts;
+    using _GvecArrayView::torch;
 
 
   public: // ---- Access ------------------------------------------------------------------------------------
@@ -54,20 +54,20 @@ namespace GElib{
 
 
     void add_CGproduct(const SO3vecArrayView& x, const SO3vecArrayView& y){
-      vCGproduct<SO3vecArrayView,SO3partArrayView>(*this,x,y,
-	[&](const SO3partArrayView& r, const SO3partArrayView& x, const SO3partArrayView& y, const int offs){
+      vCGproduct<SO3vecArrayView,_SO3partArrayView>(*this,x,y,
+	[&](const _SO3partArrayView& r, const _SO3partArrayView& x, const _SO3partArrayView& y, const int offs){
 	  r.add_CGproduct(x,y,offs);});
     }
 
     void add_CGproduct_back0(const SO3vecArrayView& g, const SO3vecArrayView& y){
-      vCGproduct<SO3vecArrayView,SO3partArrayView>(g,*this,y,
-	[&](const SO3partArrayView& g, const SO3partArrayView& gx, const SO3partArrayView& y, const int offs){
+      vCGproduct<SO3vecArrayView,_SO3partArrayView>(g,*this,y,
+	[&](const _SO3partArrayView& g, const _SO3partArrayView& gx, const _SO3partArrayView& y, const int offs){
 	  gx.add_CGproduct(g,y,offs);});
     }
 
     void add_CGproduct_back1(const SO3vecArrayView& g, const SO3vecArrayView& x){
-      vCGproduct<SO3vecArrayView,SO3partArrayView>(g,x,*this,
-	[&](const SO3partArrayView& g, const SO3partArrayView& x, const SO3partArrayView& gy, const int offs){
+      vCGproduct<SO3vecArrayView,_SO3partArrayView>(g,x,*this,
+	[&](const _SO3partArrayView& g, const _SO3partArrayView& x, const _SO3partArrayView& gy, const int offs){
 	  gy.add_CGproduct(g,x,offs);});
     }
 
