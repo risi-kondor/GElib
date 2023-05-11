@@ -277,11 +277,11 @@ class SO3partArr_ConterpolateFn(torch.autograd.Function):
         _x=_SO3partB_array.view(x)
         _M=_rtensor.view(M)
         if(x.get_nadims()==2):
-            r=SO3partArr.zeros(x.getb(),x.get_adims()+list(M.size()[:-2]),x.getl(),x.getn())
+            r=SO3partArr.zeros(x.getb(),x.get_adims()+list(M.size()[:-2]),x.getl(),x.getn(),x.device)
             _r=_SO3partB_array.view(r)
             _r.add_conterpolate2d(_x,_M)
         if(x.get_nadims()==3):
-            r=SO3partArr.zeros(x.getb(),x.get_adims()+list(M.size()[:-3]),x.getl(),x.getn())
+            r=SO3partArr.zeros(x.getb(),x.get_adims()+list(M.size()[:-3]),x.getl(),x.getn(),x.device)
             print(r.size())
             _r=_SO3partB_array.view(r)
             _r.add_conterpolate3d(_x,_M)
@@ -291,7 +291,7 @@ class SO3partArr_ConterpolateFn(torch.autograd.Function):
     def backward(ctx,g):
         _g=_SO3partB_array.view(g)
         _M=_rtensor.view(ctx.M)
-        gx=SO3partArr.zeros(g.getb(),g.get_adims()[:ctx.nadims],g.getl(),g.getn())
+        gx=SO3partArr.zeros(g.getb(),g.get_adims()[:ctx.nadims],g.getl(),g.getn(),g.device)
         _gx=_SO3partB_array.view(gx)
         if(ctx.nadims==2):
             _gx.add_conterpolate2d_back(_g,_M)
