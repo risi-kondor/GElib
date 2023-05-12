@@ -92,15 +92,15 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
 
       int aoutd=1; for(int i=0; i<M.ndims()-2; i++) aoutd*=M.dims[i];
       
-      Ctensor5_view xv(x.arr,x.arr+x.coffs,
+      Ctensor5_view xv(x.get_arr(),x.get_arr()+x.coffs,
 	x.dims[0],x.dims[1],x.dims[2],1,x.dims[3]*x.dims[4],
 	x.strides[0],x.strides[1],x.strides[2],x.strides[2],x.strides[4],x.dev);
 
-      Ctensor5_view rv(r.arr,r.arr+r.coffs,
+      Ctensor5_view rv(r.get_arr(),r.get_arr()+r.coffs,
 	r.dims[0],r.dims[1],r.dims[2],aoutd,r.dims(-2)*r.dims(-1), 
  	r.strides[0],r.strides[1],r.strides[2],r.strides(-3),r.strides(-1),r.dev);
       
-      Rtensor4_view Mv(M.arr,aoutd,M.dims(-2),M.dims(-1),1,M.strides(-3),M.strides(-2),M.strides(-1),M.strides(-1),M.dev);
+      Rtensor4_view Mv(M.get_arr(),aoutd,M.dims(-2),M.dims(-1),1,M.strides(-3),M.strides(-2),M.strides(-1),M.strides(-1),M.dev);
 
       CtensorConvolve2d()(rv,xv,Mv);
     })
@@ -122,15 +122,15 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
 
       int aoutd=1; for(int i=0; i<M.ndims()-2; i++) aoutd*=M.dims[i];
 
-      Ctensor5_view xv(x.arr,x.arr+x.coffs,
+      Ctensor5_view xv(x.get_arr(),x.get_arr()+x.coffs,
 	x.dims[0],x.dims[1],x.dims[2],1,x.dims[3]*x.dims[4],
 	x.strides[0],x.strides[1],x.strides[2],x.strides[2],x.strides[4],x.dev);
 
-      Ctensor5_view rv(r.arr,r.arr+r.coffs,
+      Ctensor5_view rv(r.get_arr(),r.get_arr()+r.coffs,
 	r.dims[0],r.dims[1],r.dims[2],aoutd,r.dims(-2)*r.dims(-1),
 	r.strides[0],r.strides[1],r.strides[2],r.strides(-3),r.strides(-1),r.dev);
       
-      Rtensor4_view Mv(M.arr, 1,M.dims(-2),M.dims(-1),aoutd,
+      Rtensor4_view Mv(M.get_arr(), 1,M.dims(-2),M.dims(-1),aoutd,
 	M.strides(-1),M.strides(-2),M.strides(-1),M.strides(-3),M.dev);
 
       CtensorConvolve2d()(xv,rv,Mv);      
@@ -155,15 +155,15 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
 
       int aoutd=1; for(int i=0; i<M.ndims()-3; i++) aoutd*=M.dims[i];
       
-      Ctensor6_view xv(x.arr,x.arr+x.coffs,
+      Ctensor6_view xv(x.true_arr(),x.get_arr()+x.coffs,
 	x.dims[0],x.dims[1],x.dims[2],x.dims[3],1,x.dims[4]*x.dims[5],
 	x.strides[0],x.strides[1],x.strides[2],x.strides[3],x.strides[3],x.strides[5],x.dev);
 
-      Ctensor6_view rv(r.arr,r.arr+r.coffs,
+      Ctensor6_view rv(r.true_arr(),r.get_arr()+r.coffs,
 	r.dims[0],r.dims[1],r.dims[2],r.dims[3],aoutd,r.dims(-2)*r.dims(-1),
 	r.strides[0],r.strides[1],r.strides[2],r.strides[3],r.strides(-3),r.strides(-1),r.dev);
       
-      Rtensor5_view Mv(M.arr,aoutd,M.dims(-3),M.dims(-2),M.dims(-1),1,
+      Rtensor5_view Mv(M.get_arr(),aoutd,M.dims(-3),M.dims(-2),M.dims(-1),1,
 	M.strides(-4),M.strides(-3),M.strides(-2),M.strides(-1),M.strides(-1),M.dev);
 
       CtensorConvolve3d()(rv,xv,Mv);
@@ -187,15 +187,15 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
 
       int aoutd=1; for(int i=0; i<M.ndims()-3; i++) aoutd*=M.dims[i];
 
-      Ctensor6_view xv(x.arr,x.arr+x.coffs,
+      Ctensor6_view xv(x.true_arr(),x.true_arr()+x.coffs,
 	x.dims[0],x.dims[1],x.dims[2],x.dims[3],1,x.dims[4]*x.dims[5],
 	x.strides[0],x.strides[1],x.strides[2],x.strides[3],x.strides[3],x.strides[5],x.dev);
 
-      Ctensor6_view rv(r.arr,r.arr+r.coffs,
+      Ctensor6_view rv(r.true_arr(),r.true_arr()+r.coffs,
 	r.dims[0],r.dims[1],r.dims[2],r.dims[3],aoutd,r.dims(-2)*r.dims(-1),
 	r.strides[0],r.strides[1],r.strides[2],r.strides[3],r.strides(-3),r.strides(-1),r.dev);
       
-      Rtensor5_view Mv(M.arr,1,M.dims(-3),M.dims(-2),M.dims(-1),aoutd,
+      Rtensor5_view Mv(M.get_arr(),1,M.dims(-3),M.dims(-2),M.dims(-1),aoutd,
 	M.strides(-1),M.strides(-3),M.strides(-2),M.strides(-1),M.strides(-4),M.dev);
 
       CtensorConvolve3d()(xv,rv,Mv);      
