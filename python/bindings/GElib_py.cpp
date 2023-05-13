@@ -46,6 +46,7 @@
 #include "CtensorConvolve2d.hpp"
 //#include "CtensorConvolve2dSparse.hpp"
 #include "CtensorConvolve3d.hpp"
+#include "CtensorConvolve3d_back0.hpp"
 
 //std::default_random_engine rndGen;
 

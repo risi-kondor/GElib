@@ -136,6 +136,7 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
       CtensorConvolve2d()(xv,rv,Mv);      
     })
 
+
   .def("add_conterpolate3d",[](SO3partB_array& r, const SO3partB_array& x, const RtensorObj& M){
 
       GELIB_ASSERT(M.ndims()>=4,"3D conterpolation tensor must have three spatial dimensions and at least one output dimension");
@@ -169,6 +170,7 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
       CtensorConvolve3d()(rv,xv,Mv);
     })
 
+
   .def("add_conterpolate3d_back",[](SO3partB_array& x, const SO3partB_array& r, const RtensorObj& M){
       GELIB_ASSERT(M.ndims()>=4,"3D conterpolation tensor must have three spatial dimensions and at least one output dimension");
       GELIB_ASSERT(M.dims(-3)%2==1&&M.dims(-2)%2==1&&M.dims(-1)%2==1,"Conterpolation tensor's spatial dimensions must be odd");
@@ -198,8 +200,11 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
       Rtensor5_view Mv(M.get_arr(),1,M.dims(-3),M.dims(-2),M.dims(-1),aoutd,
 	M.strides(-1),M.strides(-3),M.strides(-2),M.strides(-1),M.strides(-4),M.dev);
 
-      CtensorConvolve3d()(xv,rv,Mv);      
+      CtensorConvolve3d_back0()(rv,xv,Mv);      
     })
+
+
+
 
   .def("device",&SO3partB_array::get_device)
   .def("to",&SO3partB_array::to_device)
@@ -213,5 +218,72 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
 
 // ---- Stand-alone functions --------------------------------------------------------------------------------
 
+
+
+  m.def("add_conterpolate3dB",[](CtensorObj& r, const SO3partB_array& x, const RtensorObj& M){
+
+      GELIB_ASSERT(M.ndims()>=5,"3D conterpolationB tensor must have three spatial dimensions, at least one input dimension and at least one output dimension");
+      GELIB_ASSERT(M.dims(-4)%2==1&&M.dims(-3)%2==1&&M.dims(-3)%2==1,"Conterpolation tensor's spatial dimensions must be odd");
+
+      GELIB_ASSRT(x.ndims()==6);
+      GELIB_ASSRT(r.ndims()-5==M.ndims()-4);
+
+      GELIB_ASSRT(r.dims[0]==x.dims[0]);
+      GELIB_ASSRT(r.dims[1]==x.dims[1]);
+      GELIB_ASSRT(r.dims[2]==x.dims[2]);
+      GELIB_ASSRT(r.dims[3]==x.dims[3]);
+      for(int i=0; i<M.ndims()-4; i++)
+	GELIB_ASSERT(r.dims[4+i]==M.dims[i],"Mismatch between output dimensions and dimensions of conterpolation matrix");
+      //GELIB_ASSRT(r.dims(-2)==x.dims(-2));
+      GELIB_ASSRT(r.dims(-1)==x.dims(-1));
+
+      int aoutd=1; for(int i=0; i<M.ndims()-4; i++) aoutd*=M.dims[i];
+      
+      Ctensor6_view xv(x.true_arr(),x.get_arr()+x.coffs,
+	x.dims[0],x.dims[1],x.dims[2],x.dims[3],x.dims[4],x.dims[5],
+	x.strides[0],x.strides[1],x.strides[2],x.strides[3],x.strides[4],x.strides[5],x.dev);
+
+      Ctensor6_view rv(r.true_arr(),r.get_arr()+r.coffs,
+	r.dims[0],r.dims[1],r.dims[2],r.dims[3],aoutd,r.dims(-1),
+	r.strides[0],r.strides[1],r.strides[2],r.strides[3],r.strides(-2),r.strides(-1),r.dev);
+      
+      Rtensor5_view Mv(M.get_arr(),aoutd,M.dims(-4),M.dims(-3),M.dims(-2),M.dims(-1),
+	M.strides(-5),M.strides(-4),M.strides(-3),M.strides(-2),M.strides(-1),M.dev);
+
+      CtensorConvolve3d()(rv,xv,Mv);
+    });
+
+
+  m.def("add_conterpolate3dB_back",[](SO3partB_array& x, const CtensorObj& r, const RtensorObj& M){
+      GELIB_ASSERT(M.ndims()>=5,"3D conterpolationB tensor must have three spatial dimensions, at least one input dimension, and at least one output dimension");
+      GELIB_ASSERT(M.dims(-4)%2==1&&M.dims(-3)%2==1&&M.dims(-2)%2==1,"Conterpolation tensor's spatial dimensions must be odd");
+
+      GELIB_ASSRT(x.ndims()==6);
+      GELIB_ASSRT(r.ndims()-5==M.ndims()-4);
+
+      GELIB_ASSRT(r.dims[0]==x.dims[0]);
+      GELIB_ASSRT(r.dims[1]==x.dims[1]);
+      GELIB_ASSRT(r.dims[2]==x.dims[2]);
+      GELIB_ASSRT(r.dims[3]==x.dims[3]);
+      for(int i=0; i<M.ndims()-4; i++)
+	GELIB_ASSERT(r.dims[4+i]==M.dims[i],"Mismatch between output dimensions and dimensions of conterpolation matrix");
+      //GELIB_ASSRT(r.dims(-2)==x.dims(-2));
+      GELIB_ASSRT(r.dims(-1)==x.dims(-1));
+
+      int aoutd=1; for(int i=0; i<M.ndims()-4; i++) aoutd*=M.dims[i];
+
+      Ctensor6_view xv(x.get_arr(),x.get_arr()+x.coffs,
+	x.dims[0],x.dims[1],x.dims[2],x.dims[3],x.dims[4],x.dims[5],
+	x.strides[0],x.strides[1],x.strides[2],x.strides[3],x.strides[4],x.strides[5],x.dev);
+
+      Ctensor6_view rv(r.true_arr(),r.true_arr()+r.coffs,
+	r.dims[0],r.dims[1],r.dims[2],r.dims[3],aoutd,r.dims(-1),
+	r.strides[0],r.strides[1],r.strides[2],r.strides[3],r.strides(-2),r.strides(-1),r.dev);
+      
+      Rtensor5_view Mv(M.get_arr(),M.dims(-1),M.dims(-4),M.dims(-3),M.dims(-2),aoutd,
+	M.strides(-1),M.strides(-4),M.strides(-3),M.strides(-2),M.strides(-5),M.dev);
+
+      CtensorConvolve3d_back0()(rv,xv,Mv);      
+    });
 
 

@@ -10,7 +10,9 @@
 
 
 import torch
+import gelib_base
 from cnine import rtensor as _rtensor
+from cnine import ctensor as _ctensor
 from gelib_base import SO3partB_array as _SO3partB_array
 
 
@@ -122,6 +124,9 @@ class SO3partArr(torch.Tensor):
 
     def conterpolate(self,M):
         return SO3partArr_ConterpolateFn.apply(self,M)
+
+    def conterpolateB(self,M):
+        return SO3partArr_ConterpolateBFn.apply(self,M)
 
 
     # ---- Products -----------------------------------------------------------------------------------------
@@ -297,6 +302,32 @@ class SO3partArr_ConterpolateFn(torch.autograd.Function):
             _gx.add_conterpolate2d_back(_g,_M)
         if(ctx.nadims==3):
             _gx.add_conterpolate3d_back(_g,_M)
+        return gx,None
+
+
+class SO3partArr_ConterpolateBFn(torch.autograd.Function): 
+
+  @staticmethod
+  def forward(ctx,x,M):
+    ctx.b=x.getb()
+    ctx.adims=x.get_adims()
+    ctx.l=x.getl()
+    ctx.n=x.getn()
+    ctx.M=M
+    _x=_SO3partB_array.view(x)
+    _M=_rtensor.view(M)
+    r=torch.zeros([x.getb()]+x.get_adims()+list(M.size()[:-4])+[x.getn()],dtype=torch.cfloat,device=x.device)
+    _r=_ctensor.view(r)
+    gelib_base.add_conterpolate3dB(_r,_x,_M)
+    return r
+
+    @staticmethod
+    def backward(ctx,g):
+        _g=_ctensor.view(g)
+        _M=_rtensor.view(ctx.M)
+        gx=SO3partArr.zeros(ctx.b,ctx.adims,ctx.l,ctx.n,g.device)
+        _gx=_SO3partB_array.view(gx)
+        gelib_base.add_conterpolate3dB_back(_gx,_g,_M)
         return gx,None
 
 
