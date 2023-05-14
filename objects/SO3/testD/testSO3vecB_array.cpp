@@ -15,7 +15,7 @@ int main(int argc, char** argv){
   GElibSession session;
   cout<<endl;
 
-  int b=128;
+  int b=1;
   Gdims adims({50});
   SO3type tau({32,32,32});
   //SO3type tau({128,128,128});
@@ -76,7 +76,7 @@ int main(int argc, char** argv){
 #endif 
 
 
-  if(false){
+  if(true){
 
     cout<<"----------- DiagCGproduct -----------------------"<<endl;
 

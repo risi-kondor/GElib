@@ -530,3 +530,6 @@ namespace GElib{
 }
 
 #endif 
+
+
+// bc,r l2 *m , xyz
