@@ -412,9 +412,11 @@ namespace GElib{
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++)
 	    for(int i=-l1; i<=l1; i++) 
 	      count+=tau[l1]*bsize*(std::min(l2,l-i)-std::max(-l2,-l-i)+(i<=l));
+      count*=getb()*get_adims().total();
 
       LoggedTimer timer("  DiagCGproduct("+x.get_tau().str()+","+y.get_tau().str()+","+get_tau().str()+")[b="+
-	to_string(x.getb())+",bsize="+to_string(bsize)+",maxl="+to_string(L)+",dev="+to_string(get_dev())+"]",count);
+	to_string(x.getb())+",bsize="+to_string(bsize)+",maxl="+to_string(L)+
+	",total="+to_string(count)+",dev="+to_string(get_dev())+"]",count);
 
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
