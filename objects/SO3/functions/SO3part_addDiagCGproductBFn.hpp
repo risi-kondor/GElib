@@ -73,10 +73,10 @@ namespace GElib{
 	auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
 	for(int m1=-l1; m1<=l1; m1++){
 	  for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
-	    cnine::Ctensor2_view r(_r.arr+_r.s1*(m1+m2-l)+_offs*_r.s2,_r.arrc+_r.s1*(m1+m2-l)+_offs*_r.s2,
-	      _r.n0,_r.n2,_r.s0,_r.s2,_r.dev);
-	    cnine::Ctensor2_view x(_x.arr+_x.s1*(m1-l1),_x.arrc+_x.s1*(m1-l1),_x.n0,_x.n2,_x.s0,_x.s2,_x.dev);
-	    cnine::Ctensor2_view y(_y.arr+_y.s1*(m2-l2),_y.arrc+_x.s2*(m2-l2),_y.n0,_y.n2,_y.s0,_y.s2,_y.dev);
+	    cnine::Ctensor2_view r(_r.arr+_r.s1*(m1+m2+l)+_offs*_r.s2,_r.arrc+_r.s1*(m1+m2+l)+_offs*_r.s2,
+	      _r.n0,_x.n2,_r.s0,_r.s2,_r.dev);
+	    cnine::Ctensor2_view x(_x.arr+_x.s1*(m1+l1),_x.arrc+_x.s1*(m1+l1),_x.n0,_x.n2,_x.s0,_x.s2,_x.dev);
+	    cnine::Ctensor2_view y(_y.arr+_y.s1*(m2+l2),_y.arrc+_y.s1*(m2+l2),_y.n0,_y.n2,_y.s0,_y.s2,_y.dev);
 	    cnine::Ctensor2_add_otimes_cu(r,x,y,C(m1+l1,m2+l2),stream);
 	  }
 	}

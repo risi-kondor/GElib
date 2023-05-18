@@ -16,7 +16,7 @@ int main(int argc, char** argv){
   cout<<endl;
 
   int b=1;
-  Gdims adims({1});
+  Gdims adims({50,50,50});
   SO3type tau({4,4,4});
   //SO3type tau({32,32,32});
   //SO3type tau({128,128,128});
@@ -28,10 +28,10 @@ int main(int argc, char** argv){
   //printl("v",v)<<endl;
 
   SO3vecB_array w=u.DiagCGproduct(v,2);
-  cout<<w<<endl;
+  //cout<<w<<endl;
 
   SO3vecB_array wB=u.DiagCGproductB(v,2);
-  cout<<wB<<endl;
+  //cout<<wB<<endl;
     
   cout<<endl; 
     
@@ -42,10 +42,10 @@ int main(int argc, char** argv){
   //printl("vc",vc)<<endl;
   
   SO3vecB_array wc=uc.DiagCGproduct(vc,2);
-  cout<<wc<<endl;
+  //cout<<wc<<endl;
 
   SO3vecB_array wcB=uc.DiagCGproductB(vc,2);
-  cout<<wcB<<endl;
+  //cout<<wcB<<endl;
 #endif 
     
   cout<<endl; 
