@@ -579,7 +579,7 @@ namespace GElib{
 
       
     void add_DiagCGproductB_back0(const SO3vecB_array& g, const SO3vecB_array& y){
-      assert(g.get_tau()==GElib::BlockedCGproduct(get_tau(),y.get_tau(),g.get_maxl()));
+      assert(g.get_tau()==GElib::BlockedCGproduct(get_tau(),y.get_tau(),1,g.get_maxl()));
 
       int L1=get_maxl(); 
       int L2=y.get_maxl();
@@ -597,8 +597,8 @@ namespace GElib{
     }
 
       
-    void add_BlockedCGproductB_back1(const SO3vecB_array& g, const SO3vecB_array& x, const int bsize){
-      assert(g.get_tau()==GElib::BlockedCGproduct(x.get_tau(),get_tau(),bsize,g.get_maxl()));
+    void add_DiagCGproductB_back1(const SO3vecB_array& g, const SO3vecB_array& x){
+      assert(g.get_tau()==GElib::BlockedCGproduct(x.get_tau(),get_tau(),1,g.get_maxl()));
 
       int L1=x.get_maxl(); 
       int L2=get_maxl();

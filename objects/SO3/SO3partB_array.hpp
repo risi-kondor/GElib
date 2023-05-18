@@ -27,6 +27,8 @@
 #include "SO3part_addFproduct_back0Fn.hpp"
 #include "SO3part_addFproduct_back1Fn.hpp"
 #include "SO3part_addDiagCGproductBFn.hpp"
+#include "SO3part_addDiagCGproductB_back0Fn.hpp"
+#include "SO3part_addDiagCGproductB_back1Fn.hpp"
 
 #include "SO3element.hpp"
 #include "WignerMatrix.hpp"
@@ -514,11 +516,11 @@ namespace GElib{
     }
 
     void add_DiagCGproductB_back0(const SO3partB_array& g, const SO3partB_array& y, const int _offs=0){
-      //SO3part_addDiagCGproductB_back0Fn()(part3_view(),g.part3_view(),y.part3_view(),_offs);
+      SO3part_addDiagCGproductB_back0Fn()(part3_view(),g.part3_view(),y.part3_view(),_offs);
     }
 
     void add_DiagCGproductB_back1(const SO3partB_array& g, const SO3partB_array& x, const int _offs=0){
-      //SO3part_addDiagCGproductB_back1Fn()(part3_view(),g.part3_view(),x.part3_view(),_offs);
+      SO3part_addDiagCGproductB_back1Fn()(part3_view(),g.part3_view(),x.part3_view(),_offs);
     }
 
 
