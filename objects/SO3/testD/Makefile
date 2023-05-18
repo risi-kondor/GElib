@@ -24,6 +24,7 @@ NVCCFLAGS+=-arch=sm_86 --resource-usage --verbose
 ifdef WITH_CUDA
 INCLUDE+=-I$(CUDA_HOME)/include
 CUDA_OBJECTS+=$(CNINE_CUDADIR)/RtensorUtils.o $(CNINE_CUDADIR)/TensorView_accumulators.o  
+CUDA_OBJECTS+=$(CNINE_CUDADIR)/BasicCtensorProducts.o 
 #CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partA_CGproduct.o $(GELIB_CUDADIR)/SO3partA_DiagCGproduct.o \
 $(CNINE_ROOT)/cuda/CtensorA_add.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/GElib_base.o 

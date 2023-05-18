@@ -535,8 +535,87 @@ namespace GElib{
     */
 
 
-    // ---- Diagonal CG-squares ------------------------------------------------------------------------------
+    // ---- Diagonal CGproductB ------------------------------------------------------------------------------
 
+
+    SO3vecB_array DiagCGproductB(const SO3vecB_array& y, const int maxl=-1) const{
+      assert(get_adims()==y.get_adims());
+      SO3vecB_array R=SO3vecB_array::zero(getb(),get_adims(),GElib::BlockedCGproduct(get_tau(),y.get_tau(),1,maxl),get_dev());
+      R.add_DiagCGproductB(*this,y);
+      return R;
+    }
+
+
+    void add_DiagCGproductB(const SO3vecB_array& x, const SO3vecB_array& y){
+      assert(get_tau()==GElib::BlockedCGproduct(x.get_tau(),y.get_tau(),1,get_maxl()));
+
+      int L1=x.get_maxl(); 
+      int L2=y.get_maxl(); 
+      int L=get_maxl();
+      vector<int> offs(parts.size(),0);
+	
+      int count=0;
+      SO3type tau=x.get_tau();
+      for(int l1=0; l1<=L1; l1++)
+	for(int l2=0; l2<=L2; l2++)
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++)
+	    for(int i=-l1; i<=l1; i++) 
+	      count+=tau[l1]*(std::min(l2,l-i)-std::max(-l2,-l-i)+(i<=l));
+      count*=getb()*get_adims().total();
+
+      LoggedTimer timer("  DiagCGproductB("+x.get_tau().str()+","+y.get_tau().str()+","+get_tau().str()+")[b="+
+	to_string(x.getb())+",maxl="+to_string(L)+
+	",total="+to_string(count)+",dev="+to_string(get_dev())+"]",count);
+
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L1; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    parts[l]->add_DiagCGproductB(*x.parts[l1],*y.parts[l2],offs[l]);
+	    offs[l]+=(x.parts[l1]->getn());
+	  }
+	}
+      }
+    }
+
+      
+    void add_DiagCGproductB_back0(const SO3vecB_array& g, const SO3vecB_array& y){
+      assert(g.get_tau()==GElib::BlockedCGproduct(get_tau(),y.get_tau(),g.get_maxl()));
+
+      int L1=get_maxl(); 
+      int L2=y.get_maxl();
+      int L=g.get_maxl();
+      vector<int> offs(g.parts.size(),0);
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    parts[l1]->add_DiagCGproductB_back0(*g.parts[l],*y.parts[l2],offs[l]);
+	    offs[l]+=(parts[l1]->getn());
+	  }
+	}
+      }
+    }
+
+      
+    void add_BlockedCGproductB_back1(const SO3vecB_array& g, const SO3vecB_array& x, const int bsize){
+      assert(g.get_tau()==GElib::BlockedCGproduct(x.get_tau(),get_tau(),bsize,g.get_maxl()));
+
+      int L1=x.get_maxl(); 
+      int L2=get_maxl();
+      int L=g.get_maxl();
+      vector<int> offs(g.parts.size(),0);
+	
+      for(int l1=0; l1<=L1; l1++){
+	for(int l2=0; l2<=L2; l2++){
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
+	    parts[l2]->add_DiagCGproductB_back1(*g.parts[l],*x.parts[l1],offs[l]);
+	    offs[l]+=(x.parts[l1]->getn());
+	  }
+	}
+      }
+    }
+
+      
     // ---- DDiag CG-products ------------------------------------------------------------------------------
 
 

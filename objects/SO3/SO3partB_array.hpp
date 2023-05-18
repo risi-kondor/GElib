@@ -26,6 +26,7 @@
 #include "SO3part_addFproduct_Fn.hpp"
 #include "SO3part_addFproduct_back0Fn.hpp"
 #include "SO3part_addFproduct_back1Fn.hpp"
+#include "SO3part_addDiagCGproductBFn.hpp"
 
 #include "SO3element.hpp"
 #include "WignerMatrix.hpp"
@@ -443,7 +444,7 @@ namespace GElib{
     SO3partB_array BlockedCGproduct(const SO3partB_array& y, const int bsize, const int l) const{
       assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
       assert(getn()==y.getn());
-      SO3partB_array R=SO3partB_array::zeros_like(*this);
+      SO3partB_array R=SO3partB_array::zero(getb(),get_adims(),l,getn()*bsize,get_dev());
       R.add_BlockedCGproduct(*this,y,bsize);
       return R;
     }
@@ -495,6 +496,31 @@ namespace GElib{
     void add_CGsquare(const SO3partB_array& x, const int _offs=0){
       SO3part_addCGsquareFn()(part3_view(),x.part3_view(),_offs);
     }
+
+
+    // ---- DiagCGproductB -----------------------------------------------------------------------------------
+
+
+    SO3partB_array DiagCGproductB(const SO3partB_array& y, const int l) const{
+      assert(l>=abs(getl()-y.getl()) && l<=getl()+y.getl());
+      assert(getn()==y.getn());
+      SO3partB_array R=SO3partB_array::zero(getb(),get_adims(),l,getn(),get_dev());
+      R.add_DiagCGproductB(*this,y);
+      return R;
+    }
+
+    void add_DiagCGproductB(const SO3partB_array& x, const SO3partB_array& y, const int _offs=0){
+      SO3part_addDiagCGproductBFn()(part3_view(),x.part3_view(),y.part3_view(),_offs);
+    }
+
+    void add_DiagCGproductB_back0(const SO3partB_array& g, const SO3partB_array& y, const int _offs=0){
+      //SO3part_addDiagCGproductB_back0Fn()(part3_view(),g.part3_view(),y.part3_view(),_offs);
+    }
+
+    void add_DiagCGproductB_back1(const SO3partB_array& g, const SO3partB_array& x, const int _offs=0){
+      //SO3part_addDiagCGproductB_back1Fn()(part3_view(),g.part3_view(),x.part3_view(),_offs);
+    }
+
 
 
   public: // ---- I/O ----------------------------------------------------------------------------------------
