@@ -415,7 +415,7 @@ namespace GElib{
       count*=getb()*get_adims().total();
 
       LoggedTimer timer("  DiagCGproduct("+x.get_tau().str()+","+y.get_tau().str()+","+get_tau().str()+")[b="+
-	to_string(x.getb())+",bsize="+to_string(bsize)+",maxl="+to_string(L)+
+	to_string(x.getb())+",asize="+to_string(get_adims().total())+",blocksize="+to_string(bsize)+",maxl="+to_string(L)+
 	",total="+to_string(count)+",dev="+to_string(get_dev())+"]",count);
 
       for(int l1=0; l1<=L1; l1++){
