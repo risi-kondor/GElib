@@ -76,22 +76,22 @@ int main(int argc, char** argv){
 #ifdef _WITH_CUDA
   ugc.add_DiagCGproduct_back0(wgc,vc);
   printl("ugc",ugc);
-  ugcB.add_DiagCGproduct_back0(wgc,vc);
+  ugcB.add_DiagCGproductB_back0(wgc,vc);
   printl("ugcB",ugcB);
 #endif
 
 
   cout<<"----------- back1 -----------------------"<<endl;
 
-  vg.add_DiagCGproduct_back0(wg,u);
+  vg.add_DiagCGproduct_back1(wg,u);
   printl("vg",vg);
-  vgB.add_DiagCGproductB_back0(wg,u);
+  vgB.add_DiagCGproductB_back1(wg,u);
   printl("vgB",vgB);
 
 #ifdef _WITH_CUDA
-  vgc.add_DiagCGproduct_back0(wgc,uc);
+  vgc.add_DiagCGproduct_back1(wgc,uc);
   printl("vgc",vgc);
-  vgcB.add_DiagCGproduct_back0(wgc,uc);
+  vgcB.add_DiagCGproductB_back1(wgc,uc);
   printl("vgcB",vgcB);
 #endif
 

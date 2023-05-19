@@ -564,7 +564,7 @@ namespace GElib{
       count*=getb()*get_adims().total();
 
       LoggedTimer timer("  DiagCGproductB("+x.get_tau().str()+","+y.get_tau().str()+","+get_tau().str()+")[b="+
-	to_string(x.getb())+",maxl="+to_string(L)+
+	to_string(x.getb())+",adims="+get_adims().str()+",maxl="+to_string(L)+
 	",total="+to_string(count)+",dev="+to_string(get_dev())+"]",count);
 
       for(int l1=0; l1<=L1; l1++){
@@ -586,6 +586,19 @@ namespace GElib{
       int L=g.get_maxl();
       vector<int> offs(g.parts.size(),0);
 	
+      int count=0;
+      SO3type tau=get_tau();
+      for(int l1=0; l1<=L1; l1++)
+	for(int l2=0; l2<=L2; l2++)
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++)
+	    for(int i=-l1; i<=l1; i++) 
+	      count+=tau[l1]*(std::min(l2,l-i)-std::max(-l2,-l-i)+(i<=l));
+      count*=getb()*get_adims().total();
+
+      LoggedTimer timer("  DiagCGproductB_back0("+get_tau().str()+","+y.get_tau().str()+","+g.get_tau().str()+")[b="+
+	to_string(getb())+",adims="+get_adims().str()+",maxl="+to_string(L)+
+	",total="+to_string(count)+",dev="+to_string(get_dev())+"]",count);
+
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){
@@ -605,6 +618,19 @@ namespace GElib{
       int L=g.get_maxl();
       vector<int> offs(g.parts.size(),0);
 	
+      int count=0;
+      SO3type tau=x.get_tau();
+      for(int l1=0; l1<=L1; l1++)
+	for(int l2=0; l2<=L2; l2++)
+	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++)
+	    for(int i=-l1; i<=l1; i++) 
+	      count+=tau[l1]*(std::min(l2,l-i)-std::max(-l2,-l-i)+(i<=l));
+      count*=getb()*get_adims().total();
+
+      LoggedTimer timer("  DiagCGproductB_back1("+x.get_tau().str()+","+get_tau().str()+","+g.get_tau().str()+")[b="+
+	to_string(x.getb())+",adims="+get_adims().str()+",maxl="+to_string(L)+
+	",total="+to_string(count)+",dev="+to_string(get_dev())+"]",count);
+
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L; l++){

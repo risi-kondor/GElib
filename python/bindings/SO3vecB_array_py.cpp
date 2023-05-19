@@ -36,6 +36,10 @@ py::class_<SO3vecB_array>(m,"SO3vecB_array",
   .def("addDiagCGproduct_back0",&SO3vecB_array::add_DiagCGproduct_back0,py::arg("g"),py::arg("y"))
   .def("addDiagCGproduct_back1",&SO3vecB_array::add_DiagCGproduct_back1,py::arg("g"),py::arg("x"))
 
+  .def("addDiagCGproductB",&SO3vecB_array::add_DiagCGproductB,py::arg("x"),py::arg("y"))
+  .def("addDiagCGproductB_back0",&SO3vecB_array::add_DiagCGproductB_back0,py::arg("g"),py::arg("y"))
+  .def("addDiagCGproductB_back1",&SO3vecB_array::add_DiagCGproductB_back1,py::arg("g"),py::arg("x"))
+
   .def("addDDiagCGproduct",&SO3vecB_array::add_DDiagCGproduct,py::arg("x"),py::arg("y"))
   .def("addDDiagCGproduct_back0",&SO3vecB_array::add_DDiagCGproduct_back0,py::arg("g"),py::arg("y"))
   .def("addDDiagCGproduct_back1",&SO3vecB_array::add_DDiagCGproduct_back1,py::arg("g"),py::arg("x"))
