@@ -77,7 +77,6 @@ namespace GElib{
 		  float t=C(M1+l1,M2+l2)*c;
 		  for(int m1=-l1; m1<=l1; m1++){
 		    for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
-		      //cout<<"   "<<n1<<" "<<n2<<" "<<m1<<" "<<m2<<endl;
 		      r.inc(M1+M2,m1+m2,t*C(m1+l1,m2+l2)*x(M1,m1)*std::conj(y(M2,m2)));
 		    }
 		  }

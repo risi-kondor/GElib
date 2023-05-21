@@ -15,6 +15,7 @@
 #include "GElib_base.hpp"
 //#include "TensorView.hpp"
 #include "TensorVirtual.hpp"
+#include "diff_class.hpp"
 #include "SO3partView.hpp"
 #include "SO3templates.hpp"
 
@@ -41,9 +42,11 @@ namespace GElib{
     using SO3partView<TYPE>::getn;
     using SO3partView<TYPE>::dim;
 
+
+#ifdef WITH_FAKE_GRAD
     using diff_class::grad;
     using diff_class::add_to_grad;
-
+#endif 
 
     ~SO3part(){
 #ifdef WITH_FAKE_GRAD

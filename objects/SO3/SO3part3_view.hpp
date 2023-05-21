@@ -64,7 +64,6 @@ namespace GElib{
       Ctensor3_view(_arr,_n0,_n1,_n2,_s0,_s1,_s2,_coffs,_dev){
       assert(n1%2==1);
       l=(n1-1)/2;
-      //cout<<"l="<<l<<endl;
       ar=arr+l*s1;
       ac=arrc+l*s1;
     }
@@ -73,7 +72,6 @@ namespace GElib{
       Ctensor3_view(_arr,_dims,_strides,_coffs,_dev){
       assert(n1%2==1);
       l=(n1-1)/2;
-      //cout<<"l="<<l<<endl;
       ar=arr+l*s1;
       ac=arrc+l*s1;
     }
