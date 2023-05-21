@@ -140,8 +140,8 @@ namespace GElib{
 	    oss<<x.str(indent+"  ");
 	  });
       }else{
-	for_each_part([&](const int p, const Pview& x){
-	    oss<<indent<<"Part "<<p<<":"<<endl;
+	for_each_part([&](const KEY p, const Pview& x){
+	    oss<<indent<<"Part "<<p<<":"<<endl; // hack
 	    oss<<x.str(indent);
 	  });
       }

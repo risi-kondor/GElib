@@ -161,6 +161,13 @@ public:
 }
 
 
+// should go into cnine_base.hpp
+inline ostream& operator<<(ostream& stream, const pair<int,int>& x){
+  stream<<"("<<x.first<<","<<x.second<<")";
+  return stream;
+}
+
+
 
 
 

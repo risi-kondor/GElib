@@ -197,7 +197,7 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
 	r.dims[0],r.dims[1],r.dims[2],r.dims[3],aoutd,r.dims(-2)*r.dims(-1),
 	r.strides[0],r.strides[1],r.strides[2],r.strides[3],r.strides(-3),r.strides(-1),r.dev);
       
-      Rtensor5_view Mv(M.get_arr(),1,M.dims(-3),M.dims(-2),M.dims(-1),aoutd,
+      Rtensor5_view Mv(M.get_arr(),1,M.dims(-3),M.dims(-2),M.dims(-1),aoutd, // should probably not transpose here
 	M.strides(-1),M.strides(-3),M.strides(-2),M.strides(-1),M.strides(-4),M.dev);
 
       CtensorConvolve3d_back0()(rv,xv,Mv);      
@@ -280,8 +280,8 @@ pybind11::class_<SO3partB_array>(m,"SO3partB_array",
 	r.dims[0],r.dims[1],r.dims[2],r.dims[3],aoutd,r.dims(-1),
 	r.strides[0],r.strides[1],r.strides[2],r.strides[3],r.strides(-2),r.strides(-1),r.dev);
       
-      Rtensor5_view Mv(M.get_arr(),M.dims(-1),M.dims(-4),M.dims(-3),M.dims(-2),aoutd,
-	M.strides(-1),M.strides(-4),M.strides(-3),M.strides(-2),M.strides(-5),M.dev);
+      Rtensor5_view Mv(M.get_arr(),aoutd,M.dims(-4),M.dims(-3),M.dims(-2),M.dims(-1),
+	M.strides(-5),M.strides(-4),M.strides(-3),M.strides(-2),M.strides(-1),M.dev);
 
       CtensorConvolve3d_back0()(rv,xv,Mv);      
     });
