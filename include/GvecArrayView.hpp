@@ -193,7 +193,7 @@ namespace GElib{
 	    oss<<x.str(indent+"  ");
 	  });
       }else{
-	for_each_part([&](const int p, const PAview& x){
+	for_each_part([&](const KEY p, const PAview& x){
 	    oss<<indent<<"Part "<<p<<":"<<endl;
 	    oss<<x.str(indent+"  ");
 	  });

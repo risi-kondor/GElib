@@ -20,8 +20,10 @@ int main(int argc, char** argv){
 
   SO3bipartArray<float> u=SO3bipartArray<float>::gaussian(b,adims,l1,l2,nc);
   SO3bipartArray<float> v=SO3bipartArray<float>::gaussian(b,adims,l1,l2,nc);
-  printl("u",u)<<endl;
-  printl("v",v)<<endl;
+  //printl("u",u)<<endl;
+  //printl("v",v)<<endl;
+
+  
 
   cout<<endl; 
 }

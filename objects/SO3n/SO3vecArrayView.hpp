@@ -29,7 +29,10 @@ namespace GElib{
 
     using _GvecArrayView::_GvecArrayView;
     using _GvecArrayView::parts;
+
+#ifdef _WITH_ATEN
     using _GvecArrayView::torch;
+#endif
 
 
   public: // ---- Access ------------------------------------------------------------------------------------

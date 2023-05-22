@@ -14,6 +14,7 @@
 #include "GElib_base.hpp"
 #include "Gvec.hpp"
 #include "SO3vecView.hpp"
+#include "diff_class.hpp"
 
 // SO3vec<RTYPE> -> Gvec<SO3vecView<RTYPE> > -> SO3vecView<RTYPE> -> 
 // BatchedGvecView<int,BatchedSO3partView<RTYPE>,SO3vecView<RTYPE> > -> GvecView<<int,BatchedSO3partView<RTYPE> > 
@@ -35,9 +36,10 @@ namespace GElib{
     using _Gvec::_Gvec;
     using _Gvec::parts;
 
+#ifdef WITH_FAKE_GRAD
     using diff_class::grad; 
     using diff_class::add_to_grad; 
-
+#endif
 
     ~SO3vec(){
 #ifdef WITH_FAKE_GRAD

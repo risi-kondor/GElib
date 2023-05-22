@@ -8,8 +8,8 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _GElibSO3vecArray
-#define _GElibSO3vecArray
+#ifndef _GElibSO3vecArrayC
+#define _GElibSO3vecArrayC
 
 #include "GElib_base.hpp"
 //#include "TensorView.hpp"
@@ -35,8 +35,9 @@ namespace GElib{
 
     using _GvecArray::parts;
 
+#ifdef _WITH_ATEN
     using _SO3vecArrayView::torch;
-
+#endif 
 
 
   public: // ---- Constructors -------------------------------------------------------------------------------
@@ -78,12 +79,10 @@ namespace GElib{
 
     
     #ifdef _WITH_ATEN
-
     SO3vecArray(const vector<at::Tensor>& v){
       for(auto& p:v)
 	parts[(p.size(p.dim()-2)-1)/2]=new SO3partArrayView<RTYPE>(p.dim()-2,p);
     }
-
     #endif 
 
 
