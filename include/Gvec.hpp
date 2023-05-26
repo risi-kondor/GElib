@@ -63,12 +63,22 @@ namespace GElib{
 
 
   public: // ---- Named constructors -------------------------------------------------------------------------
+
   
     //static Gvec zero(const TAU& tau, const int _dev=0){
     //Gvec R;
     //return R;
     //}
 
+
+  public: // ---- Transport ----------------------------------------------------------------------------------
+
+
+    Gvec(const Gvec& x, const int _dev){
+      for(auto& p:x.parts)
+	parts[p.first]=new decltype(BASE::part(0))(*p.second,_dev);
+    }
+    
   };
 
 }

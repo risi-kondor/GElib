@@ -24,11 +24,14 @@ extern GElib::SO3_SPHgen SO3_sphGen;
 
 namespace GElib{
 
+  #ifdef _WITH_CUDA
+  void SO3part_addCGtransform_cu(cnine::Ctensor3_view r, cnine::Ctensor4_view x, const int offs, const cudaStream_t& stream);
+  #endif
+
   class SO3part_addCGtransformFn{
   public:
 
     void operator()(const cnine::Ctensor3_view& _r, const cnine::Ctensor4_view& _x, const int offs=0){
-
       const int l=(_r.n1-1)/2;
       const int l1=(_x.n1-1)/2;
       const int l2=(_x.n2-1)/2;
@@ -61,7 +64,7 @@ namespace GElib{
 	  });
 
       }else{
-	GELIB_UNIMPL();
+	CUDA_STREAM(SO3part_addCGtransform_cu(_r,_x,offs,stream));
       }
 
     }

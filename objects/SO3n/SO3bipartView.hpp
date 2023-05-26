@@ -43,26 +43,26 @@ namespace GElib{
   class SO3bipartView: public cnine::BatchedTensorView<complex<RTYPE> >{
   public:
 
-    typedef cnine::BatchedTensorView<complex<RTYPE> > TensorView;
+    typedef cnine::BatchedTensorView<complex<RTYPE> > Tview;
 
-    using TensorView::TensorView;
-    using TensorView::arr;
-    using TensorView::dims;
-    using TensorView::strides;
+    using Tview::Tview;
+    using Tview::arr;
+    using Tview::dims;
+    using Tview::strides;
 
-    using TensorView::device;
-    using TensorView::bbatch;
-    using TensorView::getb;
+    using Tview::device;
+    using Tview::bbatch;
+    using Tview::getb;
     
 
   public: // ---- Conversions --------------------------------------------------------------------------------
 
 
-    SO3bipartView(const TensorView& x):
-      TensorView(x){}
+    SO3bipartView(const Tview& x):
+      Tview(x){}
 
-    //SO3bipartView(const cnine::TensorView<complex<RTYPE> >& x):
-    //TensorView(x){}
+    //SO3bipartView(const cnine::Tview<complex<RTYPE> >& x):
+    //Tview(x){}
 
     operator cnine::Ctensor4_view() const{
       return cnine::Ctensor4_view(arr.template ptr_as<RTYPE>(),{dims[0],dims[1],dims[2],dims[3]},

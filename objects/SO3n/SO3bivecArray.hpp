@@ -34,6 +34,7 @@ namespace GElib{
     typedef GvecArray<SO3bivecArrayView<RTYPE> > _GvecArray;
     typedef SO3bivecArrayView<RTYPE> _SO3bivecArrayView;
 
+    using _GvecArray::_GvecArray;
     using _GvecArray::parts;
 
 #ifdef _WITH_ATEN

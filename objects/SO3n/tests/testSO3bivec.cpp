@@ -35,7 +35,8 @@ int main(int argc, char** argv){
   cout<<a<<endl;
 
   #ifdef _WITH_CUDA
-  SO3bivec<float> ug=SO3bivec<float>::gaussian(b,tau,1);
+  SO3bivec<float> ug(u,1);
+  //cout<<ug<<endl;
   SO3vec<float> ag=CGtransform(ug);
   cout<<ag<<endl;
   #endif
