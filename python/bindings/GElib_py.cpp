@@ -43,6 +43,11 @@
 #include "SO3partArrayC.hpp"
 #include "SO3vecArrayC.hpp"
 
+#include "SO3bipart.hpp"
+#include "SO3bivec.hpp"
+#include "SO3bipartArray.hpp"
+#include "SO3bivecArray.hpp"
+
 #include "CtensorConvolve2d.hpp"
 //#include "CtensorConvolve2dSparse.hpp"
 #include "CtensorConvolve3d.hpp"
@@ -128,6 +133,11 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   #include "SO3vec_py.cpp"
   #include "SO3partArray_py.cpp"
   #include "SO3vecArray_py.cpp"
+
+  #include "SO3bipart_py.cpp"
+  #include "SO3bivec_py.cpp"
+  #include "SO3bipartArray_py.cpp"
+  #include "SO3bivecArray_py.cpp"
 
 
   //#include "CtensorB_py.cpp"

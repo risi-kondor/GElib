@@ -68,6 +68,8 @@ namespace GElib{
   public: // ---- Constructors for non-view child classes ---------------------------------------------------
 
 
+    SO3bipartArrayView(){}
+
     SO3bipartArrayView(const int b, const Gdims& _adims, const int l, const int n, const int _dev=0):
       BatchedTensorArrayView(b,_adims,Gdims({2*l+1,n}),_dev){}
 
@@ -75,7 +77,6 @@ namespace GElib{
 	     std::enable_if<std::is_base_of<cnine::fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
     SO3bipartArrayView(const int b, const Gdims& _adims, const int l1, const int l2, const int n, const FILLTYPE& fill, const int _dev=0):
       BatchedTensorArrayView(b,_adims,Gdims({2*l1+1,2*l2+1,n}),fill,_dev){}
-
 
 
   public: // ---- Conversions --------------------------------------------------------------------------------

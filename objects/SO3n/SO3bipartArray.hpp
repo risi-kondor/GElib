@@ -82,7 +82,7 @@ namespace GElib{
     
 
     static SO3bipartArray* new_zeros_like(const SO3bipartArray& x){
-      return new SO3bipartArray(x.getb(),x.get_adims(),Gdims({2*x.getl()+1,x.getn()}),cnine::fill_zero(),x.device());
+      return new SO3bipartArray(x.getb(),x.get_adims(),Gdims({2*x.getl1()+1,2*x.getl2()+1,x.getn()}),cnine::fill_zero(),x.device());
     }
 
 
