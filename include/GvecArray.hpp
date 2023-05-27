@@ -46,6 +46,33 @@ namespace GElib{
     }
 
 
+  public: // ---- Conversions ---------------------------------------------------------------------------------
+
+
+    GvecArray(const BASE& x){
+      GELIB_COPY_WARNING();
+      for(auto& p:x.parts)
+	parts[p.first]=static_cast<decltype(BASE::part(0))*>(p.second->clone());
+    }
+    
+    GvecArray& operator=(const BASE& x){
+      GELIB_ASSIGN_WARNING();
+      for(auto& p:parts)
+	delete p->second;
+      parts.clear();
+      for(auto& p:x.parts)
+	parts[p.first]=static_cast<decltype(BASE::part(0))*>(p.second->clone());
+    }
+
+
+  public: // ---- Transport ----------------------------------------------------------------------------------
+
+
+    GvecArray(const GvecArray& x, const int _dev){
+      for(auto& p:x.parts)
+	parts[p.first]=new decltype(BASE::part(0))(*p.second,_dev);
+    }
+
   
   };
 

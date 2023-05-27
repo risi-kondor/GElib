@@ -17,6 +17,7 @@
 #include "TensorTemplates.hpp"
 #include "SO3part3_view.hpp"
 #include "SO3templates.hpp"
+#include "BatchedTensor.hpp"
 
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
@@ -37,26 +38,27 @@ namespace GElib{
   class SO3partView: public cnine::BatchedTensorView<complex<RTYPE> >{
   public:
 
-    typedef cnine::BatchedTensorView<complex<RTYPE> > TensorView;
+    typedef cnine::BatchedTensorView<complex<RTYPE> > BTview;
 
-    using TensorView::TensorView;
-    using TensorView::arr;
-    using TensorView::dims;
-    using TensorView::strides;
+    using BTview::BTview;
+    using BTview::arr;
+    using BTview::dims;
+    using BTview::strides;
+    using BTview::dev;
 
-    using TensorView::device;
-    using TensorView::bbatch;
-    using TensorView::getb;
+    using BTview::device;
+    using BTview::bbatch;
+    using BTview::getb;
     
 
   public: // ---- Conversions --------------------------------------------------------------------------------
 
 
-    SO3partView(const TensorView& x):
-      TensorView(x){}
+    SO3partView(const BTview& x):
+      BTview(x){}
 
-    //SO3partView(const cnine::TensorView<complex<RTYPE> >& x):
-    //TensorView(x){}
+    //SO3partView(const cnine::BTview<complex<RTYPE> >& x):
+    //BTview(x){}
 
     operator cnine::Ctensor3_view() const{
       return cnine::Ctensor3_view(arr.template ptr_as<RTYPE>(),{dims[0],dims[1],dims[2]},
@@ -142,6 +144,14 @@ namespace GElib{
 
     string repr(const string indent="") const{
       return "<GElib::SO3part(b="+to_string(getb())+",l="+to_string(getl())+",n="+to_string(getn())+")>";
+    }
+
+    string str(const string indent="") const{
+      if(dev>0){
+	auto t=cnine::BatchedTensor<complex<RTYPE> >(*this,0);
+	return SO3partView(t).str(indent);
+      }
+      return cnine::BatchedTensorView<complex<RTYPE> >::str(indent);
     }
 
     //friend ostream& operator<<(ostream& stream, const SO3partView& x){

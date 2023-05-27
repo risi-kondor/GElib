@@ -9,12 +9,12 @@ int main(int argc, char** argv){
   GElibSession session;
   cout<<endl;
 
-  int b=2;
-  Gdims adims({2});
+  int b=20;
+  Gdims adims({10,10,10});
   SO3bitype tau({{2,2,1},{1,3,2}});
 
-  SO3bivecArray<float> u=SO3bivecArray<float>::gaussian(2,adims,tau);
-  cout<<u<<endl;
+  SO3bivecArray<float> u=SO3bivecArray<float>::gaussian(b,adims,tau);
+  //cout<<u<<endl;
 
   //SO3vecArray<float> v=SO3vecArray<float>::sequential(2,adims,tau);
   //cout<<v<<endl;
@@ -27,6 +27,13 @@ int main(int argc, char** argv){
   //cout<<u*M<<endl;
 
   SO3vecArray<float> a=CGtransform(u);
-  cout<<a<<endl;
+  //cout<<a<<endl;
+
+  #ifdef _WITH_CUDA
+  SO3bivecArray<float> ug(u,1);
+  //cout<<ug<<endl;
+  SO3vecArray<float> ag=CGtransform(ug);
+  //cout<<ag<<endl;
+  #endif
 
 }
