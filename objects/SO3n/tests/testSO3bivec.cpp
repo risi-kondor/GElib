@@ -10,7 +10,8 @@ int main(int argc, char** argv){
   GElibSession session;
   cout<<endl;
 
-  int b=1;
+  int b=2;
+  //SO3bitype tau({{1,1,1}});
   SO3bitype tau({{2,2,1},{1,3,2}});
   //SO3bitype tau({{2,2},1},{{1,3},2});
 
