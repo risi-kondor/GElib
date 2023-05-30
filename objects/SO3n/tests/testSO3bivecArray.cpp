@@ -11,7 +11,9 @@ int main(int argc, char** argv){
 
   int b=20;
   Gdims adims({10,10,10});
-  SO3bitype tau({{2,2,1},{1,3,2}});
+  //SO3bitype tau({{2,2,1},{1,3,2}});
+  SO3bitype tau({{2,2,1},{1,3,2},{4,4,2}});
+  //SO3bitype tau({{2,2,16},{1,3,16},{4,4,16}});
 
   SO3bivecArray<float> u=SO3bivecArray<float>::gaussian(b,adims,tau);
   //cout<<u<<endl;
