@@ -17,6 +17,9 @@
 #include "SO3part4_view.hpp"
 #include "MultiLoop.hpp"
 #include "GElibTimer.hpp"
+#include "WorkStreamLoop.hpp"
+
+extern thread_local cnine::DeviceSelector cnine::dev_selector;
 
 extern GElib::SO3_CGbank SO3_cgbank;
 extern GElib::SO3_SPHgen SO3_sphGen;
@@ -59,6 +62,33 @@ namespace GElib{
 
       CGproductTimer(l1,l2,l,B,N1,N2,dev,B*count*N1*N2);
       
+      if(dev==0 && cnine::dev_selector.dev>0){
+
+	int nb=(cnine::dev_selector.max_mem<<18)/(2*_x.n1*_x.n2+2*_y.n1*_y.n2+2*_r.n1*_x.n2*_y.n2);
+	cout<<"nb="<<nb;
+	cnine::ArrayOnDevice<float> xbuf(2*nb*_x.n1*_x.n2);
+	cnine::ArrayOnDevice<float> ybuf(2*nb*_y.n1*_y.n2);
+	cnine::ArrayOnDevice<float> rbuf(2*nb*_r.n1*_x.n2*_y.n2);
+	cnine::Ctensor3_view xv(xbuf,nb,_x.n1,_x.n2,_x.s0,_x.s1,_x.s2,1,1);
+	cnine::Ctensor3_view yv(ybuf,nb,_y.n1,_y.n2,_y.s0,_y.s1,_y.s2,1,1);
+	cnine::Ctensor3_view rv(rbuf,nb,_r.n1,_x.n2*_y.n2,_r.s0,_r.s1,_r.s2,1,1);
+	
+	for(int i=0; i<cnine::roundup(_r.n0,nb)/nb; i++){
+
+	  int _nb=std::max(nb,_x.n0-i*nb);
+	  if(_nb<nb){
+	    xv.n0=_nb;
+	    yv.n0=_nb;
+	    rv.n0=_nb;
+	  }
+
+	  //CUDA_SAFE(cudaMemcpy(xbuf,_x.arrg,memsize*sizeof(float),cudaMemcpyDeviceToDevice));
+
+	  //SO3partB_addCGproduct_cu(_r,_x.chunk,_y,_offs,stream);
+	}
+
+      }
+
       if(dev==0){
 
 	auto& C=SO3_cgbank.getf(CGindex(l1,l2,l));
