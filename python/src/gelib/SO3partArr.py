@@ -22,9 +22,20 @@ class SO3partArr(torch.Tensor):
     The vectors are stacked into a fourth order tensor. The first index is the site index, the second index
     is the batch index, the third is m=-l,...,l, and the fourth index is the fragment index. 
     """
-
-    def __init__(self,_T):
-        self=_T
+    def __new__(cls, x, *args, **kwargs):
+        if(torch.is_complex(x)):
+            return torch.view_as_complex(super().__new__(cls, torch.view_as_real(x), *args, **kwargs))
+        else:
+            return torch.view_as_complex(super().__new__(cls,x, *args, **kwargs))
+        
+    #@classmethod 
+    #def __init__(self,_T):
+        #if(torch.is_complex(_T)):
+            #self=torch.view_as_real(_T)
+            #super().__init__(torch.view_as_real(_T))
+        #else:
+            #super().__init__(_T)
+            #self=_T
 
 
     ## ---- Static constructors -----------------------------------------------------------------------------
@@ -36,7 +47,7 @@ class SO3partArr(torch.Tensor):
         Create an SO(3)-part consisting of N*b lots of n vectors transforming according to the l'th irrep of SO(3).
         The vectors are initialized to zero, resulting in an b*(2+l+1)*n dimensional complex tensor of zeros.
         """        
-        return torch.view_as_complex(SO3partArr(torch.zeros([b]+_adims+[2*l+1,n,2],device=device)))
+        return SO3partArr(torch.zeros([b]+_adims+[2*l+1,n,2],device=device))
 
 
     @staticmethod
@@ -46,7 +57,8 @@ class SO3partArr(torch.Tensor):
         The vectors are initialized as random gaussian vectors, resulting in an b*(2+l+1)*n dimensional random
         complex tensor.
         """
-        return torch.view_as_complex(SO3partArr(torch.randn([b]+_adims+[2*l+1,n,2],device=device)))
+        return SO3partArr(torch.randn([b]+_adims+[2*l+1,n,2],device=device))
+        #return torch.view_as_complex(SO3partArr(torch.randn([b]+_adims+[2*l+1,n,2],device=device)))
 
 
     @classmethod

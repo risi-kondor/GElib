@@ -3,12 +3,12 @@ import gelib
 
 def main(batch_size, n_channels, maxl, kernel_size, n_radius, input_size, num_classes, device):
 
-    ############################################# Defininf Stuff ####################################################
+    ############################################# Defining Stuff ####################################################
     kernel_size = [kernel_size]*3
     input_size = [input_size]*3
 
     # Random Input
-    inputs = torch.randn(batch_size, *input_size, n_channels, dtype = torch.cfloat, device=device)
+    inputs = gelib.SO3partArr.randn(batch_size, input_size, 0, n_channels).to(device)
     labels = torch.randint(0, num_classes, size=(batch_size,)).to(device)
     criterion = torch.nn.CrossEntropyLoss()
 
@@ -26,7 +26,7 @@ def main(batch_size, n_channels, maxl, kernel_size, n_radius, input_size, num_cl
 
     ################################################ First Layer ####################################################
     # Conterpolation
-    interim1 = gelib.SO3partArr(inputs.unsqueeze(-2)).conterpolateB(Fint).flatten(-2)
+    interim1 = inputs.conterpolateB(Fint).flatten(-2)
     # the usqueeze operation introduces a new dimension at the penultimate position, which serves as a proxy for the component dimension of SO3partArr
     #the tensor is flattened afte conterpolation to collect the radius and input channels together which serve as the proxy for input channel
 
@@ -47,10 +47,30 @@ def main(batch_size, n_channels, maxl, kernel_size, n_radius, input_size, num_cl
     ################################################ Flattening #########################################################
     outputs = torch.cat(interim4.parts, dim = -2)
     outputs = torch.mean(outputs, dim = (1,2,3))
-    outputs = torch.linalg.vector_norm(outputs, dim = (1,))
+    outputs = torch.mean(outputs, dim = (1,))
     # the equivariant parts are stacked togther, averaged over the voxel locations and then the norm is calculated
     print(outputs)
 
     ############################################## Backpropagation ########################################################
-    loss = criterion(outputs, labels)
+    loss = criterion(torch.real(outputs), labels)
     loss.backward()
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--batch_size", type=int, default=1)
+    parser.add_argument("--n_channels", type=int, default=2)
+    parser.add_argument("--maxl", type=int, default=2)
+    parser.add_argument("--kernel_size", type=int, default=5)
+    parser.add_argument("--n_radius", type=int, default=4)
+    parser.add_argument("--input_size", type=int, default=10)
+    parser.add_argument("--num_classes", type=int, default=5)
+    parser.add_argument("--device", type=str, default='cuda')
+
+    args = parser.parse_args()
+
+    for _ in range(1):
+        main(**args.__dict__)
