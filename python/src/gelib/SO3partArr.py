@@ -338,6 +338,7 @@ class SO3partArr_ConterpolateBFn(torch.autograd.Function):
         _g=_ctensor.view(g)
         _M=_rtensor.view(ctx.M)
         gx=SO3partArr.zeros(ctx.b,ctx.adims,ctx.l,ctx.n,g.device)
+        print(gx.size())
         _gx=_SO3partB_array.view(gx)
         gelib_base.add_conterpolate3dB_back(_gx,_g,_M)
         return gx,None
