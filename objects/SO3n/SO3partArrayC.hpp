@@ -16,6 +16,7 @@
 #include "TensorArrayVirtual.hpp"
 #include "SO3templates.hpp"
 #include "diff_class.hpp"
+#include "WorkStreamLoop.hpp"
 
 
 namespace GElib{
@@ -128,6 +129,16 @@ namespace GElib{
     assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
     SO3partArray<TYPE> R=SO3partArray<TYPE>::zero(x.getb(),x.get_adims(),l,x.getn(),x.device());
     add_DiagCGproduct(R,x,y);
+    return R;
+  }
+
+  template<typename TYPE>
+  inline SO3partArray<TYPE> StreamingCGproduct(const SO3partArrayView<TYPE>& x, const SO3partArrayView<TYPE>& y, const int l, const int dev=1){
+    assert(x.get_adims()==y.get_adims());
+    assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
+    cnine::StreamingBlock bl(dev);
+    SO3partArray<TYPE> R=SO3partArray<TYPE>::zero(x.getb(),x.get_adims(),l,x.getn()*y.getn(),x.device());
+    add_CGproduct(R,x,y);
     return R;
   }
 

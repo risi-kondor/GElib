@@ -56,36 +56,45 @@ namespace GElib{
       assert(_offs+N1*N2<=_r.n2);
       assert(l>=abs(l1-l2) && l<=l1+l2);
 
-      //LoggedTimer timer("  CGproduct("+to_string(l1)+","+to_string(l2)+","+to_string(l)+")[b="+
-      //to_string(B)+",n1="+to_string(N1)+",n2="+to_string(N2)+",dev="+to_string(dev)+"]",B*(2*l1+1)*(2*l2+1)*N1*N2);
       int count=0; for(int i=-l1; i<=l1; i++) count+=std::min(l2,l-i)-std::max(-l2,-l-i)+(i<=l);
-
       CGproductTimer(l1,l2,l,B,N1,N2,dev,B*count*N1*N2);
       
       if(dev==0 && cnine::dev_selector.dev>0){
+	int sdev=cnine::dev_selector.dev;
 
-	int nb=(cnine::dev_selector.max_mem<<18)/(2*_x.n1*_x.n2+2*_y.n1*_y.n2+2*_r.n1*_x.n2*_y.n2);
+	if(!_r.is_regular() || !_x.is_regular() || !_y.is_regular()){
+	  gelib_log->error(__PRETTY_FUNCTION__,"Arguments of streaming operation must have regular strides. Skipping this operation."); return;}
+
+	int nb=std::min((cnine::dev_selector.max_mem<<18)/(2*_x.n1*_x.n2+2*_y.n1*_y.n2+2*_r.n1*_x.n2*_y.n2),_r.n0);
 	cout<<"nb="<<nb;
 	cnine::ArrayOnDevice<float> xbuf(2*nb*_x.n1*_x.n2);
 	cnine::ArrayOnDevice<float> ybuf(2*nb*_y.n1*_y.n2);
 	cnine::ArrayOnDevice<float> rbuf(2*nb*_r.n1*_x.n2*_y.n2);
-	cnine::Ctensor3_view xv(xbuf,nb,_x.n1,_x.n2,_x.s0,_x.s1,_x.s2,1,1);
-	cnine::Ctensor3_view yv(ybuf,nb,_y.n1,_y.n2,_y.s0,_y.s1,_y.s2,1,1);
-	cnine::Ctensor3_view rv(rbuf,nb,_r.n1,_x.n2*_y.n2,_r.s0,_r.s1,_r.s2,1,1);
-	
-	for(int i=0; i<cnine::roundup(_r.n0,nb)/nb; i++){
+	cnine::Ctensor3_view xv(xbuf,nb,_x.n1,_x.n2,_x.s0,_x.s1,_x.s2,1,sdev);
+	cnine::Ctensor3_view yv(ybuf,nb,_y.n1,_y.n2,_y.s0,_y.s1,_y.s2,1,sdev);
+	cnine::Ctensor3_view rv(rbuf,nb,_r.n1,_x.n2*_y.n2,_r.s0,_r.s1,_r.s2,1,sdev);
 
+#ifdef _WITH_CUDA
+	cu_stream stream;
+	//cudaStream_t stream;
+	//CUDA_SAFE(cudaStreamCreate(&stream));
+	for(int i=0; i<cnine::roundup(_r.n0,nb)/nb; i++){
+	
 	  int _nb=std::max(nb,_x.n0-i*nb);
 	  if(_nb<nb){
 	    xv.n0=_nb;
 	    yv.n0=_nb;
 	    rv.n0=_nb;
 	  }
-
-	  //CUDA_SAFE(cudaMemcpy(xbuf,_x.arrg,memsize*sizeof(float),cudaMemcpyDeviceToDevice));
-
-	  //SO3partB_addCGproduct_cu(_r,_x.chunk,_y,_offs,stream);
+	  CUDA_SAFE(cudaMemcpyAsync(xbuf, _x.arr+i*nb*_x.s0, _nb*_x.s0*sizeof(float), cudaMemcpyHostToDevice, stream));
+	  CUDA_SAFE(cudaMemcpyAsync(ybuf, _y.arr+i*nb*_y.s0, _nb*_y.s0*sizeof(float), cudaMemcpyHostToDevice, stream));
+	  CUDA_SAFE(cudaMemcpyAsync(rbuf, _r.arr+i*nb*_r.s0+2*_offs, _nb*_r.s0*sizeof(float), cudaMemcpyHostToDevice, stream));
+	  SO3partB_addCGproduct_cu(rbuf,xbuf,ybuf,0,stream);
+	  CUDA_SAFE(cudaMemcpyAsync(_r.arr+i*nb*_r.s0+2*_offs, rbuf, _nb*_r.s0*sizeof(float), cudaMemcpyDeviceToHost, stream));
 	}
+	//CUDA_SAFE(cudaStreamSynchronize(stream));
+	//CUDA_SAFE(cudaStreamDestroy(stream));
+#endif
 
       }
 
@@ -110,6 +119,7 @@ namespace GElib{
 	    }
 	  });
       }
+
       else CUDA_STREAM(SO3partB_addCGproduct_cu(_r,_x,_y,_offs,stream));
 
     }
@@ -172,3 +182,5 @@ namespace GElib{
 
 #endif
 
+      //LoggedTimer timer("  CGproduct("+to_string(l1)+","+to_string(l2)+","+to_string(l)+")[b="+
+      //to_string(B)+",n1="+to_string(N1)+",n2="+to_string(N2)+",dev="+to_string(dev)+"]",B*(2*l1+1)*(2*l2+1)*N1*N2);

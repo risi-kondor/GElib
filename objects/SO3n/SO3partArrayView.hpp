@@ -181,7 +181,6 @@ namespace GElib{
 	[&](const auto& yg, const auto& g, const auto& x){SO3part_addRCGproduct_back1Fn()(yg,g,x,_offs);});
     }
 
-
     void add_DiagCGproduct(const SO3partArrayView& x, const SO3partArrayView& y, const int _offs=0) const{
       cnine::reconcile_batched_array<SO3partArrayView>(*this,x,y,
 	[&](const auto& r, const auto& x, const auto& y){SO3part_addBlockedCGproductFn()(r,x,y,1,_offs);},

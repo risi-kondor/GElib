@@ -37,6 +37,12 @@ namespace GElib{
       ofs2.close();
     }
 
+
+  public: // -------------------------------------------------------------------------------------------------
+
+
+    void operator()(){}
+
     void operator()(const string msg){
       //auto time = std::chrono::system_clock::now();
       //std::time_t timet = std::chrono::system_clock::to_time_t(time);
@@ -47,7 +53,11 @@ namespace GElib{
       ofs<<os<<msg<<endl;
     }
 
-    void operator()(){}
+    void error(const string fn, const string str){
+      ofs<<"Error in "<<fn<<": "<<str<<endl;
+      cnine::CoutLock lk;
+      cout<<"Error in "<<fn<<": "<<str<<endl;
+    }
 
   };
 

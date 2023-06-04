@@ -18,6 +18,7 @@
 #include "diff_class.hpp"
 #include "SO3partView.hpp"
 #include "SO3templates.hpp"
+#include "WorkStreamLoop.hpp"
 
 
 namespace GElib{
@@ -143,7 +144,6 @@ namespace GElib{
   inline SO3part<TYPE> CGproduct(const SO3partView<TYPE>& x, const SO3partView<TYPE>& y, const int l){
     assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
     SO3part<TYPE> R=SO3part<TYPE>::zero(x.getb(),l,x.getn()*y.getn(),x.device());
-    //add_CGproduct(R,x,y);
     R.add_CGproduct(x,y);
     return R;
     }
@@ -155,6 +155,15 @@ namespace GElib{
       SO3part<TYPE> R=SO3part<TYPE>::zero(x.getb(),l,x.getn(),x.device());
       add_DiagCGproduct(R,x,y);
       return R;
+    }
+
+  template<typename TYPE>
+  inline SO3part<TYPE> StreamingCGproduct(const SO3partView<TYPE>& x, const SO3partView<TYPE>& y, const int l, const int dev=1){
+    assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
+    cnine::StreamingBlock bl(dev);
+    SO3part<TYPE> R=SO3part<TYPE>::zero(x.getb(),l,x.getn()*y.getn(),x.device());
+    R.add_CGproduct(x,y);
+    return R;
     }
 
 

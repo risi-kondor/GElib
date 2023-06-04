@@ -527,7 +527,7 @@ namespace GElib{
 
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
-
+   
     /*
     string str(const string indent="") const{
       ostringstream oss;
