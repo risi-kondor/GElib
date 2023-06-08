@@ -51,6 +51,10 @@ namespace GElib{
       return tau;
     }
 
+    SO3bipartView<RTYPE> part(const int l1, const int l2) const{
+      return *parts[pair<int,int>(l1,l2)];
+    }
+
     // this is a hack for the decltype in Gvec
     SO3bipartView<RTYPE> part(const int dummy) const{
       return SO3bipartView<RTYPE>();

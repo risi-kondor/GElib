@@ -11,13 +11,13 @@
 py::class_<SO3bivec<float> >(m,"SO3bivec")
 
     
-//.def_static("zero",[](const int b, const SO3type& tau, const int dev){
-//  return SO3bivec<float>::zero(b,tau,dev);}, 
-//  py::arg("b"), py::arg("tau"), py::arg("device")=0)
+  .def_static("zero",[](const int b, const SO3bitype& tau, const int dev){
+      return SO3bivec<float>::zero(b,tau,dev);}, 
+    py::arg("b"), py::arg("tau"), py::arg("device")=0)
 
-//.def_static("gaussian",[](const int b, const SO3type& tau, const int dev){
-//  return SO3bivec<float>::gaussian(b,tau,dev);}, 
-//  py::arg("b"), py::arg("tau"), py::arg("device")=0)
+  .def_static("gaussian",[](const int b, const SO3bitype& tau, const int dev){
+      return SO3bivec<float>::gaussian(b,tau,dev);}, 
+    py::arg("b"), py::arg("tau"), py::arg("device")=0)
 
 //  .def(pybind11::init<const vector<at::Tensor>&>())
   .def("torch",[](const SO3bivec<float>& x){return x.torch();})
@@ -34,9 +34,9 @@ py::class_<SO3bivec<float> >(m,"SO3bivec")
   .def("get_batch_back",[](SO3bivec<float>& r, int b, SO3bivec<float>& x){
       r.get_grad().batch(b).add(x.get_grad());})
 
-  .def("part",[](SO3bivec<float>& r, int l){return SO3bipart<float>(r.part(l));})
-  .def("add_to_part_grad_of",[](SO3bivec<float>& r, int l, SO3bipart<float>& x){
-      r.get_grad().part(l).add(x.get_grad());})
+  .def("part",[](SO3bivec<float>& r, int l1, int l2){return SO3bipart<float>(r.part(l1,l2));})
+//  .def("add_to_part_grad_of",[](SO3bivec<float>& r, int l, SO3bipart<float>& x){
+//      r.get_grad().part(l).add(x.get_grad());})
 
   .def("add_CGtransform_to",[](SO3bivec<float>& x, const SO3vec<float>& r){
       x.add_CGtransform_to(r);},py::arg("r"))

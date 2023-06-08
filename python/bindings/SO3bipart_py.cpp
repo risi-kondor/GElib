@@ -39,7 +39,7 @@ py::class_<SO3bipart<float> >(m,"SO3bipart",
   .def("get_batch_back",[](SO3bipart<float>& r, int b, SO3bipart<float>& x){
       r.get_grad().batch(b).add(x.get_grad());})
 
-  .def("add_CGtranform_to",[](SO3bipartView<float>& x, SO3partView<float>& r, int offs){
+  .def("add_CGtransform_to",[](SO3bipart<float>& x, SO3part<float>& r, int offs){
       x.add_CGtransform_to(r,offs);},py::arg("r"),py::arg("offs")=0)
   .def("add_CGtransform_back",[](SO3bipart<float>& x, SO3part<float>& r, const int offs){
       x.get_grad().add_CGtransform_back(r.get_grad(),offs);},py::arg("g"),py::arg("offs")=0)

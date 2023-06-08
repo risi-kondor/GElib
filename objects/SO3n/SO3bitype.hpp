@@ -14,7 +14,7 @@
 
 #include "GElib_base.hpp"
 #include <unordered_map>
-#include "SO3type.hpp"
+#include "SO3bitype.hpp"
 
 
 namespace GElib{
@@ -30,6 +30,13 @@ namespace GElib{
 	vector<int> t;
 	for(auto q:p)
 	  t.push_back(q);
+	(*this)[pair<int,int>(t[0],t[1])]=t[2];
+      }
+    }
+
+    SO3bitype(const vector<vector<int> >& list){
+      for(auto& t:list){
+	assert(t.size()==3);
 	(*this)[pair<int,int>(t[0],t[1])]=t[2];
       }
     }

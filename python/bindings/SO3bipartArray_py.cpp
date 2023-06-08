@@ -49,7 +49,7 @@ py::class_<SO3bipartArray<float> >(m,"SO3bipartArray",
 
   .def("add_CGtransform_to",[](SO3bipartArray<float>& x, SO3partArray<float>& r, const int offs){
       x.add_CGtransform_to(r,offs);},py::arg("r"),py::arg("offs")=0)
-  .def("add_CGtransform_back",[](SO3bipart<float>& x, SO3part<float>& g, const int offs){
+  .def("add_CGtransform_back",[](SO3bipartArray<float>& x, SO3partArray<float>& g, const int offs){
       x.get_grad().add_CGtransform_back(g.get_grad(),offs);},py::arg("g"),py::arg("offs")=0)
     
   .def("str",&SO3bipartArray<float>::str,py::arg("indent")="")

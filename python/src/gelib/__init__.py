@@ -23,5 +23,11 @@ from gelib.SO3vecC import *
 from gelib.SO3partArrC import *
 from gelib.SO3vecArrC import *
 
+from gelib.SO3bipart import *
+from gelib.SO3bipartArr import *
+from gelib.SO3bivec import *
+from gelib.SO3bivecArr import *
+
+
 #from gelib.gelib_torchC import *
 # from gelib.gelib_torchD import *

@@ -9,9 +9,9 @@
 
 import torch
 #from cnine import ctensorb 
-from gelib_base import SO3partArray as _SO3partArray
+from gelib_base import SO3bipartArray as _SO3bipartArr
 
-from gelib import SO3partC as SO3partC
+from gelib import SO3partArrC as SO3partArr
 
 
 def device_id(device):
@@ -31,34 +31,34 @@ def device_id(device):
 
 
 # ----------------------------------------------------------------------------------------------------------
-# ---- SO3partArr ------------------------------------------------------------------------------------------
+# ---- SO3part ---------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------
 
 
 
-class SO3partArrC(torch.Tensor):
+class SO3bipartArr(torch.Tensor):
 
     @classmethod
     def dummy(self):
-        R=SO3partArrC(1)
+        R=SO3bipartArr(1)
         #R.obj=_ptensors0.dummy()
         return R
 
     @classmethod
-    def zeros(self, b, adims, l, n, device='cpu'):
-        R=SO3partArrC(1)
-        R.obj=_SO3partArray.zero(b,adims,l,n,device_id(device))
+    def zeros(self, b, adims, l1, l2, n, device='cpu'):
+        R=SO3bipartArr(1)
+        R.obj=_SO3bipartArr.zero(b,adims,l1,l2,n,device_id(device))
         return R
 
     @classmethod
-    def randn(self, b, adims, l, n, device='cpu'):
-        R=SO3partArrC(1)
-        R.obj=_SO3partArray.gaussian(b,adims,l,n,device_id(device))
+    def randn(self, b, adims, l1, l2, n, device='cpu'):
+        R=SO3bipartArr(1)
+        R.obj=_SO3bipartArr.gaussian(b,adims,l1,l2,n,device_id(device))
         return R
 
     @classmethod
     def from_torch(self,T):
-        return SO3partArrC_fromTorchFn.apply(T)
+        return SO3bipartArr_fromTorchFn.apply(T)
 
             
     # ---- Access ------------------------------------------------------------------------------------------
@@ -79,34 +79,23 @@ class SO3partArrC(torch.Tensor):
     def getn(self):
         return self.obj.getn()
 
-    def cell(self,i):
-        return SO3partArrC_getCellFn.apply(self,i)
-
-
     def get_grad(self):
-        R=SO3partArrC(1)
+        R=SO3bipartArr(1)
         R.obj=self.obj.get_grad()
         return R
 
     def torch(self):
-        return SO3partArrC_toTorchFn.apply(self)
+        return SO3bipartArr_toTorchFn.apply(self)
 
     
     # ---- Products -----------------------------------------------------------------------------------------
 
 
-    def CGproduct(self, y, l):
+    def CGtransform(self, l):
         """
-        Compute the l component of the Clesbsch--Gordan product of this SO3partArr with another SO3partArr y.
+        Compute the l component of the CGtransform.
         """
-        return SO3partArrC_CGproductFn.apply(self,y,l)
-
-
-    def DiagCGproduct(self, y, l):
-        """
-        Compute the l component of the diagonal Clesbsch--Gordan product of this SO3partArr with another SO3partArr y.
-        """
-        return SO3partArrC_DiagCGproductFn.apply(self,y,l)
+        return SO3bipartArr_CGtransformFn.apply(self,l)
 
 
     # ---- I/O ----------------------------------------------------------------------------------------------
@@ -124,12 +113,12 @@ class SO3partArrC(torch.Tensor):
 # ----------------------------------------------------------------------------------------------------------
 
 
-class SO3partArrC_fromTorchFn(torch.autograd.Function):
+class SO3bipartArr_fromTorchFn(torch.autograd.Function):
 
     @staticmethod
     def forward(ctx,x):
-        r=SO3partArrC(1)
-        r.obj=_SO3partArray(x)
+        r=SO3bipartArr(1)
+        r.obj=_SO3bipartArr(x)
         ctx.r=r
         return r
 
@@ -138,7 +127,7 @@ class SO3partArrC_fromTorchFn(torch.autograd.Function):
         return ctx.r.obj.get_grad().torch()
 
 
-class SO3partArrC_toTorchFn(torch.autograd.Function):
+class SO3bipartArr_toTorchFn(torch.autograd.Function):
 
     @staticmethod
     def forward(ctx,x):
@@ -147,67 +136,27 @@ class SO3partArrC_toTorchFn(torch.autograd.Function):
  
     @staticmethod
     def backward(ctx,g):
-        ctx.x.obj.add_to_grad(_SO3partArray(g))
-        return SO3partArrC.dummy()
+        ctx.x.obj.add_to_grad(_SO3bipartArr(g))
+        return SO3bipartArr.dummy()
     
 
-class SO3partArrC_getCellFn(torch.autograd.Function):
+class SO3bipartArr_CGtransformFn(torch.autograd.Function):
 
     @staticmethod
-    def forward(ctx,x,ix):
-        r=SO3partC(1)
-        r.obj=x.obj.cell(ix)
+    def forward(ctx,x,l):
+        print(x.get_dev())
+        r=SO3partArr.zeros(x.getb(),x.get_adims(),l,x.getn(),x.get_dev())
+        x.obj.add_CGtransform_to(r.obj,0)
         ctx.x=x
-        ctx.r=r
-        ctx.ix=ix
-        return r
-
-    @staticmethod
-    def backward(ctx,g):
-        ctx.x.obj.get_cell_back(ctx.ix,ctx.r.obj)
-        return SO3partArrC.dummy(), None
-
-
-class SO3partArrC_CGproductFn(torch.autograd.Function):
-
-    @staticmethod
-    def forward(ctx,x,y,l):
-        r=SO3partArrC.zeros(x.getb(),x.get_adims(),l,x.getn()*y.getn(),x.get_dev())
-        r.obj.add_CGproduct(x.obj,y.obj,l)
-        ctx.x=x
-        ctx.y=y
         ctx.r=r
         return r
 
     @staticmethod
     def backward(ctx, g):
         x=ctx.x
-        y=ctx.y
         r=ctx.r
-        x.obj.add_CGproduct_back0(r.obj,y.obj)
-        y.obj.add_CGproduct_back1(r.obj,x.obj)
-        return SO3partArrC.dummy(),SO3partArrC.dummy(),None
-
-
-class SO3partArrC_DiagCGproductFn(torch.autograd.Function):
-
-    @staticmethod
-    def forward(ctx,x,y,l):
-        r=SO3partArrC.zeros(x.getb(),x.get_adims(),l,x.getn(),x.get_dev())
-        r.obj.add_DiagCGproduct(x.obj,y.obj,l)
-        ctx.x=x
-        ctx.y=y
-        ctx.r=r
-        return r
-
-    @staticmethod
-    def backward(ctx, g):
-        x=ctx.x
-        y=ctx.y
-        r=ctx.r
-        x.obj.add_DiagCGproduct_back0(r.obj,y.obj)
-        y.obj.add_DiagCGproduct_back1(r.obj,x.obj)
-        return SO3partArrC.dummy(),SO3partArrC.dummy(),None
+        x.obj.add_CGtransform_back(r.obj)
+        return SO3bipartArr.dummy(),None
 
 
 # ----------------------------------------------------------------------------------------------------------
@@ -215,10 +164,5 @@ class SO3partArrC_DiagCGproductFn(torch.autograd.Function):
 # ----------------------------------------------------------------------------------------------------------
 
 
-def CGproduct(x, y, maxl=-1):
-    return x.CGproduct(y, maxl)
-
-
-def DiagCGproduct(x, y, maxl=-1):
-    return x.DiagCGproduct(y, maxl)
-
+def CGtransform(x,l):
+    return x.CGtransform(l)

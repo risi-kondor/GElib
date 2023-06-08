@@ -11,13 +11,13 @@
 py::class_<SO3bivecArray<float> >(m,"SO3bivecArray")
 
     
-//  .def_static("zero",[](const int b, const vector<int>& adims, const SO3type& tau, const int dev){
-//      return SO3bivecArray<float>::zero(b,adims,tau,dev);}, 
-//    py::arg("b"), py::arg("adims"), py::arg("tau"), py::arg("device")=0)
+  .def_static("zero",[](const int b, const vector<int>& adims, const SO3bitype& tau, const int dev){
+      return SO3bivecArray<float>::zero(b,adims,tau,dev);}, 
+    py::arg("b"), py::arg("adims"), py::arg("tau"), py::arg("device")=0)
 
-//  .def_static("gaussian",[](const int b, const vector<int>& adims, const SO3type& tau, const int dev){
-//      return SO3bivecArray<float>::gaussian(b,adims,tau,dev);}, 
-//    py::arg("b"), py::arg("adims"), py::arg("tau"), py::arg("device")=0)
+  .def_static("gaussian",[](const int b, const vector<int>& adims, const SO3bitype& tau, const int dev){
+      return SO3bivecArray<float>::gaussian(b,adims,tau,dev);}, 
+    py::arg("b"), py::arg("adims"), py::arg("tau"), py::arg("device")=0)
 
 //  .def(pybind11::init<const vector<at::Tensor>&>())
   .def("torch",[](const SO3bivecArray<float>& x){return x.torch();})
