@@ -13,6 +13,7 @@ from cnine import ctensorb
 from gelib_base import SO3partB as _SO3partB
 from gelib_base import SO3vecB as _SO3vecB
 #from gelib_base import SO3Fvec as _SO3Fvec
+import gelib_base
 
 from gelib import *
 
@@ -53,7 +54,7 @@ class SO3vec:
     @classmethod
     def randn(self, b, _tau,  device='cpu'):
         "Construct a random SO3vec object of given type _tau."
-        R = SO3vec()
+        R = gelib_base.SO3vec()
         for l in range(0, len(_tau)):
             R.parts.append(torch.randn([b,2*l+1,_tau[l]], dtype=torch.cfloat, device=device))
         return R
