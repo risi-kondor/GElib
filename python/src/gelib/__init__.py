@@ -1,8 +1,6 @@
 # WE SHOULD REMOVE THE import *  !!!
 import torch
 
-#from gelib_base import *
-
 from gelib.SO3part import *
 from gelib.SO3weights import *
 from gelib.SO3weightsArr import *
