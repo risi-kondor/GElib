@@ -96,7 +96,7 @@ class SO3partArr(torch.Tensor):
     
     @classmethod
     def randn_like(self,x):
-        return torch.view_as_complex(SO3partArr(torch.randn_like(torch.view_as_real(x))))
+        return SO3partArr(torch.randn_like(torch.view_as_real(x)))
 
 
     ## ---- Access ------------------------------------------------------------------------------------------
@@ -126,7 +126,8 @@ class SO3partArr(torch.Tensor):
 
     def rotate(self,R):
         A= _SO3partB_array.view(self).rotate(R).torch()
-        return torch.view_as_complex(SO3partArr(torch.view_as_real(A)))
+        return SO3partArr(torch.view_as_real(A))
+        #return torch.view_as_complex(SO3partArr(torch.view_as_real(A)))
 
     def gather(self,_mask):
         """

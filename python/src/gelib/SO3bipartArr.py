@@ -11,7 +11,7 @@ import torch
 #from cnine import ctensorb 
 from gelib_base import SO3bipartArray as _SO3bipartArr
 
-from gelib import SO3partArrC as SO3partArr
+from gelib import SO3partArrC as SO3partArrC
 
 
 def device_id(device):
@@ -145,7 +145,7 @@ class SO3bipartArr_CGtransformFn(torch.autograd.Function):
     @staticmethod
     def forward(ctx,x,l):
         print(x.get_dev())
-        r=SO3partArr.zeros(x.getb(),x.get_adims(),l,x.getn(),x.get_dev())
+        r=SO3partArrC.zeros(x.getb(),x.get_adims(),l,x.getn(),x.get_dev())
         x.obj.add_CGtransform_to(r.obj,0)
         ctx.x=x
         ctx.r=r

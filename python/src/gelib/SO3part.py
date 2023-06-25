@@ -98,7 +98,7 @@ class SO3part(torch.Tensor):
         Create an SO(3)-part corresponding to the l'th matrix in the Fourier transform of a function on SO(3).
         This gives a b*(2+l+1)*(2l+1) dimensional complex random tensor. 
         """
-        return torch.view_as_complex(SO3part(torch.randn([b, 2*l+1, 2*l+1], device=device)))
+        return torch.view_as_complex(SO3part(torch.randn([b, 2*l+1, 2*l+1, 2], device=device)))
 
     @classmethod
     def zeros_like(self,x):

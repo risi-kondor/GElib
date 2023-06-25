@@ -189,10 +189,10 @@ class SO3partC_DiagCGproductFn(torch.autograd.Function):
 # ----------------------------------------------------------------------------------------------------------
 
 
-def CGproduct(x, y, maxl=-1):
-    return x.CGproduct(y, maxl)
+#def CGproduct(x, y, maxl=-1):
+#    return x.CGproduct(y, maxl)
 
 
-def DiagCGproduct(x, y, maxl=-1):
-    return x.DiagCGproduct(y, maxl)
+#def DiagCGproduct(x, y, maxl=-1):
+#    return x.DiagCGproduct(y, maxl)
 

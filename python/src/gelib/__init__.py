@@ -1,7 +1,9 @@
 # WE SHOULD REMOVE THE import *  !!!
 import torch
 
-from gelib_base import *
+from gelib_base import SO3element 
+from gelib_base import SO3type 
+from gelib_base import SO3bitype 
 
 from gelib.SO3part import *
 from gelib.SO3weights import *
@@ -27,6 +29,13 @@ from gelib.SO3bipart import *
 from gelib.SO3bipartArr import *
 from gelib.SO3bivec import *
 from gelib.SO3bivecArr import *
+
+
+def CGproduct(x, y, maxl=-1):
+    return x.CGproduct(y, maxl)
+
+def DiagCGproduct(x, y, maxl=-1):
+    return x.DiagCGproduct(y, maxl)
 
 
 #from gelib.gelib_torchC import *

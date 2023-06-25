@@ -145,7 +145,7 @@ class SO3vecArr:
         "Apply the group element to this vector"
         r=SO3vecArr()
         for l in range(0,len(self.parts)):
-            r.parts.append(SO3partB_array.view(self.parts[l]).rotate(R).torch())
+            r.parts.append(_SO3partB_array.view(self.parts[l]).rotate(R).torch())
         return r
 
     def __add__(self, y):

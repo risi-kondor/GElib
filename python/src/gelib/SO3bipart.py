@@ -11,7 +11,7 @@ import torch
 #from cnine import ctensorb 
 from gelib_base import SO3bipart as _SO3bipart
 
-from gelib import SO3partC as SO3part
+from gelib import SO3partC as SO3partC
 
 
 def device_id(device):
@@ -142,7 +142,7 @@ class SO3bipart_CGtransformFn(torch.autograd.Function):
     @staticmethod
     def forward(ctx,x,l):
         print(x.get_dev())
-        r=SO3part.zeros(x.getb(),l,x.getn(),x.get_dev())
+        r=SO3partC.zeros(x.getb(),l,x.getn(),x.get_dev())
         x.obj.add_CGtransform_to(r.obj,0)
         #ctx.save_for_backward(r,x,y) doesn't work
         ctx.x=x
