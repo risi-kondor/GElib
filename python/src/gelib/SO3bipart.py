@@ -141,7 +141,6 @@ class SO3bipart_CGtransformFn(torch.autograd.Function):
 
     @staticmethod
     def forward(ctx,x,l):
-        print(x.get_dev())
         r=SO3partC.zeros(x.getb(),l,x.getn(),x.get_dev())
         x.obj.add_CGtransform_to(r.obj,0)
         #ctx.save_for_backward(r,x,y) doesn't work
@@ -161,6 +160,3 @@ class SO3bipart_CGtransformFn(torch.autograd.Function):
 # ---- Other functions --------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------
 
-
-def CGtransform(x,l):
-    return x.CGtransform(l)

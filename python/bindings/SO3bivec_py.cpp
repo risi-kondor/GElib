@@ -28,7 +28,7 @@ py::class_<SO3bivec<float> >(m,"SO3bivec")
   .def("__len__",[](const SO3bivec<float>& r){return r.size();})
   .def("device",&SO3bivec<float>::device)
   .def("getb",&SO3bivec<float>::getb)
-//.def("get_tau",&SO3bivec<float>::get_tau)
+  .def("get_tau",&SO3bivec<float>::get_tau)
 
   .def("batch",[](SO3bivec<float>& r, int b){return r.batch(b);})
   .def("get_batch_back",[](SO3bivec<float>& r, int b, SO3bivec<float>& x){

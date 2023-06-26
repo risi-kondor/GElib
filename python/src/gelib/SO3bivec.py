@@ -10,10 +10,12 @@
 import torch
 from gelib_base import SO3type as _SO3type
 from gelib_base import SO3bitype as _SO3bitype
+from gelib_base import CGtransform as _CGtransform
 from gelib_base import SO3bipart as _SO3bipart
 from gelib_base import SO3bivec as _SO3bivec
 
 from gelib import SO3bipart as SO3bipart
+from gelib import SO3vecC as SO3vecC
 
 
 def device_id(device):
@@ -87,6 +89,16 @@ class SO3bivec(torch.Tensor):
         return SO3bivec_toTorchFn.apply(self)
 
 
+    # ---- Products -----------------------------------------------------------------------------------------
+
+
+    def CGtransform(self, maxl):
+        """
+        Compute the CGtransform up to maxl.
+        """
+        return SO3bivec_CGtransformFn.apply(self,maxl)
+
+
     # ---- I/O ----------------------------------------------------------------------------------------------
 
 
@@ -143,6 +155,26 @@ class SO3bivec_getPartFn(torch.autograd.Function):
     def backward(ctx,g):
         ctx.x.obj.get_part_back(ctx.r.getl1(),ctx.r.getl2(),ctx.r.obj)
         return SO3bivec.dummy(), None
+
+
+class SO3bivec_CGtransformFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx, x, maxl):
+        tau=_CGtransform(x.obj.get_tau(),maxl)
+        r = SO3vecC.zeros(x.getb(),tau,x.get_device())
+        x.obj.add_CGtransform_to(r.obj)
+        ctx.x=x
+        ctx.r=r
+        return r
+
+    @staticmethod
+    def backward(ctx,g):
+        x=ctx.x
+        r=ctx.r
+        x.obj.add_CGtransform_back(r.obj)
+        return SO3bivec.dummy(),None
+
 
 
 

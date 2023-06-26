@@ -26,6 +26,7 @@ GElib
    SO3vecArr.rst
 
    SO3bipart.rst
+   SO3bivec.rst
 
    SO3weights.rst 
 

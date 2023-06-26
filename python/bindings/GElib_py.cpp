@@ -127,6 +127,9 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
     .def("__repr__",&SO3bitype::repr,py::arg("indent")="","Print the SO3bitype to string.");
 
 
+  m.def("CGtransform",static_cast<SO3type (*)(const SO3bitype&, const int)>(&CGtransform),
+    py::arg("x"),py::arg("maxl")=-1);
+
 
   m.def("add_WignerMatrix_to",
     static_cast<void(*)(cnine::CtensorB&, const int, const double, const double, const double)>(&add_WignerMatrix_to));

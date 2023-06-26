@@ -71,6 +71,9 @@ class SO3bivecArr(torch.Tensor):
     def getb(self):
         return self.obj.getb()
 
+    def get_adims(self):
+        return self.obj.get_adims()
+
     def getn(self):
         return self.obj.getn()
 
@@ -85,6 +88,16 @@ class SO3bivecArr(torch.Tensor):
 
     def torch(self):
         return SO3bivecArr_toTorchFn.apply(self)
+
+
+    # ---- Products -----------------------------------------------------------------------------------------
+
+
+    def CGtransform(self, maxl):
+        """
+        Compute the CGtransform up to maxl.
+        """
+        return SO3bivecArr_CGtransformFn.apply(self,maxl)
 
 
     # ---- I/O ----------------------------------------------------------------------------------------------
@@ -144,6 +157,24 @@ class SO3bivecArr_getPartFn(torch.autograd.Function):
         ctx.x.obj.get_part_back(ctx.r.getl1(),ctx.r.getl2(),ctx.r.obj)
         return SO3bivecArr.dummy(), None
 
+
+class SO3bivecArr_CGtransformFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx, x, maxl):
+        tau=_CGtransform(x.obj.get_tau(),maxl)
+        r = SO3vecArrC.zeros(x.getb(),x.get_adims(),tau,x.get_device())
+        x.obj.add_CGtransform_to(r.obj)
+        ctx.x=x
+        ctx.r=r
+        return r
+
+    @staticmethod
+    def backward(ctx,g):
+        x=ctx.x
+        r=ctx.r
+        x.obj.add_CGtransform_back(r.obj)
+        return SO3bivecArr.dummy(),None
 
 
 

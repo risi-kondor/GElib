@@ -11,6 +11,7 @@ import torch
 from gelib_base import SO3type as _SO3type
 from gelib_base import SO3part as _SO3part
 from gelib_base import SO3vec as _SO3vec
+from gelib_base import CGproduct as _CGproduct
 
 from gelib import SO3partC as SO3partC
 
@@ -89,6 +90,16 @@ class SO3vecC(torch.Tensor):
         return SO3vecC_toTorchFn.apply(self)
 
 
+    # ---- Products -----------------------------------------------------------------------------------------
+
+
+    def CGproduct(self,y,maxl):
+        """
+        Compute the full Clesbsch--Gordan product of this SO3vec with another SO3vec y.
+        """
+        return SO3vecC_CGproductFn.apply(self,y,maxl)
+
+
     # ---- I/O ----------------------------------------------------------------------------------------------
 
 
@@ -146,6 +157,24 @@ class SO3vecC_getPartFn(torch.autograd.Function):
         ctx.x.obj.get_part_back(ctx.r.getl(),ctx.r.obj)
         return SO3vecC.dummy(), None
 
+
+class SO3vecC_CGproductFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,x,y,maxl):
+        tau=_CGproduct(x.obj.get_tau(),y.obj.get_tau(),maxl)
+        r = SO3vecC.zeros(x.getb(),tau,x.get_device())
+        r.obj.add_CGproduct(x.obj,y.obj)
+        ctx.x=x
+        ctx.y=y
+        ctx.r=r
+        return r
+
+    @staticmethod
+    def backward(ctx,g):
+        ctx.x.obj.add_CGtransform_back0(ctx.r.obj)
+        ctx.y.obj.add_CGtransform_back1(ctx.r.obj)
+        return SO3vecC.dummy(),None
 
 
 

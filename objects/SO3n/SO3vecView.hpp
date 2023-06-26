@@ -99,20 +99,3 @@ namespace GElib{
 #endif 
 
 
-    /*
-    string str(const string indent="") const{
-      ostringstream oss;
-      for_each_batch([&](const int b, const VEC& x){
-	  oss<<indent<<"Batch "<<b<<":"<<endl;
-	  oss<<indent<<x<<endl;
-	});
-      //for(int l=0; l<parts.size(); l++){
-	//if(!parts[l]) continue;
-      //oss<<indent<<"Part l="<<l<<":\n";
-      //oss<<(*this)(l).str(indent+"  ");
-      //oss<<endl;
-      //}
-      return oss.str();
-    }
-    */
-

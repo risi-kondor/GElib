@@ -29,6 +29,9 @@ namespace GElib{
 
     using _GvecArrayView::_GvecArrayView;
     using _GvecArrayView::parts;
+    using _GvecArrayView::getb;
+    using _GvecArrayView::get_adims;
+    using _GvecArrayView::device;
 
 #ifdef _WITH_ATEN
     using _GvecArrayView::torch;
@@ -83,8 +86,7 @@ namespace GElib{
     }
 
     string repr(const string indent="") const{
-      return "";
-      //return "<GElib::SO3vecV of type "+get_tau().str()+">";
+      return "<GElib::SO3vecArr b="+to_string(getb())+", adims="+get_adims().str()+", tau="+get_tau().str()+">";
     }
     
     friend ostream& operator<<(ostream& stream, const SO3vecArrayView& x){

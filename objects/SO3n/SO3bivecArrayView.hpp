@@ -132,8 +132,7 @@ namespace GElib{
     }
 
     string repr(const string indent="") const{
-      return "";
-      //return "<GElib::SO3bivecV of type "+get_tau().str()+">";
+      return "<GElib::SO3vecArr b="+to_string(getb())+", adims="+get_adims().str()+", tau="+get_tau().str()+">";
     }
     
     friend ostream& operator<<(ostream& stream, const SO3bivecArrayView& x){
