@@ -154,7 +154,21 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WignerMatrix.html">Wigner matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch–Gordan matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bipart.html">SO3bipart/SO3bipartArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bivec.html">SO3bivec/SObivecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
+</ul>
+
 </div>
 </div>
       </div>
@@ -184,15 +198,15 @@
 <p>The basic classes in GElib for storing and manipulating SO(3)-equivariant vectors are
 <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code>:</p>
 <ol class="arabic simple">
-<li><p>An <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> object represents <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg"/> vectors that transform according to a specific irreducible
-representation <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> of SO(3).</p></li>
+<li><p>An <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> object represents <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg" style="vertical-align: 0px"/> vectors that transform according to a specific irreducible
+representation <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg" style="vertical-align: 0px"/> of SO(3).</p></li>
 <li><p>An <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> object represents a vector that transforms according to a general representation of SO(3).
 The vector is stored as a collection of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects.</p></li>
 </ol>
 <p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects are complex valued. To facilitate parallelism, they also have an outer “batch” index
-running from 1 to <img alt="b" class="math" src="_images/math/24f427669c3588bc442fbc57b978a87764e7d849.svg"/>. Consequently:</p>
+running from 1 to <img alt="b" class="math" src="_images/math/24f427669c3588bc442fbc57b978a87764e7d849.svg" style="vertical-align: 0px"/>. Consequently:</p>
 <ol class="arabic simple">
-<li><p>An <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is stored as a <img alt="b\times (2\ell+1)\times n\times 2" class="math" src="_images/math/a2202ef475a155bde94c05b5d32bed966ff3b88a.svg"/> dimensional single precision
+<li><p>An <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is stored as a <img alt="b\times (2\ell+1)\times n\times 2" class="math" src="_images/math/a2202ef475a155bde94c05b5d32bed966ff3b88a.svg" style="vertical-align: -5px"/> dimensional single precision
 real <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>.</p></li>
 <li><p>An <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> is a collection of such tensors.</p></li>
 </ol>
@@ -204,8 +218,8 @@ real <code class="docutils literal notranslate"><span class="pre">torch.Tensor</
 </div>
 <p>The library also provides arrayed versions of these classes:</p>
 <ol class="arabic simple">
-<li><p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> is conceptually an array of <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg"/> <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects, stored as a single
-<img alt="N\times b\times (2\ell+1)\times n\times 2" class="math" src="_images/math/09b52ae8150dee9914b1e577a179f5ddc0a1c564.svg"/> dimensional tensor.</p></li>
+<li><p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> is conceptually an array of <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg" style="vertical-align: 0px"/> <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects, stored as a single
+<img alt="N\times b\times (2\ell+1)\times n\times 2" class="math" src="_images/math/09b52ae8150dee9914b1e577a179f5ddc0a1c564.svg" style="vertical-align: -5px"/> dimensional tensor.</p></li>
 <li><p>An <code class="docutils literal notranslate"><span class="pre">SO3vecArr</span></code> is a collection of such tensors.</p></li>
 </ol>
 </section>
@@ -220,7 +234,7 @@ real <code class="docutils literal notranslate"><span class="pre">torch.Tensor</
         </div>
 
         <div class="related-information">
-              Copyright &#169; 2021, Risi Kondor |
+              Copyright &#169; 2021-2022, Risi Kondor |
             Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
               and
               <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s

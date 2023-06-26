@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3vecArr" href="SO3vecArr.html" /><link rel="prev" title="SO3 weights" href="SO3weights.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3vecArr" href="SO3vecArr.html" /><link rel="prev" title="SO3vec" href="SO3vecB.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>SO3partArr - GElib documentation</title>
@@ -162,9 +162,11 @@
 <li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3partArr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bipart.html">SO3bipart/SO3bipartArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bivec.html">SO3bivec/SObivecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 </ul>
 
 </div>
@@ -193,10 +195,10 @@
         <article role="main">
           <section id="so3partarr">
 <h1>SO3partArr<a class="headerlink" href="#so3partarr" title="Permalink to this headline">¶</a></h1>
-<p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object is an array of <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg"/> <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>s, called cells,
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object is an array of <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg" style="vertical-align: 0px"/> <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>s, called cells,
 stored in a single tensor.
 The following constructs an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object with batch dimension 1,
-consisting of <img alt="2\times 2" class="math" src="_images/math/43b45bc78b2ec575d1aa08e58a24bdf90f664bd7.svg"/> cells, each
+consisting of <img alt="2\times 2" class="math" src="_images/math/43b45bc78b2ec575d1aa08e58a24bdf90f664bd7.svg" style="vertical-align: -2px"/> cells, each
 holding <code class="docutils literal notranslate"><span class="pre">n=3</span></code> Gaussian distributed random vectors corresponding
 to the <code class="docutils literal notranslate"><span class="pre">l=2</span></code> irrep of SO(3) and prints it out.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
@@ -230,7 +232,7 @@ to the <code class="docutils literal notranslate"><span class="pre">l=2</span></
 <span class="go">[ (-1.47393,0.276098) (1.88762,0.878272) (-2.43639,1.74515) ]</span>
 </pre></div>
 </div>
-<p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> is stored as an <img alt="b\times a_1\times \ldots\times a_k\times (2\ell+1)\times n" class="math" src="_images/math/86e0005a449d160efef2e1d156a22b304c937c37.svg"/>
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> is stored as an <img alt="b\times a_1\times \ldots\times a_k\times (2\ell+1)\times n" class="math" src="_images/math/86e0005a449d160efef2e1d156a22b304c937c37.svg" style="vertical-align: -5px"/>
 dimensional complex PyTorch tensor and supports the same operations as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>, with the
 natural syntax.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
@@ -278,12 +280,12 @@ along the array dimensions.
 The simplest of these operations is <code class="docutils literal notranslate"><span class="pre">gather</span></code>.</p>
 <section id="gather">
 <h2>Gather<a class="headerlink" href="#gather" title="Permalink to this headline">¶</a></h2>
-<p>Given an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object <code class="docutils literal notranslate"><span class="pre">X</span></code> with array dimension <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg"/> and an <img alt="N\times N" class="math" src="_images/math/49ce981f1e286e4ca0005ce3f441d955c08c30b7.svg"/>
-real matrix <img alt="C" class="math" src="_images/math/e86c6a238f03820c341bcabb7ffb67131f8d38ac.svg"/>, <code class="docutils literal notranslate"><span class="pre">gather</span></code> return an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> in which the <img alt="i" class="math" src="_images/math/4beb4858fd47cbeee3a992f0d65c3bd7dc1464de.svg"/>’th cell is</p>
+<p>Given an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object <code class="docutils literal notranslate"><span class="pre">X</span></code> with array dimension <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg" style="vertical-align: 0px"/> and an <img alt="N\times N" class="math" src="_images/math/49ce981f1e286e4ca0005ce3f441d955c08c30b7.svg" style="vertical-align: -2px"/>
+real matrix <img alt="C" class="math" src="_images/math/e86c6a238f03820c341bcabb7ffb67131f8d38ac.svg" style="vertical-align: 0px"/>, <code class="docutils literal notranslate"><span class="pre">gather</span></code> return an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> in which the <img alt="i" class="math" src="_images/math/4beb4858fd47cbeee3a992f0d65c3bd7dc1464de.svg" style="vertical-align: 0px"/>’th cell is</p>
 <div class="math-wrapper"><div class="math">
 <p><img alt="Y^{(i)}=\sum_{j\::\:c_{i,j}\neq 0} c_{i,j}\,X^{(j)}." src="_images/math/a2d94487361f51adfc63eee840fea45d1b4f8a8b.svg"/></p>
 </div></div><p>Using cnine’s array functionality, GElib can efficiently parallelize this operation on the GPU,
-even when the number of terms in the sum for different values of <img alt="i" class="math" src="_images/math/4beb4858fd47cbeee3a992f0d65c3bd7dc1464de.svg"/> is different.</p>
+even when the number of terms in the sum for different values of <img alt="i" class="math" src="_images/math/4beb4858fd47cbeee3a992f0d65c3bd7dc1464de.svg" style="vertical-align: 0px"/> is different.</p>
 <p>Invoking this functionality requires defining <code class="docutils literal notranslate"><span class="pre">C</span></code> as a single precision PyTorch tensor
 and constructing the corresponding <code class="docutils literal notranslate"><span class="pre">cnine.Rmask1</span></code> object:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cnine</span>
@@ -317,14 +319,14 @@ and constructing the corresponding <code class="docutils literal notranslate"><s
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="SO3weights.html">
+          <a class="prev-page" href="SO3vecB.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">SO3 weights</div>
+                <div class="title">SO3vec</div>
                 
               </div>
             </a>

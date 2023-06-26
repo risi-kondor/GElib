@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3part" href="SO3partB.html" /><link rel="prev" title="Clebsch-Gordan matrices" href="SO3CG.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3part" href="SO3partB.html" /><link rel="prev" title="Clebsch–Gordan matrices" href="SO3CG.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>SO3element - GElib documentation</title>
@@ -158,12 +158,15 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="WignerMatrix.html">Wigner matrices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch-Gordan matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch–Gordan matrices</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3element</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bipart.html">SO3bipart/SO3bipartArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bivec.html">SO3bivec/SObivecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 </ul>
 
 </div>
@@ -192,8 +195,8 @@
         <article role="main">
           <section id="so3element">
 <h1>SO3element<a class="headerlink" href="#so3element" title="Permalink to this headline">¶</a></h1>
-<p>An <code class="docutils literal notranslate"><span class="pre">SO3element</span></code> object represents a single group element <img alt="R\in\mathrm{SO}(3)" class="math" src="_images/math/58098a343047e1438732735950b6a5ef3fa5550d.svg"/>.
-The group element can be initialized from its <img alt="(\phi,\theta,\psi)" class="math" src="_images/math/360e0faa1a98c2db28b5f9623272a2a4703ece1f.svg"/> Euler angles or
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3element</span></code> object represents a single group element <img alt="R\in\mathrm{SO}(3)" class="math" src="_images/math/58098a343047e1438732735950b6a5ef3fa5550d.svg" style="vertical-align: -5px"/>.
+The group element can be initialized from its <img alt="(\phi,\theta,\psi)" class="math" src="_images/math/360e0faa1a98c2db28b5f9623272a2a4703ece1f.svg" style="vertical-align: -5px"/> Euler angles or
 chosen randomly from the group.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3element</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
@@ -226,7 +229,7 @@ chosen randomly from the group.</p>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Clebsch-Gordan matrices</div>
+                <div class="title">Clebsch–Gordan matrices</div>
                 
               </div>
             </a>

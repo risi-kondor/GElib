@@ -162,9 +162,11 @@
 <li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bipart.html">SO3bipart/SO3bipartArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bivec.html">SO3bivec/SObivecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 </ul>
 
 </div>
@@ -193,14 +195,14 @@
         <article role="main">
           <section id="so3part">
 <h1>SO3part<a class="headerlink" href="#so3part" title="Permalink to this headline">¶</a></h1>
-<p>An SO3-part <img alt="P" class="math" src="_images/math/3009b24f49e5aa567b035fdb76bd939eac9b9b35.svg"/> is a collection of <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg"/> different complex valued vectors,
+<p>An SO3-part <img alt="P" class="math" src="_images/math/3009b24f49e5aa567b035fdb76bd939eac9b9b35.svg" style="vertical-align: 0px"/> is a collection of <img alt="n" class="math" src="_images/math/43f4c8f9a7a6bb3564238d6434576ab69407c4a7.svg" style="vertical-align: 0px"/> different complex valued vectors,
 which we call <cite>fragments</cite>, transforming according
-to the same irreducible representation <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> of SO(3).
+to the same irreducible representation <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg" style="vertical-align: 0px"/> of SO(3).
 The irreducible representations of SO(3) are sometimes referred to as Wigner D-matrices.</p>
-<p>Since <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg"/> is a <img alt="2\ell\!+\!1" class="math" src="_images/math/9d92fcb93216b22d3ad1507285348f8058a2f8d5.svg"/> a dimensional representation,
-<img alt="P" class="math" src="_images/math/3009b24f49e5aa567b035fdb76bd939eac9b9b35.svg"/> can be thought of as a matrix <img alt="\mathbb{C}^{(2\ell+1)\times n}" class="math" src="_images/math/b1be3e1209376d353d86358bbcc30acd3fd61d17.svg"/>.
+<p>Since <img alt="D^{(\ell)}" class="math" src="_images/math/97ec1a846402f148b6b6650fc74756aa4580d221.svg" style="vertical-align: 0px"/> is a <img alt="2\ell\!+\!1" class="math" src="_images/math/9d92fcb93216b22d3ad1507285348f8058a2f8d5.svg" style="vertical-align: -1px"/> a dimensional representation,
+<img alt="P" class="math" src="_images/math/3009b24f49e5aa567b035fdb76bd939eac9b9b35.svg" style="vertical-align: 0px"/> can be thought of as a matrix <img alt="\mathbb{C}^{(2\ell+1)\times n}" class="math" src="_images/math/b1be3e1209376d353d86358bbcc30acd3fd61d17.svg" style="vertical-align: 0px"/>.
 However, to aid in parallelizing certain operations, the
-<code class="docutils literal notranslate"><span class="pre">SO3part</span></code> class in GElib also admits a “batch dimension”, <img alt="b" class="math" src="_images/math/24f427669c3588bc442fbc57b978a87764e7d849.svg"/>.
+<code class="docutils literal notranslate"><span class="pre">SO3part</span></code> class in GElib also admits a “batch dimension”, <img alt="b" class="math" src="_images/math/24f427669c3588bc442fbc57b978a87764e7d849.svg" style="vertical-align: 0px"/>.
 Therefore, <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is implemented as a
 <code class="docutils literal notranslate"><span class="pre">(b,2l+1,n)</span></code> -dimensional single precision complex <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>.</p>
 <p>The following code constructs an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> object holding <code class="docutils literal notranslate"><span class="pre">n=3</span></code> Gaussian distributed random vectors corresponding
@@ -235,9 +237,9 @@ accessed directly, just like any PyTorch tensor.</p>
 <section id="spherical-harmonics">
 <h2>Spherical harmonics<a class="headerlink" href="#spherical-harmonics" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can also be initialized as the spherical harmonic coefficients
-(for a given value of <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/>)
+(for a given value of <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg" style="vertical-align: 0px"/>)
 of corresponding three dimensional Euclidean vectors.
-The following example computes the <img alt="\ell=1" class="math" src="_images/math/a43448e698506cc367adf0a37c72a17158b01942.svg"/> spherical harmonics of a collection
+The following example computes the <img alt="\ell=1" class="math" src="_images/math/a43448e698506cc367adf0a37c72a17158b01942.svg" style="vertical-align: 0px"/> spherical harmonics of a collection
 of random vectors with b=2 and n=4.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">spharm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">A</span><span class="p">)</span>
@@ -257,7 +259,7 @@ of random vectors with b=2 and n=4.</p>
 </section>
 <section id="group-action">
 <h2>Group action<a class="headerlink" href="#group-action" title="Permalink to this headline">¶</a></h2>
-<p>The group SO(3) acts on <img alt="P" class="math" src="_images/math/3009b24f49e5aa567b035fdb76bd939eac9b9b35.svg"/> by <img alt="P\mapsto D^{(l)}(r) P" class="math" src="_images/math/97df2e6d965dd37793d8d3d104d1b51e9757cb79.svg"/>.
+<p>The group SO(3) acts on <img alt="P" class="math" src="_images/math/3009b24f49e5aa567b035fdb76bd939eac9b9b35.svg" style="vertical-align: 0px"/> by <img alt="P\mapsto D^{(l)}(r) P" class="math" src="_images/math/97df2e6d965dd37793d8d3d104d1b51e9757cb79.svg" style="vertical-align: -5px"/>.
 This is implemented in the <code class="docutils literal notranslate"><span class="pre">rotate</span></code> method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3element</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Pr</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
@@ -275,7 +277,7 @@ This is implemented in the <code class="docutils literal notranslate"><span clas
 </section>
 <section id="clebsch-gordan-products">
 <h2>Clebsch-Gordan products<a class="headerlink" href="#clebsch-gordan-products" title="Permalink to this headline">¶</a></h2>
-<p>The <img alt="l" class="math" src="_images/math/8c69666dbd6b15f2dc9105386bfdc3c967d6ee9f.svg"/>’th component of the Clebsch-Gordan product of two SO3-vectors is computed as follows.</p>
+<p>The <img alt="l" class="math" src="_images/math/8c69666dbd6b15f2dc9105386bfdc3c967d6ee9f.svg" style="vertical-align: 0px"/>’th component of the Clebsch-Gordan product of two SO3-vectors is computed as follows.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">R</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
@@ -296,7 +298,7 @@ GElib uses highly optimized routines for computing the CG-product on both the CP
 memory in neural network applications, where the results of intermediate calculations generally need to be
 saved for the backward pass.</p>
 <p>Second, the linear transformation has a specific sparsity pattern, whereby
-<img alt="{}_{[C_{\ell_1,\ell_2}^\ell]_{m_1,m_2,m}=0}" class="math" src="_images/math/6e67157df5a46de63410d78fe5fef7bb8a214659.svg"/> unless <img alt="m_1+m_2=m" class="math" src="_images/math/bf080ef3da9ab43b1c665ba2ebe5b20221fd8e09.svg"/>.
+<img alt="{}_{[C_{\ell_1,\ell_2}^\ell]_{m_1,m_2,m}=0}" class="math" src="_images/math/6e67157df5a46de63410d78fe5fef7bb8a214659.svg" style="vertical-align: -12px"/> unless <img alt="m_1+m_2=m" class="math" src="_images/math/bf080ef3da9ab43b1c665ba2ebe5b20221fd8e09.svg" style="vertical-align: -3px"/>.
 GElib uses specialized multiplication kernels for the CG-product that
 exploit this symmetry.</p>
 <p>Finally, the coefficients of the transformation, the so-called CG-coefficents,
@@ -326,7 +328,7 @@ In contrast, the <code class="docutils literal notranslate"><span class="pre">Di
 <section id="fourier-parts">
 <h2>Fourier parts<a class="headerlink" href="#fourier-parts" title="Permalink to this headline">¶</a></h2>
 <p>The Fourier transform of a band limited function on SO(3) consits of a sequence of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>s that
-are square, i.e., the <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/>'th part has exactly <img alt="2\ell+1" class="math" src="_images/math/1d3f01d9f1a70210c7595a682d9887f8b61be160.svg"/> fragments.
+are square, i.e., the <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg" style="vertical-align: 0px"/>'th part has exactly <img alt="2\ell+1" class="math" src="_images/math/1d3f01d9f1a70210c7595a682d9887f8b61be160.svg" style="vertical-align: -1px"/> fragments.
 Such “Fourier” <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can be constructed with the <code class="docutils literal notranslate"><span class="pre">Fzero</span></code> and <code class="docutils literal notranslate"><span class="pre">Frandn</span></code> constructors.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">Frandn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">P</span>

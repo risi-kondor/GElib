@@ -164,6 +164,9 @@
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bipart.html">SO3bipart/SO3bipartArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bivec.html">SO3bivec/SObivecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 </ul>
 
 </div>
@@ -192,16 +195,16 @@
         <article role="main">
           <section id="clebsch-gordan-matrices">
 <h1>Clebsch–Gordan matrices<a class="headerlink" href="#clebsch-gordan-matrices" title="Permalink to this headline">¶</a></h1>
-<p>Given two irreps <img alt="D^{(\ell_1)}" class="math" src="_images/math/4a6ef88a0da2afec6a334c34ba29420e03ef2c65.svg"/> and <img alt="D^{(\ell_2)}" class="math" src="_images/math/310fc4937d5aa6a5d5d7d28aff93eeacc3cfb6c1.svg"/> of SO(3), the tensor product
-representation <img alt="D^{(\ell_1)}\otimes D^{(\ell_2)}" class="math" src="_images/math/2e1e30a07573e9d7e5c8f8b9a25e25bf2719421a.svg"/> reduces into a direct sum of irreps in the form</p>
+<p>Given two irreps <img alt="D^{(\ell_1)}" class="math" src="_images/math/4a6ef88a0da2afec6a334c34ba29420e03ef2c65.svg" style="vertical-align: 0px"/> and <img alt="D^{(\ell_2)}" class="math" src="_images/math/310fc4937d5aa6a5d5d7d28aff93eeacc3cfb6c1.svg" style="vertical-align: 0px"/> of SO(3), the tensor product
+representation <img alt="D^{(\ell_1)}\otimes D^{(\ell_2)}" class="math" src="_images/math/2e1e30a07573e9d7e5c8f8b9a25e25bf2719421a.svg" style="vertical-align: -2px"/> reduces into a direct sum of irreps in the form</p>
 <div class="math-wrapper"><div class="math">
 <p><img alt="(D^{(\ell_1)}\otimes D^{(\ell_2)})(R)= C_{\ell_1,\ell_2} \biggl[\bigoplus_{\ell=|\ell_1-\ell_2|}^{\ell_1+\ell_2} D^{(\ell)(R)}\biggr] C_{\ell_1,\ell_2}^\dag" src="_images/math/66c15a9596a05ae5618a7b4ea3da3b3b95d8665d.svg"/></p>
 </div></div><p>called the Clebsch–Gordan decomposition.
-The submatrix of <img alt="C_{\ell_1,\ell_2}" class="math" src="_images/math/eb363aec611ca77bc23901b8a20ea01dbb11cfc3.svg"/> corresponding to a particular value of <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/> we will denote
-<img alt="C_{\ell_1,\ell_2,\ell}" class="math" src="_images/math/c634fe43088a3063e0547d5b4a49af82625a3557.svg"/>.</p>
+The submatrix of <img alt="C_{\ell_1,\ell_2}" class="math" src="_images/math/eb363aec611ca77bc23901b8a20ea01dbb11cfc3.svg" style="vertical-align: -6px"/> corresponding to a particular value of <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg" style="vertical-align: 0px"/> we will denote
+<img alt="C_{\ell_1,\ell_2,\ell}" class="math" src="_images/math/c634fe43088a3063e0547d5b4a49af82625a3557.svg" style="vertical-align: -6px"/>.</p>
 <p>Taking the Clebsch–Gordan product of two (or more) <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code>s is an equivariant operation and is an
 important building block of group equivariant neural networks.</p>
-<p>The function <code class="docutils literal notranslate"><span class="pre">SO3ClebschGordanTensor(l1,l2,l)</span></code> returns <img alt="C_{\ell_1,\ell_2,\ell}" class="math" src="_images/math/c634fe43088a3063e0547d5b4a49af82625a3557.svg"/> as a third order tensor.</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">SO3ClebschGordanTensor(l1,l2,l)</span></code> returns <img alt="C_{\ell_1,\ell_2,\ell}" class="math" src="_images/math/c634fe43088a3063e0547d5b4a49af82625a3557.svg" style="vertical-align: -6px"/> as a third order tensor.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3CGtensor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span>
 <span class="go">tensor([[[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000],</span>
@@ -224,8 +227,8 @@ important building block of group equivariant neural networks.</p>
 </pre></div>
 </div>
 <p>As apparent from this output, the SO(3) Clebsch–Gordan coefficients satisfy
-<img alt="C_{\ell_1,\ell_2,\ell}(m_1,m_2,m)=0" class="math" src="_images/math/2a1baee79603105c0b411b5f06db29f8d15be5bd.svg"/> unless <img alt="m_1+m_2=m" class="math" src="_images/math/bf080ef3da9ab43b1c665ba2ebe5b20221fd8e09.svg"/>.
-Hence, the coefficients can also given as elements of a <img alt="(2\ell_1+1)\times (2\ell_2+1)" class="math" src="_images/math/73be7170743ec5e716d710f33e17fe1f6ae03410.svg"/> dimensional tensor.</p>
+<img alt="C_{\ell_1,\ell_2,\ell}(m_1,m_2,m)=0" class="math" src="_images/math/2a1baee79603105c0b411b5f06db29f8d15be5bd.svg" style="vertical-align: -6px"/> unless <img alt="m_1+m_2=m" class="math" src="_images/math/bf080ef3da9ab43b1c665ba2ebe5b20221fd8e09.svg" style="vertical-align: -3px"/>.
+Hence, the coefficients can also given as elements of a <img alt="(2\ell_1+1)\times (2\ell_2+1)" class="math" src="_images/math/73be7170743ec5e716d710f33e17fe1f6ae03410.svg" style="vertical-align: -5px"/> dimensional tensor.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">D</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3CGmatrix</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">D</span>
 <span class="go">tensor([[ 0.0000, -0.5774, -0.7071, -0.7071, -0.5774],</span>

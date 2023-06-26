@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3 weights" href="SO3weights.html" /><link rel="prev" title="SO3part" href="SO3partB.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3partArr" href="SO3partArr.html" /><link rel="prev" title="SO3part" href="SO3partB.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>SO3vec - GElib documentation</title>
@@ -162,9 +162,11 @@
 <li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bipart.html">SO3bipart/SO3bipartArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bivec.html">SO3bivec/SObivecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 </ul>
 
 </div>
@@ -238,7 +240,7 @@ For example, the following creates a random <code class="docutils literal notran
 <p>As mentioned before, one context in which <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects appear is when computing the
 Fourier transform of functions on SO(3). In this case, however, all the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>s are square.
 Such <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects are created with the <code class="docutils literal notranslate"><span class="pre">Fzero</span></code> or <code class="docutils literal notranslate"><span class="pre">Frandn</span></code> constructors, which take only two
-arguments: the batch dimension and <img alt="\ell_{\textrm{max}}" class="math" src="_images/math/ef36f2b5eb20bfcac6f4e1d6c9a71c47fb063b55.svg"/>.</p>
+arguments: the batch dimension and <img alt="\ell_{\textrm{max}}" class="math" src="_images/math/ef36f2b5eb20bfcac6f4e1d6c9a71c47fb063b55.svg" style="vertical-align: -3px"/>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3vec</span><span class="o">.</span><span class="n">Frandn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span>
 <span class="go">&lt;GElib::SO3vecB of type (1,3,5)&gt;</span>
@@ -291,7 +293,7 @@ arguments: the batch dimension and <img alt="\ell_{\textrm{max}}" class="math" s
 </pre></div>
 </div>
 <p>The optional third argument of <code class="docutils literal notranslate"><span class="pre">CGproduct</span></code> can be used to limit the result to parts
-<img alt="\ell=0,1,\ldots,\ell_{\text{max}}" class="math" src="_images/math/9cb285ffaae7d5e43dc7b6a711555c0223282e42.svg"/>.</p>
+<img alt="\ell=0,1,\ldots,\ell_{\text{max}}" class="math" src="_images/math/9cb285ffaae7d5e43dc7b6a711555c0223282e42.svg" style="vertical-align: -4px"/>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 <span class="go">Part l=0:</span>
@@ -340,9 +342,9 @@ Naturally, this means that <code class="docutils literal notranslate"><span clas
 </section>
 <section id="fproduct-and-fmodsq">
 <h2>Fproduct and Fmodsq<a class="headerlink" href="#fproduct-and-fmodsq" title="Permalink to this headline">¶</a></h2>
-<p>If <code class="docutils literal notranslate"><span class="pre">F</span></code> and <code class="docutils literal notranslate"><span class="pre">G</span></code> are the Fourier transforms of two functions <img alt="f,g\colon \textrm{SO}(3)\to\mathbb{C}" class="math" src="_images/math/fd1679df83b5d531e259a48972ad063ab365aefa.svg"/>
+<p>If <code class="docutils literal notranslate"><span class="pre">F</span></code> and <code class="docutils literal notranslate"><span class="pre">G</span></code> are the Fourier transforms of two functions <img alt="f,g\colon \textrm{SO}(3)\to\mathbb{C}" class="math" src="_images/math/fd1679df83b5d531e259a48972ad063ab365aefa.svg" style="vertical-align: -5px"/>
 (represented as Fourier <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code> objects),
-the Fourier transform of the product  <img alt="h(R)=f(R)\,G(R)" class="math" src="_images/math/0f1969f629d60a8704635fcda522cc318a06f579.svg"/> can be computed directly from <code class="docutils literal notranslate"><span class="pre">F</span></code> and <code class="docutils literal notranslate"><span class="pre">G</span></code>
+the Fourier transform of the product  <img alt="h(R)=f(R)\,G(R)" class="math" src="_images/math/0f1969f629d60a8704635fcda522cc318a06f579.svg" style="vertical-align: -5px"/> can be computed directly from <code class="docutils literal notranslate"><span class="pre">F</span></code> and <code class="docutils literal notranslate"><span class="pre">G</span></code>
 using the formula</p>
 <div class="math-wrapper"><div class="math">
 <p><img alt="H_\ell=\frac{1}{8\pi^2} \sum_{\ell_1} \sum_{\ell_2}
@@ -350,7 +352,7 @@ using the formula</p>
 C_{\ell_1,\ell_2,\ell}^\dag (F_\ell \otimes G_\ell)\, C_{\ell_1,\ell_2,\ell}." src="_images/math/6dd3eadd424ef39f02c8382cb6a17f96bf1e9554.svg"/></p>
 </div></div><p>This operation is performed by the <code class="docutils literal notranslate"><span class="pre">Fproduct</span></code> function.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Fmodsq</span></code> uses a similar formula to compute the Fourier transform of the squared modulus function
-<img alt="h(R)=|f(R)|^2" class="math" src="_images/math/8615d761390c8085c56fde959d870a88a61f9850.svg"/>.</p>
+<img alt="h(R)=|f(R)|^2" class="math" src="_images/math/8615d761390c8085c56fde959d870a88a61f9850.svg" style="vertical-align: -5px"/>.</p>
 </section>
 <section id="gpu-operations">
 <h2>GPU operations<a class="headerlink" href="#gpu-operations" title="Permalink to this headline">¶</a></h2>
@@ -374,12 +376,12 @@ on the GPU and the result is placed on the same device.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="SO3weights.html">
+          <a class="next-page" href="SO3partArr.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">SO3 weights</div>
+                <div class="title">SO3partArr</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>

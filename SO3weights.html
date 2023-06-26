@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3partArr" href="SO3partArr.html" /><link rel="prev" title="SO3vec" href="SO3vecB.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="SO3bivec/SObivecArr" href="SO3bivec.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>SO3 weights - GElib documentation</title>
@@ -162,9 +162,11 @@
 <li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3 weights</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bipart.html">SO3bipart/SO3bipartArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bivec.html">SO3bivec/SObivecArr</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3 weights</a></li>
 </ul>
 
 </div>
@@ -199,7 +201,7 @@ In matrix language, this corresponds to multiplying each constituent <code class
 complex matrix of the appropriate dimensions from the right.
 The <code class="docutils literal notranslate"><span class="pre">SO3weights</span></code> class is a container for a sequence of such matrices corresponding to each part.</p>
 <p>A zero or random <code class="docutils literal notranslate"><span class="pre">SO3weights</span></code> object <code class="docutils literal notranslate"><span class="pre">W</span></code> can be constructed by specifying the row and column dimensions
-of the matrices, i.e., the input and output type of the transformation <img alt="u\mapsto v\cdot W" class="math" src="_images/math/02434a625775bbd44546ad011dc97715acd753d2.svg"/>.
+of the matrices, i.e., the input and output type of the transformation <img alt="u\mapsto v\cdot W" class="math" src="_images/math/02434a625775bbd44546ad011dc97715acd753d2.svg" style="vertical-align: 0px"/>.
 For example, the following intiializes an <code class="docutils literal notranslate"><span class="pre">SO3weights</span></code>  object that can transform a vector of
 type (1,2,2) to a vector of type (3,2,1).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3weights</span><span class="o">.</span><span class="n">randn</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
@@ -259,23 +261,15 @@ by scalars, and so on.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="SO3partArr.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">SO3partArr</div>
-              </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="SO3vecB.html">
+          
+          <a class="prev-page" href="SO3bivec.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">SO3vec</div>
+                <div class="title">SO3bivec/SObivecArr</div>
                 
               </div>
             </a>

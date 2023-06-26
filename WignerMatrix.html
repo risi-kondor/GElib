@@ -162,9 +162,11 @@
 <li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bipart.html">SO3bipart/SO3bipartArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bivec.html">SO3bivec/SObivecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 </ul>
 
 </div>
@@ -197,9 +199,9 @@
 <div class="math-wrapper"><div class="math">
 <p><img alt="D^{(\ell)}\colon \mathrm{SO}(3)\to\mathbb{C}^{(2\ell+1)\times(2\ell+1)} \hspace{100pt} \ell=0,1,2,\ldots" src="_images/math/5836367e67c6ce77e8c32459a7fa36e8e02c9338.svg"/></p>
 </div></div><p>sometimes also referred to as “Wigner D-matrices”.
-Thus, the irrep indexed by <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/> is <img alt="2\ell+1" class="math" src="_images/math/1d3f01d9f1a70210c7595a682d9887f8b61be160.svg"/> dimensional.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">WignerMatrix(l,phi,theta,psi)</span></code> function returns the matrix of the <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg"/>'th irrep
-corresponding to the Euler angles <img alt="(\phi,\theta,\psi)" class="math" src="_images/math/360e0faa1a98c2db28b5f9623272a2a4703ece1f.svg"/>.</p>
+Thus, the irrep indexed by <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg" style="vertical-align: 0px"/> is <img alt="2\ell+1" class="math" src="_images/math/1d3f01d9f1a70210c7595a682d9887f8b61be160.svg" style="vertical-align: -1px"/> dimensional.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">WignerMatrix(l,phi,theta,psi)</span></code> function returns the matrix of the <img alt="\ell" class="math" src="_images/math/b63508a5def7c85a38e1707585ff5fa9ac8b90dd.svg" style="vertical-align: 0px"/>'th irrep
+corresponding to the Euler angles <img alt="(\phi,\theta,\psi)" class="math" src="_images/math/360e0faa1a98c2db28b5f9623272a2a4703ece1f.svg" style="vertical-align: -5px"/>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">WignerMatrix</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
 <span class="go">tensor([[-0.3877-4.4888e-01j, -0.6416+9.1454e-02j, -0.1804+3.9428e-01j, 0.1045+1.6275e-01j,  0.0528+0.0000e+00j],</span>

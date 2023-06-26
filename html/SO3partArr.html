@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3vecArr" href="SO3vecArr.html" /><link rel="prev" title="SO3vec" href="SO3vecB.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>SO3partArr - GElib documentation</title>
@@ -154,7 +154,21 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WignerMatrix.html">Wigner matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch–Gordan matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3partArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bipart.html">SO3bipart/SO3bipartArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bivec.html">SO3bivec/SObivecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
+</ul>
+
 </div>
 </div>
       </div>
@@ -181,45 +195,97 @@
         <article role="main">
           <section id="so3partarr">
 <h1>SO3partArr<a class="headerlink" href="#so3partarr" title="Permalink to this headline">¶</a></h1>
-<p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object is a one dimensional array of <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg"/> <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>s, called cells,
-stored in a single tensor, with the array index <cite>preceding</cite> the batch index.</p>
-<p>The following constructs an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object consisting of two cells, each
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object is an array of <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg" style="vertical-align: 0px"/> <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>s, called cells,
+stored in a single tensor.
+The following constructs an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object with batch dimension 1,
+consisting of <img alt="2\times 2" class="math" src="_images/math/43b45bc78b2ec575d1aa08e58a24bdf90f664bd7.svg" style="vertical-align: -2px"/> cells, each
 holding <code class="docutils literal notranslate"><span class="pre">n=3</span></code> Gaussian distributed random vectors corresponding
-to the <code class="docutils literal notranslate"><span class="pre">l=2</span></code> irrep of SO(3) (batch size 1) and prints it out.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+to the <code class="docutils literal notranslate"><span class="pre">l=2</span></code> irrep of SO(3) and prints it out.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
-<span class="go">Cell 0:</span>
-<span class="go">  b=0:</span>
-<span class="go">  [ (-1.05925,-1.02559) (0.715829,0.320616) (-2.72001,-0.709364) ]</span>
-<span class="go">  [ (0.69712,1.70328) (0.122816,-0.108684) (-1.15609,-0.815829) ]</span>
-<span class="go">  [ (-1.27695,0.112134) (0.554192,-0.861661) (-1.31538,0.361672) ]</span>
-<span class="go">  [ (1.40155,0.907972) (-0.47667,1.74514) (-0.790502,1.00309) ]</span>
-<span class="go">  [ (-0.0711297,0.955976) (-0.885566,0.762559) (-0.108455,-1.78388) ]</span>
+<span class="go">Cell(0,0,0)</span>
+<span class="go">[ (0.311398,-1.80913) (-0.921517,1.3563) (-0.463656,-0.153738) ]</span>
+<span class="go">[ (-0.107248,-0.91566) (-0.268635,-0.934234) (0.292521,-0.466788) ]</span>
+<span class="go">[ (2.03572,-0.917957) (0.231427,-0.438412) (-0.360624,0.0279882) ]</span>
+<span class="go">[ (0.115751,1.16965) (0.588774,0.845822) (-0.291249,0.947408) ]</span>
+<span class="go">[ (-0.0814305,0.592962) (-0.761416,0.177536) (-1.1615,-0.492729) ]</span>
 
-<span class="go">Cell 1:</span>
-<span class="go">  b=0:</span>
-<span class="go">  [ (2.31865,0.686779) (0.586154,-0.538432) (-0.87097,-0.380714) ]</span>
-<span class="go">  [ (1.28026,-1.22237) (-1.31656,0.313413) (-1.32445,-0.95055) ]</span>
-<span class="go">  [ (-0.86004,-1.89935) (0.362931,-0.470088) (-0.0649395,-0.401615) ]</span>
-<span class="go">  [ (-0.33532,2.04058) (0.00392951,0.0587168) (0.661799,0.0952551) ]</span>
-<span class="go">  [ (0.671642,-0.0307553) (0.396101,0.787704) (-1.35005,-1.24229) ]</span>
+<span class="go">Cell(0,0,1)</span>
+<span class="go">[ (2.35398,0.425596) (-0.194245,0.566688) (1.38338,-2.13741) ]</span>
+<span class="go">[ (-1.06957,-0.526105) (-0.759776,1.04892) (-1.01595,0.392939) ]</span>
+<span class="go">[ (-0.581912,-1.07034) (-1.22874,1.92764) (-2.87221,-0.404009) ]</span>
+<span class="go">[ (-0.609044,1.48928) (-0.236781,1.73229) (0.0744118,1.05315) ]</span>
+<span class="go">[ (0.0746617,-0.272857) (0.225767,1.6043) (0.509717,1.18577) ]</span>
+
+<span class="go">Cell(0,1,0)</span>
+<span class="go">[ (0.947831,-3.48871) (-0.0304763,-2.04327) (0.564578,-1.22349) ]</span>
+<span class="go">[ (-0.0346214,-1.32766) (-2.03267,-2.02395) (1.6006,1.92112) ]</span>
+<span class="go">[ (-0.115995,-1.38828) (-1.59841,0.899515) (-1.56611,1.03086) ]</span>
+<span class="go">[ (-1.72669,-1.18976) (-1.35317,0.0381025) (0.993481,-0.300125) ]</span>
+<span class="go">[ (-1.89355,-0.901076) (-0.678269,-0.57792) (-1.81518,0.037866) ]</span>
+
+<span class="go">Cell(0,1,1)</span>
+<span class="go">[ (-1.29319,-1.78938) (-0.129255,-0.423372) (1.28934,-1.46638) ]</span>
+<span class="go">[ (-1.03102,-0.603144) (0.0982916,-0.0189021) (0.0997176,-0.0518933) ]</span>
+<span class="go">[ (1.18114,-0.145281) (1.03506,-1.23571) (-0.149596,-0.473458) ]</span>
+<span class="go">[ (-1.46849,1.28294) (2.07751,-1.02977) (1.08815,0.0456315) ]</span>
+<span class="go">[ (-1.47393,0.276098) (1.88762,0.878272) (-2.43639,1.74515) ]</span>
 </pre></div>
 </div>
-<p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> is stored as an <img alt="N\times b\times (2\ell+1)\times n\times 2" class="math" src="_images/math/09b52ae8150dee9914b1e577a179f5ddc0a1c564.svg"/>
-dimensional PyTorch tensor and supports the same operations as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>, with the
-natural syntax.
-In some ways, the array dimension can be regarded as an extra batch index.
-The fundamental difference however is that <cite>cnine</cite>’s cell operator functionality allows
-GElib to perform efficient reductions and broadcasting along the array dimension.
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> is stored as an <img alt="b\times a_1\times \ldots\times a_k\times (2\ell+1)\times n" class="math" src="_images/math/86e0005a449d160efef2e1d156a22b304c937c37.svg" style="vertical-align: -5px"/>
+dimensional complex PyTorch tensor and supports the same operations as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>, with the
+natural syntax.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="go">Cell(0,0,0)</span>
+<span class="go">[ (-3.68829,2.1156) (0.70249,0.237766) (0.70249,0.237766) (0.779456,-1.94687) ]</span>
+<span class="go">[ (-1.23101,-2.19237) (-1.71898,1.0264) (-1.71898,1.0264) (0.292517,2.35244) ]</span>
+<span class="go">[ (-3.84478,1.74094) (-0.230101,0.727197) (-0.230101,0.727197) (-1.10904,2.02747) ]</span>
+<span class="go">[ (-1.07394,-0.727521) (-0.295923,1.08078) (-0.295923,1.08078) (0.491645,-0.325617) ]</span>
+<span class="go">[ (2.41142,-1.13035) (-0.65661,-0.304086) (-0.65661,-0.304086) (-1.05191,1.62797) ]</span>
+
+<span class="go">Cell(0,0,1)</span>
+<span class="go">[ (1.36789,-0.482399) (0.26131,-0.382551) (0.26131,-0.382551) (1.30767,-0.258516) ]</span>
+<span class="go">[ (-2.16126,-0.749785) (0.0529939,1.20392) (0.0529938,1.20392) (0.122059,-2.28648) ]</span>
+<span class="go">[ (-0.336205,1.51531) (0.736288,0.452221) (0.736288,0.452221) (0.804226,0.625281) ]</span>
+<span class="go">[ (-0.160749,0.499992) (-0.0490017,0.55788) (-0.0490018,0.55788) (-1.2649,0.562428) ]</span>
+<span class="go">[ (1.16493,0.181675) (0.53126,-0.995217) (0.53126,-0.995217) (1.13421,1.01864) ]</span>
+
+<span class="go">Cell(0,1,0)</span>
+<span class="go">[ (1.79327,0.325623) (0.0509059,0.148115) (0.0509059,0.148115) (0.22462,1.42646) ]</span>
+<span class="go">[ (-3.50149,2.00715) (0.240442,-2.60512) (0.240442,-2.60512) (1.87925,1.41955) ]</span>
+<span class="go">[ (-1.0096,-1.02473) (1.18226,-1.02291) (1.18226,-1.02291) (-0.576821,0.960422) ]</span>
+<span class="go">[ (0.881412,1.7066) (-0.399855,0.0449982) (-0.399855,0.0449983) (-0.419007,-0.498288) ]</span>
+<span class="go">[ (-2.69044,-2.11147) (2.12463,0.593042) (2.12463,0.593042) (-1.49771,0.35531) ]</span>
+
+<span class="go">Cell(0,1,1)</span>
+<span class="go">[ (-1.4145,3.08397) (2.16428,-0.107854) (2.16428,-0.107854) (-0.665168,-1.2601) ]</span>
+<span class="go">[ (-3.04274,-3.63055) (-1.96958,3.30893) (-1.96958,3.30893) (3.23503,0.646061) ]</span>
+<span class="go">[ (1.77954,-2.04437) (-1.35374,0.407467) (-1.35374,0.407467) (1.30007,-0.173447) ]</span>
+<span class="go">[ (1.09669,1.0829) (0.786561,-0.675544) (0.786561,-0.675544) (-0.809771,-0.891165) ]</span>
+<span class="go">[ (-1.0491,-0.0903285) (0.201155,2.46153) (0.201155,2.46153) (2.47398,-0.676472) ]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In some ways, the array dimensions of <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> can be regarded as multiple batch indices.
+Indeed, to compute cellwise operations like <code class="docutils literal notranslate"><span class="pre">CGproduct</span></code> on <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> objects,
+<cite>GElib</cite> reuses the same computational kernels as it uses for <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>, by internally concatenating
+all the array dimensions into a single batch dimension.</p>
+</div>
+<p>The main advantage of <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> over <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is that it can take advantage of
+<cite>cnine</cite>’s cell operator functionality to perform efficient reductions and broadcasting
+along the array dimensions.
 The simplest of these operations is <code class="docutils literal notranslate"><span class="pre">gather</span></code>.</p>
 <section id="gather">
 <h2>Gather<a class="headerlink" href="#gather" title="Permalink to this headline">¶</a></h2>
-<p>Given an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object <code class="docutils literal notranslate"><span class="pre">X</span></code> with array dimension <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg"/> and an <img alt="N\times N" class="math" src="_images/math/49ce981f1e286e4ca0005ce3f441d955c08c30b7.svg"/>
-real matrix <img alt="C" class="math" src="_images/math/e86c6a238f03820c341bcabb7ffb67131f8d38ac.svg"/>, <code class="docutils literal notranslate"><span class="pre">gather</span></code> return an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> in which the <img alt="i" class="math" src="_images/math/4beb4858fd47cbeee3a992f0d65c3bd7dc1464de.svg"/>’th cell is</p>
+<p>Given an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object <code class="docutils literal notranslate"><span class="pre">X</span></code> with array dimension <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg" style="vertical-align: 0px"/> and an <img alt="N\times N" class="math" src="_images/math/49ce981f1e286e4ca0005ce3f441d955c08c30b7.svg" style="vertical-align: -2px"/>
+real matrix <img alt="C" class="math" src="_images/math/e86c6a238f03820c341bcabb7ffb67131f8d38ac.svg" style="vertical-align: 0px"/>, <code class="docutils literal notranslate"><span class="pre">gather</span></code> return an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> in which the <img alt="i" class="math" src="_images/math/4beb4858fd47cbeee3a992f0d65c3bd7dc1464de.svg" style="vertical-align: 0px"/>’th cell is</p>
 <div class="math-wrapper"><div class="math">
 <p><img alt="Y^{(i)}=\sum_{j\::\:c_{i,j}\neq 0} c_{i,j}\,X^{(j)}." src="_images/math/a2d94487361f51adfc63eee840fea45d1b4f8a8b.svg"/></p>
 </div></div><p>Using cnine’s array functionality, GElib can efficiently parallelize this operation on the GPU,
-even when the number of terms in the sum for different values of <img alt="i" class="math" src="_images/math/4beb4858fd47cbeee3a992f0d65c3bd7dc1464de.svg"/> is different.</p>
+even when the number of terms in the sum for different values of <img alt="i" class="math" src="_images/math/4beb4858fd47cbeee3a992f0d65c3bd7dc1464de.svg" style="vertical-align: 0px"/> is different.</p>
 <p>Invoking this functionality requires defining <code class="docutils literal notranslate"><span class="pre">C</span></code> as a single precision PyTorch tensor
 and constructing the corresponding <code class="docutils literal notranslate"><span class="pre">cnine.Rmask1</span></code> object:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cnine</span>
@@ -228,11 +294,14 @@ and constructing the corresponding <code class="docutils literal notranslate"><s
 </pre></div>
 </div>
 <p>The gather operation is then called as</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">3</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Y</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Naturally, <code class="docutils literal notranslate"><span class="pre">gather</span></code> is a differentiable operation.</p>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
 </section>
 </section>
 
@@ -241,12 +310,30 @@ and constructing the corresponding <code class="docutils literal notranslate"><s
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="SO3vecArr.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">SO3vecArr</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="SO3vecB.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">SO3vec</div>
+                
+              </div>
+            </a>
         </div>
 
         <div class="related-information">
-              Copyright &#169; 2021, Risi Kondor |
+              Copyright &#169; 2021-2022, Risi Kondor |
             Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
               and
               <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
