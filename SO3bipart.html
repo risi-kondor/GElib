@@ -1,0 +1,306 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3bivec/SObivecArr" href="SO3bivec.html" /><link rel="prev" title="SO3vecArr" href="SO3vecArr.html" />
+
+    <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
+        <title>SO3bipart/SO3bipartArr - GElib documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=0254c309f5cadf746f1a613e7677379ac9c8cdcd" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=16fb25fabf47304eee183a5e9af80b1ba98259b1" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  body[data-theme="dark"] {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    body:not([data-theme="light"]) {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+</style></head>
+  <body>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" />
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">GElib  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">GElib  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WignerMatrix.html">Wigner matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch–Gordan matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3bipart/SO3bipartArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3bivec.html">SO3bivec/SObivecArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
+</ul>
+
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="so3bipart-so3bipartarr">
+<h1>SO3bipart/SO3bipartArr<a class="headerlink" href="#so3bipart-so3bipartarr" title="Permalink to this headline">¶</a></h1>
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3bipart</span></code> object is similar to an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>, except it has two separate <img alt="SO3" class="math" src="_images/math/28a439ce9eb48a0818fcfd91bf4092363aae0575.svg" style="vertical-align: 0px"/> covariant indices,
+possibly corresponding to possbily two different irreps of <img alt="SO3" class="math" src="_images/math/28a439ce9eb48a0818fcfd91bf4092363aae0575.svg" style="vertical-align: 0px"/>.
+Hence, an <code class="docutils literal notranslate"><span class="pre">SO3bipart</span></code> with batch dimension <code class="docutils literal notranslate"><span class="pre">b</span></code> and channel dimension <code class="docutils literal notranslate"><span class="pre">n</span></code> corresponding to the <code class="docutils literal notranslate"><span class="pre">l1</span></code> and
+<code class="docutils literal notranslate"><span class="pre">l2</span></code> irreps is a <code class="docutils literal notranslate"><span class="pre">(b,2l1+1,2l2+1,n)</span></code> dimensional single precision complex <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>.
+Just like an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>, an <code class="docutils literal notranslate"><span class="pre">SO3bipart</span></code> object can be constructed directly from a PyTorch tensor, or
+via its <code class="docutils literal notranslate"><span class="pre">zeros</span></code> or <code class="docutils literal notranslate"><span class="pre">randn</span></code> constructors, for example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3bipart</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span>
+<span class="go">&lt;GElib::SO3bipart(b=1,l1=2,l2=3,n=4)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+<span class="go"> Channel 0:</span>
+<span class="go"> [ (-1.23974,0) (1.3828,0) (-1.66043,0) (0.097221,0) (0.584898,0) (0.74589,0) (-0.546571,0) ]</span>
+<span class="go"> [ (-0.370271,0) (-1.50279,0) (-0.764676,0) (1.32256,0) (-0.696964,0) (-1.96886,0) (-0.274068,0) ]</span>
+<span class="go"> [ (0.0431933,0) (-0.257851,0) (-1.13769,0) (-1.39814,0) (-1.2589,0) (-0.149277,0) (-0.322037,0) ]</span>
+<span class="go"> [ (-1.21275,0) (-0.187871,0) (-1.62807,0) (-1.20183,0) (-0.42954,0) (0.630166,0) (-1.1945,0) ]</span>
+<span class="go"> [ (0.680457,0) (-0.37048,0) (-0.0893479,0) (1.1648,0) (-0.653697,0) (0.321597,0) (-1.36411,0) ]</span>
+
+<span class="go"> Channel 1:</span>
+<span class="go"> [ (-0.407472,0) (0.0523187,0) (-0.688081,0) (-0.89237,0) (-0.660558,0) (-1.75177,0) (-0.0384917,0) ]</span>
+<span class="go"> [ (-1.12408,0) (0.570759,0) (0.250854,0) (1.93468,0) (0.537104,0) (0.354178,0) (0.005616,0) ]</span>
+<span class="go"> [ (-1.96668,0) (-0.391737,0) (-1.22027,0) (-0.477463,0) (0.259477,0) (-1.3338,0) (-0.380621,0) ]</span>
+<span class="go"> [ (-0.100699,0) (-0.0230505,0) (-0.250657,0) (-0.399454,0) (-2.20967,0) (0.137796,0) (1.06918,0) ]</span>
+<span class="go"> [ (1.40633,0) (0.0266631,0) (2.04214,0) (-0.915378,0) (-0.645572,0) (-0.406172,0) (1.01046,0) ]</span>
+
+<span class="go"> Channel 2:</span>
+<span class="go"> [ (1.61201,0) (-0.904146,0) (0.0757219,0) (-0.228782,0) (0.534755,0) (-0.965146,0) (0.194947,0) ]</span>
+<span class="go"> [ (1.73664,0) (-0.929941,0) (-0.188164,0) (1.25244,0) (0.694816,0) (-0.455262,0) (-1.77286,0) ]</span>
+<span class="go"> [ (-0.480737,0) (2.69588,0) (0.111152,0) (0.643125,0) (-1.6247,0) (-1.44352,0) (0.593568,0) ]</span>
+<span class="go"> [ (0.468701,0) (-0.302782,0) (0.658802,0) (-0.727057,0) (-1.22569,0) (0.674001,0) (-1.2115,0) ]</span>
+<span class="go"> [ (-0.31774,0) (0.592888,0) (0.200541,0) (-0.566838,0) (0.471302,0) (-1.41157,0) (0.588378,0) ]</span>
+
+<span class="go"> Channel 3:</span>
+<span class="go"> [ (0.399771,0) (1.87065,0) (1.47339,0) (1.16493,0) (-0.607787,0) (-0.474282,0) (-0.485144,0) ]</span>
+<span class="go"> [ (0.882195,0) (-0.934988,0) (-1.51315,0) (1.0417,0) (0.541231,0) (0.377994,0) (0.519691,0) ]</span>
+<span class="go"> [ (-1.83641,0) (1.6585,0) (-0.672931,0) (1.37519,0) (-0.996947,0) (0.65806,0) (1.05796,0) ]</span>
+<span class="go"> [ (0.819091,0) (-0.999364,0) (-0.973458,0) (0.43853,0) (0.73464,0) (-0.281158,0) (-2.1947,0) ]</span>
+<span class="go"> [ (0.123568,0) (-0.165017,0) (0.277807,0) (-0.419928,0) (1.52415,0) (-1.49311,0) (0.515642,0) ]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">SO3bipart</span></code> supports many of the same operations as the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> class, except that instead of
+taking <code class="docutils literal notranslate"><span class="pre">CGproduct``s,</span> <span class="pre">we</span> <span class="pre">can</span> <span class="pre">apply</span> <span class="pre">a</span> <span class="pre">``CGtransform</span></code> to contract the two SO(3)-covariant
+indices into a single one. The result is an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> object.
+For example, the following computes the <img alt="\ell=1" class="math" src="_images/math/a43448e698506cc367adf0a37c72a17158b01942.svg" style="vertical-align: 0px"/> component of such a contraction:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGtransform</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span>
+<span class="go">&lt;GElib::SO3part(b=1,l=1,n=4)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="go">[ (-0.213503,0) (-0.250336,0) (-0.276431,0) (-0.0712574,0) ]</span>
+<span class="go">[ (0.544488,0) (-1.03109,0) (-0.46173,0) (0.662361,0) ]</span>
+<span class="go">[ (0.510107,0) (0.355053,0) (-0.0549618,0) (-1.01385,0) ]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">SO3bipartArr</span></code> is the arrayed version of <code class="docutils literal notranslate"><span class="pre">SO3bipart</span></code>, similar to <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code>.</p>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="SO3bivec.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">SO3bivec/SObivecArr</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="SO3vecArr.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">SO3vecArr</div>
+                
+              </div>
+            </a>
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2021-2022, Risi Kondor |
+            Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
+              and
+              <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+              <a href="https://github.com/pradyunsg/furo">Furo theme</a>. |
+            <a class="muted-link" href="_sources/SO3bipart.rst.txt"
+               rel="nofollow">
+              Show Source
+            </a>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/main.js"></script>
+    </body>
+</html>
