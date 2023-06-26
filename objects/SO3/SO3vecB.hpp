@@ -802,7 +802,7 @@ namespace GElib{
     }
 
     string repr(const string indent="") const{
-      return "<GElib::SO3vecB of type "+get_tau().str()+">";
+      return "<GElib::SO3vecB of type "+get_tau().str()+" [b="+to_string(getb())+"]>";
     }
     
     friend ostream& operator<<(ostream& stream, const SO3vecB& x){

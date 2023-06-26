@@ -53,6 +53,7 @@ namespace GElib{
     using Tview::device;
     using Tview::bbatch;
     using Tview::getb;
+    using Tview::for_each_batch;
     
 
   public: // ---- Conversions --------------------------------------------------------------------------------
@@ -111,9 +112,31 @@ namespace GElib{
 	",n="+to_string(getn())+")>";
     }
 
-    //friend ostream& operator<<(ostream& stream, const SO3partView& x){
-    //stream<<x.str(); return stream;
-    //}
+    string str(const string indent="") const{
+      if(device()>0){
+	auto t=cnine::BatchedTensor<complex<RTYPE> >(*this,0);
+	return SO3bipartView(t).str(indent);
+      }
+      if(getb()>1){
+	ostringstream oss;
+	for_each_batch([&](const int b, const SO3bipartView& x){
+	    oss<<indent<<"Batch "<<b<<":"<<endl;
+	    oss<<x.str(indent+"  ")<<endl; 
+	  });
+	return oss.str();
+      }
+      ostringstream oss;
+      auto x=Tview::batch(0);
+      for(int i=0; i<getn(); i++){
+	oss<<indent<<"  "<<"Channel "<<i<<":"<<endl;
+	oss<<x.slice(2,i).str(indent+"  ")<<endl;
+      }
+      return oss.str();
+    }
+
+    friend ostream& operator<<(ostream& stream, const SO3bipartView& x){
+      stream<<x.str(); return stream;
+    }
     
   };
 

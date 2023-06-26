@@ -18,6 +18,7 @@
 #include "SO3bipartView.hpp"
 #include "SO3part_view.hpp"
 #include "SO3partArrayView.hpp"
+// #include "BatchedTensorArrayVirtual.hpp" //deprecated
 
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
@@ -63,6 +64,7 @@ namespace GElib{
     using BatchedTensorArrayView::get_dstrides;
     using BatchedTensorArrayView::getN;
     using BatchedTensorArrayView::slice;
+    //using BatchedTensorArrayView::for_each_batch;
 
     
   public: // ---- Constructors for non-view child classes ---------------------------------------------------
@@ -115,7 +117,7 @@ namespace GElib{
 
 
     SO3bipartArrayView<RTYPE> batch(const int i) const{
-      return SO3bipartArrayView<RTYPE>(arr+strides[0]*i,nadims(),dims.chunk(1).prepend(1),strides);
+      return SO3bipartArrayView<RTYPE>(arr+strides[0]*i,nadims()+1,dims.chunk(1).prepend(1),strides);
     }
 
 
@@ -161,6 +163,16 @@ namespace GElib{
     }
 
 
+  public: // ---- Lambdas ------------------------------------------------------------------------------------
+
+
+    void for_each_batch(const std::function<void(const int, const SO3bipartArrayView&)>& lambda) const{
+      int B=getb();
+      for(int b=0; b<B; b++)
+	lambda(b,batch(b));
+    }
+
+
   public: // ---- CG-products --------------------------------------------------------------------------------
 
     
@@ -189,6 +201,32 @@ namespace GElib{
 	",l2="+to_string(getl2())+",n="+to_string(getn())+")>";
     }
     
+    string str(const string indent="") const{
+      if(device()>0){
+	//auto t=cnine::BatchedTensorArrayVirtual<complex<RTYPE>, BatchedTensorArrayView>(*this,0);
+	//return SO3bipartArrayView(t).str(indent);
+	return "";
+      }
+      if(getb()>1){
+	ostringstream oss;
+	for_each_batch([&](const int b, const SO3bipartArrayView& x){
+	    oss<<indent<<"Batch "<<b<<":"<<endl;
+	    oss<<x.str(indent+"  ");//<<endl; 
+	  });
+	return oss.str();
+      }
+      ostringstream oss;
+      auto x=BatchedTensorArrayView::batch(0);
+      x.for_each_cell([&](const Gindex& ix, const cnine::TensorView<complex<RTYPE> >& x){
+	  oss<<indent<<"Cell"<<ix<<":"<<endl;
+	  for(int i=0; i<getn(); i++){
+	    oss<<indent<<"  "<<"Channel "<<i<<":"<<endl;
+	    oss<<x.slice(2,i).str(indent+"  ")<<endl;
+	  }
+	});
+      return oss.str();
+    }
+
     friend ostream& operator<<(ostream& stream, const SO3bipartArrayView& x){
       stream<<x.str(); return stream;
     }

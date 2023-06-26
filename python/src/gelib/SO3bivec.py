@@ -54,7 +54,7 @@ class SO3bivec(torch.Tensor):
     @classmethod
     def randn(self,b,_tau,device='cpu'):
         R=SO3bivec(1)
-        R.obj=_SO3bivec.gaussian(b,_tau,device_id(device))
+        R.obj=_SO3bivec.gaussian(b,_SO3bitype(_tau),device_id(device))
         return R
 
     @classmethod

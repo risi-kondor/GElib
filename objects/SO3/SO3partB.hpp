@@ -538,7 +538,7 @@ namespace GElib{
     }
 
     string repr(const string indent="") const{
-      return "<GElib::SO3partB(l="+to_string(getl())+",n="+to_string(getn())+")>";
+      return "<GElib::SO3partB(b="+to_string(getb())+",l="+to_string(getl())+",n="+to_string(getn())+")>";
     }
     
     friend ostream& operator<<(ostream& stream, const SO3partB& x){

@@ -29,6 +29,8 @@ namespace GElib{
 
     using _GvecView::_GvecView;
     using _GvecView::parts;
+    using _GvecView::size;
+    using _GvecView::getb;
     using _GvecView::str;
 
 
@@ -80,8 +82,7 @@ namespace GElib{
     }
 
     string repr(const string indent="") const{
-      return "";
-      //return "<GElib::SO3vecV of type "+get_tau().str()+">";
+      return "<GElib::SO3vec b="+to_string(getb())+", tau="+get_tau().str()+">";
     }
     
     friend ostream& operator<<(ostream& stream, const SO3vecView& x){

@@ -43,6 +43,7 @@ namespace GElib{
     using SO3bipartView<TYPE>::getl2;
     using SO3bipartView<TYPE>::getn;
     using SO3bipartView<TYPE>::dim;
+    using SO3bipartView<TYPE>::str;
 
 #ifdef WITH_FAKE_GRAD
     using diff_class::grad;

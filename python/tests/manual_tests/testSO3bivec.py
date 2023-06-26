@@ -3,7 +3,7 @@ import gelib as g
 
 tau=g.SO3bitype([[1,2,1],[2,2,3]])
 
-u=g.SO3bivec.randn(1,tau)
+u=g.SO3bivec.randn(1,[[1,2,1],[2,2,3]])
 print(u)
 
 print(u.part(2,2))

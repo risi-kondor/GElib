@@ -22,9 +22,12 @@ GElib
 
    SO3partB.rst
    SO3vecB.rst
-   SO3weights.rst 
    SO3partArr.rst
    SO3vecArr.rst
+
+   SO3bipart.rst
+
+   SO3weights.rst 
 
 
 
