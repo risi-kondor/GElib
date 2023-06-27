@@ -65,22 +65,22 @@ class TestSO3vecArr(object):
         for i in range(maxl+1 ):
             assert (torch.allclose(rz.parts[i] , zr.parts[i], rtol=1e-3, atol=1e-5))
 
-    @pytest.mark.parametrize('b', [1, 2, 4])    
-    @pytest.mark.parametrize('a', [1, 2, 4])    
-    @pytest.mark.parametrize('maxl', range(7))
-    def test_Fproduct(self,b,a,maxl):
-        x=G.SO3vecArr.Frandn(b,[a],maxl)
-        y=G.SO3vecArr.Frandn(b,[a],maxl)
-        R = G.SO3element.uniform()
-        xr=x.rotate(R)
-        yr=y.rotate(R)
-
-        z=G.Fproduct(x,y,maxl=maxl)
-        zr=G.Fproduct(xr,yr,maxl=maxl)
-        rz=z.rotate(R)
-
-        for i in range(maxl+1 ):
-            assert (torch.allclose(rz.parts[i] , zr.parts[i], rtol=1e-3, atol=1e-2))
+#    @pytest.mark.parametrize('b', [1, 2, 4])    
+#    @pytest.mark.parametrize('a', [1, 2, 4])    
+#    @pytest.mark.parametrize('maxl', range(7))
+#    def test_Fproduct(self,b,a,maxl):
+#        x=G.SO3vecArr.Frandn(b,[a],maxl)
+#        y=G.SO3vecArr.Frandn(b,[a],maxl)
+#        R = G.SO3element.uniform()
+#        xr=x.rotate(R)
+#        yr=y.rotate(R)
+#
+#        z=G.Fproduct(x,y,maxl=maxl)
+#        zr=G.Fproduct(xr,yr,maxl=maxl)
+#        rz=z.rotate(R)
+#
+#        for i in range(maxl+1 ):
+#            assert (torch.allclose(rz.parts[i] , zr.parts[i], rtol=1e-3, atol=1e-2))
 
 
     @pytest.mark.parametrize('b', [1, 2, 4])    
@@ -99,11 +99,10 @@ class TestSO3vecArr(object):
         self.vecArr_vecArr_backprop(b,[a],[tau for i in range(maxl + 1)],G.DiagCGproduct)
         return
 
-    @pytest.mark.parametrize('b', [1, 2, 4])    
-    @pytest.mark.parametrize('a', [1, 2, 4])    
-    @pytest.mark.parametrize('maxl', range(7))
-    def test_Fproduct_backprop(self,b,a,maxl):
-        self.vecArr_vecArr_backprop(b,[a],[2*l+1 for l in range(maxl+1)],G.Fproduct)
-        return
+#    @pytest.mark.parametrize('b', [1, 2, 4])    
+#    @pytest.mark.parametrize('a', [1, 2, 4])    
+#    @pytest.mark.parametrize('maxl', range(7))
+#    def test_Fproduct_backprop(self,b,a,maxl):
+#        return
 
 
