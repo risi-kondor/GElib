@@ -50,7 +50,30 @@ class SO3vec:
 
     @classmethod
     def randn(self, b, _tau,  device='cpu'):
-        "Construct a random SO3vec object of given type _tau."
+        """
+        Construct a random SO3vec object of given type _tau.
+        >>> import gelib
+        >>> import torch
+        >>> g = torch.manual_seed(0)
+        >>> v = gelib.SO3vec.randn(1,[2,3,1])
+        >>> v
+        <GElib::SO3vecB of type (2,3,1) [b=1]>
+        >>> print(v)
+        Part l=0:
+          [ (1.08965,-0.207486) (-1.54064,0.401942) ]
+        <BLANKLINE>
+        <BLANKLINE>
+        Part l=1:
+          [ (-0.251821,0.309163) (1.02082,0.188125) (0.117702,0.618281) ]
+          [ (-0.101451,-0.0789197) (-0.433869,0.0223394) (1.41774,0.0379977) ]
+          [ (0.437032,-0.291895) (-0.594723,-1.63769) (-0.0723438,0.560342) ]
+        <BLANKLINE>
+        <BLANKLINE>
+        Part l=2:
+          [ (-0.151452,-0.305448) (-0.500545,-0.0752602) (-0.878744,-0.336747) (-0.485018,-1.0643) (0.1803,1.2758) ]
+        <BLANKLINE>
+        <BLANKLINE>
+        """
         R = SO3vec()
         for l in range(0, len(_tau)):
             R.parts.append(torch.randn([b,2*l+1,_tau[l]], dtype=torch.cfloat, device=device))

@@ -3,7 +3,7 @@ import time
 
 import sys
 sys.path.insert(1, '../models/')
-import gelib_torchC as gelib
+import gelib
 
 torch.manual_seed(123)
 
