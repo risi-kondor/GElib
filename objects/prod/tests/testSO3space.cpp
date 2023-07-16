@@ -18,10 +18,10 @@ int main(int argc, char** argv){
   cout<<endl;
 
   SO3space V1(1);
-  cout<<V1.repr()<<endl;
+  cout<<V1<<endl;
 
   SO3space W=V1*V1*V1;
-  cout<<W.repr()<<endl;
+  cout<<W<<endl;
 
   cout<<endl;
 }

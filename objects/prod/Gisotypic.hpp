@@ -7,60 +7,42 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef _GSnSpace
-#define _GSnSpace
-
-#include "GSnSpaceBank.hpp"
+#ifndef _Gisotypic
+#define _Gisotypic
 
 
 namespace GElib{
 
-
-
   template<typename GROUP>
-  class GSnSpace{
+  class Gisotypic{
   public:
 
     typedef typename GROUP::IrrepIx _IrrepIx;
-    typedef GSnSpaceObj<GROUP> OBJ;
 
-
-    OBJ* obj;
-
-    GSnSpace(OBJ* _obj):
-      obj(_obj){}
-
-    GSnSpace(const _IrrepIx& ix):
-      GSnSpace(GSnSpace_bank(ix)){}
-
-
-
-  public: // ---- Operations --------------------------------------------------------------------------------
+    _IrrepIx ix;
+    int m=1;
+    
+    Gisotypic(const _IrrepIx& _ix, const int _m=1):
+      ix(_ix), m(_m){}
 
 
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
-
     string repr() const{
-      return obj->repr();
+      ostringstream oss;
+      oss<<"Isotypic<"<<GROUP::repr()<<">("<<ix<<","<<m<<")";
+      return oss.str();
     }
 
     string str(const string indent="") const{
-      return obj->str(indent);
+      return indent+repr();
     }
 
-    friend ostream& operator<<(ostream& stream, const GSnSpace& x){
+    friend ostream& operator<<(ostream& stream, const Gisotypic& x){
       stream<<x.str(); return stream;
     }
 
-
   };
-
-
-  template<typename GROUP>
-  inline GSnSpace<GROUP> operator*(const GSnSpace<GROUP>& x, const GSnSpace<GROUP>& y){
-    return GSnSpace(GSnSpace_bank(x.obj,y.obj));
-  }
 
 }
 

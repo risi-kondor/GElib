@@ -18,6 +18,17 @@ namespace GElib{
     typedef int IrrepIx;
   
   
+
+  public: // ---- CG-rule -----------------------------------------------------------------------------------
+
+
+    static void for_each_CGcomponent(const int l1, const int l2, 
+      const std::function<void(const int&, const int)>& lambda){
+      for(int l=std::abs(l1-l2); l<=l1+l2; l++)
+	lambda(l,1);
+    }
+
+
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
     static string repr(){
