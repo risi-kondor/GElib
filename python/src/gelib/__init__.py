@@ -40,5 +40,3 @@ def DiagCGproduct(x, y, maxl=-1):
 def CGtransform(x,l=-1):
     return x.CGtransform(l)
 
-#from gelib.gelib_torchC import *
-# from gelib.gelib_torchD import *
