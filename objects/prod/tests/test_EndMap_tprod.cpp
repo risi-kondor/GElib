@@ -9,28 +9,30 @@ namespace cnine{
 }
 
 #include "SO3.hpp"
+#include "GprodSpace.hpp"
+
 namespace GElib{
   SO3CouplingMatrices SO3::coupling_matrices;
   GprodSpaceBank<SO3> SO3::product_space_bank;
 }
 
-#include "GprodSpace.hpp"
-
 using namespace cnine;
 using namespace GElib;
 
-typedef GprodSpace<SO3> SO3basis;
+typedef GprodSpace<SO3> SO3space;
 
 
 int main(int argc, char** argv){
   GElibSession session;
   cout<<endl;
 
-  SO3basis V1(1);
-  cout<<V1<<endl;
-
-  SO3basis W=V1*V1*V1*V1;
+  SO3space V1(1);
+  SO3space W=V1*V1*V1;
   cout<<W<<endl;
 
-  cout<<endl;
+  EndMap<SO3,double> A(W,cnine::fill_sequential());
+  cout<<A<<endl;
+
+  cout<<tprod(A,A)<<endl;
+
 }

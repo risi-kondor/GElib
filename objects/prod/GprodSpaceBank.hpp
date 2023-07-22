@@ -7,53 +7,52 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef _GSnSpaceBank
-#define _GSnSpaceBank
+#ifndef _GprodSpaceBank
+#define _GprodSpaceBank
 
-#include "GSnSpaceObj.hpp"
+#include "GprodSpaceObj.hpp"
 
 
 namespace GElib{
 
   template<typename GROUP>
-  class GSnSpaceProductSignature: public pair<int,int>{
+  class GprodSpaceProductSignature: public pair<int,int>{
   public:
-    GSnSpaceProductSignature(const GSnSpaceObj<GROUP>& x, const GSnSpaceObj<GROUP>& y):
+    GprodSpaceProductSignature(const GprodSpaceObj<GROUP>& x, const GprodSpaceObj<GROUP>& y):
       pair<int,int>(x.id,y.id){}
   };
 
 
   template<typename GROUP>
-  class GSnSpaceBank{
+  class GprodSpaceBank{
   public:
 
     typedef typename GROUP::IrrepIx _IrrepIx;
-    //typedef GSnSpaceObj<GROUP> _GSnSpaceObj;
-    typedef GSnSpaceProductSignature<GROUP> _psignature;
-    //typedef typename GROUP::_SnSpaceObj _SnSpaceObj;
+    typedef GprodSpaceProductSignature<GROUP> _psignature;
+
 
     int nspaces=0;
-    map<_IrrepIx,GSnSpaceObj<GROUP>*> singletons;
-    map<_psignature,GSnSpaceObj<GROUP>*> products;
+    map<_IrrepIx,GprodSpaceObj<GROUP>*> singletons;
+    map<_psignature,GprodSpaceObj<GROUP>*> products;
 
 
 
   public: // ---- Access -------------------------------------------------------------------------------------
 
 
-    GSnSpaceObj<GROUP>* operator()(const _IrrepIx& ix){
+    GprodSpaceObj<GROUP>* operator()(const _IrrepIx& ix){
       auto it=singletons.find(ix);
       if(it!=singletons.end()) return it->second;
-      GSnSpaceObj<GROUP>* x=new GSnSpaceObj<GROUP>(ix,nspaces++);
+      GprodSpaceObj<GROUP>* x=new GprodSpaceObj<GROUP>(ix,nspaces++);
       singletons[ix]=x;
       return x;
     }
 
-    GSnSpaceObj<GROUP>* operator()(GSnSpaceObj<GROUP>* left, GSnSpaceObj<GROUP>* right){
+    GprodSpaceObj<GROUP>* operator()(GprodSpaceObj<GROUP>* left, GprodSpaceObj<GROUP>* right){
       _psignature ix(*left,*right);
       auto it=products.find(ix);
       if(it!=products.end()) return it->second;
-      GSnSpaceObj<GROUP>* x=new GSnSpaceObj<GROUP>(left,right,nspaces++);
+      GprodSpaceObj<GROUP>* x=new GprodSpaceObj<GROUP>(left,right,nspaces++);
       products[ix]=x;
       return x;
     }
