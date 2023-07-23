@@ -14,7 +14,7 @@
 
 #include "Gtensor.hpp"
 #include "SO3element.hpp"
-#include "Factorial.hpp"
+//#include "Factorial.hpp"
 #include "Ctensor2_view.hpp"
 
 extern default_random_engine rndGen;
@@ -57,11 +57,11 @@ namespace GElib{
 
       if(l<5){
 	for(int s=std::max(0,m1-m2); s<=std::min(l+m1,l-m2); s++){
-	  TYPE pref=1.0/(factorial(l+m1-s)*factorial(s)*factorial(m2-m1+s)*factorial(l-m2-s));
+	  TYPE pref=1.0/(cnine::factorial(l+m1-s)*cnine::factorial(s)*cnine::factorial(m2-m1+s)*cnine::factorial(l-m2-s));
 	  if((m2-m1+s)%2) pref=-pref;
 	  x+=pref*std::pow(cos(beta/2),2*l+m1-m2-2*s)*std::pow(sin(beta/2),m2-m1+2*s);
 	}
-	TYPE v= sqrt(factorial(l+m1)*factorial(l-m1)*factorial(l+m2)*factorial(l-m2))*x;
+	TYPE v= sqrt(cnine::factorial(l+m1)*cnine::factorial(l-m1)*cnine::factorial(l+m2)*cnine::factorial(l-m2))*x;
 	if(std::isnan(v)) cout<<l<<m1<<m2<<" "<<beta<<endl;
       return v;
       }
