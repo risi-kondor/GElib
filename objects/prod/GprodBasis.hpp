@@ -10,7 +10,7 @@
 #ifndef _GprodBasis
 #define _GprodBasis
 
-#include "GprodSpaceObj.hpp"
+#include "CGprodBasisObj.hpp"
 
 
 namespace GElib{
@@ -21,7 +21,7 @@ namespace GElib{
   public:
 
     typedef typename GROUP::IrrepIx _IrrepIx;
-    typedef GprodSpaceObj<GROUP> OBJ;
+    typedef CGprodBasisObj<GROUP> OBJ;
 
 
     OBJ* obj;

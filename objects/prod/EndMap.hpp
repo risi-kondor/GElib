@@ -26,8 +26,6 @@ namespace GElib{
     map<_IrrepIx,_Tensor> maps;
 
     ~EndMap(){
-      //for(auto& x: maps)
-      //delete x.second;
     }
 
 

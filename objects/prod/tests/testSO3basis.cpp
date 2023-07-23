@@ -6,7 +6,7 @@
 namespace GElib{
   SO3CouplingMatrices SO3::coupling_matrices;
   GprodSpaceBank<SO3> SO3::product_space_bank;
-  template<> int GprodSpaceObj<SO3>::indnt=0;
+  template<> int CGprodBasisObj<SO3>::indnt=0;
 }
 
 using namespace cnine;
@@ -31,7 +31,7 @@ int main(int argc, char** argv){
   cout<<E.standard_form()<<endl;
 
   //E.obj->standardize();
-  cout<<E.obj->standardizing_map()<<endl;
+  cout<<E.standardizing_map()<<endl;
 
   cout<<endl;
 }

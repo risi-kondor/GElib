@@ -7,8 +7,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef _GprodSpaceObj
-#define _GprodSpaceObj
+#ifndef _CGprodBasisObj
+#define _CGprodBasisObj
 
 #include "EndMap.hpp"
 #include "Gtype.hpp"
@@ -22,7 +22,7 @@ namespace GElib{
 
 
   template<typename GROUP>
-  class GprodSpaceObj{
+  class CGprodBasisObj{
   public:
 
     typedef typename GROUP::IrrepIx _IrrepIx;
@@ -31,26 +31,26 @@ namespace GElib{
     int id=0;
     int nnodes=1;
     _IrrepIx irrep;
-    GprodSpaceObj* left=nullptr;
-    GprodSpaceObj* right=nullptr;
+    CGprodBasisObj* left=nullptr;
+    CGprodBasisObj* right=nullptr;
     map<_IrrepIx,_Isotypic> isotypics;
     Gtype<GROUP> tau;
 
     static int indnt;
 
-    ~GprodSpaceObj(){
+    ~CGprodBasisObj(){
     }
 
 
   public: // ---- Constructors -------------------------------------------------------------------------------
 
 
-    GprodSpaceObj(_IrrepIx _irrep, const int _id): 
+    CGprodBasisObj(_IrrepIx _irrep, const int _id): 
       id(_id), irrep(_irrep), tau(_irrep){
       isotypics[_irrep]=_Isotypic(_irrep,1);
     }
 
-    GprodSpaceObj(GprodSpaceObj* _x, GprodSpaceObj* _y, const int _id): 
+    CGprodBasisObj(CGprodBasisObj* _x, CGprodBasisObj* _y, const int _id): 
       id(_id), nnodes(_x->nnodes+_y->nnodes+1), left(_x), right(_y), tau(tprod(_x->tau,_y->tau)){
       for(auto& x:_x->isotypics)
 	for(auto& y:_y->isotypics)
@@ -66,7 +66,7 @@ namespace GElib{
   public: // ---- Copying -----------------------------------------------------------------------------------
 
 
-    GprodSpaceObj(const GprodSpaceObj& x)=delete;
+    CGprodBasisObj(const CGprodBasisObj& x)=delete;
 
 
   public: // ---- Boolean -----------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ namespace GElib{
       return right->is_reverse();
     }
 
-    bool is_isomorphic(const GprodSpaceObj& y) const{
+    bool is_isomorphic(const CGprodBasisObj& y) const{
       unordered_map<_IrrepIx,int> xcounts;
       unordered_map<_IrrepIx,int> ycounts;
       add_counts(xcounts);
@@ -104,7 +104,7 @@ namespace GElib{
       return tau;
     }
 
-    void for_each_leaf(std::function<void(GprodSpaceObj*)> lambda){
+    void for_each_leaf(std::function<void(CGprodBasisObj*)> lambda){
       if(is_leaf()) lambda(this);
       else{
 	left->for_each_leaf(lambda);
@@ -112,7 +112,7 @@ namespace GElib{
       }
     }
 
-    void for_each_leaf_reverse(std::function<void(GprodSpaceObj*)> lambda){
+    void for_each_leaf_reverse(std::function<void(CGprodBasisObj*)> lambda){
       if(is_leaf()) lambda(this);
       else{
 	right->for_each_leaf(lambda);
@@ -124,38 +124,38 @@ namespace GElib{
   public: // ---- Transformations to other bases -------------------------------------------------------------
 
 
-    cnine::cachedf<GprodSpaceObj> shift_left=
-      cnine::cachedf<GprodSpaceObj>([&](){
+    cnine::cachedf<CGprodBasisObj> shift_left=
+      cnine::cachedf<CGprodBasisObj>([&](){
 	  GELIB_ASSRT(left!=nullptr && right!=nullptr);
 	  GELIB_ASSRT(right->left!=nullptr && right->right!=nullptr);
 	  auto t=GROUP::space(left,right->left);
 	  return GROUP::space(t,right->right);
 	});
 
-    cnine::cachedf<GprodSpaceObj> shift_right=
-      cnine::cachedf<GprodSpaceObj>([&](){
+    cnine::cachedf<CGprodBasisObj> shift_right=
+      cnine::cachedf<CGprodBasisObj>([&](){
 	  GELIB_ASSRT(left!=nullptr && right!=nullptr);
 	  GELIB_ASSRT(left->left!=nullptr && left->right!=nullptr);
 	  auto t=GROUP::space(left->right,right);
 	  return GROUP::space(left->left,t);
 	});
 
-    cnine::cachedf<GprodSpaceObj> standard_form=
-      cnine::cachedf<GprodSpaceObj>([&](){
-	  GprodSpaceObj* u; 
+    cnine::cachedf<CGprodBasisObj> standard_form=
+      cnine::cachedf<CGprodBasisObj>([&](){
+	  CGprodBasisObj* u; 
 	  bool first=true;
-	  for_each_leaf([&](GprodSpaceObj* x){
+	  for_each_leaf([&](CGprodBasisObj* x){
 	      if(first){u=x; first=false;}
 	      else u=GROUP::space(u,x);
 	    });
 	  return u;
 	});
 
-    cnine::cachedf<GprodSpaceObj> reverse_standard_form=
-      cnine::cachedf<GprodSpaceObj>([&](){
-	  GprodSpaceObj* u; 
+    cnine::cachedf<CGprodBasisObj> reverse_standard_form=
+      cnine::cachedf<CGprodBasisObj>([&](){
+	  CGprodBasisObj* u; 
 	  bool first=true;
-	  for_each_leaf_reverse([&](GprodSpaceObj* x){
+	  for_each_leaf_reverse([&](CGprodBasisObj* x){
 	      if(first){u=x; first=false;}
 	      else u=GROUP::space(x,u);
 	    });
@@ -167,9 +167,11 @@ namespace GElib{
 	  if(is_leaf()) return new EndMap<GROUP,double>(tau,cnine::fill_identity());
 	  auto T=tprod(left->standardizing_map(),right->right_standardizing_map());
 	  auto u=GROUP::space(&left->standard_form(),&right->reverse_standard_form());
+	  //cout<<u->repr()<<endl;
 	  while(!u->right->is_leaf()){
 	    T=u->left_shift_map()*T;
 	    u=&u->shift_left();
+	    //cout<<u->repr()<<endl;
 	  }
 	  return new EndMap<GROUP,double>(std::move(T));
 	});
@@ -189,9 +191,12 @@ namespace GElib{
     cnine::cachedf<EndMap<GROUP,double> > left_shift_map=
       cnine::cachedf<EndMap<GROUP,double> >([&](){
 	  auto R=new EndMap<GROUP,double>(tau,cnine::fill_zero());
-	  GprodSpaceObj& x=*left;
-	  GprodSpaceObj& y=*right->left;
-	  GprodSpaceObj& z=*right->right;
+
+	  GELIB_ASSRT(left && right);
+	  GELIB_ASSRT(right->left && right->right);
+	  CGprodBasisObj& x=*left;
+	  CGprodBasisObj& y=*right->left;
+	  CGprodBasisObj& z=*right->right;
 
 	  for(auto& p1:x.tau){
 	    auto l1=p1.first;
@@ -200,18 +205,22 @@ namespace GElib{
 	      for(auto& p3:z.tau){
 		auto l3=p3.first;
 		int m0=p1.second*p2.second*p3.second;
+		//cout<<l1<<l2<<l3<<endl;
 	    
 		GROUP::for_each_CGcomponent(l1,l2,[&](const _IrrepIx& l12, const int m12){
 		    GROUP::for_each_CGcomponent(l12,l3,[&](const _IrrepIx& l, const int mL){
 			GROUP::for_each_CGcomponent(l2,l3,[&](const _IrrepIx& l23, const int m23){
 			    GROUP::for_each_CGcomponent(l1,l23,[&](const _IrrepIx& ld, const int mR){
 				if(l==ld){
+				  //cout<<" "<<l12<<" "<<l23<<" "<<l<<endl;
 				  int loffs=shift_left().left_triple_index(l1,l2,l3,l12,l);
 				  int roffs=right_triple_index(l1,l2,l3,l23,l);
 				  int lwidth=m0*m12*mL;
 				  int rwidth=m0*m23*mR;
+				  //cout<<"("<<lwidth<<","<<rwidth<<")("<<loffs<<","<<roffs<<")"<<endl;
 				  auto T=cnine::Tensor<double>::constant({lwidth,rwidth},GROUP::coupling(l1,l2,l3,l,l12,l23));
-				  R->maps[l].block({loffs,roffs},{lwidth,rwidth})=T;
+				  R->maps[l].block({lwidth,rwidth},{loffs,roffs})=T;
+				  //cout<<"."<<endl;
 				}
 			      });
 			  });
@@ -260,9 +269,9 @@ namespace GElib{
     cnine::cachedf<TripleIndexMap> left_triple_index_map=
       cnine::cachedf<TripleIndexMap>([&](){
 	  auto R=new TripleIndexMap();
-	  GprodSpaceObj& x=*left->left;
-	  GprodSpaceObj& y=*left->right;
-	  GprodSpaceObj& z=*right;
+	  CGprodBasisObj& x=*left->left;
+	  CGprodBasisObj& y=*left->right;
+	  CGprodBasisObj& z=*right;
 
 	  Gtype<GROUP> offs;
 	  for(auto& p1:x.tau){
@@ -287,9 +296,9 @@ namespace GElib{
       cnine::cachedf<TripleIndexMap>([&](){
 	  auto R=new TripleIndexMap();
 	  GELIB_ASSRT(left && right->left && right->right);
-	  GprodSpaceObj& x=*left;
-	  GprodSpaceObj& y=*right->left;
-	  GprodSpaceObj& z=*right->right;
+	  CGprodBasisObj& x=*left;
+	  CGprodBasisObj& y=*right->left;
+	  CGprodBasisObj& z=*right->right;
 
 	  Gtype<GROUP> offs;
 	  for(auto& p1:x.tau){
@@ -343,12 +352,12 @@ namespace GElib{
     string str(const string indent="") const{
       ostringstream oss;
       oss<<indent<<repr()<<endl;
-      for(auto& p:isotypics)
-	oss<<p.second.str(indent+"  ");
+      //for(auto& p:isotypics)
+      //oss<<p.second.str(indent+"  ");
       return oss.str();
     }
 
-    friend ostream& operator<<(ostream& stream, const GprodSpaceObj& x){
+    friend ostream& operator<<(ostream& stream, const CGprodBasisObj& x){
       stream<<x.str(); return stream;
     }
 
@@ -362,9 +371,9 @@ namespace GElib{
 
     /*
     for_each_Ltriple(std::function<void(const _IrrepIx&, const _IrrepIx&, const _IrrepIx&, const _IrrepIx&, const _IrrepIx&, const int, const int)>){
-      GprodSpaceObj& x=*left->left;
-      GprodSpaceObj& y=*left->right;
-      GprodSpaceObj& z=*right;
+      CGprodBasisObj& x=*left->left;
+      CGprodBasisObj& y=*left->right;
+      CGprodBasisObj& z=*right;
 
       Gtype<GROUP> offs;
       for(auto& p1:x.tau){
@@ -398,11 +407,11 @@ namespace GElib{
       //oss<<indent<<"  "<<*p.second<<endl;
     //map<_IrrepIx,_Isotypic*> isotypics;
     //typedef Gisotypic<GROUP> _Isotypic;
-    //GprodSpaceObj* Lmove() const{
+    //CGprodBasisObj* Lmove() const{
     //return GROUP::FmoveL(this);
     //}
 
-    //GprodSpaceObj* Rmove() const{
+    //CGprodBasisObj* Rmove() const{
     //return GROUP::FmoveR(this);
     //}
 
@@ -411,7 +420,7 @@ namespace GElib{
     //return *_Lmove_map;
     //}
     /*
-    pair<GprodSpaceObj*,const EndMap<GROUP,double>&> transform_left(){
+    pair<CGprodBasisObj*,const EndMap<GROUP,double>&> transform_left(){
       GELIB_ASSRT(left!=nullptr && right!=nullptr);
       GELIB_ASSRT(right->left!=nullptr && right->right!=nullptr);
       cout<<string("  ",indnt)<<"Left shifting "<<repr()<<endl;
@@ -419,7 +428,7 @@ namespace GElib{
       return make_pair(GROUP::space(t,right->right),left_shift_map());
     }
 
-    GprodSpaceObj* transform_right(){
+    CGprodBasisObj* transform_right(){
       GELIB_ASSRT(left!=nullptr && right!=nullptr);
       GELIB_ASSRT(left->left!=nullptr && left->right!=nullptr);
       cout<<string("  ",indnt)<<"Right shifting "<<repr()<<endl;
@@ -429,11 +438,11 @@ namespace GElib{
     `*/
 
     /*
-    GprodSpaceObj* cleave(){
+    CGprodBasisObj* cleave(){
       GELIB_ASSRT(left!=nullptr && right!=nullptr);
       //cout<<"Cleaving "<<repr()<<endl;
-      GprodSpaceObj* u=left->standardize();
-      GprodSpaceObj* v=right->reverse_standardize();
+      CGprodBasisObj* u=left->standardize();
+      CGprodBasisObj* v=right->reverse_standardize();
       return GROUP::space(u,v);
     }
     */
@@ -449,7 +458,7 @@ namespace GElib{
     }
     */
     /*
-    pair<GprodSpaceObj*, EndMap<GROUP,double> > standardize(){
+    pair<CGprodBasisObj*, EndMap<GROUP,double> > standardize(){
       if(is_standard()) 
 	return make_pair(this,EndMap<GROUP,double>(tau,cnine::fill_identity()));
 
@@ -470,7 +479,7 @@ namespace GElib{
     }
 
 
-    pair<GprodSpaceObj*, EndMap<GROUP,double> > reverse_standardize(){
+    pair<CGprodBasisObj*, EndMap<GROUP,double> > reverse_standardize(){
       if(is_standard()) 
 	return make_pair(this,EndMap<GROUP,double>(tau,cnine::fill_identity()));
 

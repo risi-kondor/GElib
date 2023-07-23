@@ -54,8 +54,10 @@ namespace GElib{
     }
 
     static double coupling(int j1, int j2, int j3, int j, int j12, int j23){
-      int offs1=std::abs(j1-j2);
-      int offs2=std::abs(j2-j3);
+      //int offs1=std::abs(j1-j2);
+      int offs1=std::max(std::abs(j1-j2),std::abs(j-j3));
+      //int offs2=std::abs(j2-j3);
+      int offs2=std::max(std::abs(j2-j3),std::abs(j-j1));
       return coupling_matrices(j1,j2,j3,j)(j12-offs1,j23-offs2);
     }
 
@@ -63,11 +65,11 @@ namespace GElib{
   public: // ---- SnSpaces ----------------------------------------------------------------------------------
 
 
-    static GprodSpaceObj<SO3>* space(const int& ix){
+    static CGprodBasisObj<SO3>* space(const int& ix){
       return product_space_bank(ix);
     }
 
-    static GprodSpaceObj<SO3>* space(GprodSpaceObj<SO3>* x, GprodSpaceObj<SO3>* y){
+    static CGprodBasisObj<SO3>* space(CGprodBasisObj<SO3>* x, CGprodBasisObj<SO3>* y){
       return product_space_bank(x,y);
     }
 
@@ -124,14 +126,14 @@ namespace GElib{
     */
 
     /*
-    static GprodSpaceObj<SO3>* FmoveL(GprodSpaceObj<SO3>* x){
+    static CGprodBasisObj<SO3>* FmoveL(CGprodBasisObj<SO3>* x){
       GELIB_ASSRT(x->left!=nullptr && x->right!=nullptr);
       GELIB_ASSRT(x->left->left!=nullptr && x->left->right!=nullptr);
       auto t=product_space_bank(x->left->right,x->right);
       return product_space_bank(x->left->left,t);
     }
 
-    static GprodSpaceObj<SO3>* FmoveR(GprodSpaceObj<SO3>* x){
+    static CGprodBasisObj<SO3>* FmoveR(CGprodBasisObj<SO3>* x){
       GELIB_ASSRT(x->left!=nullptr && x->right!=nullptr);
       GELIB_ASSRT(x->right->left!=nullptr && x->right->right!=nullptr);
       auto t=product_space_bank(x->left,x->right->left);
@@ -139,7 +141,7 @@ namespace GElib{
     }
     */
     /*
-    static HomMap<SO3,double> coupling(GprodSpaceObj<SO3>* x, GprodSpaceObj<SO3>* y){
+    static HomMap<SO3,double> coupling(CGprodBasisObj<SO3>* x, CGprodBasisObj<SO3>* y){
       GELIB_ASSRT(x->is_isomorphic(*y));
       //HomMap<SO3,double> Tx=x->standardizer(); //ccoupling(x);
       //HomMap<SO3,double> Ty=ccoupling(y);
@@ -150,13 +152,13 @@ namespace GElib{
     */
 
     /*
-    static HomMap<SO3,double> lcoupling(GprodSpaceObj<SO3>* x){
+    static HomMap<SO3,double> lcoupling(CGprodBasisObj<SO3>* x){
       HomMap<SO3,double> Z=HomMap<SO3,double>::zero(*x,*x);
       //if(x->is_sequential()) return R;
       //if(x->left)
       if(x->is_leaf()) return Z;
       auto R=rcoupling(x->right);
-      GprodSpaceObj* u=new GprodSpaceObj()
+      CGprodBasisObj* u=new CGprodBasisObj()
 
       return Z;
     }

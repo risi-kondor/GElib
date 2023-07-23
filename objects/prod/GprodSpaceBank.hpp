@@ -10,7 +10,7 @@
 #ifndef _GprodSpaceBank
 #define _GprodSpaceBank
 
-#include "GprodSpaceObj.hpp"
+#include "CGprodBasisObj.hpp"
 
 
 namespace GElib{
@@ -18,7 +18,7 @@ namespace GElib{
   template<typename GROUP>
   class GprodSpaceProductSignature: public pair<int,int>{
   public:
-    GprodSpaceProductSignature(const GprodSpaceObj<GROUP>& x, const GprodSpaceObj<GROUP>& y):
+    GprodSpaceProductSignature(const CGprodBasisObj<GROUP>& x, const CGprodBasisObj<GROUP>& y):
       pair<int,int>(x.id,y.id){}
   };
 
@@ -32,27 +32,27 @@ namespace GElib{
 
 
     int nspaces=0;
-    map<_IrrepIx,GprodSpaceObj<GROUP>*> singletons;
-    map<_psignature,GprodSpaceObj<GROUP>*> products;
+    map<_IrrepIx,CGprodBasisObj<GROUP>*> singletons;
+    map<_psignature,CGprodBasisObj<GROUP>*> products;
 
 
 
   public: // ---- Access -------------------------------------------------------------------------------------
 
 
-    GprodSpaceObj<GROUP>* operator()(const _IrrepIx& ix){
+    CGprodBasisObj<GROUP>* operator()(const _IrrepIx& ix){
       auto it=singletons.find(ix);
       if(it!=singletons.end()) return it->second;
-      GprodSpaceObj<GROUP>* x=new GprodSpaceObj<GROUP>(ix,nspaces++);
+      CGprodBasisObj<GROUP>* x=new CGprodBasisObj<GROUP>(ix,nspaces++);
       singletons[ix]=x;
       return x;
     }
 
-    GprodSpaceObj<GROUP>* operator()(GprodSpaceObj<GROUP>* left, GprodSpaceObj<GROUP>* right){
+    CGprodBasisObj<GROUP>* operator()(CGprodBasisObj<GROUP>* left, CGprodBasisObj<GROUP>* right){
       _psignature ix(*left,*right);
       auto it=products.find(ix);
       if(it!=products.end()) return it->second;
-      GprodSpaceObj<GROUP>* x=new GprodSpaceObj<GROUP>(left,right,nspaces++);
+      CGprodBasisObj<GROUP>* x=new CGprodBasisObj<GROUP>(left,right,nspaces++);
       products[ix]=x;
       return x;
     }

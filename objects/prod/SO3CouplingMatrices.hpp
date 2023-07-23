@@ -41,25 +41,27 @@ namespace GElib{
       int j3=x.i3;
       int j=x.i4;
 
+      //cout<<"Coupling("<<j1<<","<<j2<<","<<j3<<"->"<<j<<")"<<endl;
+
       int a=j1;
       int b=j2;
       int c=j;
       int d=j3;
 
-      int offs1=std::abs(j1-j2);
-      int max1=j1+j2;
+      int offs1=std::max(std::abs(j1-j2),std::abs(j-j3));
+      int max1=std::min(j1+j2,j+j3);
       vector<cnine::frational> D1(max1+1-offs1);
       for(int e=offs1; e<=max1; e++)
 	D1[e-offs1]=delta.squared(a,b,e)*delta.squared(c,d,e);
 
-      int offs2=std::abs(j2-j3);
-      int max2=j2+j3;
+      int offs2=std::max(std::abs(j2-j3),std::abs(j-j1));
+      int max2=std::min(j2+j3,j+j1);
       vector<cnine::frational> D2(max2+1-offs2);
       for(int f=offs2; f<=max2; f++)
 	D2[f-offs2]=delta.squared(a,c,f)*delta.squared(b,d,f);
 
       for(int e=offs1; e<=max1; e++){
-	for(int f=offs1; f<=max2; f++){
+	for(int f=offs2; f<=max2; f++){
 
 	  int a1=a+b+e;
 	  int a2=c+d+e;
