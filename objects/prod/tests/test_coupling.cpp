@@ -4,7 +4,7 @@
 
 namespace GElib{
   SO3CouplingMatrices SO3::coupling_matrices;
-  GprodSpaceBank<SO3> SO3::product_space_bank;
+  CGprodBasisBank<SO3> SO3::product_space_bank;
 }
 
 using namespace cnine;

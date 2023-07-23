@@ -12,7 +12,7 @@
 
 #include "object_bank.hpp"
 #include "Tensor.hpp"
-#include "GprodSpaceBank.hpp"
+#include "CGprodBasisBank.hpp"
 #include "SO3CouplingMatrices.hpp"
 
 
@@ -25,7 +25,7 @@ namespace GElib{
     typedef int IrrepIx;
   
     static SO3CouplingMatrices coupling_matrices;
-    static GprodSpaceBank<SO3> product_space_bank;
+    static CGprodBasisBank<SO3> product_space_bank;
 
 
   public: // ---- CG-products --------------------------------------------------------------------------------

@@ -7,8 +7,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef _GprodSpaceBank
-#define _GprodSpaceBank
+#ifndef _CGprodBasisBank
+#define _CGprodBasisBank
 
 #include "CGprodBasisObj.hpp"
 
@@ -24,7 +24,7 @@ namespace GElib{
 
 
   template<typename GROUP>
-  class GprodSpaceBank{
+  class CGprodBasisBank{
   public:
 
     typedef typename GROUP::IrrepIx _IrrepIx;

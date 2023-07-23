@@ -7,8 +7,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef _GprodBasis
-#define _GprodBasis
+#ifndef _CGprodBasis
+#define _CGprodBasis
 
 #include "CGprodBasisObj.hpp"
 
@@ -17,7 +17,7 @@ namespace GElib{
 
 
   template<typename GROUP>
-  class GprodBasis{
+  class CGprodBasis{
   public:
 
     typedef typename GROUP::IrrepIx _IrrepIx;
@@ -26,14 +26,14 @@ namespace GElib{
 
     OBJ* obj;
 
-    GprodBasis(OBJ* _obj):
+    CGprodBasis(OBJ* _obj):
       obj(_obj){}
 
-    GprodBasis(OBJ& _obj):
+    CGprodBasis(OBJ& _obj):
       obj(&_obj){}
 
-    GprodBasis(const _IrrepIx& ix):
-      GprodBasis(GROUP::space(ix)){}
+    CGprodBasis(const _IrrepIx& ix):
+      CGprodBasis(GROUP::space(ix)){}
 
 
 
@@ -44,16 +44,16 @@ namespace GElib{
       return obj->is_leaf();
     }
 
-    bool is_isomorphic(const GprodBasis& y) const{
+    bool is_isomorphic(const CGprodBasis& y) const{
       return obj->is_isomorphic(*y.obj);
     }
 
-    GprodBasis left() const{
+    CGprodBasis left() const{
       GELIB_ASSRT(!is_leaf());
       return obj->left;
     }
 
-    GprodBasis right() const{
+    CGprodBasis right() const{
       GELIB_ASSRT(!is_leaf());
       return obj->right;
     }
@@ -66,19 +66,19 @@ namespace GElib{
   public: // ---- Transformations to other bases ------------------------------------------------------------
 
 
-    GprodBasis shift_left() const{
+    CGprodBasis shift_left() const{
       return obj->shift_left();
     }
 
-    GprodBasis shift_right() const{
+    CGprodBasis shift_right() const{
       return obj->shift_right();
     }
 
-    GprodBasis standard_form() const{
+    CGprodBasis standard_form() const{
       return obj->standard_form();
     }
 
-    GprodBasis reverse_standard_form() const{
+    CGprodBasis reverse_standard_form() const{
       return obj->reverse_standard_form();
     }
 
@@ -98,7 +98,7 @@ namespace GElib{
       return obj->str(indent);
     }
 
-    friend ostream& operator<<(ostream& stream, const GprodBasis& x){
+    friend ostream& operator<<(ostream& stream, const CGprodBasis& x){
       stream<<x.str(); return stream;
     }
 
@@ -107,8 +107,8 @@ namespace GElib{
 
 
   template<typename GROUP>
-  inline GprodBasis<GROUP> operator*(const GprodBasis<GROUP>& x, const GprodBasis<GROUP>& y){
-    return GprodBasis(GROUP::space(x.obj,y.obj));
+  inline CGprodBasis<GROUP> operator*(const CGprodBasis<GROUP>& x, const CGprodBasis<GROUP>& y){
+    return CGprodBasis(GROUP::space(x.obj,y.obj));
   }
 
 }
