@@ -12,7 +12,6 @@
 
 #include "Tensor.hpp"
 #include "Gtype.hpp"
-//#include "GSnSpaceObj.hpp"
 
 
 namespace GElib{
@@ -131,7 +130,7 @@ namespace GElib{
   inline EndMap<GROUP,TYPE> operator*(const EndMap<GROUP,TYPE>& x, const EndMap<GROUP,TYPE>& y){
     EndMap<GROUP,TYPE> R;
     for(auto& p:x.maps)
-      R.maps[p.first]=p.second*y.maps[p.first];
+      R.maps[p.first]=p.second*y[p.first];
     return R;
   }
 
@@ -140,6 +139,14 @@ namespace GElib{
     EndMap<GROUP,TYPE> R;
     for(auto& p:x.maps)
       R.maps[p.first]=p.second*cnine::transp(y.obj[p.first]);
+    return R;
+  }
+
+  template<typename GROUP, typename TYPE>
+  inline EndMap<GROUP,TYPE> operator*(const cnine::Transpose<EndMap<GROUP,TYPE> >& x, const EndMap<GROUP,TYPE>& y){
+    EndMap<GROUP,TYPE> R;
+    for(auto& p:x.obj.maps)
+      R.maps[p.first]=cnine::transp(p.second)*y[p.first];
     return R;
   }
 

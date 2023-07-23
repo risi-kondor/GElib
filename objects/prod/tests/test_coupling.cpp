@@ -1,17 +1,7 @@
 #include "GElib_base.cpp"
 #include "GElibSession.hpp"
-
-#include "Primes.hpp"
-#include "FFactorial.hpp"
-#include "DeltaFactor.hpp"
-
-namespace cnine{
-  Primes primes;
-  FFactorial ffactorial;
-  DeltaFactor delta_factor;
-}
-
 #include "SO3.hpp"
+
 namespace GElib{
   SO3CouplingMatrices SO3::coupling_matrices;
   GprodSpaceBank<SO3> SO3::product_space_bank;

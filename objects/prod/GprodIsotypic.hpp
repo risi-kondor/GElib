@@ -25,7 +25,7 @@ namespace GElib{
 
     _IrrepIx ix;
     int n=0;
-    _Lmatrix* offsets=nullptr;;
+    _Lmatrix* offsets=nullptr; // currently unused
     
     ~GprodIsotypic(){
       delete offsets;
@@ -42,6 +42,12 @@ namespace GElib{
 
     //GprodIsotypic(const _IrrepIx& _ix, const cnine::Llist<_IrrepIx>& _llabels, const cnine::Llist<_IrrepIx>& _rlabels):
     //ix(_ix), offsets(new _Lmatrix(_llabels,_rlabels,cnine::fill_constant<int>(-1))){}
+
+
+  public: // ---- Copying -----------------------------------------------------------------------------------
+
+
+    GprodIsotypic(const GprodIsotypic& x)=delete;
 
 
   public: // ---- I/O ---------------------------------------------------------------------------------------

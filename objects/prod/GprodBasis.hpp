@@ -7,15 +7,17 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef _GprodSpace
-#define _GprodSpace
+#ifndef _GprodBasis
+#define _GprodBasis
+
+#include "GprodSpaceObj.hpp"
 
 
 namespace GElib{
 
 
   template<typename GROUP>
-  class GprodSpace{
+  class GprodBasis{
   public:
 
     typedef typename GROUP::IrrepIx _IrrepIx;
@@ -24,11 +26,14 @@ namespace GElib{
 
     OBJ* obj;
 
-    GprodSpace(OBJ* _obj):
+    GprodBasis(OBJ* _obj):
       obj(_obj){}
 
-    GprodSpace(const _IrrepIx& ix):
-      GprodSpace(GROUP::space(ix)){}
+    GprodBasis(OBJ& _obj):
+      obj(&_obj){}
+
+    GprodBasis(const _IrrepIx& ix):
+      GprodBasis(GROUP::space(ix)){}
 
 
 
@@ -39,16 +44,16 @@ namespace GElib{
       return obj->is_leaf();
     }
 
-    bool is_isomorphic(const GprodSpace& y) const{
+    bool is_isomorphic(const GprodBasis& y) const{
       return obj->is_isomorphic(*y.obj);
     }
 
-    GprodSpace left() const{
+    GprodBasis left() const{
       GELIB_ASSRT(!is_leaf());
       return obj->left;
     }
 
-    GprodSpace right() const{
+    GprodBasis right() const{
       GELIB_ASSRT(!is_leaf());
       return obj->right;
     }
@@ -58,33 +63,29 @@ namespace GElib{
     }
 
 
-  public: // ---- Operations --------------------------------------------------------------------------------
+  public: // ---- Transformations to other bases ------------------------------------------------------------
 
 
-    GprodSpace FmoveL() const{
-      return GROUP::FmoveL(obj);
+    GprodBasis shift_left() const{
+      return obj->shift_left();
     }
 
-    GprodSpace FmoveR() const{
-      return GROUP::FmoveR(obj);
+    GprodBasis shift_right() const{
+      return obj->shift_right();
     }
 
-    /*
-    void canonicalize() const{
-      if(is_leaf()) return;
-      GprodSpace R=right();
-      R.canonicalizeR();
-      while(!R.is_leaf()){
-      }
+    GprodBasis standard_form() const{
+      return obj->standard_form();
     }
-    */
 
-
-    /*
-    HomMap<GROUP,double> coupling(const GprodSpace& y){
-      return GROUP::coupling(obj,y.obj);
+    GprodBasis reverse_standard_form() const{
+      return obj->reverse_standard_form();
     }
-    */
+
+    const EndMap<GROUP,double>& standardizing_map() const{
+      return obj->standardizing_map();
+    }
+
 
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
@@ -97,7 +98,7 @@ namespace GElib{
       return obj->str(indent);
     }
 
-    friend ostream& operator<<(ostream& stream, const GprodSpace& x){
+    friend ostream& operator<<(ostream& stream, const GprodBasis& x){
       stream<<x.str(); return stream;
     }
 
@@ -106,8 +107,8 @@ namespace GElib{
 
 
   template<typename GROUP>
-  inline GprodSpace<GROUP> operator*(const GprodSpace<GROUP>& x, const GprodSpace<GROUP>& y){
-    return GprodSpace(GROUP::space(x.obj,y.obj));
+  inline GprodBasis<GROUP> operator*(const GprodBasis<GROUP>& x, const GprodBasis<GROUP>& y){
+    return GprodBasis(GROUP::space(x.obj,y.obj));
   }
 
 }

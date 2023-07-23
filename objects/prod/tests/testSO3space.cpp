@@ -1,25 +1,18 @@
 #include "GElib_base.cpp"
 #include "GElibSession.hpp"
-#include "DeltaFactor.hpp"
-
-namespace cnine{
-  Primes primes;
-  FFactorial ffactorial;
-  DeltaFactor delta_factor;
-}
-
+#include "GprodBasis.hpp"
 #include "SO3.hpp"
+
 namespace GElib{
   SO3CouplingMatrices SO3::coupling_matrices;
   GprodSpaceBank<SO3> SO3::product_space_bank;
+  template<> int GprodSpaceObj<SO3>::indnt=0;
 }
-
-#include "GprodSpace.hpp"
 
 using namespace cnine;
 using namespace GElib;
 
-typedef GprodSpace<SO3> SO3basis;
+typedef GprodBasis<SO3> SO3basis;
 
 
 int main(int argc, char** argv){
@@ -31,6 +24,14 @@ int main(int argc, char** argv){
 
   SO3basis W=V1*V1*V1*V1;
   cout<<W<<endl;
+
+  SO3basis E=(V1*(V1*V1))*(V1*V1*V1);
+  cout<<E<<endl;
+  cout<<E.shift_left()<<endl;
+  cout<<E.standard_form()<<endl;
+
+  //E.obj->standardize();
+  cout<<E.obj->standardizing_map()<<endl;
 
   cout<<endl;
 }
