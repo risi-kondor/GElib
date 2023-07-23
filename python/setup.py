@@ -34,6 +34,10 @@ def main():
     ext_cuda_folder = "../../GElib-cuda/cuda/"
 
     _include_dirs = [cwd + cnine_folder + '/include',
+		     cwd + cnine_folder + '/combinatorial',
+		     cwd + cnine_folder + '/containers',
+		     cwd + cnine_folder + '/math',
+		     cwd + cnine_folder + '/wrappers',
                      cwd + cnine_folder + '/include/cmaps',
                      cwd + cnine_folder + '/objects/scalar',
                      cwd + cnine_folder + '/objects/matrix',
