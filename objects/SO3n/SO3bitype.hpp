@@ -14,7 +14,7 @@
 
 #include "GElib_base.hpp"
 #include <unordered_map>
-#include "SO3bitype.hpp"
+#include "SO3type.hpp"
 
 
 namespace GElib{
