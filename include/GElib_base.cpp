@@ -20,7 +20,6 @@
 #include "SO3_SPHgen.hpp"
 #include "SO2FourierMatrixBank.hpp"
 #include "SO3FourierMatrixBank.hpp"
-#include "Factorial.hpp"
 #include "GElibConfig.hpp"
 #include "GElibLog.hpp"
 //#include "SO3CGprogramBank.hpp"
@@ -34,7 +33,7 @@
 #include "SO3vec_CGproduct_ops.hpp"
 */
 
-vector<int> GElib::factorial::fact;
+//vector<int> GElib::factorial::fact;
 
 GElib::GElibConfig* gelib_config=nullptr;
 GElib::GElibLog* gelib_log=nullptr;
