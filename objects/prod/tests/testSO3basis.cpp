@@ -26,12 +26,18 @@ int main(int argc, char** argv){
   cout<<W<<endl;
 
   SO3basis E=(V1*(V1*V1))*(V1*V1*V1);
+  //SO3basis E=(V1*(V1*V1))*(V1*V1);
   cout<<E<<endl;
-  cout<<E.shift_left()<<endl;
+  //cout<<E.shift_left()<<endl;
   cout<<E.standard_form()<<endl;
-
-  //E.obj->standardize();
   cout<<E.standardizing_map()<<endl;
+
+  auto U=E.standardizing_map();
+  for(auto& p:U.maps){
+    auto& A=p.second;
+    //cout<<A<<endl;
+    cout<<cnine::transp(A)*A<<endl;
+  }
 
   cout<<endl;
 }

@@ -167,10 +167,14 @@ namespace GElib{
 	  if(is_leaf()) return new EndMap<GROUP,double>(tau,cnine::fill_identity());
 	  auto T=tprod(left->standardizing_map(),right->right_standardizing_map());
 	  auto u=GROUP::space(&left->standard_form(),&right->reverse_standard_form());
+	  cout<<T.str(">>")<<endl;
 	  //cout<<u->repr()<<endl;
+	  int i=0;
 	  while(!u->right->is_leaf()){
+	    cout<<left_shift_map().str("map:")<<endl;
 	    T=u->left_shift_map()*T;
 	    u=&u->shift_left();
+	    cout<<T.str(to_string(i++)+"->")<<endl;
 	    //cout<<u->repr()<<endl;
 	  }
 	  return new EndMap<GROUP,double>(std::move(T));
@@ -217,9 +221,15 @@ namespace GElib{
 				  int roffs=right_triple_index(l1,l2,l3,l23,l);
 				  int lwidth=m0*m12*mL;
 				  int rwidth=m0*m23*mR;
+				  GELIB_ASSRT(lwidth==rwidth);
 				  //cout<<"("<<lwidth<<","<<rwidth<<")("<<loffs<<","<<roffs<<")"<<endl;
-				  auto T=cnine::Tensor<double>::constant({lwidth,rwidth},GROUP::coupling(l1,l2,l3,l,l12,l23));
-				  R->maps[l].block({lwidth,rwidth},{loffs,roffs})=T;
+				  double v=GROUP::coupling(l1,l2,l3,l,l12,l23);
+				  //cout<<l1<<","<<l2<<","<<l3<<","<<l<<":"<<l12<<","<<l23<<" "<<GROUP::coupling(l1,l2,l3,l,l12,l23)<<endl;
+				  //auto T=cnine::Tensor<double>::constant({lwidth,rwidth},GROUP::coupling(l1,l2,l3,l,l12,l23));
+				  //R->maps[l].block({lwidth,rwidth},{loffs,roffs})=T;
+				  auto& M=R->maps[l];
+				  for(int i=0; i<lwidth; i++)
+				    M.set(loffs+i,roffs+i,v);
 				  //cout<<"."<<endl;
 				}
 			      });
