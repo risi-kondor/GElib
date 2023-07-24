@@ -41,7 +41,7 @@ namespace GElib{
       int j3=x.i3;
       int j=x.i4;
 
-      cout<<"Coupling("<<j1<<","<<j2<<","<<j3<<"->"<<j<<")"<<endl;
+      //cout<<"Coupling("<<j1<<","<<j2<<","<<j3<<"->"<<j<<")"<<endl;
 
       int a=j1;
       int b=j2;
@@ -60,7 +60,6 @@ namespace GElib{
       for(int f=offs2; f<=max2; f++)
 	D2[f-offs2]=delta.squared(a,c,f)*delta.squared(b,d,f);
 
-      cout<<D1.size()<<" "<<D1[0]<<" "<<(float)D1[0]<<endl;
       for(int e=offs1; e<=max1; e++){
 	for(int f=offs2; f<=max2; f++){
 

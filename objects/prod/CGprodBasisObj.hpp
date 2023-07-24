@@ -167,14 +167,14 @@ namespace GElib{
 	  if(is_leaf()) return new EndMap<GROUP,double>(tau,cnine::fill_identity());
 	  auto T=tprod(left->standardizing_map(),right->right_standardizing_map());
 	  auto u=GROUP::space(&left->standard_form(),&right->reverse_standard_form());
-	  cout<<T.str(">>")<<endl;
+	  //cout<<T.str(">>")<<endl;
 	  //cout<<u->repr()<<endl;
 	  int i=0;
 	  while(!u->right->is_leaf()){
-	    cout<<left_shift_map().str("map:")<<endl;
+	    //cout<<left_shift_map().str("map:")<<endl;
 	    T=u->left_shift_map()*T;
 	    u=&u->shift_left();
-	    cout<<T.str(to_string(i++)+"->")<<endl;
+	    //cout<<T.str(to_string(i++)+"->")<<endl;
 	    //cout<<u->repr()<<endl;
 	  }
 	  return new EndMap<GROUP,double>(std::move(T));
