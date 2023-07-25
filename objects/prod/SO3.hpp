@@ -41,7 +41,7 @@ namespace GElib{
 	lambda(l,1);
     }
 
-    static int CG_sign_rule(const int l1, const int l2, const int l){
+    static int CG_sign_rule(const int l1, const int l2, const int l, const int i){
       return 1-2*((l1+l2-l)%2);
     }
 

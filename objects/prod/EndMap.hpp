@@ -81,6 +81,12 @@ namespace GElib{
   public: // ---- Copying -----------------------------------------------------------------------------------
 
 
+    EndMap(const cnine::Transpose<EndMap>& x){
+      for(auto& p:x.obj.maps)
+	maps[p.first]=p.second.transp();
+    }
+
+
   public: // ---- Access ------------------------------------------------------------------------------------
 
 

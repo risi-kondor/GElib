@@ -33,12 +33,13 @@ namespace GElib{
     _IrrepIx irrep;
     CGprodBasisObj* left=nullptr;
     CGprodBasisObj* right=nullptr;
-    map<_IrrepIx,_Isotypic> isotypics;
+    map<_IrrepIx,_Isotypic*> isotypics;
     Gtype<GROUP> tau;
 
     static int indnt;
 
     ~CGprodBasisObj(){
+      for(auto p:isotypics) delete p.second;
     }
 
 
@@ -47,17 +48,17 @@ namespace GElib{
 
     CGprodBasisObj(_IrrepIx _irrep, const int _id): 
       id(_id), irrep(_irrep), tau(_irrep){
-      isotypics[_irrep]=_Isotypic(_irrep,1);
+      isotypics[_irrep]=new _Isotypic(this,_irrep,1);
     }
 
     CGprodBasisObj(CGprodBasisObj* _x, CGprodBasisObj* _y, const int _id): 
       id(_id), nnodes(_x->nnodes+_y->nnodes+1), left(_x), right(_y), tau(tprod(_x->tau,_y->tau)){
       for(auto& x:_x->isotypics)
 	for(auto& y:_y->isotypics)
-	  GROUP::for_each_CGcomponent(x.second.ix,y.second.ix,[&](const _IrrepIx& _irrep, const int n){
+	  GROUP::for_each_CGcomponent(x.second->ix,y.second->ix,[&](const _IrrepIx& _irrep, const int n){
 	  auto it=isotypics.find(_irrep);
-	  if(it!=isotypics.end()) it->second.n+=n*x.second.n*y.second.n;
-	  else isotypics[_irrep]=_Isotypic(_irrep,n);
+	  if(it!=isotypics.end()) it->second->n+=n*x.second->n*y.second->n;
+	  else isotypics[_irrep]=new _Isotypic(this,_irrep,n);
 	});
       //make_offsets();
     }
@@ -74,6 +75,11 @@ namespace GElib{
 
     bool is_leaf() const{
       return (left==nullptr);
+    }
+
+    bool is_stem() const{
+      if(left==nullptr) return false;
+      return left->is_leaf() && right->is_leaf();
     }
 
     bool is_standard() const{
@@ -120,8 +126,24 @@ namespace GElib{
       }
     }
 
+    void for_each_block(std::function<void(const _IrrepIx& l1, const _IrrepIx& l2, const _IrrepIx& l, int offs, int n)> lambda){
+      GELIB_ASSRT(!is_leaf());
+      CGprodBasisObj& x=*left;
+      CGprodBasisObj& y=*right;
 
-  public: // ---- Transformations to other bases -------------------------------------------------------------
+      for(auto& p1:x.tau){
+	auto l1=p1.first;
+	for(auto& p2:y.tau){
+	  auto l2=p2.first;
+	  GROUP::for_each_CGcomponent(l1,l2,[&](const _IrrepIx& l, const int m){
+	      lambda(l1,l2,l,offset_map()(l1,l2,l),m*p1.second*p2.second);
+	    });
+	}
+      }
+    }
+
+
+  public: // ---- Other bases -----------------------------------------------------------------------------------
 
 
     cnine::cachedf<CGprodBasisObj> shift_left=
@@ -162,20 +184,24 @@ namespace GElib{
 	  return u;
 	});
 
+
+  public: // ---- Transformations to other bases -------------------------------------------------------------
+
+
+    cnine::cachedf<EndMap<GROUP,double> > identity_map=
+      cnine::cachedf<EndMap<GROUP,double> >([&](){
+	  return new EndMap<GROUP,double>(tau,cnine::fill_identity());
+	});
+
     cnine::cachedf<EndMap<GROUP,double> > standardizing_map=
       cnine::cachedf<EndMap<GROUP,double> >([&](){
-	  if(is_leaf()) return new EndMap<GROUP,double>(tau,cnine::fill_identity());
+	  if(is_leaf()) return  new EndMap<GROUP,double>(identity_map());
 	  auto T=tprod(left->standardizing_map(),right->right_standardizing_map());
 	  auto u=GROUP::space(&left->standard_form(),&right->reverse_standard_form());
-	  //cout<<T.str(">>")<<endl;
-	  //cout<<u->repr()<<endl;
-	  int i=0;
+	  
 	  while(!u->right->is_leaf()){
-	    //cout<<left_shift_map().str("map:")<<endl;
 	    T=u->left_shift_map()*T;
 	    u=&u->shift_left();
-	    //cout<<T.str(to_string(i++)+"->")<<endl;
-	    //cout<<u->repr()<<endl;
 	  }
 	  return new EndMap<GROUP,double>(std::move(T));
 	});
@@ -242,7 +268,36 @@ namespace GElib{
 	  return R;
 	});
 
-    
+    cnine::cachedf<EndMap<GROUP,double> > right_shift_map=
+      cnine::cachedf<EndMap<GROUP,double> >([&](){
+	  return new EndMap<GROUP,double>(cnine::transp(shift_right().left_shift_map()));
+	});
+
+    cnine::cachedF<EndMap<GROUP,double> > swap_map=
+      cnine::cachedF<EndMap<GROUP,double> >([&](){
+	  if(is_leaf()) return identity_map(); 
+	  EndMap<GROUP,double> R(tau,cnine::fill_zero());
+	  for_each_block([&](const _IrrepIx& l1, const _IrrepIx& l2, const _IrrepIx& l, int offs, int n){
+	      auto& T=R.maps[l];
+	      for(int i=0; i<n; i++){
+		double c=GROUP::CG_sign_rule(l1,l2,l,i);
+		T.set(offs+i,offs+i,c);
+	      }
+	    });
+	  return R;
+	});
+
+    cnine::cachedF<EndMap<GROUP,double> > transpose_last_map=
+      cnine::cachedF<EndMap<GROUP,double> >([&](){
+	  if(is_leaf()) return identity_map(); 
+	  if(is_stem()) return swap_map(); 
+	  if(right->is_stem()) return tprod(left->identity_map(),right->swap_map());
+	  if(right->is_leaf() && left->right->is_leaf()) 
+	    return cnine::transp(right_shift_map()) * shift_right().transpose_last_map() * right_shift_map();
+	  return cnine::transp(standardizing_map()) * standard_form().transpose_last_map() * standardizing_map();
+	});
+
+	
   public: // ---- Index maps ---------------------------------------------------------------------------------
 
 
@@ -348,6 +403,7 @@ namespace GElib{
 
     string reprr() const{
       ostringstream oss;
+      cout<<22<<endl;
       if(!left) oss<<"("<<irrep<<")";
       else oss<<"("<<left->reprr()<<"*"<<right->reprr()<<")";
       return oss.str();

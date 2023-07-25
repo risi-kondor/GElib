@@ -86,6 +86,15 @@ namespace GElib{
       return obj->standardizing_map();
     }
 
+    const EndMap<GROUP,double>& swap_map() const{
+      return obj->swap_map();
+    }
+
+    const EndMap<GROUP,double>& transpose_last_map() const{
+      return obj->transpose_last_map();
+    }
+
+
 
   public: // ---- I/O ---------------------------------------------------------------------------------------
 

@@ -11,9 +11,15 @@
 #define _GprodIsotypic
 
 #include "Lmatrix.hpp"
+#include "cachedf.hpp"
+#include "SnBasis.hpp"
 
 
 namespace GElib{
+
+  template<typename GROUP>
+  class CGprodBasisObj;
+
 
   template<typename GROUP>
   class GprodIsotypic{
@@ -25,10 +31,11 @@ namespace GElib{
 
     _IrrepIx ix;
     int n=0;
-    _Lmatrix* offsets=nullptr; // currently unused
+    CGprodBasisObj<GROUP>* owner;
+
+    //_Lmatrix* offsets=nullptr; // currently unused
     
     ~GprodIsotypic(){
-      delete offsets;
     }
 
 
@@ -37,8 +44,8 @@ namespace GElib{
 
     GprodIsotypic(){}
 
-    GprodIsotypic(const _IrrepIx& _ix, const int _n=0):
-      ix(_ix), n(_n){}
+    GprodIsotypic(CGprodBasisObj<GROUP>* _owner, const _IrrepIx& _ix, const int _n=0):
+      owner(_owner),ix(_ix), n(_n){cout<<" "<<ix<<endl;}
 
     //GprodIsotypic(const _IrrepIx& _ix, const cnine::Llist<_IrrepIx>& _llabels, const cnine::Llist<_IrrepIx>& _rlabels):
     //ix(_ix), offsets(new _Lmatrix(_llabels,_rlabels,cnine::fill_constant<int>(-1))){}
@@ -48,6 +55,46 @@ namespace GElib{
 
 
     GprodIsotypic(const GprodIsotypic& x)=delete;
+
+
+  public: // ---- Sn-action ---------------------------------------------------------------------------------
+
+
+    cnine::Tensor<double>& standardizing_map(){
+      return owner->standardizing_map().maps[ix];
+    }
+
+    /*
+    cnine::cachedF<cnine::Tensor<double> > Sn_map=
+      cnine::cachedF<cnine::Tensor<double> >([&](){
+	  if(!owner->is_standard())
+	    return cnine::transp(standardizing_map())*owner->standard_form().isotypics[ix].Sn_map()*standardizing_map();
+	  if(owner->is_leaf()) return cnine::Tensor<double>({n,n},cnine::fill_identity());
+	  if(owner->is_stem()) return cnine::Tensor<double>({n,n},cnine::fill_identity());
+	  //auto M=owner->transpose_last_map().maps[ix];
+	  //BlockDiagonalize blocke
+	  //if(u.left->is_leaf()){
+	  //}
+	  return cnine::Tensor<double>();
+	});
+    */
+
+    cnine::cachedF<SnBasis<double> > Sn_basis=
+      cnine::cachedF<SnBasis<double> >([&](){
+	  if(!owner->is_standard()){cout<<"a"<<endl;
+	    return owner->standard_form().isotypics[ix]->Sn_basis().conjugate(standardizing_map());}
+	  if(owner->is_leaf()){cout<<"b"<<endl;
+	    return SnBasis<double>( {{{1},n}}, cnine::Tensor<double>({n,n},cnine::fill_identity()));}
+	  if(owner->is_stem()){cout<<"c"<<endl;
+	    int parity=GROUP::CG_sign_rule(owner->left->irrep,owner->right->irrep,ix,0); //TODO 
+	    if(parity==1) return SnBasis<double>({{{2},n}},cnine::Tensor<double>({n,n},cnine::fill_identity()));
+	    else return SnBasis<double>({{{1,1},n}},cnine::Tensor<double>({n,n},cnine::fill_identity()));
+	  }
+	  cout<<"d"<<endl;
+	  auto M=owner->transpose_last_map().maps[ix];
+	  cout<<"diaginalizing:"<<endl<<M<<endl;
+	  return SnBasis<double>({{{2,1},3}},cnine::Tensor<double>::sequential({3,3}));
+	});
 
 
   public: // ---- I/O ---------------------------------------------------------------------------------------

@@ -10,6 +10,9 @@ CNINE_ROOT=$(ROOTDIR)/../cnine/
 #MACROS+=-DCNINE_MOVEASSIGN_WARNINGS
 
 
+SNOB2_ROOT=$(ROOTDIR)/../Snob2/
+
+
 # ---- CUDA OPTIONS ----------------------------------
 
 # WITH_CUDA=t

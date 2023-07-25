@@ -25,8 +25,9 @@ int main(int argc, char** argv){
   SO3basis W=V1*V1*V1*V1;
   cout<<W<<endl;
 
-  SO3basis E=(V1*(V1*V1))*(V1*V1*V1);
-  //SO3basis E=(V1*(V1*V1))*(V1*V1);
+  SO3basis E=(V1*V1*V1);
+  //SO3basis E=(V1*(V1*V1))*V1;
+  //SO3basis E=(V1*(V1*V1))*(V1*V1*V1);
   cout<<E<<endl;
   //cout<<E.shift_left()<<endl;
   cout<<E.standard_form()<<endl;
@@ -38,6 +39,15 @@ int main(int argc, char** argv){
     //cout<<A<<endl;
     cout<<cnine::transp(A)*A<<endl;
   }
+
+  cout<<E.swap_map()<<endl;
+  cout<<E.transpose_last_map()<<endl;
+
+  cout<<"---------"<<endl;
+
+  for(auto& p:E.obj->isotypics)
+    cout<<p.second->Sn_basis()<<endl;
+    //cout<<*p.second<<endl;
 
   cout<<endl;
 }

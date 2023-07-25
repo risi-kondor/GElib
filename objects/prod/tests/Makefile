@@ -1,7 +1,8 @@
 ROOTDIR=../../..
 include $(ROOTDIR)/common.txt
 
-INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO2DIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions 
+INCLUDE= $(CNINE_INCLUDES) $(SNOB2_INCLUDES) 
+INCLUDE+=-I$(GELIB_INCLUDEDIR) -I$(SO2DIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions 
 INCLUDE+=-I$(SO3NDIR) -I$(SO3NDIR)/functions 
 INCLUDE+=-I$(SO2DIR) -I$(SO2DIR)/functions 
 INCLUDE+=-I../ 
