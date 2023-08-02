@@ -1,6 +1,7 @@
 include $(ROOTDIR)/config.txt
 
 CNINE_INCLUDES=-I$(CNINE_ROOT)/include 
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/algorithms
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/combinatorial
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/containers
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/math
@@ -48,5 +49,9 @@ endif
 
 ifdef WITH_CUBLAS
 MACROS+=-D_WITH_CUBLAS
+endif 
+
+ifdef EIGENDIR
+CFLAGS+=-D_WITH_EIGEN
 endif 
 

@@ -12,7 +12,7 @@
 
 #include "EndMap.hpp"
 #include "Gtype.hpp"
-#include "GprodIsotypic.hpp"
+#include "CGprodBasisIsotypic.hpp"
 #include "cachedf.hpp"
 #include "triple_map.hpp"
 #include "quintuple_map.hpp"
@@ -26,7 +26,7 @@ namespace GElib{
   public:
 
     typedef typename GROUP::IrrepIx _IrrepIx;
-    typedef GprodIsotypic<GROUP> _Isotypic;
+    typedef CGprodBasisIsotypic<GROUP> _Isotypic;
 
     int id=0;
     int nnodes=1;
@@ -35,8 +35,6 @@ namespace GElib{
     CGprodBasisObj* right=nullptr;
     map<_IrrepIx,_Isotypic*> isotypics;
     Gtype<GROUP> tau;
-
-    static int indnt;
 
     ~CGprodBasisObj(){
       for(auto p:isotypics) delete p.second;
@@ -58,9 +56,8 @@ namespace GElib{
 	  GROUP::for_each_CGcomponent(x.second->ix,y.second->ix,[&](const _IrrepIx& _irrep, const int n){
 	  auto it=isotypics.find(_irrep);
 	  if(it!=isotypics.end()) it->second->n+=n*x.second->n*y.second->n;
-	  else isotypics[_irrep]=new _Isotypic(this,_irrep,n);
+	  else isotypics[_irrep]=new _Isotypic(this,_irrep,n*x.second->n*y.second->n);
 	});
-      //make_offsets();
     }
 
 
@@ -110,6 +107,11 @@ namespace GElib{
       return tau;
     }
 
+    CGprodBasisIsotypic<GROUP>& isotypic(const _IrrepIx& ix){
+      GELIB_ASSRT(isotypics.find(ix)!=isotypics.end());
+      return *isotypics[ix];
+    }
+
     void for_each_leaf(std::function<void(CGprodBasisObj*)> lambda){
       if(is_leaf()) lambda(this);
       else{
@@ -137,6 +139,39 @@ namespace GElib{
 	  auto l2=p2.first;
 	  GROUP::for_each_CGcomponent(l1,l2,[&](const _IrrepIx& l, const int m){
 	      lambda(l1,l2,l,offset_map()(l1,l2,l),m*p1.second*p2.second);
+	    });
+	}
+      }
+    }
+
+    void for_each_subisotypic_pair(std::function<void(const _Isotypic& I1, const _Isotypic& I2, const _Isotypic& I, int offs, int n)> lambda){
+      GELIB_ASSRT(!is_leaf());
+      CGprodBasisObj& x=*left;
+      CGprodBasisObj& y=*right;
+
+      for(auto& p1:x.tau){
+	auto l1=p1.first;
+	for(auto& p2:y.tau){
+	  auto l2=p2.first;
+	  GROUP::for_each_CGcomponent(l1,l2,[&](const _IrrepIx& l, const int m){
+	      lambda(*x.isotypics[l1],*y.isotypics[l2],*isotypics[l],offset_map()(l1,l2,l),m/* *p1.second*p2.second*/);
+	    });			
+	}
+      }
+    }
+
+
+    void for_each_subisotypic_pair(const int _l, std::function<void(_Isotypic& I1, _Isotypic& I2, int offs, int n)> lambda){
+      GELIB_ASSRT(!is_leaf());
+      CGprodBasisObj& x=*left;
+      CGprodBasisObj& y=*right;
+
+      for(auto& p1:x.tau){
+	auto l1=p1.first;
+	for(auto& p2:y.tau){
+	  auto l2=p2.first;
+	  GROUP::for_each_CGcomponent(l1,l2,[&](const _IrrepIx& l, const int m){
+	      if(l==_l) lambda(*x.isotypics[l1],*y.isotypics[l2],offset_map()(l1,l2,l),m*p1.second*p2.second);
 	    });
 	}
       }
@@ -403,7 +438,6 @@ namespace GElib{
 
     string reprr() const{
       ostringstream oss;
-      cout<<22<<endl;
       if(!left) oss<<"("<<irrep<<")";
       else oss<<"("<<left->reprr()<<"*"<<right->reprr()<<")";
       return oss.str();
