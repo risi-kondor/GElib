@@ -1,18 +1,13 @@
-#include "Snob2_base.hpp"
+#include "Cnine_base.cpp"
 
-#include "../../../../Snob2/include/Factorial.hpp"
-vector<int> Snob2::factorial::fact;
-
+//#include "Snob2_base.hpp"
+//#include "../../../../Snob2/include/Factorial.hpp"
+//vector<int> Snob2::factorial::fact;
 
 #include "CombinatorialBank.hpp"
 #include "SnBank.hpp"
-
 namespace Snob2{
-  class CombinatorialBank;
-  //CombinatorialBank* _combibank=nullptr;
-  //_combibank=new CombinatorialBank();
   CombinatorialBank* _combibank=new CombinatorialBank();
-  class SnBank;
   SnBank* _snbank=new SnBank();
 }
 
@@ -20,8 +15,6 @@ namespace Snob2{
 #include "GElibSession.hpp"
 #include "CGprodBasis.hpp"
 #include "SO3.hpp"
-
-
 namespace GElib{
   SO3CouplingMatrices SO3::coupling_matrices;
   CGprodBasisBank<SO3> SO3::product_space_bank;
@@ -62,9 +55,14 @@ int main(int argc, char** argv){
   SO3basis A=(V1*V1*V1);
   for(auto& p:A.obj->isotypics)
     p.second->SnIsotypics();
+  cout<<endl<<endl<<endl;
 
   SO3basis B=(V1*V1*V1*V1);
   for(auto& p:B.obj->isotypics)
+    p.second->SnIsotypics();
+
+  SO3basis C=(V1*V1*V1*V1*V1);
+  for(auto& p:C.obj->isotypics)
     p.second->SnIsotypics();
 
   cout<<endl;

@@ -17,9 +17,9 @@
 #include "SnIrrep.hpp"
 #include "BlockDiagonalize.hpp"
 #include "CoupleIsotypics.hpp"
-//#include "ColumnSpace.hpp"
 #include "ComplementSpace.hpp"
 #include "SingularValueDecomposition.hpp"
+#include "SymmEigendecomposition.hpp"
 
 
 namespace GElib{
@@ -34,13 +34,12 @@ namespace GElib{
 
     typedef typename GROUP::IrrepIx _IrrepIx;
     typedef CGprodBasisIsotypic<GROUP> _Isotypic;
-    typedef cnine::Tensor<double> _Tensor;
+    typedef cnine::Tensor<double> Tensor;
     typedef Snob2::IntegerPartition IP;
 
     _IrrepIx ix;
     int n=0;
     CGprodBasisObj<GROUP>* owner;
-    map<Snob2::IntegerPartition,SnIsotypicSpace<double> > Snisotypics;
 
 
     ~CGprodBasisIsotypic(){
@@ -65,7 +64,7 @@ namespace GElib{
   public: // ---- Maps --------------------------------------------------------------------------------------
 
 
-    cnine::Tensor<double>& standardizing_map(){
+    Tensor& standardizing_map(){
       return owner->standardizing_map().maps[ix];
     }
 
@@ -73,21 +72,35 @@ namespace GElib{
   public: // ---- Sn-action ---------------------------------------------------------------------------------
 
 
+    cnine::cachedf<map<IP,SnIsotypicSpace<double> > > Snisotypics= 
+      cnine::cachedf<map<IP,SnIsotypicSpace<double> > >([&](){
+
+	  cout<<endl<<"Computing Sn-basis for "<<owner->repr()<<":"<<ix<<" [n="<<n<<"]"<<endl;
+	  //cnine::SingularValueDecomposition svd(owner->lastJM()[ix]);
+	  //cout<<svd.S()<<endl;
+	  cnine::SymmEigendecomposition svd(owner->lastJM()[ix]);
+	  cout<<svd.lambda()<<endl;
+
+	  return new map<IP,SnIsotypicSpace<double> >();
+
+	});
+
+
     cnine::cachedf<map<IP,SnIsotypicSpace<double>* > > SnIsotypics= // Leak bc of pointers!
       cnine::cachedf<map<IP,SnIsotypicSpace<double>* > >([&](){
 	  auto R=new map<IP,SnIsotypicSpace<double>* >;
 
 	  if(owner->is_leaf()){
-	    (*R)[{1}]=new SnIsotypicSpace<double>({1},cnine::Tensor<double>::identity({n,n}).split0(1,n));
+	    (*R)[{1}]=new SnIsotypicSpace<double>({1},cnine::Identity<double>(n).split0(1,n));
 	    return R;
 	  }
 
 	  if(owner->is_stem()){
 	    int parity=GROUP::CG_sign_rule(owner->left->irrep,owner->right->irrep,ix,0); //TODO 
 	    if(parity==1) 
-	      (*R)[{2}]=new SnIsotypicSpace<double>({2},cnine::Tensor<double>::identity({n,n}).split0(1,n));
+	      (*R)[{2}]=new SnIsotypicSpace<double>({2},cnine::Identity<double>(n).split0(1,n));
 	    else
-	      (*R)[{1,1}]=new SnIsotypicSpace<double>({1,1},cnine::Tensor<double>::identity({n,n}).split0(1,n));
+	      (*R)[{1,1}]=new SnIsotypicSpace<double>({1,1},cnine::Identity<double>(n).split0(1,n));
 	    return R;
 	  }
 
@@ -117,7 +130,7 @@ namespace GElib{
 	      const auto& ysubs=y.SnIsotypics();
 	      for(auto& p:xsubs){
 		IP ip=p.first;
-		cout<<"Processing "<<ip<<endl;
+		//cout<<"Processing "<<ip<<endl;
 		auto& xsub=*p.second;
 		auto& ysub=*const_cast<map<IP,SnIsotypicSpace<double>* >&>(ysubs)[{1}]; // eliminate this by custom hash
 		//cout<<dimensions[ip]<<","<<xsub.dmult()*y.n<<","<<x.n<<"*"<<y.n<<endl;
@@ -129,33 +142,55 @@ namespace GElib{
 	      }
 	    });
 	  
-	  for(auto& p:induced)
+	  for(auto& p:induced){
 	    cout<<""<<p.first<<":"<<p.second.dims<<endl;
+	    //cout<<p.second.matrix().str("  ")<<endl;
+	  }
 	  cout<<endl;
 	  
 	  auto partitions=Snob2::IntegerPartitions::RestrictionOrdered(induced.begin()->first.getn()+1);
 	  for(auto lambda:partitions){
-	    cout<<"Searching for "<<lambda<<endl;
+	    //cout<<"Searching for "<<lambda<<endl;
 	    
 	    vector<IP> subs=lambda.parents();
 	    if(any_of(subs.begin(),subs.end(),[&](const IP& ip){
 		  return induced.find(ip)==induced.end();})) continue;
+	    //cout<<1<<endl;
 
 	    auto joint=cnine::cat<vector<IP>,IP,double>(0,subs,[&](const IP& x){
 		return induced[x].matrix();});
 	    auto projected=joint*(owner->transpose_last_map().maps[ix]*(joint.transp()));
-	    
-	    auto basis1=cnine::ComplementSpace<double>(projected-cnine::Tensor<double>::identity_like(projected))();
-	    auto basis2=cnine::ComplementSpace<double>(projected+cnine::Tensor<double>::identity_like(projected))();
+	    //cout<<owner->transpose_last_map().maps[ix]<<endl;
+	    //cout<<joint<<endl;
+	    //cout<<projected<<endl;
+	    //cout<<2<<endl;
+
+	    auto basis1=cnine::ComplementSpace<double>(projected-Tensor::identity_like(projected))();
+	    auto basis2=cnine::ComplementSpace<double>(projected+Tensor::identity_like(projected))();
 	    auto basis=cat(1,basis1,basis2);
+	    //cout<<joint.str("joint:")<<endl;
+	    //cout<<basis<<endl;
+	    //cout<<basis.transp()*basis<<endl;
+	    //cout<<3<<endl;
 
 	    int rdim=Snob2::SnIrrep(lambda).dim();
+	    //cout<<4<<endl;
 	    int m=basis.dims[1]/rdim;
 	    if(m==0) continue;
-	    (*R)[lambda]=new SnIsotypicSpace<double>(lambda,(basis.transp()*joint).split0(rdim,m));
+	    Tensor TB=basis.transp();
+	    Tensor A=TB*joint;
+	    //cout<<TB.str("TB=")<<endl;
+	    //cout<<A.str("A=")<<endl;
+	    //Tensor A=basis.transp()*joint;
+	    //Tensor C=A.split0(rdim,m);
 	    cout<<"  Found "<<((double)basis.dims[1])/rdim<<" copies of rho"<<lambda<<endl;
+	    (*R)[lambda]=new SnIsotypicSpace<double>(lambda,A.split0(rdim,m));
+	    //cout<<(*R)[lambda]->matrix().str("found:")<<endl;
+	    //(*R)[lambda]=new SnIsotypicSpace<double>(lambda,(basis.transp()*joint).split0(rdim,m));
+	    //cout<<5<<endl;
 
-	    joint=(cnine::Tensor<double>::identity({joint.dims[0],joint.dims[0]})-(basis*basis.transp()))*joint;
+	    if(lambda.getn()==4 && ix==2){cout<<"Skipping"<<endl; continue;}
+	    joint=(Tensor::identity({joint.dims[0],joint.dims[0]})-(basis*basis.transp()))*joint;
 	    int offs=0;
 	    for(auto p:subs){
 	      auto M=induced[p].matrix();
@@ -327,3 +362,4 @@ namespace GElib{
       CoupleIsotypics(subisotypics,spaces);
     }
     */
+    //map<Snob2::IntegerPartition,SnIsotypicSpace<double> > Snisotypics;

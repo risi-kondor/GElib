@@ -332,6 +332,16 @@ namespace GElib{
 	  return cnine::transp(standardizing_map()) * standard_form().transpose_last_map() * standardizing_map();
 	});
 
+    cnine::cachedF<EndMap<GROUP,double> > lastJM=
+      cnine::cachedF<EndMap<GROUP,double> >([&](){
+	  if(is_leaf()) return identity_map(); 
+	  if(is_stem()) return swap_map(); 
+	  if(right->is_leaf())
+	    return tprod(left->lastJM(),right->identity_map()).conjugate(transpose_last_map())+transpose_last_map();
+	  return standard_form().lastJM().conjugate(standardizing_map());
+	  //return cnine::transp(standardizing_map()) * standard_form().last_JM() * standardizing_map();
+	});
+
 	
   public: // ---- Index maps ---------------------------------------------------------------------------------
 

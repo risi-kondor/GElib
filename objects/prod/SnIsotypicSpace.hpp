@@ -47,8 +47,8 @@ namespace GElib{
     SnIsotypicSpace(const Snob2::IntegerPartition& _ix, const cnine::TensorView<TYPE>& T):
       cnine::Tensor<TYPE>(T),ix(_ix){}
 
-    SnIsotypicSpace(const Snob2::IntegerPartition& _ix, const cnine::TensorView<TYPE>&& T):
-      cnine::Tensor<TYPE>(std::move(T)),ix(_ix){}
+    //SnIsotypicSpace(const Snob2::IntegerPartition& _ix, const cnine::TensorView<TYPE>&& T):
+    //cnine::Tensor<TYPE>(std::move(T)),ix(_ix){}
 
 
   public: // ---- Access ------------------------------------------------------------------------------------

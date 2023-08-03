@@ -11,6 +11,7 @@
 #define _HomMap
 
 #include "Tensor.hpp"
+#include "TensorFunctions.hpp"
 //#include "GSnSpaceObj.hpp"
 
 

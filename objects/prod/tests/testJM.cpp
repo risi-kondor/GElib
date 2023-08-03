@@ -16,7 +16,6 @@ namespace GElib{
   CGprodBasisBank<SO3> SO3::product_space_bank;
 }
 
-
 using namespace cnine;
 using namespace GElib;
 
@@ -28,14 +27,16 @@ int main(int argc, char** argv){
   cout<<endl;
 
   SO3basis V1(1);
-  SO3basis W=V1*V1*V1;
-  cout<<W<<endl;
 
+  SO3basis A=(V1*V1*V1);
+  for(auto& p:A.obj->isotypics)
+    p.second->Snisotypics();
+  cout<<endl<<endl<<endl;
 
-  SO3basis W2=W.shift_left();
-  cout<<W2<<endl;
-
-  //auto A=W.coupling(W2);
-  //cout<<A<<endl;
+  SO3basis B=(V1*V1*V1*V1);
+  for(auto& p:B.obj->isotypics)
+    p.second->Snisotypics();
+  cout<<endl<<endl<<endl;
 
 }
+

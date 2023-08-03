@@ -11,6 +11,7 @@
 #define _EndMap
 
 #include "Tensor.hpp"
+#include "TensorFunctions.hpp"
 #include "Gtype.hpp"
 
 
@@ -110,6 +111,10 @@ namespace GElib{
       return const_cast<EndMap<GROUP,TYPE>&>(*this).maps[ix];
     }
 
+    EndMap conjugate(const EndMap& T) const{
+      return cnine::transp(T)*(*this)*T;
+    }
+
 
   public: // ---- I/O ---------------------------------------------------------------------------------------
 
@@ -129,6 +134,15 @@ namespace GElib{
 
   };
 
+
+  template<typename GROUP, typename TYPE>
+  inline EndMap<GROUP,TYPE> operator+(const EndMap<GROUP,TYPE>& x, const EndMap<GROUP,TYPE>& y){
+    EndMap<GROUP,TYPE> R;
+    for(auto& p:x.maps)
+      R.maps.emplace(p.first,p.second+y[p.first]);
+    //R.maps[p.first]=p.second+y[p.first];
+    return R;
+  }
 
   template<typename GROUP, typename TYPE>
   inline EndMap<GROUP,TYPE> operator*(const EndMap<GROUP,TYPE>& x, const EndMap<GROUP,TYPE>& y){
