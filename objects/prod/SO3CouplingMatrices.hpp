@@ -32,30 +32,35 @@ namespace GElib{
 
 
     SO3CouplingMatrices(): base([](const cnine::quadruple_index<int,int,int,int>& x){
-      auto R=new cnine::Tensor<double>({x.i1+x.i2+1-std::abs(x.i1-x.i2),x.i2+x.i3+1-std::abs(x.i2-x.i3)},cnine::fill_zero());
-      auto deltasq=[](const int a, const int b, const int c){return cnine::delta_factor.squared(a,b,c);};
-      cnine::DeltaFactor& delta=cnine::delta_factor;
 
       int j1=x.i1;
       int j2=x.i2;
       int j3=x.i3;
       int j=x.i4;
+      int offs1=std::max(std::abs(j1-j2),std::abs(j-j3));
+      int offs2=std::max(std::abs(j2-j3),std::abs(j-j1));
+      int max1=std::min(j1+j2,j+j3);
+      int max2=std::min(j2+j3,j+j1);
 
-      //cout<<"Coupling("<<j1<<","<<j2<<","<<j3<<"->"<<j<<")"<<endl;
+      cout<<"Coupling("<<j1<<","<<j2<<","<<j3<<"->"<<j<<")"<<endl;
+      auto R=new cnine::Tensor<double>({max1+1-offs1,max2+1-offs2},cnine::fill_zero());
+      //auto R=new cnine::Tensor<double>({x.i1+x.i2+1-std::abs(x.i1-x.i2),x.i2+x.i3+1-std::abs(x.i2-x.i3)},cnine::fill_zero());
+      auto deltasq=[](const int a, const int b, const int c){return cnine::delta_factor.squared(a,b,c);};
+      cnine::DeltaFactor& delta=cnine::delta_factor;
 
       int a=j1;
       int b=j2;
       int c=j;
       int d=j3;
 
-      int offs1=std::max(std::abs(j1-j2),std::abs(j-j3));
-      int max1=std::min(j1+j2,j+j3);
+      //int offs1=std::max(std::abs(j1-j2),std::abs(j-j3));
+      //int max1=std::min(j1+j2,j+j3);
       vector<cnine::frational> D1(max1+1-offs1);
       for(int e=offs1; e<=max1; e++)
 	D1[e-offs1]=delta.squared(a,b,e)*delta.squared(c,d,e);
 
-      int offs2=std::max(std::abs(j2-j3),std::abs(j-j1));
-      int max2=std::min(j2+j3,j+j1);
+      //int offs2=std::max(std::abs(j2-j3),std::abs(j-j1));
+      //int max2=std::min(j2+j3,j+j1);
       vector<cnine::frational> D2(max2+1-offs2);
       for(int f=offs2; f<=max2; f++)
 	D2[f-offs2]=delta.squared(a,c,f)*delta.squared(b,d,f);
@@ -84,6 +89,8 @@ namespace GElib{
 	}
       }
 
+      cout<<R->str("coupling:")<<endl;
+      cout<<(R->transp()*(*R)).str("identity:")<<endl;
       return R;
     }){}
 

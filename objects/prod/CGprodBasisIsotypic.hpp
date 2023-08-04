@@ -76,10 +76,17 @@ namespace GElib{
       cnine::cachedf<map<IP,SnIsotypicSpace<double> > >([&](){
 
 	  cout<<endl<<"Computing Sn-basis for "<<owner->repr()<<":"<<ix<<" [n="<<n<<"]"<<endl;
+	  cout<<owner->lastJM()[ix]<<endl;
 	  //cnine::SingularValueDecomposition svd(owner->lastJM()[ix]);
 	  //cout<<svd.S()<<endl;
-	  cnine::SymmEigendecomposition svd(owner->lastJM()[ix]);
-	  cout<<svd.lambda()<<endl;
+
+	  cout<<owner->transpose_last_map()[ix]<<endl;
+	  cout<<"TLM error: "<<owner->transpose_last_map()[ix].unitary_error()<<endl;
+	  cout<<owner->swap_map()[ix]<<endl;
+
+	  cnine::SymmEigendecomposition esolver(owner->lastJM()[ix]);
+	  cout<<esolver.lambda()<<endl;
+	  cout<<esolver.U()<<endl;
 
 	  return new map<IP,SnIsotypicSpace<double> >();
 

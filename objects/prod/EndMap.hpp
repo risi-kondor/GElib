@@ -175,9 +175,9 @@ namespace GElib{
     for(auto& p:x.maps)
       for(auto& q:y.maps){
 	cnine::Tensor<TYPE> T=tprod(p.second,q.second);
+	int width=m*p.second.dim(0)*q.second.dim(0);
 	GROUP::for_each_CGcomponent(p.first,q.first,[&](const typename GROUP::IrrepIx& ix, const int m){
 	    GELIB_ASSRT(m==1);
-	    int width=m*p.second.dim(0)*q.second.dim(0);
 	    R[ix].block({width,width},{offs[ix],offs[ix]})=T;
 	    offs[ix]+=width;
 	  });
