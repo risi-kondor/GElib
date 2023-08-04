@@ -38,5 +38,10 @@ int main(int argc, char** argv){
     p.second->Snisotypics();
   cout<<endl<<endl<<endl;
 
+  SO3basis C=(V1*V1*V1*V1*V1);
+  for(auto& p:C.obj->isotypics)
+    p.second->Snisotypics();
+  cout<<endl<<endl<<endl;
+
 }
 

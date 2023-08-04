@@ -248,6 +248,8 @@ namespace GElib{
       cnine::cachedf<EndMap<GROUP,double> >([&](){
 	  auto R=new EndMap<GROUP,double>(tau,cnine::fill_zero());
 
+	  //GELIB_ASSRT(right->is_stem());
+
 	  GELIB_ASSRT(left && right);
 	  GELIB_ASSRT(right->left && right->right);
 	  CGprodBasisObj& x=*left;
@@ -287,6 +289,8 @@ namespace GElib{
 				  //for(int b=0; b<n2; b++)
 				  //  for(int c=0; c<n3; c++)
 				  //M.set()
+				  // for completeness rewrite this to take into account strides, if the 
+				  // tau_{23}[l_{23}]>1 
 				  for(int i=0; i<lwidth; i++)
 				    M.set(loffs+i,roffs+i,v);
 				  //cout<<"."<<endl;
@@ -408,8 +412,9 @@ namespace GElib{
 		  for(auto& p3:z.tau){
 		    auto l3=p3.first;
 		    GROUP::for_each_CGcomponent(l12,l3,[&](const _IrrepIx& l, const int m){
-			(*R)(l1,l2,l3,l12,l)=offs[l];
-			offs[l]+=m12*m*p1.second*p2.second*p3.second;
+			//(*R)(l1,l2,l3,l12,l)=offs[l];
+			//offs[l]+=m12*m*p1.second*p2.second*p3.second;
+			(*R)(l1,l2,l3,l12,l)=offset(l12,l3,l)+left->offset(l1,l2,l12)*right->tau[l3];
 		      });
 		  }
 		});
@@ -435,8 +440,9 @@ namespace GElib{
 		auto l3=p3.first;
 		GROUP::for_each_CGcomponent(l2,l3,[&](const _IrrepIx& l23, const int m23){
 		    GROUP::for_each_CGcomponent(l1,l23,[&](const _IrrepIx& l, const int m){
-			(*R)(l1,l2,l3,l23,l)=offs[l];
-			offs[l]+=m23*m*p1.second*p2.second*p3.second;
+			//(*R)(l1,l2,l3,l23,l)=offs[l];
+			//offs[l]+=m23*m*p1.second*p2.second*p3.second;
+			(*R)(l1,l2,l3,l23,l)=offset(l1,l23,l)+right->offset(l2,l3,l23);
 		      });
 		  });
 	      }

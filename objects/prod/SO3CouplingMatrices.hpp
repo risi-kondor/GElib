@@ -42,7 +42,7 @@ namespace GElib{
       int max1=std::min(j1+j2,j+j3);
       int max2=std::min(j2+j3,j+j1);
 
-      cout<<"Coupling("<<j1<<","<<j2<<","<<j3<<"->"<<j<<")"<<endl;
+      //cout<<"Coupling("<<j1<<","<<j2<<","<<j3<<"->"<<j<<")"<<endl;
       auto R=new cnine::Tensor<double>({max1+1-offs1,max2+1-offs2},cnine::fill_zero());
       //auto R=new cnine::Tensor<double>({x.i1+x.i2+1-std::abs(x.i1-x.i2),x.i2+x.i3+1-std::abs(x.i2-x.i3)},cnine::fill_zero());
       auto deltasq=[](const int a, const int b, const int c){return cnine::delta_factor.squared(a,b,c);};
@@ -89,8 +89,8 @@ namespace GElib{
 	}
       }
 
-      cout<<R->str("coupling:")<<endl;
-      cout<<(R->transp()*(*R)).str("identity:")<<endl;
+      //cout<<R->str("coupling:")<<endl;
+      //cout<<(R->transp()*(*R)).str("identity:")<<endl;
       return R;
     }){}
 
