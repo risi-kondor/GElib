@@ -18,6 +18,7 @@
 #include "BlockDiagonalize.hpp"
 #include "CoupleIsotypics.hpp"
 #include "ComplementSpace.hpp"
+#include "SymmEigenspace.hpp"
 #include "SingularValueDecomposition.hpp"
 #include "SymmEigendecomposition.hpp"
 
@@ -75,20 +76,97 @@ namespace GElib{
     cnine::cachedf<map<IP,SnIsotypicSpace<double> > > Snisotypics= 
       cnine::cachedf<map<IP,SnIsotypicSpace<double> > >([&](){
 
-	  cout<<endl<<"Computing Sn-basis for "<<owner->repr()<<":"<<ix<<" [n="<<n<<"]"<<endl;
-	  //cout<<owner->lastJM()[ix]<<endl;
-	  //cnine::SingularValueDecomposition svd(owner->lastJM()[ix]);
-	  //cout<<svd.S()<<endl;
+	  auto R=new map<IP,SnIsotypicSpace<double> >;
 
-	  //cout<<owner->transpose_last_map()[ix]<<endl;
-	  //cout<<"TLM error: "<<owner->transpose_last_map()[ix].unitary_error()<<endl;
-	  //cout<<owner->swap_map()[ix]<<endl;
+	  if(owner->is_leaf()){
+	    (*R)[{1}]=SnIsotypicSpace<double>({1},cnine::Identity<double>(n).split0(1,n));
+	    return R;
+	  }
+
+	  if(owner->is_stem()){
+	    int parity=GROUP::CG_sign_rule(owner->left->irrep,owner->right->irrep,ix,0); //TODO 
+	    if(parity==1) 
+	      (*R)[{2}]=SnIsotypicSpace<double>({2},cnine::Identity<double>(n).split0(1,n));
+	    else
+	      (*R)[{1,1}]=SnIsotypicSpace<double>({1,1},cnine::Identity<double>(n).split0(1,n));
+	    return R;
+	  }
+
+	  GELIB_ASSRT(owner->right->is_leaf());
+	  // the implicit assumption is that the right branch only has an isotypic corresponding to {1}
+	  // it is also assumed that the multiplicity of each irrep in the CG-decomposition is 1
+
+	  cout<<endl<<"Computing Sn-basis for "<<owner->repr()<<":"<<ix<<" [n="<<n<<"]"<<endl;
+	  const auto& JM=owner->lastJM()[ix];
+
+	  map<IP,int> multiplicities;
+	  owner->for_each_subisotypic_pair(ix,[&](_Isotypic& x, _Isotypic& y, int offs, int n){
+	      for(auto& [lambda,iso]:x.Snisotypics())
+		multiplicities[lambda]+=iso.dmult()*y.n;
+	    });
+	  
+	  map<IP,SnIsotypicSpace<double> > induced;
+	  for(auto& [lambda,m]:multiplicities)
+	    induced.emplace(lambda,
+	      SnIsotypicSpace<double>(lambda,Snob2::SnIrrep(lambda).dim(),m,n,cnine::fill_zero())); 
+
+
+	  map<IP,int> offsets;
+	  owner->for_each_subisotypic_pair(ix,[&](_Isotypic& x, _Isotypic& y, int offs, int n){
+	      const auto& xsubs=x.Snisotypics();
+	      const auto& ysubs=y.Snisotypics();
+	      for(auto& [ip,xsub]: xsubs){
+		auto& ysub=const_cast<map<IP,SnIsotypicSpace<double> >& >(ysubs)[{1}]; // eliminate this by custom hash
+		induced[ip].block({Snob2::SnIrrep(ip).dim(),xsub.dmult()*y.n,x.n*y.n},{0,offsets[ip],offs})=
+		  tprod(xsub,ysub);
+		offsets[ip]+=xsub.dmult()*y.n;
+	      }
+	    });
 
 	  cnine::SymmEigendecomposition esolver(owner->lastJM()[ix]);
 	  cout<<esolver.lambda()<<endl;
 	  //cout<<esolver.U()<<endl;
 
-	  return new map<IP,SnIsotypicSpace<double> >();
+	  // Find multiplicities 
+	  auto partitions=Snob2::IntegerPartitions(induced.begin()->first.getn()+1);
+	  map<IP,int> multipl;
+	  for(auto lambda:partitions){
+	    cout<<"Searching for "<<lambda<<endl;
+	    
+	    vector<IP> subs=lambda.parents();
+	    if(any_of(subs.begin(),subs.end(),[&](const IP& ip){
+		  return induced.find(ip)==induced.end();})) continue;
+
+	    for(auto mu:subs){
+
+	      int rowix=mu.height();
+	      for(int i=0; i<mu.height(); i++)
+		if(mu[i]==lambda[i]-1){
+		  rowix=i;
+		  break;
+		}
+	      int content=lambda[rowix]-1-rowix;
+
+	      auto S=cnine::SymmEigenspace<double>(JM,content)();
+	      cout<<mu<<": "<<S.dims[1]<<endl;
+
+	      int mult=S.dims[1]/Snob2::SnIrrep(mu).dim();
+	      if(multipl.find(lambda)==multipl.end())
+		multipl.emplace(lambda,mult);
+	      else
+		GELIB_ASSRT(multipl[lambda]==mult);
+	      
+
+	    }
+
+	  }
+	   
+	  for(auto lambda:multipl){
+	    
+	  }
+
+	  //return new map<IP,SnIsotypicSpace<double> >();
+	  return R;
 
 	});
 
@@ -370,3 +448,17 @@ namespace GElib{
     }
     */
     //map<Snob2::IntegerPartition,SnIsotypicSpace<double> > Snisotypics;
+	  //cout<<owner->lastJM()[ix]<<endl;
+	  //cnine::SingularValueDecomposition svd(owner->lastJM()[ix]);
+	  //cout<<svd.S()<<endl;
+
+	  //cout<<owner->transpose_last_map()[ix]<<endl;
+	  //cout<<"TLM error: "<<owner->transpose_last_map()[ix].unitary_error()<<endl;
+	  //cout<<owner->swap_map()[ix]<<endl;
+
+	  //map<IP,int> dimensions;
+	  //owner->for_each_subisotypic_pair(ix,[&](_Isotypic& x, _Isotypic& y, int offs, int n){
+	  //  for(auto& p:x.Snisotypics())
+	  //if(dimensions.find(p.first)==dimensions.end()) dimensions.emplace(p.first,p.second.drho());
+	  //});
+	  
