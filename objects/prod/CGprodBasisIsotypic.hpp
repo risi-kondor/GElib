@@ -18,9 +18,11 @@
 #include "BlockDiagonalize.hpp"
 #include "CoupleIsotypics.hpp"
 #include "ComplementSpace.hpp"
+#include "IntersectionSpace.hpp"
 #include "SymmEigenspace.hpp"
 #include "SingularValueDecomposition.hpp"
 #include "SymmEigendecomposition.hpp"
+#include "MakeCoherentSnIsotypic.hpp"
 
 
 namespace GElib{
@@ -97,25 +99,35 @@ namespace GElib{
 	  // it is also assumed that the multiplicity of each irrep in the CG-decomposition is 1
 
 	  cout<<endl<<"Computing Sn-basis for "<<owner->repr()<<":"<<ix<<" [n="<<n<<"]"<<endl;
-	  const auto& JM=owner->lastJM()[ix];
+	  const auto JM=owner->lastJM()[ix];
 
-	  map<IP,int> multiplicities;
+
+	  // ---- Gather S_{n-1} representations
+
+	  map<IP,int> submultiplicities;
 	  owner->for_each_subisotypic_pair(ix,[&](_Isotypic& x, _Isotypic& y, int offs, int n){
-	      for(auto& [lambda,iso]:x.Snisotypics())
-		multiplicities[lambda]+=iso.dmult()*y.n;
+	      for(auto& [lambda,iso]: x.Snisotypics()){
+		//auto lambda=p.first;
+		//auto iso=p.second;
+		submultiplicities[lambda]+=iso.dmult()*y.n;
+	      }
 	    });
 	  
 	  map<IP,SnIsotypicSpace<double> > induced;
-	  for(auto& [lambda,m]:multiplicities)
+	  for(auto& [lambda,m]: submultiplicities){
+	    //auto lambda=p.first;
+	    //auto m=p.second;
 	    induced.emplace(lambda,
 	      SnIsotypicSpace<double>(lambda,Snob2::SnIrrep(lambda).dim(),m,n,cnine::fill_zero())); 
-
+	  }
 
 	  map<IP,int> offsets;
 	  owner->for_each_subisotypic_pair(ix,[&](_Isotypic& x, _Isotypic& y, int offs, int n){
 	      const auto& xsubs=x.Snisotypics();
 	      const auto& ysubs=y.Snisotypics();
 	      for(auto& [ip,xsub]: xsubs){
+		//auto ip=p.first;
+		//auto xsub=p.second;
 		auto& ysub=const_cast<map<IP,SnIsotypicSpace<double> >& >(ysubs)[{1}]; // eliminate this by custom hash
 		induced[ip].block({Snob2::SnIrrep(ip).dim(),xsub.dmult()*y.n,x.n*y.n},{0,offsets[ip],offs})=
 		  tprod(xsub,ysub);
@@ -123,53 +135,72 @@ namespace GElib{
 	      }
 	    });
 
-	  cnine::SymmEigendecomposition esolver(owner->lastJM()[ix]);
-	  cout<<esolver.lambda()<<endl;
-	  //cout<<esolver.U()<<endl;
 
-	  // Find multiplicities 
+	  // ---- Compute multiplicities for new SnIsotypicSpaces
+
+	  map<IP,int> multiplicities;
 	  auto partitions=Snob2::IntegerPartitions(induced.begin()->first.getn()+1);
-	  map<IP,int> multipl;
 	  for(auto lambda:partitions){
-	    cout<<"Searching for "<<lambda<<endl;
+	    //cout<<"Searching for "<<lambda<<endl;
 	    
 	    vector<IP> subs=lambda.parents();
 	    if(any_of(subs.begin(),subs.end(),[&](const IP& ip){
 		  return induced.find(ip)==induced.end();})) continue;
 
 	    for(auto mu:subs){
+	      auto E=cnine::SymmEigenspace<double>(JM,lambda.content_of_difference(mu))();
+	      auto S=cnine::IntersectionSpace<double>(E.transp(),induced[mu].slice(0,0))();
 
-	      int rowix=mu.height();
-	      for(int i=0; i<mu.height(); i++)
-		if(mu[i]==lambda[i]-1){
-		  rowix=i;
-		  break;
+	      if(multiplicities.find(lambda)==multiplicities.end())
+		multiplicities.emplace(lambda,S.dims[0]);
+	      else{
+		if(S.dims[0]!=multiplicities[lambda]){
+		  cout<<"Error: Inconsistent multiplicities in gathered basis."<<endl;
+		  return R;
 		}
-	      int content=lambda[rowix]-1-rowix;
-
-	      auto S=cnine::SymmEigenspace<double>(JM,content)();
-	      cout<<mu<<": "<<S.dims[1]<<endl;
-
-	      int mult=S.dims[1]/Snob2::SnIrrep(mu).dim();
-	      if(multipl.find(lambda)==multipl.end())
-		multipl.emplace(lambda,mult);
-	      else
-		GELIB_ASSRT(multipl[lambda]==mult);
-	      
+	      }
 
 	    }
 
 	  }
 	   
-	  for(auto lambda:multipl){
+	  int i=0;
+	  cout<<"  ";
+	  for(auto& [lambda,m]: multiplicities)
+	    if(m>0){
+	      if(i++>0) cout<<"+";
+	      cout<<m<<"*"<<lambda;
+	    }
+	  cout<<endl;
+
+
+	  // ---- Compute new bases 
+
+
+	  for(auto& p: multiplicities){
+	    auto lambda=p.first;
+	    auto M=p.second;
+	    if(M==0) continue;
+	    //cout<<"lambda="<<lambda<<":"<<endl;
 	    
+	    map<IP,SnIsotypicSpace<double> > sources;
+	    lambda.for_each_sub([&](const IP& mu){
+		sources[mu]=SnIsotypicSpace<double>(mu,Snob2::SnIrrep(mu).dim(),M,n,cnine::fill_zero());
+		auto E=cnine::SymmEigenspace<double>(JM,lambda.content_of_difference(mu))();
+		auto S=cnine::IntersectionSpace<double>(E.transp(),induced[mu].slice(0,0))();
+		auto P=S*(induced[mu].slice(0,0).transp());
+		for(int i=0; i<Snob2::SnIrrep(mu).dim(); i++)
+		  sources[mu].slice(0,i)=P*induced[mu].slice(0,i);
+	      });
+
+	    (*R)[lambda]=MakeCoherentSnIsotypic(lambda,sources,owner->transpose_last_map().maps[ix])();
 	  }
 
-	  //return new map<IP,SnIsotypicSpace<double> >();
 	  return R;
 
 	});
 
+   
 
     cnine::cachedf<map<IP,SnIsotypicSpace<double>* > > SnIsotypics= // Leak bc of pointers!
       cnine::cachedf<map<IP,SnIsotypicSpace<double>* > >([&](){
@@ -462,3 +493,82 @@ namespace GElib{
 	  //if(dimensions.find(p.first)==dimensions.end()) dimensions.emplace(p.first,p.second.drho());
 	  //});
 	  
+	  //int tdims=0;
+	  //for(auto& [lambda,m]: multiplicities){
+	    //if(m>0) R->emplace(lambda,SnIsotypicSpace<double>(lambda,Snob2::SnIrrep(lambda).dim(),m,n,cnine::fill_zero())); 
+	    //tdims+=Snob2::SnIrrep(lambda).dim();
+	  //}
+
+	    /*
+	    vector<IP> subs=lambda.parents();
+	    map<IP,int> offs;
+	    int t=0;
+	    for(auto p:subs){
+	      offs.emplace(p,t);
+	      t+=Snob2::SnIrrep(p).dim();
+	    }
+	      
+	    auto mu0=subs[0];
+	    auto E0=cnine::SymmEigenspace<double>(JM,lambda.content_of_difference(mu0))();
+	    auto S0=cnine::IntersectionSpace<double>(E.transp(),induced[mu0].slice(0,0))();
+	    //auto V=S0*(owner->transpose_last_map().maps[ix]);
+	    GELIB_ASSRT(S0.dims[0]==M);
+
+
+	    for(int m=0; m<M; m++){ // for each copy
+	      Tensor<double> B({Snob2::SnIrrep(lambda).dim(),n},cnine::fill_zero);
+
+	      auto coeffs=(induced[m0].slice(0,0))*(S0.row(m).transp());
+	      for(int d=0; d<Snob2::SnIrrep(mu).dim(); d++)
+		B.row(d)=coeffs*induced[m0].slice(0,d);
+	      (*R)[lambda].slice(1,m)=B.rows(0,Snob2::SnIrrep(mu).dim());
+
+	      std::set<IP> remaining;
+	      for(int i=1; i<subs.size(); i++)
+		remaining.insert(subs[i]);
+
+	      while(remaining.size()>0){
+		auto D=B;
+	      }
+
+	    */
+	    //R->emplace(lambda,SnIsotypicSpace<double>(lambda,Snob2::SnIrrep(lambda).dim(),M,n,cnine::fill_zero())); 
+    /*
+    void add_mu_subspace_to_isotypic(const IP& lambda, const IP& mu, int m, TensorView<double>& coeffs){
+      GELIB_ASSRT(coeffs.dims[0]==M);
+
+      for(int d=0; d<Snob2::SnIrrep(mu).dim(); d++)
+	(*R)[lambda].slice(1,m).row(offs[mu]+d)=coeffs*(sources[mu].slice(0,d)); 
+      remaining.erase(mu);
+
+      if(remaining.size()>0){
+
+	auto S=RowSpace( (*R)[lambda].slice(1,m) * owner->transpose_last_map().maps[ix] )(); 
+	map<IP,Tensor<double> > projection_vectors;
+
+	for(auto nu:remaining){
+
+	  Tensor<double> v({M},cnine::fill_zero());
+	  for(int i=0; i<d; i++){
+	    auto Pi=Project(S,sources[nu].slice(0,d))();
+	    v=v+Pi.slice(0,0);
+	  }
+	  if(v.norm
+	  projection_vectors.emplace(nu,v);
+
+	}
+
+	for(
+	
+
+	  if(P.norm()>10e-5){
+	    P.normalize();
+	    complete_isotypic(lambda,nu, 
+	  }
+	  
+
+	}
+      }
+    }
+
+    */

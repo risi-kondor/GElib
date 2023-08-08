@@ -12,9 +12,9 @@
 
 #include "Tensor.hpp"
 #include "cachedf.hpp"
-//#include "SnBasis.hpp"
 
 #include "IntegerPartition.hpp"
+
 
 namespace GElib{
 
@@ -44,11 +44,24 @@ namespace GElib{
     SnIsotypicSpace(const Snob2::IntegerPartition& _ix, const int m, const int n, const int p, const FILLTYPE& dummy):
       cnine::Tensor<TYPE>({m,n,p},dummy),ix(_ix){}
 
+    SnIsotypicSpace(const Snob2::IntegerPartition& _ix, const int m, const int n, const int p):
+      cnine::Tensor<TYPE>({m,n,p},cnine::fill_raw()),ix(_ix){}
+
     SnIsotypicSpace(const Snob2::IntegerPartition& _ix, const cnine::TensorView<TYPE>& T):
       cnine::Tensor<TYPE>(T),ix(_ix){}
 
     //SnIsotypicSpace(const Snob2::IntegerPartition& _ix, const cnine::TensorView<TYPE>&& T):
     //cnine::Tensor<TYPE>(std::move(T)),ix(_ix){}
+
+
+  public: // ---- Copying -----------------------------------------------------------------------------------
+
+
+    //SnIsotypicSpace(const SnIsotypicSpace& x):
+    //_Tensor(x), ix(x.ix){}
+
+    //SnIsotypicSpace(SnIsotypicSpace&& x):
+    //_Tensor(std::move(x)), ix(x.ix){}
 
 
   public: // ---- Access ------------------------------------------------------------------------------------
@@ -83,7 +96,7 @@ namespace GElib{
   public: // ---- Operations --------------------------------------------------------------------------------
 
 
-    cnine::TensorView<TYPE> matrix(){
+    cnine::TensorView<TYPE> matrix() const{
       return fuse01();
     }
 
