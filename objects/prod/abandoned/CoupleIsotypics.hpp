@@ -13,7 +13,7 @@
 #include "cachedf.hpp"
 #include "SnIsotypicSpace.hpp"
 #include "IntegerPartition.hpp"
-#include "BlockDiagonalize.hpp"
+//#include "BlockDiagonalize.hpp"
 
 
 namespace GElib{

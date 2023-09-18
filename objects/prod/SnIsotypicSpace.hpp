@@ -10,8 +10,10 @@
 #ifndef _SnIsotypicSpace
 #define _SnIsotypicSpace
 
-#include "Tensor.hpp"
-#include "cachedf.hpp"
+//#include "Tensor.hpp"
+#include <cnine/tensors>
+#include <cnine/containers>
+//#include "cachedf.hpp"
 
 #include "IntegerPartition.hpp"
 

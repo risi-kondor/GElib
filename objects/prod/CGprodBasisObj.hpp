@@ -10,12 +10,15 @@
 #ifndef _CGprodBasisObj
 #define _CGprodBasisObj
 
+#include <cnine/containers>
+
 #include "EndMap.hpp"
 #include "Gtype.hpp"
 #include "CGprodBasisIsotypic.hpp"
-#include "cachedf.hpp"
-#include "triple_map.hpp"
-#include "quintuple_map.hpp"
+
+//#include "cachedf.hpp"
+//#include "triple_map.hpp"
+//#include "quintuple_map.hpp"
 
 
 namespace GElib{

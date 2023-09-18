@@ -10,10 +10,10 @@
 #ifndef _SO3CouplingMatrices
 #define _SO3CouplingMatrices
 
-#include "object_bank.hpp"
-#include "DeltaFactor.hpp"
-#include "Tensor.hpp"
-#include "quadruple_map.hpp"
+//#include "object_bank.hpp"
+#include "combinatorial/DeltaFactor.hpp"
+//#include "Tensor.hpp"
+//#include "quadruple_map.hpp"
 
 extern cnine::FFactorial cnine::ffactorial;
 extern cnine::DeltaFactor cnine::delta_factor;

@@ -10,8 +10,11 @@
 #ifndef _SO3
 #define _SO3
 
-#include "object_bank.hpp"
-#include "Tensor.hpp"
+#include <cnine/tensors>
+#include <cnine/containers>
+
+//#include "object_bank.hpp"
+//#include "Tensor.hpp"
 #include "CGprodBasisBank.hpp"
 #include "SO3CouplingMatrices.hpp"
 

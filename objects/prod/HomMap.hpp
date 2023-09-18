@@ -10,8 +10,9 @@
 #ifndef _HomMap
 #define _HomMap
 
-#include "Tensor.hpp"
-#include "TensorFunctions.hpp"
+#include <cnine/tensors>
+//#include "Tensor.hpp"
+//#include "TensorFunctions.hpp"
 //#include "GSnSpaceObj.hpp"
 
 

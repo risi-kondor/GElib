@@ -10,7 +10,7 @@
 #ifndef _Gtype
 #define _Gtype
 
-#include "Tensor.hpp"
+//#include "Tensor.hpp"
 
 namespace GElib{
 

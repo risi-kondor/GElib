@@ -10,8 +10,9 @@
 #ifndef _EndMap
 #define _EndMap
 
-#include "Tensor.hpp"
-#include "TensorFunctions.hpp"
+#include <cnine/tensors>
+//#include "Tensor.hpp"
+//#include "TensorFunctions.hpp"
 #include "Gtype.hpp"
 
 

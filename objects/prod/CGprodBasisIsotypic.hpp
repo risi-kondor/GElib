@@ -10,18 +10,23 @@
 #ifndef _GprodIsotypic
 #define _GprodIsotypic
 
-#include "cachedf.hpp"
-#include "SnIsotypicSpace.hpp"
+#include <cnine/tensors>
+#include <cnine/containers>
+
 #include "IntegerPartition.hpp"
 #include "IntegerPartitions.hpp"
 #include "SnIrrep.hpp"
-#include "BlockDiagonalize.hpp"
-#include "CoupleIsotypics.hpp"
-#include "ComplementSpace.hpp"
-#include "IntersectionSpace.hpp"
-#include "SymmEigenspace.hpp"
-#include "SingularValueDecomposition.hpp"
-#include "SymmEigendecomposition.hpp"
+
+//#include "cachedf.hpp"
+//#include "BlockDiagonalize.hpp"
+//#include "CoupleIsotypics.hpp"
+//#include "ComplementSpace.hpp"
+//#include "IntersectionSpace.hpp"
+//#include "SymmEigenspace.hpp"
+//#include "SingularValueDecomposition.hpp"
+//#include "SymmEigendecomposition.hpp"
+
+#include "SnIsotypicSpace.hpp"
 #include "MakeCoherentSnIsotypic.hpp"
 
 
@@ -159,7 +164,6 @@ namespace GElib{
 		  return R;
 		}
 	      }
-
 	    }
 
 	  }
@@ -175,7 +179,6 @@ namespace GElib{
 
 
 	  // ---- Compute new bases 
-
 
 	  for(auto& p: multiplicities){
 	    auto lambda=p.first;
