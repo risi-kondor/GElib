@@ -66,10 +66,11 @@ namespace GElib{
 	  gelib_log->error(__PRETTY_FUNCTION__,"Arguments of streaming operation must have regular strides. Skipping this operation."); return;}
 
 	int nb=std::min((cnine::dev_selector.max_mem<<18)/(2*_x.n1*_x.n2+2*_y.n1*_y.n2+2*_r.n1*_x.n2*_y.n2),_r.n0);
+	int rsize_per_batch=_r.n1*_x.n2*_y.n2;
 	//cout<<"nb="<<nb<<endl;
 	cnine::ArrayOnDevice<float> xbuf(2*nb*_x.n1*_x.n2);
 	cnine::ArrayOnDevice<float> ybuf(2*nb*_y.n1*_y.n2);
-	cnine::ArrayOnDevice<float> rbuf(2*nb*_r.n1*_x.n2*_y.n2);
+	cnine::ArrayOnDevice<float> rbuf(2*nb*rsize_per_batch);
 	cnine::Ctensor3_view xv(xbuf,nb,_x.n1,_x.n2,_x.s0,_x.s1,_x.s2,1,sdev);
 	cnine::Ctensor3_view yv(ybuf,nb,_y.n1,_y.n2,_y.s0,_y.s1,_y.s2,1,sdev);
 	cnine::Ctensor3_view rv(rbuf,nb,_r.n1,_x.n2*_y.n2,_r.s0,_r.s1,_r.s2,1,sdev);
@@ -81,16 +82,20 @@ namespace GElib{
 	for(int i=0; i<cnine::roundup(_r.n0,nb)/nb; i++){
 	
 	  int _nb=std::max(nb,_x.n0-i*nb);
+	  if(nb==0) continue;
 	  if(_nb<nb){
 	    xv.n0=_nb;
 	    yv.n0=_nb;
 	    rv.n0=_nb;
 	  }
+
 	  CUDA_SAFE(cudaMemcpyAsync(xbuf, _x.arr+i*nb*_x.s0, _nb*_x.s0*sizeof(float), cudaMemcpyHostToDevice, stream));
 	  CUDA_SAFE(cudaMemcpyAsync(ybuf, _y.arr+i*nb*_y.s0, _nb*_y.s0*sizeof(float), cudaMemcpyHostToDevice, stream));
-	  CUDA_SAFE(cudaMemcpyAsync(rbuf, _r.arr+i*nb*_r.s0+2*_offs, _nb*_r.s0*sizeof(float), cudaMemcpyHostToDevice, stream));
-	  SO3partB_addCGproduct_cu(rbuf,xbuf,ybuf,0,stream);
-	  CUDA_SAFE(cudaMemcpyAsync(_r.arr+i*nb*_r.s0+2*_offs, rbuf, _nb*_r.s0*sizeof(float), cudaMemcpyDeviceToHost, stream));
+	  CUDA_SAFE(cudaMemcpyAsync(rbuf, _r.arr+i*nb*_r.s0+2*_offs, 2*_nb*rsize_per_batch*sizeof(float), 
+	      cudaMemcpyHostToDevice, stream));
+	  SO3partB_addCGproduct_cu(rv,xv,yv,0,stream);
+	  CUDA_SAFE(cudaMemcpyAsync(_r.arr+i*nb*_r.s0+2*_offs, rbuf, 2*_nb*rsize_per_batch*sizeof(float), 
+	      cudaMemcpyDeviceToHost, stream));
 	}
 	//CUDA_SAFE(cudaStreamSynchronize(stream));
 	//CUDA_SAFE(cudaStreamDestroy(stream));
