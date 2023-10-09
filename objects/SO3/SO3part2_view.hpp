@@ -88,7 +88,7 @@ namespace GElib{
     }
 
     SO3part2_view(const cnine::TensorView<complex<float> >& x):
-      Ctensor2_view(x){
+      Ctensor2_view(x.view2()){
       assert(n0%2==1);
       l=(n0-1)/2;
       ar=arr+l*s0;
