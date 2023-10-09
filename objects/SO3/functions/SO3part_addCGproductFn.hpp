@@ -81,6 +81,7 @@ namespace GElib{
 	//CUDA_SAFE(cudaStreamCreate(&stream));
 	cout<<"Streaming packets: "<<cnine::roundup(_r.n0,nb)/nb<<" "<<nb<<endl;
 	for(int i=0; i<cnine::roundup(_r.n0,nb)/nb; i++){
+	  cout<<i<<" "<<i*nb*_r.s0+2*_offs<<endl;
 	  int _nb=std::min(nb,_x.n0-i*nb);
 	  if(nb==0) continue;
 	  if(_nb<nb){
@@ -91,11 +92,11 @@ namespace GElib{
 
 	  CUDA_SAFE(cudaMemcpyAsync(xbuf, _x.arr+i*nb*_x.s0, _nb*_x.s0*sizeof(float), cudaMemcpyHostToDevice, stream));
 	  CUDA_SAFE(cudaMemcpyAsync(ybuf, _y.arr+i*nb*_y.s0, _nb*_y.s0*sizeof(float), cudaMemcpyHostToDevice, stream));
-	  CUDA_SAFE(cudaMemcpyAsync(rbuf, _r.arr+i*nb*_r.s0+2*_offs, 2*_nb*rsize_per_batch*sizeof(float), 
-	      cudaMemcpyHostToDevice, stream));
+	  //CUDA_SAFE(cudaMemcpyAsync(rbuf, _r.arr+i*nb*_r.s0+2*_offs, 2*_nb*rsize_per_batch*sizeof(float), 
+	  //    cudaMemcpyHostToDevice, stream));
 	  SO3partB_addCGproduct_cu(rv,xv,yv,0,stream);
-	  CUDA_SAFE(cudaMemcpyAsync(_r.arr+i*nb*_r.s0+2*_offs, rbuf, 2*_nb*rsize_per_batch*sizeof(float), 
-	      cudaMemcpyDeviceToHost, stream));
+	  //CUDA_SAFE(cudaMemcpyAsync(_r.arr+i*nb*_r.s0+2*_offs, rbuf, 2*_nb*rsize_per_batch*sizeof(float), 
+	  //  cudaMemcpyDeviceToHost, stream));
 
 	}
 	//CUDA_SAFE(cudaStreamSynchronize(stream));
