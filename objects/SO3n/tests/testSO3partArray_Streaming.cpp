@@ -14,20 +14,20 @@ int main(int argc, char** argv){
   GElibSession session;
   cout<<endl;
 
-  int b=2;
-  int l=2;
-  int nc=2;
-  Gdims adims({2});
+  int b=200;
+  int l=4;
+  int nc=32;
+  Gdims adims({40,40});
 
   SO3partArray<float> u=SO3partArray<float>::gaussian(b,adims,l,nc);
   SO3partArray<float> v=SO3partArray<float>::gaussian(b,adims,l,nc);
   //printl("u",u)<<endl;
   //printl("v",v)<<endl;
 
-  SO3partArray<float> w=CGproduct(u,v,2);
-  cout<<w<<endl;
+  //xsSO3partArray<float> w=CGproduct(u,v,2);
+  //cout<<w<<endl;
   SO3partArray<float> ws=StreamingCGproduct(u,v,2);
-  cout<<ws<<endl;
+  //cout<<ws<<endl;
 
   //cout<<DiagCGproduct(u,v,2)<<endl;
 
