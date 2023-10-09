@@ -66,7 +66,7 @@ namespace GElib{
 	  gelib_log->error(__PRETTY_FUNCTION__,"Arguments of streaming operation must have regular strides. Skipping this operation."); return;}
 
 	int nb=std::min((cnine::dev_selector.max_mem<<18)/(2*_x.n1*_x.n2+2*_y.n1*_y.n2+2*_r.n1*_x.n2*_y.n2),_r.n0);
-	cout<<"nb="<<nb;
+	//cout<<"nb="<<nb<<endl;
 	cnine::ArrayOnDevice<float> xbuf(2*nb*_x.n1*_x.n2);
 	cnine::ArrayOnDevice<float> ybuf(2*nb*_y.n1*_y.n2);
 	cnine::ArrayOnDevice<float> rbuf(2*nb*_r.n1*_x.n2*_y.n2);
@@ -95,7 +95,7 @@ namespace GElib{
 	//CUDA_SAFE(cudaStreamSynchronize(stream));
 	//CUDA_SAFE(cudaStreamDestroy(stream));
 #endif
-
+	return;
       }
 
       if(dev==0){
@@ -120,7 +120,7 @@ namespace GElib{
 	  });
       }
 
-      else CUDA_STREAM(SO3partB_addCGproduct_cu(_r,_x,_y,_offs,stream));
+      if(dev==1) CUDA_STREAM(SO3partB_addCGproduct_cu(_r,_x,_y,_offs,stream));
 
     }
 

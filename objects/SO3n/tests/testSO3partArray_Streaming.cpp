@@ -24,8 +24,10 @@ int main(int argc, char** argv){
   //printl("u",u)<<endl;
   //printl("v",v)<<endl;
 
-  SO3partArray<float> w=StreamingCGproduct(u,v,2);
-  //cout<<w<<endl;
+  SO3partArray<float> w=CGproduct(u,v,2);
+  cout<<w<<endl;
+  SO3partArray<float> ws=StreamingCGproduct(u,v,2);
+  cout<<ws<<endl;
 
   //cout<<DiagCGproduct(u,v,2)<<endl;
 
