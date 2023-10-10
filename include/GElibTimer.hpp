@@ -78,15 +78,15 @@ namespace GElib{
 
     ~CGproductTimer(){
       auto elapsed=chrono::duration<double,std::milli>(chrono::system_clock::now()-t0).count();
+      int Mflops=0;
+      if(elapsed>0) Mflops=(((float)n_ops)/elapsed/1000.0);
+
       if(gelib_log){
 	(*gelib_log)("CGproduct("+to_string(l1)+","+to_string(l2)+","+to_string(l)+")[b="+
 	  to_string(b)+",n1="+to_string(n1)+",n2="+to_string(n2)+",dev="+to_string(dev)+"] "+
-	  to_string(elapsed)+" ms"+" ["+to_string((int)(((float)n_ops)/elapsed/1000.0))+" Mflops]");
-	if(elapsed>0)
-	  gelib_log->ofs2<<l1<<","<<l2<<","<<l<<","<<b<<","<<n1<<","<<n2<<","<<dev<<","<<elapsed<<","<<
-	    (int)(((float)n_ops)/elapsed/1000.0)<<endl;
-	else
-	  gelib_log->ofs2<<l1<<","<<l2<<","<<l<<","<<b<<","<<n1<<","<<n2<<","<<dev<<","<<elapsed<<","<<0<<endl;
+	  to_string(elapsed)+" ms"+" ["+to_string(Mflops)+" Mflops]");
+
+	  gelib_log->ofs2<<l1<<","<<l2<<","<<l<<","<<b<<","<<n1<<","<<n2<<","<<dev<<","<<elapsed<<","<<Mflops<<endl;
 	
       }
     }

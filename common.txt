@@ -1,6 +1,14 @@
 include $(ROOTDIR)/config.txt
 
-CNINE_INCLUDES=-I$(CNINE_ROOT)/include 
+CNINE_INCLUDES=-I$(CNINE_ROOT) 
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/include 
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/modules 
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/algorithms
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/combinatorial
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/containers
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/math
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/utility 
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/wrappers
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/scalar 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/ntensor 
@@ -10,8 +18,11 @@ CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_array
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/backendA -I$(CNINE_ROOT)/objects/backendB 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_array/cell_maps -I$(CNINE_ROOT)/objects/tensor_array/cell_ops 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/labeled 
+CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/labeled2 
 
 CNINE_CUDADIR=$(CNINE_ROOT)/cuda
+
+SNOB2_INCLUDES=-I$(SNOB2_ROOT)/include -I$(SNOB2_ROOT)/combinatorial -I$(SNOB2_ROOT)/Sn 
 
 GELIB_INCLUDEDIR=$(ROOTDIR)/include
 SO2DIR=$(ROOTDIR)/objects/SO2
@@ -27,11 +38,11 @@ CFLAGS= -std=c++17 -O3 #-ferror-limit=1
 INCLUDE= -I $(ROOTDIR)/include 
 LIBS= -lstdc++ -lm -lpthread 
 
+CFLAGS+=-DCNINE_RANGE_CHECKING
+
 MACROS+=-DGELIB_COPY_WARNINGS
 MACROS+=-DGELIB_MOVE_WARNINGS
 MACROS+=-DGELIB_CONVERT_WARNINGS
-
-MACROS=
 
 ifdef GELIB_SO3CG_DEBUG
 MACROS+=-D_GELIB_SO3CG_DEBUG
@@ -43,5 +54,9 @@ endif
 
 ifdef WITH_CUBLAS
 MACROS+=-D_WITH_CUBLAS
+endif 
+
+ifdef EIGENDIR
+CFLAGS+=-D_WITH_EIGEN
 endif 
 
