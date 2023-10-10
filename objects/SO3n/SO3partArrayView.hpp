@@ -92,12 +92,12 @@ namespace GElib{
 
     operator cnine::Ctensor3_view() const{
       return cnine::Ctensor3_view(arr.template ptr_as<RTYPE>(),{getb()*getN(),dims(-2),dims(-1)},
-	{2*strides(-3),2*strides(-2),2*strides(-1)},1,device());
+	cnine::GstridesB(2*strides(-3),2*strides(-2),2*strides(-1)),1,device());
     }
 
     operator SO3part3_view() const{
       return SO3part3_view(arr.template ptr_as<RTYPE>(),{getb()*getN(),dims(-2),dims(-1)},
-	{2*strides(-3),2*strides(-2),2*strides(-1)},1,device());
+	cnine::GstridesB(2*strides(-3),2*strides(-2),2*strides(-1)),1,device());
     }
 
 

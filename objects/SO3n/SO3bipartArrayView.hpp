@@ -96,7 +96,7 @@ namespace GElib{
 
     operator cnine::Ctensor4_view() const{
       return cnine::Ctensor4_view(arr.template ptr_as<RTYPE>(),{getb()*getN(),dims(-3),dims(-2),dims(-1)},
-	{2*strides(-4),2*strides(-3),2*strides(-2),2*strides(-1)},1,device());
+	cnine::GstridesB(2*strides(-4),2*strides(-3),2*strides(-2),2*strides(-1)),1,device());
     }
 
 

@@ -37,6 +37,7 @@ def main():
 		     cwd + cnine_folder + '/combinatorial',
 		     cwd + cnine_folder + '/containers',
 		     cwd + cnine_folder + '/math',
+		     cwd + cnine_folder + '/utility',
 		     cwd + cnine_folder + '/wrappers',
                      cwd + cnine_folder + '/include/cmaps',
                      cwd + cnine_folder + '/objects/scalar',

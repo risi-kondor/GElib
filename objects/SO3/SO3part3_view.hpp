@@ -13,6 +13,7 @@
 #define _SO3part3_view
 
 //#include "CtensorB.hpp"
+#include "GstridesB.hpp"
 #include "Ctensor3_view.hpp"
 #include "SO3part2_view.hpp"
 //#include "SO3_CGbank.hpp"
@@ -33,6 +34,7 @@ namespace GElib{
     typedef cnine::fill_pattern fill_pattern;
     typedef cnine::Gdims Gdims;
     typedef cnine::Gstrides Gstrides;
+    typedef cnine::GstridesB GstridesB;
 
     //float* arr;
     //float* arrc;
@@ -69,6 +71,14 @@ namespace GElib{
     }
 
     SO3part3_view(float* _arr,  const Gdims& _dims, const Gstrides& _strides, const int _coffs=1, const int _dev=0):
+      Ctensor3_view(_arr,_dims,_strides,_coffs,_dev){
+      assert(n1%2==1);
+      l=(n1-1)/2;
+      ar=arr+l*s1;
+      ac=arrc+l*s1;
+    }
+
+    SO3part3_view(float* _arr,  const Gdims& _dims, const GstridesB& _strides, const int _coffs=1, const int _dev=0):
       Ctensor3_view(_arr,_dims,_strides,_coffs,_dev){
       assert(n1%2==1);
       l=(n1-1)/2;
