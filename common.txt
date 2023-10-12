@@ -28,6 +28,7 @@ GELIB_INCLUDEDIR=$(ROOTDIR)/include
 SO2DIR=$(ROOTDIR)/objects/SO2
 SO3DIR=$(ROOTDIR)/objects/SO3
 SO3NDIR=$(ROOTDIR)/objects/SO3n
+SO3CDIR=$(ROOTDIR)/objects/SO3c
 GELIB_CUDADIR=$(ROOTDIR)/../GElib-cuda/cuda
 
 # COMBINATORIALDIR=$(ROOTDIR)/objects/combinatorial
