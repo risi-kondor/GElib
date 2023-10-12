@@ -26,6 +26,7 @@ namespace GElib{
   public:
 
     typedef cnine::TensorSpecBase<SO3partSpec<TYPE> > BASE;
+    using BASE::BASE;
 
     using BASE::ddims;
 
@@ -36,10 +37,17 @@ namespace GElib{
     SO3partSpec(const BASE& x): 
       BASE(x){}
 
+    SO3partSpec(const cnine::TensorSpec<complex<TYPE> > x): 
+      BASE(reinterpret_cast<const BASE&>(x)){}
+
     SO3part<TYPE> operator()(){
       return SO3part<TYPE>(*this);
     }
     
+
+  public: // ---- Copying -----------------------------------
+
+
 
   public: // ---- Construction ------------------------------
 

@@ -40,7 +40,6 @@ namespace GElib{
 
     void operator()(const SO3part3_view& _r, const SO3part3_view& _x, const SO3part3_view& _y, const int _offs=0){
 
-
       const int l=_r.getl(); 
       const int l1=_x.getl(); 
       const int l2=_y.getl();

@@ -13,20 +13,23 @@
 #define _GElibSO3partC
 
 #include "GElib_base.hpp"
-#include "LtensorView.hpp"
+#include "Ltensor.hpp"
 #include "SO3partSpec.hpp"
 #include "diff_class.hpp"
 #include "WorkStreamLoop.hpp"
+
+#include "SO3part_addCGproductFn.hpp"
+
 
 namespace GElib{
 
 
   template<typename TYPE>
-  class SO3part: public cnine::LtensorView<TYPE>,
+  class SO3part: public cnine::Ltensor<complex<TYPE> >,
 		 public cnine::diff_class<SO3part<TYPE> >{
   public:
 
-    typedef cnine::LtensorView<TYPE> BASE;
+    typedef cnine::Ltensor<complex<TYPE> > BASE;
     typedef cnine::diff_class<SO3part<TYPE> > diff_class;
 
     typedef cnine::Gdims Gdims;
@@ -69,6 +72,19 @@ namespace GElib{
     static SO3partSpec<TYPE> zero() {return SO3partSpec<TYPE>().zero();}
     static SO3partSpec<TYPE> sequential() {return SO3partSpec<TYPE>().sequential();}
     static SO3partSpec<TYPE> gaussian() {return SO3partSpec<TYPE>().gaussian();}
+
+    SO3partSpec<TYPE> spec() const{
+      return BASE::spec();
+    }
+
+
+  public: // ---- Constructors ------------------------------------------------------------------------------
+
+
+    cnine::Ctensor3_view view3() const{
+      if(is_batched()) return cnine::TensorView<complex<TYPE> >::view3();
+      else return unsqueeze0(cnine::TensorView<complex<TYPE> >::view2());
+    }
 
 
   public: // ---- Access -------------------------------------------------------------------------------------
@@ -124,16 +140,26 @@ namespace GElib{
 
   };
 
-  
-  /*
+
   template<typename TYPE>
-  inline SO3part<TYPE> CGproduct(const BASE& x, const BASE& y, const int l){
-    assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
-    SO3part<TYPE> R=SO3part<TYPE>::zero(x.getb(),l,x.getn()*y.getn(),x.device());
-    R.add_CGproduct(x,y);
+  inline SO3part<TYPE> operator*(const SO3part<TYPE>& x, const cnine::Ltensor<complex<TYPE> >& y){
+    CNINE_ASSRT(y.ndims()==2);
+    CNINE_ASSRT(y.dim(0)==x.dims(-1));
+    SO3part<TYPE> R(x.spec().channels(y.dim(1)));
+    R.add_mprod(x,y);
     return R;
+  }
+
+
+  template<typename TYPE>
+  inline SO3part<TYPE> CGproduct(const SO3part<TYPE>& x, const SO3part<TYPE>& y, const int l){
+    assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
+    SO3part<TYPE> r=SO3part<TYPE>::zero().l(l).n(x.getn()*y.getn()).dev(x.dev);
+    SO3part_addCGproductFn()(r.view3(),x.view3(),y.view3());
+    return r;
     }
 
+  /*
   template<typename TYPE>
   inline SO3part<TYPE> DiagCGproduct(const BASE& x, const BASE& y, const int l){
       assert(x.getn()==y.getn());
