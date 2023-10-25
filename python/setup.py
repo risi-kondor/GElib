@@ -31,7 +31,8 @@ def main():
 
     cwd = os.getcwd()
     cnine_folder = "/../../cnine/"
-    ext_cuda_folder = "../../GElib-cuda/cuda/"
+    ext_cuda_folder = "../cuda/"
+    #ext_cuda_folder = "../../GElib-cuda/cuda/"
 
     _include_dirs = [cwd + cnine_folder + '/include',
 		     cwd + cnine_folder + '/combinatorial',
