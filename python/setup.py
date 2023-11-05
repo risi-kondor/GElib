@@ -52,6 +52,7 @@ def main():
                      cwd + cnine_folder + '/objects/tensor_array/cell_maps',
                      cwd + cnine_folder + '/objects/tensor_array/cell_ops',
                      cwd + cnine_folder + '/objects/labeled',
+                     cwd + cnine_folder + '/objects/labeled2',
                      cwd + cnine_folder + '/objects/ntensor',
                      cwd + cnine_folder + '/objects/ntensor/functions',
                      cwd + '/../include',
@@ -61,7 +62,8 @@ def main():
                      cwd + '/../objects/SO3',
                      cwd + '/../objects/SO3/cell_ops',
                      cwd + '/../objects/SO3/functions',
-                     cwd + '/../objects/SO3n',
+#                     cwd + '/../objects/SO3n',
+                     cwd + '/../objects/SO3c',
                      cwd + '/../objects/SO3n/functions'
                      ]
 

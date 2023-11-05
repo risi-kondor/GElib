@@ -23,7 +23,7 @@
 
 #include "WignerMatrix.hpp"
 #include "SO3type.hpp"
-#include "SO3bitype.hpp"
+//#include "SO3bitype.hpp"
 //#include "SO3part.hpp"
 //#include "SO3vec.hpp"
 //#include "SO3partArray.hpp"
@@ -36,18 +36,19 @@
 #include "SO3mweights.hpp"
 #include "SO3partB_array.hpp"
 #include "SO3vecB_array.hpp"
-
 #include "SO3CGtensor.hpp"
 
-#include "SO3partC.hpp"
-#include "SO3vecC.hpp"
-#include "SO3partArrayC.hpp"
-#include "SO3vecArrayC.hpp"
+//#include "SO3partC.hpp"
+//#include "SO3vecC.hpp"
+//#include "SO3partArrayC.hpp"
+//#include "SO3vecArrayC.hpp"
 
-#include "SO3bipart.hpp"
-#include "SO3bivec.hpp"
-#include "SO3bipartArray.hpp"
-#include "SO3bivecArray.hpp"
+//#include "SO3bipart.hpp"
+//#include "SO3bivec.hpp"
+//#include "SO3bipartArray.hpp"
+//#include "SO3bivecArray.hpp"
+
+#include "SO3partC.hpp"
 
 #include "CtensorConvolve2d.hpp"
 //#include "CtensorConvolve2dSparse.hpp"
@@ -88,47 +89,10 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
     .def("__repr__",&SO3element::str,"Print the SO3element to string.");
 
 
-  // ---- SO3type --------------------------------------------------------------------------------------------
 
 
-  py::class_<SO3type>(m,"SO3type","Class to store the type of an SO3-vector")
-
-    .def(pybind11::init<>(),"")
-    .def(pybind11::init<vector<int> >(),"")
-    
-    .def("__len__",&SO3type::size)
-    .def("maxl",&SO3type::maxl)
-    .def("__getitem__",&SO3type::operator())
-    .def("__setitem__",&SO3type::set)
-    
-
-    .def("str",&SO3type::str,py::arg("indent")="","Print the SO3type to string.")
-    .def("__str__",&SO3type::str,py::arg("indent")="","Print the SO3type to string.")
-    .def("__repr__",&SO3type::repr,py::arg("indent")="","Print the SO3type to string.");
-
-
-  m.def("CGproduct",static_cast<SO3type (*)(const SO3type&, const SO3type&, const int)>(&CGproduct),
-    py::arg("x"),py::arg("y"),py::arg("maxl")=-1);
-
-
-  py::class_<SO3bitype>(m,"SO3bitype","Class to store the type of an SO3-bivector")
-
-    .def(pybind11::init<>(),"")
-    .def(pybind11::init<vector<vector<int> > >(),"")
-    
-    //.def("__len__",&SO3type::size)
-    //.def("maxl",&SO3type::maxl)
-    //.def("__getitem__",&SO3type::operator())
-    //.def("__setitem__",&SO3type::set)
-    
-
-    .def("str",&SO3bitype::str,py::arg("indent")="","Print the SO3bitype to string.")
-    .def("__str__",&SO3bitype::str,py::arg("indent")="","Print the SO3bitype to string.")
-    .def("__repr__",&SO3bitype::repr,py::arg("indent")="","Print the SO3bitype to string.");
-
-
-  m.def("CGtransform",static_cast<SO3type (*)(const SO3bitype&, const int)>(&CGtransform),
-    py::arg("x"),py::arg("maxl")=-1);
+  //m.def("CGtransform",static_cast<SO3type (*)(const SO3bitype&, const int)>(&CGtransform),
+  //py::arg("x"),py::arg("maxl")=-1);
 
 
   m.def("add_WignerMatrix_to",
@@ -142,6 +106,7 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
       R+=SO3CGtensor(l1,l2,l);
     });
 
+  #include "SO3type_py.cpp"
   #include "SO3partB_py.cpp"
   #include "SO3vecB_py.cpp"
   #include "SO3mvec_py.cpp"
@@ -151,18 +116,17 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   #include "SO3partB_array_py.cpp"
   #include "SO3vecB_array_py.cpp"
 
-  #include "SO3part_py.cpp"
-  #include "SO3vec_py.cpp"
-  #include "SO3partArray_py.cpp"
-  #include "SO3vecArray_py.cpp"
+  //#include "SO3part_py.cpp"
+  //#include "SO3vec_py.cpp"
+  //#include "SO3partArray_py.cpp"
+  //#include "SO3vecArray_py.cpp"
 
-  #include "SO3bipart_py.cpp"
-  #include "SO3bivec_py.cpp"
-  #include "SO3bipartArray_py.cpp"
-  #include "SO3bivecArray_py.cpp"
+  //#include "SO3bipart_py.cpp"
+  //#include "SO3bivec_py.cpp"
+  //#include "SO3bipartArray_py.cpp"
+  //#include "SO3bivecArray_py.cpp"
 
-
-  //#include "CtensorB_py.cpp"
+  #include "SO3partC_py.cpp"
 
 }
 

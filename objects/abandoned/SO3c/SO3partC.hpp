@@ -25,12 +25,12 @@ namespace GElib{
 
 
   template<typename TYPE>
-  class SO3part: public cnine::Ltensor<complex<TYPE> >,
-		 public cnine::diff_class<SO3part<TYPE> >{
+  class SO3partC: public cnine::Ltensor<complex<TYPE> >,
+		 public cnine::diff_class<SO3partC<TYPE> >{
   public:
 
     typedef cnine::Ltensor<complex<TYPE> > BASE;
-    typedef cnine::diff_class<SO3part<TYPE> > diff_class;
+    typedef cnine::diff_class<SO3partC<TYPE> > diff_class;
 
     typedef cnine::Gdims Gdims;
 
@@ -51,7 +51,7 @@ namespace GElib{
     using diff_class::add_to_grad;
 #endif 
 
-    ~SO3part(){
+    ~SO3partC(){
 #ifdef WITH_FAKE_GRAD
       if(grad) delete grad;
 #endif 
@@ -61,11 +61,11 @@ namespace GElib{
   public: // ---- Constructors ------------------------------------------------------------------------------
 
 
-    SO3part(): 
-      SO3part({1},cnine::DimLabels(),0,0){}
+    SO3partC(): 
+      SO3partC({1},cnine::DimLabels(),0,0){}
 
-    SO3part(const SO3partSpec<TYPE>& g):
-      SO3part(g.get_dims(), g.get_labels(), g.get_fcode(), g.get_dev()){}
+    SO3partC(const SO3partSpec<TYPE>& g):
+      SO3partC(g.get_dims(), g.get_labels(), g.get_fcode(), g.get_dev()){}
 
     static SO3partSpec<TYPE> make() {return SO3partSpec<TYPE>();}
     static SO3partSpec<TYPE> raw() {return SO3partSpec<TYPE>().raw();}
@@ -112,12 +112,12 @@ namespace GElib{
 
 
     string classname() const{
-      return "GElib::SO3part";
+      return "GElib::SO3partC";
     }
 
     string repr() const{
       ostringstream oss;
-      oss<<"SO3part[";
+      oss<<"SO3partC[";
       if(is_batched()) oss<<"nbatch="<<nbatch()<<",";
       //if(_narray>0) oss<<"blocks="<<adims(dims)<<",";
       oss<<"l="<<getl()<<",";
@@ -133,7 +133,7 @@ namespace GElib{
       return oss.str();
     }
 
-    friend ostream& operator<<(ostream& stream, const SO3part& x){
+    friend ostream& operator<<(ostream& stream, const SO3partC& x){
       stream<<x.str(); return stream;
     }
 
@@ -142,19 +142,19 @@ namespace GElib{
 
 
   template<typename TYPE>
-  inline SO3part<TYPE> operator*(const SO3part<TYPE>& x, const cnine::Ltensor<complex<TYPE> >& y){
+  inline SO3partC<TYPE> operator*(const SO3partC<TYPE>& x, const cnine::Ltensor<complex<TYPE> >& y){
     CNINE_ASSRT(y.ndims()==2);
     CNINE_ASSRT(y.dim(0)==x.dims(-1));
-    SO3part<TYPE> R(x.spec().channels(y.dim(1)));
+    SO3partC<TYPE> R(x.spec().channels(y.dim(1)));
     R.add_mprod(x,y);
     return R;
   }
 
 
   template<typename TYPE>
-  inline SO3part<TYPE> CGproduct(const SO3part<TYPE>& x, const SO3part<TYPE>& y, const int l){
+  inline SO3partC<TYPE> CGproduct(const SO3partC<TYPE>& x, const SO3partC<TYPE>& y, const int l){
     assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
-    SO3part<TYPE> r=SO3part<TYPE>::zero().l(l).n(x.getn()*y.getn()).dev(x.dev);
+    SO3partC<TYPE> r=SO3partC<TYPE>::zero().l(l).n(x.getn()*y.getn()).dev(x.dev);
     SO3part_addCGproductFn()(r.view3(),x.view3(),y.view3());
     return r;
     }
