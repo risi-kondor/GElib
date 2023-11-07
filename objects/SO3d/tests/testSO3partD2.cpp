@@ -13,10 +13,10 @@ int main(int argc, char** argv){
   int b=3;
   int l=2;
   int n=2;
-  Gdims blocks(2,2);
+  Gdims grid(2,2);
 
-  SO3partD<float> u=SO3partD<float>::gaussian().l(l).n(n).blocks(blocks);
-  SO3partD<float> v=SO3partD<float>::gaussian().batch(b).l(l).n(n).blocks(blocks);
+  SO3partD<float> u=SO3partD<float>::gaussian().l(l).n(n).grid(grid);
+  SO3partD<float> v=SO3partD<float>::gaussian().batch(b).l(l).n(n).grid(grid);
   cout<<u<<endl;
   cout<<v<<endl;
 
