@@ -12,17 +12,16 @@
 #define _GElibSO3vecD
 
 #include "GElib_base.hpp"
-#include "GvecD.hpp"
 #include "diff_class.hpp"
 #include "SO3group.hpp"
 #include "SO3partD.hpp"
-#include "SO3vecSpec.hpp"
+#include "GvecD.hpp"
+
 
 namespace GElib{
 
   template<typename TYPE>
-  class SO3vecD: public GvecD<SO3group,TYPE>, //SO3partD<TYPE>>, 
-		public cnine::diff_class<SO3vecD<TYPE> >{
+  class SO3vecD: public GvecD<SO3group,TYPE>, public cnine::diff_class<SO3vecD<TYPE> >{
   public:
 
     typedef GvecD<SO3group,TYPE> BASE;
@@ -52,21 +51,21 @@ namespace GElib{
     //SO3vecD(const int _b, const cnine::Gdims& _gdims, ){}
 
 
-  public: // ---- SO3vecSpec -------------------------------------------------------------------------------
+  public: // ---- GvecSpec<SO3group> -------------------------------------------------------------------------------
 
 
-    SO3vecD(const SO3vecSpec& spec):
+    SO3vecD(const GvecSpec<SO3group>& spec):
       BASE(spec){
       for(int l=0; l<spec._tau.size(); l++)
-	parts[l]=new SO3partD(SO3partSpec<TYPE>(spec).l(l).n(spec._tau(l)));
+	parts[l]=new SO3partD<TYPE>(SO3partSpec(spec).l(l).n(spec._tau(l)));
     }
+    
+    static GvecSpec<SO3group> raw() {return GvecSpec<SO3group>().raw();}
+    static GvecSpec<SO3group> zero() {return GvecSpec<SO3group>().zero();}
+    static GvecSpec<SO3group> sequential() {return GvecSpec<SO3group>().sequential();}
+    static GvecSpec<SO3group> gaussian() {return GvecSpec<SO3group>().gaussian();}
 
-    static SO3vecSpec raw() {return SO3vecSpec().raw();}
-    static SO3vecSpec zero() {return SO3vecSpec().zero();}
-    static SO3vecSpec sequential() {return SO3vecSpec().sequential();}
-    static SO3vecSpec gaussian() {return SO3vecSpec().gaussian();}
-
-    SO3vecSpec spec() const{
+    GvecSpec<SO3group> spec() const{
       return BASE::spec();
     }
 

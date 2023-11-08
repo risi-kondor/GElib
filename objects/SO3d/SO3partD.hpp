@@ -83,16 +83,16 @@ namespace GElib{
   public: // ---- SO3partSpec -------------------------------------------------------------------------------
 
 
-    SO3partD(const SO3partSpec<TYPE>& g):
+    SO3partD(const SO3partSpec& g):
       SO3partD(g.get_dims(), g.get_labels(), g.get_fcode(), g.get_dev()){}
 
-    static SO3partSpec<TYPE> make() {return SO3partSpec<TYPE>();}
-    static SO3partSpec<TYPE> raw() {return SO3partSpec<TYPE>().raw();}
-    static SO3partSpec<TYPE> zero() {return SO3partSpec<TYPE>().zero();}
-    static SO3partSpec<TYPE> sequential() {return SO3partSpec<TYPE>().sequential();}
-    static SO3partSpec<TYPE> gaussian() {return SO3partSpec<TYPE>().gaussian();}
+    static SO3partSpec make() {return SO3partSpec();}
+    static SO3partSpec raw() {return SO3partSpec().raw();}
+    static SO3partSpec zero() {return SO3partSpec().zero();}
+    static SO3partSpec sequential() {return SO3partSpec().sequential();}
+    static SO3partSpec gaussian() {return SO3partSpec().gaussian();}
 
-    SO3partSpec<TYPE> spec() const{
+    SO3partSpec spec() const{
       return BASE::spec();
     }
 

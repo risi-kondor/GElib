@@ -13,25 +13,26 @@
 #include <cnine/tensors>
 #include <cnine/containers>
 
+#include "GtypeD.hpp"
+#include "GvecSpec.hpp"
 
 
 namespace GElib{
 
-  class SO3typeD;
+  class SO3group;
 
   template<typename TYPE>
   class SO3partD;
 
-  //template<typename TYPE>
-  class SO3vecSpec;
+  typedef GtypeD<SO3group> SO3typeD;
 
 
   class SO3group{
   public:
 
     typedef int IrrepIx;
-    typedef SO3vecSpec vecSpec;
-    typedef SO3typeD TAU;
+    typedef GvecSpec<SO3group> vecSpec;
+    typedef GtypeD<SO3group> TAU;
 
 
   public: // ---- General ------------------------------------------------------------------------------------
@@ -44,10 +45,6 @@ namespace GElib{
     template<typename TYPE>
     static SO3partD<TYPE> dummy_part(){
       return SO3partD<TYPE>();}
-
-    //template<typename TYPE>
-    //static SO3vecSpec dummy_spec(){
-    //return SO3vecSpec();}
 
 
   public: // ---- Irreps -------------------------------------------------------------------------------------
@@ -76,6 +73,7 @@ namespace GElib{
     }
 
   };
+
 
 }
 

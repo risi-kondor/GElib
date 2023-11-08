@@ -13,7 +13,7 @@
 #define _GElibGvecSpec
 
 #include "GElib_base.hpp"
-#include "TensorSpec.hpp"
+#include "LtensorSpecBase.hpp"
 #include "SO3type.hpp"
 
 
