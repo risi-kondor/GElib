@@ -72,7 +72,7 @@ The installation can be configured by setting the following variables in ``pytho
 ``compile_with_cuda``
   If set to ``True``, `GElib` will be compiled with GPU suport. This requires a working CUDA and CUBLAS installation 
   on your system and PyTorch itself having been compiled with CUDA enabled. If `GElib` is compiled with CUDA,  
-  you must always import ``torch`` before importing ``GElib``. **CUDA functionality is currently on hold.** 
+  you must always import ``torch`` before importing ``GElib``.
 
 ``copy_warnings``
   If set to ``True``, `GElib` will print a message to the terminal whenever a data object 
@@ -114,7 +114,6 @@ Troubleshooting
 Known issues
 ************
 
-#. CUDA functionality is currently not available in the public version of the library. 
 
  
 *****
