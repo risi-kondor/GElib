@@ -15,20 +15,18 @@
 #include "GvecSpec.hpp"
 #include "SO3type.hpp"
 #include "SO3typeD.hpp"
+#include "SO3group.hpp"
 
 // can we just use GvecSpec for this?
 
 namespace GElib{
 
-  template<typename TYPE>
-  class SO3vecSpec: public GvecSpec<SO3vecSpec<TYPE>,SO3typeD >{
+  class SO3vecSpec: public GvecSpec<SO3group>{
   public:
 
-    typedef GvecSpec<SO3vecSpec<TYPE>,SO3typeD > BASE;
+    typedef GvecSpec<SO3group> BASE;
 
     using BASE::BASE;
-
-    //using BASE::grid;
 
     SO3vecSpec(const BASE& x): 
       BASE(x){}

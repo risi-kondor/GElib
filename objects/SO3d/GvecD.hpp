@@ -22,7 +22,6 @@ namespace GElib{
   public:
 
     typedef typename GROUP::IrrepIx KEY;
-    //typedef typename GROUP::template PART<TYPE> PART;
     typedef decltype(GROUP::template dummy_part<TYPE>()) PART;
     typedef typename GROUP::TAU TAU;
 
@@ -51,8 +50,7 @@ namespace GElib{
       _gdims(__gdims),
       dev(_dev){}
 
-    template<typename SPEC>
-    GvecD(const GvecSpec<SPEC,TAU>& spec):
+    GvecD(const GvecSpec<GROUP>& spec):
       _nbatch(spec.nbatch), 
       _gdims(spec.adims),
       dev(spec._dev) //labels(spec.get_labels())
@@ -213,6 +211,17 @@ namespace GElib{
     }
 
 
+  public: // ---- Operations ---------------------------------------------------------------------------------
+
+
+    GvecD transp(){
+      GvecD r(_nbatch,_gdims,dev);
+      for(auto p: parts)
+	r[p.first]=p.second->transp();
+      return r;
+    }
+
+
   public: // ---- CG-products --------------------------------------------------------------------------------
 
 
@@ -232,7 +241,6 @@ namespace GElib{
 	}
     }
 
-
     void add_CGproduct_back0(const GvecD& g, const GvecD& y){
       TAU offs;
       for(auto p1: parts)
@@ -248,7 +256,6 @@ namespace GElib{
 	    });
 	}
     }
-
 
     void add_CGproduct_back1(const GvecD& g, const GvecD& x){
       TAU offs;
@@ -266,6 +273,118 @@ namespace GElib{
 	}
     }
 
+
+  public: // ---- Diagonal CG-products -----------------------------------------------------------------------
+
+
+    void add_DiagCGproduct(const GvecD& x, const GvecD& y){
+      TAU offs;
+      for(auto p1: x.parts)
+	for(auto p2: y.parts){
+	  const PART& P1=*p1.second;
+	  const PART& P2=*p2.second;
+	  GROUP::for_each_CGcomponent(p1.first,p2.first,
+	    [&](const KEY l, const int m){
+	      if(has_part(l)){
+		parts[l]->add_DiagCGproduct(P1,P2,offs[l]);
+		offs[l]+=P1.getn()*m;
+	      }
+	    });
+	}
+    }
+
+    void add_DiagCGproduct_back0(const GvecD& g, const GvecD& y){
+      TAU offs;
+      for(auto p1: parts)
+	for(auto p2: y.parts){
+	  PART& P1=*p1.second;
+	  const PART& P2=*p2.second;
+	  GROUP::for_each_CGcomponent(p1.first,p2.first,
+	    [&](const KEY l, const int m){
+	      if(g.has_part(l)){
+		P1.add_DiagCGproduct_back0(*g.parts[l],P2,offs[l]);
+		offs[l]+=P1.getn()*m;
+	      }
+	    });
+	}
+    }
+
+    void add_DiagCGproduct_back1(const GvecD& g, const GvecD& x){
+      TAU offs;
+      for(auto p1: x.parts)
+	for(auto p2: parts){
+	  const PART& P1=*p1.second;
+	  PART& P2=*p2.second;
+	  GROUP::for_each_CGcomponent(p1.first,p2.first,
+	    [&](const KEY l, const int m){
+	      if(g.has_part(l)){
+		P2.add_DiagCGproduct_back1(*g.parts[l],P1,offs[l]);
+		offs[l]+=P1.getn()*m;
+	      }
+	    });
+	}
+    }
+
+
+  public: // ---- Fproducts ----------------------------------------------------------------------------------
+
+
+    void add_Fproduct(const GvecD& x, const GvecD& y, const int conj=0){
+      for(auto p1: x.parts)
+	for(auto p2: y.parts){
+	  const PART& P1=*p1.second;
+	  const PART& P2=*p2.second;
+	  GROUP::for_each_CGcomponent(p1.first,p2.first,
+	    [&](const KEY l, const int m){
+	      if(has_part(l)){
+		parts[l]->add_Fproduct(P1,P2,conj);
+	      }
+	    });
+	}
+    }
+
+    void add_Fproduct_back0(const GvecD& g, const GvecD& y, const int conj=0){
+      for(auto p1: parts)
+	for(auto p2: y.parts){
+	  PART& P1=*p1.second;
+	  const PART& P2=*p2.second;
+	  GROUP::for_each_CGcomponent(p1.first,p2.first,
+	    [&](const KEY l, const int m){
+	      if(g.has_part(l)){
+		P1.add_Fproduct_back0(*g.parts[l],P2,conj);
+	      }
+	    });
+	}
+    }
+
+    void add_Fproduct_back1(const GvecD& g, const GvecD& x, const int conj=0){
+      for(auto p1: x.parts)
+	for(auto p2: parts){
+	  const PART& P1=*p1.second;
+	  PART& P2=*p2.second;
+	  GROUP::for_each_CGcomponent(p1.first,p2.first,
+	    [&](const KEY l, const int m){
+	      if(g.has_part(l)){
+		P2.add_DiagCGproduct_back1(*g.parts[l],P1,conj);
+	      }
+	    });
+	}
+    }
+
+
+  public: // ---- Fmodsq ----------------------------------------------------------------------------------
+
+
+    void add_Fmodsq(const GvecD& x){
+      add_Fproduct(x,x.transp(),1);
+    }
+    
+    void add_Fmodsq_back(const GvecD& g){
+      auto t=transp();
+      add_Fproduct_back0(g,t,1);
+      t.add_Fproduct_back1(g,*this,1);
+    }
+    
 
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
@@ -311,15 +430,6 @@ namespace GElib{
   };
 
   
-
-  
 }
 
 #endif 
-    //GvecD(const int __nbatch, const Gdims& __gdims, const cnine::DimLabels& _labels, const int _dev=0):
-    //_nbatch(__nbatch),
-    //_gdims(__gdims),
-    //labels(_labels),
-    //dev(_dev){
-    //}
-

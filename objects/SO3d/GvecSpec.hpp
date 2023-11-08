@@ -20,11 +20,14 @@
 namespace GElib{
 
 
-  template<typename SPEC, typename TAU>
-  class GvecSpec: public cnine::TensorSpecBase<SPEC>{
+  template<typename GROUP>
+  class GvecSpec: public cnine::TensorSpecBase<typename GROUP::vecSpec>{
   public:
 
-    typedef cnine::TensorSpecBase<SPEC> BASE;
+    typedef cnine::TensorSpecBase<typename GROUP::vecSpec> BASE;
+    typedef typename GROUP::vecSpec SPEC;
+    typedef typename GROUP::TAU TAU;
+
     typedef cnine::Gdims Gdims;
 
     using BASE::BASE;
@@ -49,12 +52,6 @@ namespace GElib{
   public: // ---- Construction ------------------------------------------------------------------------------
 
 
-    SPEC batch(const int b) {nbatch=b; return *this;}
-
-    SPEC grid(const initializer_list<int>& v) {adims=Gdims(v); return *this;}
-    SPEC grid(const vector<int>& v) {adims=Gdims(v); return *this;}
-    SPEC grid(const Gdims& v) {adims=v; return *this;}
-
     SPEC zero() {_fcode=0; return *this;}
     SPEC raw() {_fcode=1; return *this;}
     SPEC ones() {_fcode=2; return *this;}
@@ -62,16 +59,20 @@ namespace GElib{
     SPEC gaussian() {_fcode=4; return *this;}
     SPEC fcode(const int x) {_fcode=x; return *this;}
 
+    SPEC batch(const int b) {nbatch=b; return *this;}
+
+    SPEC grid(const initializer_list<int>& v) {adims=Gdims(v); return *this;}
+    SPEC grid(const vector<int>& v) {adims=Gdims(v); return *this;}
+    SPEC grid(const Gdims& v) {adims=v; return *this;}
+
+    SPEC tau(const TAU& __tau) {_tau=__tau;return *this;}
+    SPEC tau(const initializer_list<int>& list) {_tau=TAU(list); return *this;}
+
+    SPEC fourier(const int maxl) {_tau=TAU::Fourier(maxl);}
+    SPEC fourier(const initializer_list<int>& list) {_tau=TAU::Fourier(list); return *this;}
+
     SPEC dev(const int i) {_dev=i; return *this;}
 
-
-  public: // ---- Construction ------------------------------
-
-
-    SPEC tau(const TAU& __tau){
-      _tau=__tau;
-      return *this;
-    }
     
 
 

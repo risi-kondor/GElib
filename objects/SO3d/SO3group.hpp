@@ -22,15 +22,16 @@ namespace GElib{
   template<typename TYPE>
   class SO3partD;
 
+  //template<typename TYPE>
+  class SO3vecSpec;
+
+
   class SO3group{
   public:
 
     typedef int IrrepIx;
-    //typedef SO3partD PART;
+    typedef SO3vecSpec vecSpec;
     typedef SO3typeD TAU;
-  
-    //static SO3CouplingMatrices coupling_matrices;
-    //static CGprodBasisBank<SO3> product_space_bank;
 
 
   public: // ---- General ------------------------------------------------------------------------------------
@@ -43,6 +44,18 @@ namespace GElib{
     template<typename TYPE>
     static SO3partD<TYPE> dummy_part(){
       return SO3partD<TYPE>();}
+
+    //template<typename TYPE>
+    //static SO3vecSpec dummy_spec(){
+    //return SO3vecSpec();}
+
+
+  public: // ---- Irreps -------------------------------------------------------------------------------------
+
+
+    static int dim_of_irrep(const int l){
+      return 2*l+1;
+    }
 
 
   public: // ---- CG-products --------------------------------------------------------------------------------

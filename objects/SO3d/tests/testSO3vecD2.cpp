@@ -23,4 +23,6 @@ int main(int argc, char** argv){
   auto w=CGproduct(u,v);
   cout<<w<<endl;
 
+  cout<<DiagCGproduct(u,v)<<endl;
+
 }

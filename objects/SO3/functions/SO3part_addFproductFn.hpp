@@ -8,8 +8,8 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _SO3part_addFproduct_Fn
-#define _SO3part_addFproduct_Fn
+#ifndef _SO3part_addFproductFn
+#define _SO3part_addFproductFn
 
 #include "GElib_base.hpp"
 #include "CtensorB.hpp"
@@ -28,14 +28,14 @@ namespace GElib{
   #endif
 
 
-  class SO3part_addFproduct_Fn{
+  class SO3part_addFproductFn{
   public:
 
     int conj=0;
     int method=0;
 
-    SO3part_addFproduct_Fn(){}
-    SO3part_addFproduct_Fn(const int _conj, const int _method=0): conj(_conj), method(_method){}
+    SO3part_addFproductFn(){}
+    SO3part_addFproductFn(const int _conj, const int _method=0): conj(_conj), method(_method){}
 
   public:
 

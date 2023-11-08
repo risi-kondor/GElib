@@ -55,18 +55,18 @@ namespace GElib{
   public: // ---- SO3vecSpec -------------------------------------------------------------------------------
 
 
-    SO3vecD(const SO3vecSpec<TYPE>& spec):
+    SO3vecD(const SO3vecSpec& spec):
       BASE(spec){
       for(int l=0; l<spec._tau.size(); l++)
 	parts[l]=new SO3partD(SO3partSpec<TYPE>(spec).l(l).n(spec._tau(l)));
     }
 
-    static SO3vecSpec<TYPE> raw() {return SO3vecSpec<TYPE>().raw();}
-    static SO3vecSpec<TYPE> zero() {return SO3vecSpec<TYPE>().zero();}
-    static SO3vecSpec<TYPE> sequential() {return SO3vecSpec<TYPE>().sequential();}
-    static SO3vecSpec<TYPE> gaussian() {return SO3vecSpec<TYPE>().gaussian();}
+    static SO3vecSpec raw() {return SO3vecSpec().raw();}
+    static SO3vecSpec zero() {return SO3vecSpec().zero();}
+    static SO3vecSpec sequential() {return SO3vecSpec().sequential();}
+    static SO3vecSpec gaussian() {return SO3vecSpec().gaussian();}
 
-    SO3vecSpec<TYPE> spec() const{
+    SO3vecSpec spec() const{
       return BASE::spec();
     }
 
@@ -104,20 +104,35 @@ namespace GElib{
   // ---- Functions ------------------------------------------------------------------------------------------
 
 
-  /*
-  template<typename RTYPE>
-  inline SO3vec<RTYPE> operator+(const SO3vec<RTYPE>& x, const SO3vec<RTYPE>& y){
-    SO3vec<RTYPE> r(x);
-    r.add(y);
-    return r;
-  }
-  */
-
   template<typename TYPE>
   inline SO3vecD<TYPE> CGproduct(const SO3vecD<TYPE>& x, const SO3vecD<TYPE>& y, const int maxl=-1){
     SO3vecD<TYPE> R=SO3vecD<TYPE>::zero().batch(std::max(x.nbatch(),y.nbatch())).grid(x.gdims())
       .tau(CGproduct(x.tau(),y.tau(),maxl));
     R.add_CGproduct(x,y);
+    return R;
+  }
+
+  template<typename TYPE>
+  inline SO3vecD<TYPE> DiagCGproduct(const SO3vecD<TYPE>& x, const SO3vecD<TYPE>& y, const int maxl=-1){
+    SO3vecD<TYPE> R=SO3vecD<TYPE>::zero().batch(std::max(x.nbatch(),y.nbatch())).grid(x.gdims())
+      .tau(DiagCGproduct(x.tau(),y.tau(),maxl));
+    R.add_DiagCGproduct(x,y);
+    return R;
+  }
+
+  template<typename TYPE>
+  inline SO3vecD<TYPE> Fproduct(const SO3vecD<TYPE>& x, const SO3vecD<TYPE>& y, const int maxl=-1){
+    if(maxl==-1) maxl=x.max_irrep()+y.max_irrep();
+    SO3vecD<TYPE> R=SO3vecD<TYPE>::zero().batch(std::max(x.nbatch(),y.nbatch())).grid(x.gdims()).fourier(maxl);
+    R.add_Fproduct(x,y);
+    return R;
+  }
+
+  template<typename TYPE>
+  inline SO3vecD<TYPE> Fmodsq(const SO3vecD<TYPE>& x, const int maxl=-1){
+    if(maxl==-1) maxl=2*x.max_irrep();
+    SO3vecD<TYPE> R=SO3vecD<TYPE>::zero().batch(x.nbatch()).grid(x.gdims()).fourier(maxl);
+    R.add_Fproduct(x,x.transp(),1);
     return R;
   }
 

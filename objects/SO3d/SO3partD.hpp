@@ -22,10 +22,12 @@
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
 #include "SO3part_addCGproduct_back1Fn.hpp"
-
 #include "SO3part_addBlockedCGproductFn.hpp"
 #include "SO3part_addBlockedCGproduct_back0Fn.hpp"
 #include "SO3part_addBlockedCGproduct_back1Fn.hpp"
+#include "SO3part_addFproductFn.hpp"
+#include "SO3part_addFproduct_back0Fn.hpp"
+#include "SO3part_addFproduct_back1Fn.hpp"
 
 
 namespace GElib{
@@ -158,6 +160,19 @@ namespace GElib{
     }
 
 
+    void add_BlockedCGproduct(const SO3partD& x, const SO3partD& y, const int bsize, const int _offs=0){
+      SO3part_addBlockedCGproductFn()(bgfused_view3(),x.bgfused_view3(),y.bgfused_view3(),1,_offs);
+    }
+
+    void add_BlockedCGproduct_back0(const SO3partD& g, const SO3partD& y, const int bsize, const int _offs=0){
+      SO3part_addBlockedCGproduct_back0Fn()(bgfused_view3(),g.bgfused_view3(),y.bgfused_view3(),1,_offs);
+    }
+
+    void add_BlockedCGproduct_back1(const SO3partD& g, const SO3partD& x, const int bsize, const int _offs=0){
+      SO3part_addBlockedCGproduct_back1Fn()(bgfused_view3(),g.bgfused_view3(),x.bgfused_view3(),1,_offs);
+    }
+
+
     void add_DiagCGproduct(const SO3partD& x, const SO3partD& y, const int _offs=0){
       SO3part_addBlockedCGproductFn()(bgfused_view3(),x.bgfused_view3(),y.bgfused_view3(),1,_offs);
     }
@@ -168,6 +183,19 @@ namespace GElib{
 
     void add_DiagCGproduct_back1(const SO3partD& g, const SO3partD& x, const int _offs=0){
       SO3part_addBlockedCGproduct_back1Fn()(bgfused_view3(),g.bgfused_view3(),x.bgfused_view3(),1,_offs);
+    }
+
+
+    void add_Fproduct(const SO3partD& x, const SO3partD& y, const int conj=0){
+      SO3part_addFproductFn(conj,0)(bgfused_view3(),x.bgfused_view3(),y.bgfused_view3());
+    }
+
+    void add_Fproduct_back0(const SO3partD& g, const SO3partD& y, const int conj=0){
+      SO3part_addFproduct_back0Fn(conj,0)(bgfused_view3(),g.bgfused_view3(),y.bgfused_view3());
+    }
+
+    void add_Fproduct_back1(const SO3partD& g, const SO3partD& x, const int conj=0){
+      SO3part_addFproduct_back1Fn(conj,0)(bgfused_view3(),g.bgfused_view3(),x.bgfused_view3());
     }
 
 
@@ -223,26 +251,21 @@ namespace GElib{
     return r;
   }
 
-  /*
   template<typename TYPE>
-  inline SO3part<TYPE> DiagCGproduct(const BASE& x, const BASE& y, const int l){
-      assert(x.getn()==y.getn());
-      assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
-      SO3part<TYPE> R=SO3part<TYPE>::zero(x.getb(),l,x.getn(),x.device());
-      add_DiagCGproduct(R,x,y);
-      return R;
-    }
-
-  template<typename TYPE>
-  inline SO3part<TYPE> StreamingCGproduct(const BASE& x, const BASE& y, const int l, const int dev=1){
+  inline SO3partD<TYPE> BlockedCGproduct(const SO3partD<TYPE>& x, const SO3partD<TYPE>& y, const int bsize, const int l){
     assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
-    cnine::StreamingBlock bl(dev);
-    SO3part<TYPE> R=SO3part<TYPE>::zero(x.getb(),l,x.getn()*y.getn(),x.device());
-    R.add_CGproduct(x,y);
-    return R;
-    }
-  */
+    SO3partD<TYPE> r(x.spec().l(l).n(x.getn()*bsize));
+    r.add_BlockedCGproduct(x,y,bsize);
+    return r;
+  }
 
+  template<typename TYPE>
+  inline SO3partD<TYPE> DiagCGproduct(const SO3partD<TYPE>& x, const SO3partD<TYPE>& y, const int l){
+    assert(l>=abs(x.getl()-y.getl()) && l<=x.getl()+y.getl());
+    SO3partD<TYPE> r(x.spec().l(l).n(x.getn()));
+    r.add_DiagCGproduct(x,y);
+    return r;
+  }
 
 
 }
