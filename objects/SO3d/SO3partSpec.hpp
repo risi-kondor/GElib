@@ -13,7 +13,7 @@
 #define _GElibSO3partSpec
 
 #include "GElib_base.hpp"
-#include "LtensorSpecBase.hpp"
+#include "LtensorSpec.hpp"
 
 
 namespace GElib{
@@ -22,10 +22,10 @@ namespace GElib{
   //class SO3part;
 
   //template<typename TYPE>
-  class SO3partSpec: public cnine::TensorSpecBase<SO3partSpec>{
+  class SO3partSpec: public cnine::LtensorSpecBase<SO3partSpec>{
   public:
 
-    typedef cnine::TensorSpecBase<SO3partSpec> BASE;
+    typedef cnine::LtensorSpecBase<SO3partSpec> BASE;
     using BASE::BASE;
 
     using BASE::adims;
@@ -46,7 +46,7 @@ namespace GElib{
 
     
     template<typename SPEC>
-    SO3partSpec(const cnine::TensorSpecBase<SPEC>& x){
+    SO3partSpec(const cnine::LtensorSpecBase<SPEC>& x){
       adims=x.adims;
       ddims=cnine::Gdims(0,0);
       nbatch=x.nbatch;
@@ -56,7 +56,7 @@ namespace GElib{
     
       
     template<typename TYPE>
-    SO3partSpec(const cnine::TensorSpec<complex<TYPE> > x): 
+    SO3partSpec(const cnine::LtensorSpec<complex<TYPE> > x): 
       BASE(reinterpret_cast<const BASE&>(x)){
       if(ddims.size()!=2) ddims=cnine::Gdims(0,0);
     }

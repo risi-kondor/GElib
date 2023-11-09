@@ -114,7 +114,6 @@ Troubleshooting
 Known issues
 ************
 
-#. CUDA functionality is currently not available in the public version of the library. 
 
  
 *****

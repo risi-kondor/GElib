@@ -13,7 +13,7 @@
 #define _GElibGvecSpec
 
 #include "GElib_base.hpp"
-#include "LtensorSpecBase.hpp"
+#include "LtensorSpec.hpp"
 #include "SO3type.hpp"
 
 
@@ -21,10 +21,10 @@ namespace GElib{
 
 
   template<typename GROUP>
-  class GvecSpec: public cnine::TensorSpecBase<typename GROUP::vecSpec>{
+  class GvecSpec: public cnine::LtensorSpecBase<typename GROUP::vecSpec>{
   public:
 
-    typedef cnine::TensorSpecBase<typename GROUP::vecSpec> BASE;
+    typedef cnine::LtensorSpecBase<typename GROUP::vecSpec> BASE;
     typedef typename GROUP::vecSpec SPEC;
     typedef typename GROUP::TAU TAU;
 
