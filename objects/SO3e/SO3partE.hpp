@@ -81,13 +81,3 @@ namespace GElib{
 
 #endif 
 
-
-    //SO3partSpec(const SO3partSpec& x)=delete;
-    //SO3partSpec(SO3partSpec&& x)=delete;
-    //SO3partSpec& operator=(const SO3partSpec& x)=delete;
-    //SO3partSpec& operator=(SO3partSpec&& x)=delete;
-
-    //operator SO3partE<TYPE>() const{
-    //return SO3partE<TYPE>(*this);
-    //}
-

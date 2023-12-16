@@ -17,6 +17,7 @@
 
 namespace GElib{
 
+
   class GirrepIx{
   public:
     
@@ -76,6 +77,7 @@ namespace GElib{
     }
     
   };
+
 
 }
 

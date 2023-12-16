@@ -131,32 +131,27 @@ namespace GElib{
   public: // ---- Operations ---------------------------------------------------------------------------------
 
 
-    //cnine::Ltensor<TYPE> operator*(const cnine::Ltensor<TYPE>& y) const=delete;
-
     GpartE<TYPE> operator*(const cnine::Ltensor<TYPE>& y) const{
       CNINE_ASSRT(y.ndims()==2);
       CNINE_ASSRT(y.dim(0)==dims(-1));
       GpartE<TYPE> R(spec().n(y.dim(1)));
       R.add_mprod(*this,y);
       return R;
-  }
+    }
 
 
   public: // ---- CG-products --------------------------------------------------------------------------------
 
 
     void add_CGproduct(const GpartE& x, const GpartE& y, const int _offs=0){
-      //G->add_CGproduct(*this,x,y,_offs);
       G->addCGproduct(bgfused_view3(),x.bgfused_view3(),y.bgfused_view3(),_offs);
     }
 
     void add_CGproduct_back0(const GpartE& g, const GpartE& y, const int _offs=0){
-      //G->add_CGproduct_back0(*this,g,y,_offs);
       G->addCGproduct_back0(bgfused_view3(),g.bgfused_view3(),y.bgfused_view3(),_offs);
     }
 
     void add_CGproduct_back1(const GpartE& g, const GpartE& x, const int _offs=0){
-      //G->add_CGproduct_back1(*this,g,g,_offs);
       G->addCGproduct_back1(bgfused_view3(),g.bgfused_view3(),x.bgfused_view3(),_offs);
     }
 
@@ -174,7 +169,6 @@ namespace GElib{
       oss<<ix->repr()<<",";
       if(is_batched()) oss<<"b="<<nbatch()<<",";
       if(is_grid()) oss<<"grid="<<gdims()<<",";
-      //oss<<"l="<<getl()<<",";
       oss<<"n="<<getn()<<",";
       if(dev>0) oss<<"dev="<<dev<<",";
       oss<<"\b)";
@@ -194,6 +188,7 @@ namespace GElib{
 
   };
 
+
   template<typename TYPE, typename IX>
   inline GpartE<TYPE> CGproduct(const GpartE<TYPE>& x, const GpartE<TYPE>& y, const IX& l){
     GpartE<TYPE> r(x.spec().irrep(x.G->new_irrep(l)).n(x.getn()*y.getn()));
@@ -206,15 +201,3 @@ namespace GElib{
 }
 
 #endif 
-
-
-  /*
-  inline GpartE<complex<float> > operator*
-  (const GpartE<complex<float> >& x, const cnine::Ltensor<complex<float> >& y){
-    CNINE_ASSRT(y.ndims()==2);
-    CNINE_ASSRT(y.dim(0)==x.dims(-1));
-    GpartE<complex<float> > R(x.spec().n(y.dim(1)));
-    R.add_mprod(x,y);
-    return R;
-  }
-  */

@@ -8,8 +8,8 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _GElibGvecD
-#define _GElibGvecD
+#ifndef _GElibGvecE
+#define _GElibGvecE
 
 #include "GElib_base.hpp"
 #include "GvecSpec.hpp"
@@ -17,26 +17,23 @@
 
 namespace GElib{
 
-  template<typename GROUP, typename TYPE>
-  class GvecD{
+  template<typename TYPE>
+  class GvecE{
   public:
-
-    typedef typename GROUP::IrrepIx KEY;
-    typedef decltype(GROUP::template dummy_part<TYPE>()) PART;
-    typedef typename GROUP::TAU TAU;
 
     typedef cnine::Gdims Gdims;
     typedef cnine::Gindex Gindex;
 
+    shared_ptr<Ggroup> G;
     int _nbatch=0;
     Gdims _gdims;
     int dev;
-    //cnine::DimLabels labels;
-    mutable map<KEY,PART*> parts;
+    mutable map<GirrepIxWrapper,GpartE<TYPE>*> parts;
 
-    GvecD(){}
+    GvecE(shared_ptr<Ggroup>& _G): 
+      G(_G){}
 
-    ~GvecD(){
+    ~GvecE(){
       for(auto& p: parts)
 	delete p.second;
     }
@@ -45,12 +42,14 @@ namespace GElib{
   public: // ---- Constructors ------------------------------------------------------------------------------
 
 
-    GvecD(const int __nbatch, const Gdims& __gdims, const int _dev=0):
+    GvecE(shared_ptr<Ggroup>& _G, const int __nbatch, const Gdims& __gdims, const int _dev=0):
+      G(_G),
       _nbatch(__nbatch),
       _gdims(__gdims),
       dev(_dev){}
 
-    GvecD(const GvecSpec<GROUP>& spec):
+    GvecE(const GvecSpec& spec):
+      G(spec.G),
       _nbatch(spec.nbatch), 
       _gdims(spec.adims),
       dev(spec._dev) //labels(spec.get_labels())
@@ -60,16 +59,18 @@ namespace GElib{
   public: // ---- Copying -----------------------------------------------------------------------------------
 
 
-    GvecD(const GvecD& x):
+    GvecE(const GvecE& x):
+      G(x.G),
       _nbatch(x._nbatch),
       _gdims(x._gdims),
       dev(x.dev){
       GELIB_COPY_WARNING();
       for(auto& p:x.parts)
-	parts[p.first]=new PART(*p.second);
+	parts[p.first]=new GpartE<TYPE>(*p.second);
     }
     
-    GvecD(GvecD&& x):
+    GvecE(GvecE&& x):
+      G(x.G),
       _nbatch(x._nbatch),
       _gdims(x._gdims),
       dev(x.dev),
@@ -77,19 +78,20 @@ namespace GElib{
       GELIB_MOVE_WARNING();
     }
       
-    GvecD& operator=(const GvecD& x){
+    GvecE& operator=(const GvecE& x){
       GELIB_ASSIGN_WARNING();
       GELIB_ASSRT(_nbatch==x._nbatch);
       GELIB_ASSRT(_gdims==x._gdims);
+      G.reset(x.G);
       for(auto& p:parts)
 	(*p.second)=(*x.parts[p.first]);
       return *this;
     }
 
-    GvecD copy() const{
-      GvecD r(_nbatch,_gdims,dev);
+    GvecE copy() const{
+      GvecE r(G,_nbatch,_gdims,dev);
       for(auto& p:parts)
-	r.parts(p.first)=new PART(p.second->copy());
+	r.parts(p.first)=new GpartE<TYPE>(p.second->copy());
       return r;
     }
 
@@ -120,13 +122,14 @@ namespace GElib{
       return parts.size();
     }
 
-    TAU tau() const{
-      TAU r;
+    GtypeE tau() const{
+      GtypeE r;
       for(auto p:parts)
-	r[p.first]=p.second->getn();
+	r.map[p.first]=p.second->getn();
       return r;
     }
 
+    /*
     bool has_part(const KEY& l) const{
       return parts.find(l)!=parts.end();
     }
@@ -147,7 +150,7 @@ namespace GElib{
       for(auto& p:parts) 
 	lambda(p.first,*p.second);
     }
-
+    */
 
   public: // ---- Batches -----------------------------------------------------------------------------------
 
@@ -160,22 +163,23 @@ namespace GElib{
       return _nbatch;
     }
 
-    GvecD batch(const int i) const{
+    /*
+    GvecE batch(const int i) const{
       CNINE_ASSRT(is_batched());
       CNINE_ASSRT(i>=0 && i<_nbatch);
-      //GvecD r(0,_gdims,labels.copy().set_batched(false),dev);
-      GvecD r(0,_gdims,dev);
+      //GvecE r(0,_gdims,labels.copy().set_batched(false),dev);
+      GvecE r(0,_gdims,dev);
       for(auto p:parts)
 	r.parts[p.first]=new PART(p.second->batch(i));
       return r;
     }
 
-    void for_each_batch(const std::function<void(const int, const GvecD& x)>& lambda) const{
+    void for_each_batch(const std::function<void(const int, const GvecE& x)>& lambda) const{
       int B=nbatch();
       for(int b=0; b<B; b++)
 	lambda(b,batch(b));
     }
-
+    */
 
   public: // ---- Grid ---------------------------------------------------------------------------------------
 
@@ -192,211 +196,52 @@ namespace GElib{
       return _gdims;
     }
 
-    GvecD cell(const Gindex& ix) const{
+    /*
+    GvecE cell(const Gindex& ix) const{
       CNINE_ASSRT(ix.size()==_gdims.size());
-      GvecD r(_nbatch,cnine::Gdims(),dev);
+      GvecE r(_nbatch,cnine::Gdims(),dev);
       for(auto p: parts)
 	r[p.first]=new PART(p.second->cell(ix));
       return r;
     }
-
+    */
 
   public: // ---- Cumulative operations ----------------------------------------------------------------------
 
-
-    void add(const GvecD& x){
+    /*
+    void add(const GvecE& x){
       for(auto p: parts){
 	p.second->add(x.part(p.first));
       }
     }
-
+    */
 
   public: // ---- Operations ---------------------------------------------------------------------------------
 
 
-    GvecD transp(){
-      GvecD r(_nbatch,_gdims,dev);
+    /*
+    GvecE transp(){
+      GvecE r(_nbatch,_gdims,dev);
       for(auto p: parts)
 	r[p.first]=p.second->transp();
       return r;
     }
+    */
 
 
-  public: // ---- CG-products --------------------------------------------------------------------------------
-
-
-    void add_CGproduct(const GvecD& x, const GvecD& y){
-      TAU offs;
-      for(auto p1: x.parts)
-	for(auto p2: y.parts){
-	  const PART& P1=*p1.second;
-	  const PART& P2=*p2.second;
-	  GROUP::for_each_CGcomponent(p1.first,p2.first,
-	    [&](const KEY l, const int m){
-	      if(has_part(l)){
-		parts[l]->add_CGproduct(P1,P2,offs[l]);
-		offs[l]+=P1.getn()*P2.getn()*m;
-	      }
-	    });
-	}
-    }
-
-    void add_CGproduct_back0(const GvecD& g, const GvecD& y){
-      TAU offs;
-      for(auto p1: parts)
-	for(auto p2: y.parts){
-	  PART& P1=*p1.second;
-	  const PART& P2=*p2.second;
-	  GROUP::for_each_CGcomponent(p1.first,p2.first,
-	    [&](const KEY l, const int m){
-	      if(g.has_part(l)){
-		P1.add_CGproduct_back0(*g.parts[l],P2,offs[l]);
-		offs[l]+=P1.getn()*P2.getn()*m;
-	      }
-	    });
-	}
-    }
-
-    void add_CGproduct_back1(const GvecD& g, const GvecD& x){
-      TAU offs;
-      for(auto p1: x.parts)
-	for(auto p2: parts){
-	  const PART& P1=*p1.second;
-	  PART& P2=*p2.second;
-	  GROUP::for_each_CGcomponent(p1.first,p2.first,
-	    [&](const KEY l, const int m){
-	      if(g.has_part(l)){
-		P2.add_CGproduct_back1(*g.parts[l],P1,offs[l]);
-		offs[l]+=P1.getn()*P2.getn()*m;
-	      }
-	    });
-	}
-    }
-
-
-  public: // ---- Diagonal CG-products -----------------------------------------------------------------------
-
-
-    void add_DiagCGproduct(const GvecD& x, const GvecD& y){
-      TAU offs;
-      for(auto p1: x.parts)
-	for(auto p2: y.parts){
-	  const PART& P1=*p1.second;
-	  const PART& P2=*p2.second;
-	  GROUP::for_each_CGcomponent(p1.first,p2.first,
-	    [&](const KEY l, const int m){
-	      if(has_part(l)){
-		parts[l]->add_DiagCGproduct(P1,P2,offs[l]);
-		offs[l]+=P1.getn()*m;
-	      }
-	    });
-	}
-    }
-
-    void add_DiagCGproduct_back0(const GvecD& g, const GvecD& y){
-      TAU offs;
-      for(auto p1: parts)
-	for(auto p2: y.parts){
-	  PART& P1=*p1.second;
-	  const PART& P2=*p2.second;
-	  GROUP::for_each_CGcomponent(p1.first,p2.first,
-	    [&](const KEY l, const int m){
-	      if(g.has_part(l)){
-		P1.add_DiagCGproduct_back0(*g.parts[l],P2,offs[l]);
-		offs[l]+=P1.getn()*m;
-	      }
-	    });
-	}
-    }
-
-    void add_DiagCGproduct_back1(const GvecD& g, const GvecD& x){
-      TAU offs;
-      for(auto p1: x.parts)
-	for(auto p2: parts){
-	  const PART& P1=*p1.second;
-	  PART& P2=*p2.second;
-	  GROUP::for_each_CGcomponent(p1.first,p2.first,
-	    [&](const KEY l, const int m){
-	      if(g.has_part(l)){
-		P2.add_DiagCGproduct_back1(*g.parts[l],P1,offs[l]);
-		offs[l]+=P1.getn()*m;
-	      }
-	    });
-	}
-    }
-
-
-  public: // ---- Fproducts ----------------------------------------------------------------------------------
-
-
-    void add_Fproduct(const GvecD& x, const GvecD& y, const int conj=0){
-      for(auto p1: x.parts)
-	for(auto p2: y.parts){
-	  const PART& P1=*p1.second;
-	  const PART& P2=*p2.second;
-	  GROUP::for_each_CGcomponent(p1.first,p2.first,
-	    [&](const KEY l, const int m){
-	      if(has_part(l)){
-		parts[l]->add_Fproduct(P1,P2,conj);
-	      }
-	    });
-	}
-    }
-
-    void add_Fproduct_back0(const GvecD& g, const GvecD& y, const int conj=0){
-      for(auto p1: parts)
-	for(auto p2: y.parts){
-	  PART& P1=*p1.second;
-	  const PART& P2=*p2.second;
-	  GROUP::for_each_CGcomponent(p1.first,p2.first,
-	    [&](const KEY l, const int m){
-	      if(g.has_part(l)){
-		P1.add_Fproduct_back0(*g.parts[l],P2,conj);
-	      }
-	    });
-	}
-    }
-
-    void add_Fproduct_back1(const GvecD& g, const GvecD& x, const int conj=0){
-      for(auto p1: x.parts)
-	for(auto p2: parts){
-	  const PART& P1=*p1.second;
-	  PART& P2=*p2.second;
-	  GROUP::for_each_CGcomponent(p1.first,p2.first,
-	    [&](const KEY l, const int m){
-	      if(g.has_part(l)){
-		P2.add_DiagCGproduct_back1(*g.parts[l],P1,conj);
-	      }
-	    });
-	}
-    }
-
-
-  public: // ---- Fmodsq ----------------------------------------------------------------------------------
-
-
-    void add_Fmodsq(const GvecD& x){
-      add_Fproduct(x,x.transp(),1);
-    }
-    
-    void add_Fmodsq_back(const GvecD& g){
-      auto t=transp();
-      add_Fproduct_back0(g,t,1);
-      t.add_Fproduct_back1(g,*this,1);
-    }
     
 
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
 
     string classname() const{
-      return "GElib::GvecD";
+      return "GElib::GvecE";
     }
 
     string repr() const{
       ostringstream oss;
-      //oss<<"GvecD(";
-      oss<<GROUP::Gname()<<"vecD(";
+      //oss<<"GvecE(";
+      oss<<"GvecE("<<G->repr()<<",";
       if(is_batched()) oss<<"b="<<nbatch()<<",";
       if(is_grid()) oss<<"grid="<<gdims()<<",";
       oss<<"tau="<<tau()<<",";
@@ -409,8 +254,9 @@ namespace GElib{
     string str(const string indent="", bool norepr=false) const{
       ostringstream oss;
       if(!norepr) oss<<indent<<repr()<<":"<<endl;
-      if(is_batched()){
-	for_each_batch([&](const int b, const GvecD& x){
+      /*
+     if(is_batched()){
+	for_each_batch([&](const int b, const GvecE& x){
 	    oss<<indent<<"  "<<"Batch "<<b<<":"<<endl;
 	    oss<<x.str(indent+"  ",true);
 	  });
@@ -420,10 +266,11 @@ namespace GElib{
 	    oss<<x.str(indent+"  ");
 	  });
       }
+      */
       return oss.str();
     }
 
-    friend ostream& operator<<(ostream& stream, const GvecD& x){
+    friend ostream& operator<<(ostream& stream, const GvecE& x){
       stream<<x.str(); return stream;
     }
 

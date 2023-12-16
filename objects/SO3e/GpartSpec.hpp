@@ -19,6 +19,7 @@
 
 namespace GElib{
 
+
   template<typename SPEC>
   class GpartSpecBase{
   public:
@@ -55,6 +56,7 @@ namespace GElib{
 
 
   public: // ---- Construction --------------------------------------------------------------------------------
+
 
     SPEC batch(const int b) {nbatch=b; return *this;}
     SPEC batches(const int b) {nbatch=b; return *this;}
@@ -121,6 +123,7 @@ namespace GElib{
 
 
   };
+
 
 }
 

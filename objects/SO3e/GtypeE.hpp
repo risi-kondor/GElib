@@ -10,12 +10,12 @@
 #ifndef _GtypeE
 #define _GtypeE
 
-//#include "Tensor.hpp"
 #include "Ggroup.hpp"
 #include "GirrepIx.hpp"
 
 
 namespace GElib{
+
 
   class GtypeE{
   public:

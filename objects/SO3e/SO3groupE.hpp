@@ -116,20 +116,3 @@ namespace GElib{
 #endif 
 
 
-    /*
-    template<typename TYPE>
-    void add_CGproduct(GpartE<TYPE>& r, const GpartE<TYPE>& x, const GpartE<TYPE>& y, const int _offs=0){
-      SO3part_addCGproductFn()(r.bgfused_view3(),x.bgfused_view3(),y.bgfused_view3(),_offs);
-    }
-
-    template<typename TYPE>
-    void add_CGproduct_back0(GpartE<TYPE>& r,const GpartE<TYPE>& g, const GpartE<TYPE>& y, const int _offs=0){
-      SO3part_addCGproduct_back0Fn()(r.bgfused_view3(),g.bgfused_view3(),y.bgfused_view3(),_offs);
-    }
-
-    template<typename TYPE>
-    void add_CGproduct_back1(GpartE<TYPE>& r, const GpartE<TYPE>& g, const GpartE<TYPE>& x, const int _offs=0){
-      SO3part_addCGproduct_back1Fn()(r.bgfused_view3(),g.bgfused_view3(),x.bgfused_view3(),_offs);
-    }
-    */
-

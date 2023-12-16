@@ -776,7 +776,7 @@ namespace GElib{
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
-	    SO3part_addFproduct_Fn()(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3());
+	    SO3part_addFproductFn()(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3());
 	  }
 	}
       }

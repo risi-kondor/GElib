@@ -31,7 +31,7 @@ namespace GElib{
     int _dev=0;
 
     shared_ptr<Ggroup> G;
-    shared_ptr<GtypeE> tau;
+    shared_ptr<GtypeE> _tau;
 
     GvecSpecBase(Ggroup* _G): G(_G){
     }
@@ -70,7 +70,7 @@ namespace GElib{
 
     SPEC dev(const int i) {_dev=i; return *this;}
 
-    SPEC irrep(GtypeE* x){tau.reset(x); return *this;}
+    SPEC tau(GtypeE* x){_tau.reset(x); return *this;}
 
 
   public: // ---- Access ------------------------------------------------------------------------------------

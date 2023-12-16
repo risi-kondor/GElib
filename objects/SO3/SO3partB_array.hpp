@@ -23,7 +23,7 @@
 #include "SO3part_addCGproduct_back0Fn.hpp"
 #include "SO3part_addCGproduct_back1Fn.hpp"
 #include "SO3part_addCGsquareFn.hpp"
-#include "SO3part_addFproduct_Fn.hpp"
+#include "SO3part_addFproductFn.hpp"
 #include "SO3part_addFproduct_back0Fn.hpp"
 #include "SO3part_addFproduct_back1Fn.hpp"
 #include "SO3part_addDiagCGproductBFn.hpp"

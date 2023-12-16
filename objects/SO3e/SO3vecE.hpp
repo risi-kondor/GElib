@@ -28,8 +28,6 @@ namespace GElib{
 
     typedef GtypeE BASE;
 
-    //SO3typeE():
-    //BASE(new SO3group()){}
 
     SO3typeE(const initializer_list<int>& list){
       int l=0;
@@ -49,26 +47,25 @@ namespace GElib{
 
     typedef GvecSpecBase<SO3vecSpec<TYPE> > BASE;
 
-    using BASE::ddims;
-    using BASE::ix;
-
     SO3vecSpec():
       BASE(new SO3group()){}
 
     SO3vecSpec(const BASE& x): 
       BASE(x){
-      if(ddims.size()!=2) ddims=cnine::Gdims(0,0);
+      //if(ddims.size()!=2) ddims=cnine::Gdims(0,0);
     }
 
     SO3vecE<TYPE> operator ()() const{
       return SO3vecE<TYPE>(*this);
     }
 
+    /*
     SO3vecSpec& l(const int _l){
       ix.reset(new SO3irrepIx(_l));
       ddims[0]=2*_l+1;
       return *this;
     }
+    */
 
   };
 

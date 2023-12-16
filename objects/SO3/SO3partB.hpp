@@ -26,7 +26,7 @@
 
 #include "SO3part_addCGsquareFn.hpp"
 
-#include "SO3part_addFproduct_Fn.hpp"
+#include "SO3part_addFproductFn.hpp"
 //#include "SO3part_addFproductB_Fn.hpp"
 #include "SO3part_addFproduct_back0Fn.hpp"
 //#include "SO3part_addFproductB_back0Fn.hpp"
@@ -480,11 +480,11 @@ namespace GElib{
 
 
     void add_Fproduct(const SO3partB& x, const SO3partB& y){
-      SO3part_addFproduct_Fn()(view3(),x.view3(),y.view3());
+      SO3part_addFproductFn()(view3(),x.view3(),y.view3());
     }
 
     void add_FproductB(const SO3partB& x, const SO3partB& y){
-      SO3part_addFproduct_Fn(0,1)(view3(),x.view3(),y.view3());
+      SO3part_addFproductFn(0,1)(view3(),x.view3(),y.view3());
     }
 
     void add_Fproduct_back0(const SO3partB& g, const SO3partB& y){
