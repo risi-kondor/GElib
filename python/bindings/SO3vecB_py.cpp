@@ -51,7 +51,7 @@ py::class_<SO3vecB>(m,"SO3vecB",
 
   .def("add_to_grad",&SO3vecB::add_to_grad)
   .def("add_to_part_of_grad",&SO3vecB::add_to_part_of_grad)
-  .def("get_grad",&SO3vecB::get_grad)
+  .def("get_grad",[](SO3vecB& vec) { return vec.get_grad(); })
   .def("view_of_grad",&SO3vecB::view_of_grad)
 
   .def("get_dev",&SO3vecB::get_dev)

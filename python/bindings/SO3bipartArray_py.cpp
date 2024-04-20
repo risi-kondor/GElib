@@ -28,7 +28,7 @@ py::class_<SO3bipartArray<float> >(m,"SO3bipartArray",
   .def("torch",[](const SO3bipartArray<float>& x){return x.torch();})
 
   .def("add_to_grad",[](SO3bipartArray<float>& r, const SO3bipartArray<float>& x){r.add_to_grad(x);})
-  .def("get_grad",&SO3bipartArray<float>::get_grad)
+  .def("get_grad",[] (SO3bipartArray<float>& arr) {return arr.get_grad(); })
 
   .def("__len__",[](const SO3bipartArray<float>& obj){return 1;})
   .def("device",&SO3bipartArray<float>::device)

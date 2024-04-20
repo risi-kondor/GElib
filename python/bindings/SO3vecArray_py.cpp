@@ -23,7 +23,7 @@ py::class_<SO3vecArray<float> >(m,"SO3vecArray")
   .def("torch",[](const SO3vecArray<float>& x){return x.torch();})
 
   .def("add_to_grad",[](SO3vecArray<float>& r, const SO3vecArray<float>& x){r.add_to_grad(x);})
-  .def("get_grad",&SO3vecArray<float>::get_grad)
+  .def("get_grad",[](SO3vecArray<float>& arr) { return arr.get_grad(); })
 
   .def("__len__",[](const SO3vecArray<float>& r){return r.size();})
   .def("device",&SO3vecArray<float>::device)
