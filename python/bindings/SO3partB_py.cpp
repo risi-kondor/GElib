@@ -46,7 +46,7 @@ py::class_<SO3partB>(m,"SO3partB",
   .def("torch",[](const SO3partB& x){return x.torch();})
 
   .def("add_to_grad",&SO3partB::add_to_grad)
-  .def("get_grad",&SO3partB::get_grad)
+  .def("get_grad",[](SO3partB& part) { return part.get_grad(); })
   .def("view_of_grad",&SO3partB::view_of_grad)
 
   .def("__len__",[](const SO3partB& obj){return 1;})

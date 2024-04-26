@@ -28,7 +28,7 @@ py::class_<SO3partArray<float> >(m,"SO3partArray",
   .def("torch",[](const SO3partArray<float>& x){return x.torch();})
 
   .def("add_to_grad",[](SO3partArray<float>& r, const SO3partArray<float>& x){r.add_to_grad(x);})
-  .def("get_grad",&SO3partArray<float>::get_grad)
+  .def("get_grad",[](SO3partArray<float>& arr) { return arr.get_grad(); })
 
   .def("__len__",[](const SO3partArray<float>& obj){return 1;})
   .def("device",&SO3partArray<float>::device)

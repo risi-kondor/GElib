@@ -43,7 +43,7 @@ namespace GElib{
  
       const int N1=_xg.dim(4);
       const int N2=_y.dim(4);
-      const int dev=_g.dev;
+      const int dev=_g.get_dev();
 
       assert(_offs+N1*N2<=_g.dim(4));
       assert(l>=abs(l1-l2) && l<=l1+l2);
