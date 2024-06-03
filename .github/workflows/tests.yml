@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     # Check all PR
+  workflow_dispatch:
 
 jobs:
   tests:

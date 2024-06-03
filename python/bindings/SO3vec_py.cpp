@@ -23,7 +23,7 @@ py::class_<SO3vec<float> >(m,"SO3vec")
   .def("torch",[](const SO3vec<float>& x){return x.torch();})
 
   .def("add_to_grad",[](SO3vec<float>& r, const SO3vec<float>& x){r.add_to_grad(x);})
-  .def("get_grad",&SO3vec<float>::get_grad)
+  .def("get_grad",[](SO3vec<float>& vec) { return vec.get_grad(); })
 
   .def("__len__",[](const SO3vec<float>& r){return r.size();})
   .def("device",&SO3vec<float>::device)

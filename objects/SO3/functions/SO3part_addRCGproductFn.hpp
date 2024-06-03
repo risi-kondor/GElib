@@ -50,7 +50,7 @@ namespace GElib{
       //const int B=_x.n0;
       //const int J=_x.n1;
       //const int K=_x.n2;
-      const int dev=_r.dev;
+      const int dev=_r.get_dev();
 
       //CNINE_CHECK_DEV3(_r,_x,_y);
       //CNINE_CHECK_BATCH3(_r,_x,_y);

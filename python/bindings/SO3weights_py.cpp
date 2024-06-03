@@ -24,7 +24,7 @@ py::class_<SO3weights>(m,"SO3weights",
   .def("torch",&CtensorPackObj::torch)
 
   .def("add_to_grad",&CtensorPackObj::add_to_grad)
-  .def("get_grad",&CtensorPackObj::get_grad)
+  .def("get_grad", [](CtensorPackObj& obj) { return obj.get_grad(); })
   .def("view_of_grad",&CtensorPackObj::view_of_grad)
 
   .def("device",&CtensorPackObj::get_dev)

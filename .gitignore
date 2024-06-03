@@ -10,3 +10,9 @@ python/cnine
 *.egg
 *.egg-info
 *.so
+
+.vscode
+
+CGproducts.csv
+GElib.log
+cnine.log
