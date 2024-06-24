@@ -8,10 +8,10 @@
 # with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import torch
-#from cnine import ctensorb 
+
 from gelib_base import SO3partArray as _SO3partArray
 
-from gelib import SO3partC as SO3partC
+from gelib import SO3partC
 
 
 def device_id(device):

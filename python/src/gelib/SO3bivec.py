@@ -43,7 +43,7 @@ class SO3bivec(torch.Tensor):
 
     @classmethod
     def dummy(self):
-        R=SO3bibivec(1)
+        R=SO3bivec(1)
         #R.obj=_ptensors0.dummy()
         return R
 

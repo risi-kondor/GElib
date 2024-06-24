@@ -9,11 +9,14 @@
 # with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
+from ctypes import Array
+from typing import List, Optional
 import torch
 from gelib_base import SO3partB_array as _SO3partB_array
 from gelib_base import SO3vecB_array as _SO3vecB_array
 
-from gelib import *
+from gelib import SO3weights, SO3weightsArr, SO3partArr
+from gelib import DiagCGproductType, DDiagCGproductType
 
 
 ## ----------------------------------------------------------------------------------------------------------
@@ -35,17 +38,34 @@ class SO3vecArr:
 
 
     @staticmethod
-    def zeros(b,_adims,_tau,device='cpu'):
+    def zeros(b : int, _adims : Optional[List[int]] ,_tau : List[int], device='cpu') -> 'SO3vecArr':
         "Construct a zero SO3vec object of given type _tau."
+        if _adims == None:
+            _adims = []
+
         R=SO3vecArr()
         for l in range(0,len(_tau)):
             R.parts.append(torch.zeros([b]+_adims+[2*l+1,_tau[l]],dtype=torch.cfloat,device=device))
             #R.parts.append(SO3partArr.zeros(_adims,l,_tau[l],_dev))
         return R
+    
+    @staticmethod
+    def ones(b : int, _adims : Optional[List[int]], _tau : List[int], device='cpu') -> 'SO3vecArr':
+        "Construct a zero SO3vec object of given type _tau."
+        if _adims == None:
+            _adims = []
+
+        R=SO3vecArr()
+        for l in range(0,len(_tau)):
+            R.parts.append(torch.ones([b]+_adims+[2*l+1,_tau[l]],dtype=torch.cfloat,device=device))
+        return R
 
     @staticmethod
-    def randn(b,_adims,_tau,device='cpu'):
+    def randn(b : int, _adims : Optional[List[int]], _tau : List[int], device='cpu') -> 'SO3vecArr':
         "Construct a random SO3vec array of given type _tau."
+        if _adims == None:
+            _adims = []
+            
         R=SO3vecArr()
         for l in range(0,len(_tau)):
             R.parts.append(torch.randn([b]+_adims+[2*l+1,_tau[l]],dtype=torch.cfloat,device=device))
@@ -53,64 +73,79 @@ class SO3vecArr:
         return R
 
     @staticmethod
-    def Fzeros(b,_adims,maxl,device='cpu'):
+    def Fzeros(b : int, _adims : Optional[List[int]], maxl : int, device='cpu') -> 'SO3vecArr':
         "Construct an SO3vec array corresponding the to the Forier matrices 0,1,...maxl of b functions on SO(3)."
+        if _adims == None:
+            _adims = []
+            
         R=SO3vecArr()
         for l in range(0,maxl+1):
             R.parts.append(torch.zeros([b]+_adims+[2*l+1,2*l+1],dtype=torch.cfloat,device=device))
         return R
 
     @staticmethod
-    def Frandn(b,_adims,maxl,device='cpu'):
+    def Frandn(b : int, _adims : Optional[List[int]], maxl : int, device='cpu') -> 'SO3vecArr':
         "Construct a zero SO3Fvec array with l ranging from 0 to maxl."
+        if _adims == None:
+            _adims = []
+            
         R=SO3vecArr()
         for l in range(0,maxl+1):
             R.parts.append(torch.randn([b]+_adims+[2*l+1,2*l+1],dtype=torch.cfloat,device=device))
         return R
 
     @staticmethod
-    def zeros_like(x):
+    def zeros_like(x : 'SO3vecArr') -> 'SO3vecArr':
         R=SO3vecArr()
         for l in range(0,len(x.parts)):
             R.parts.append(torch.zeros_like(x.parts[l]))
-        return R;
+        return R
                            
     @staticmethod
-    def randn_like(x):
+    def randn_like(x: 'SO3vecArr') -> 'SO3vecArr':
         R=SO3vecArr()
         for l in range(0,len(x.parts)):
             R.parts.append(torch.randn_like(x.parts[l]))
-        return R;
-                           
-                       
+        return R
+    
+    @staticmethod
+    def from_part(part : SO3partArr, max_l : int,device='cpu') -> 'SO3vecArr':
+        assert isinstance(part, SO3partArr)
+        tau = [ part.size()[-1] for _ in range(max_l + 1)]
+        result = SO3vecArr.zeros(part.getb(), part.get_adims(), tau, device)
+        result.parts[part.getl()] = part
+        return result
+
+    
     
     ## ---- Access -------------------------------------------------------------------------------------------
 
 
-    def getb(self):
+    def getb(self) -> int:
         return self.parts[0].size(0)
 
-    def get_adims(self):
+    def get_adims(self) -> List[int]:
         assert len(self.parts)>0 
         return list(self.parts[0].size()[1:self.parts[0].dim()-2])
 
-    def get_aadims(self):
+    def get_aadims(self) -> List[int]:
         assert len(self.parts)>0 
         return list(self.parts[0].size()[0:self.parts[0].dim()-2])
 
-    def getN(self):
+    def getN(self) -> int:
         t=1
         for i in range(0,self.parts[0].dim()-2):
             t*=self.parts[0].size(i)
         return t
                        
-    def getNarr(self):
+    def getNarr(self) -> int:
+        # TODO: Should this be different than getN()?
         t=1
         for i in range(1,self.parts[0].dim()-2):
             t*=self.parts[0].size(i)
         return t
                        
-    def tau(self):
+    def tau(self) -> Array:
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
         r=[]
         for l in range(0,len(self.parts)):
@@ -126,12 +161,19 @@ class SO3vecArr:
         for p in self.parts:
             r.parts.append(p.grad)
         return r
+    
+    def getPart(self, l_val : int) -> SO3partArr:
+        assert 0 <= l_val and l_val < len(self.parts)
+        return SO3partArr(self.parts[l_val])
+    
+    def getLMax(self) -> int:
+        return len(self.parts) - 1
 
 
     ## ---- Transport ---------------------------------------------------------------------------------------
 
 
-    def to(self,device):
+    def to(self,device) -> 'SO3vecArr':
         r=SO3vecArr()
         for p in self.parts:
             r.parts.append(p.to(device))
@@ -141,24 +183,23 @@ class SO3vecArr:
     ## ---- Operations ---------------------------------------------------------------------------------------
 
 
-    def rotate(self,R):
+    def rotate(self, R) -> 'SO3vecArr':
         "Apply the group element to this vector"
         r=SO3vecArr()
         for l in range(0,len(self.parts)):
             r.parts.append(_SO3partB_array.view(self.parts[l]).rotate(R).torch())
         return r
 
-    def __add__(self, y):
-       if(isinstance(y,SO3vecArr)):
-           if(len(self.parts)!=len(y.parts)):
-               raise IndexError("SO3vecArr must have the same number of parts.")
-           R=SO3vecArr()
-           for l in range(len(self.parts)):
-               R.parts.append(self.parts[l]+y.parts[l])
-           return R
-       raise TypeError("Not an SO3vecArr object.")
+    def __add__(self, y : 'SO3vecArr') -> 'SO3vecArr':
+        assert isinstance(y, SO3vecArr)
+        if(len(self.parts)!=len(y.parts)):
+            raise IndexError("SO3vecArr must have the same number of parts.")
+        R=SO3vecArr()
+        for l in range(len(self.parts)):
+            R.parts.append(self.parts[l]+y.parts[l])
+        return R
 
-    def __mul__(self, w):
+    def __mul__(self, w : 'SO3vecArr') -> 'SO3vecArr':
         if(isinstance(w,SO3weights)):
             if(len(self.parts)!=len(w.parts)):
                 raise IndexError("SO3vecArr and SO3weights have different number of parts.")
@@ -193,17 +234,16 @@ class SO3vecArr:
             return R
         raise TypeError("SO3vecArr can only be multiplied by a scalar tensor, an SO3weights or an SOweightsArr.")
 
-    def mix1(self, w):
-        if(isinstance(w,SO3weights)):
-            if(len(self.parts)!=len(w.parts)):
-                raise IndexError("SO3vecArr and SO3weights have different number of parts.")
-            R=SO3vecArr()
-            for l in range(len(self.parts)):
-                R.parts.append(torch.einsum('bimk,ij->bjmk',self.parts[l],w.parts[l]))
-            return R
-        raise TypeError("SO3vecArr can only be mixed with an SO3weights.")
+    def mix1(self, w : SO3weights) -> 'SO3vecArr':
+        assert isinstance(w,SO3weights)
+        if(len(self.parts)!=len(w.parts)):
+            raise IndexError("SO3vecArr and SO3weights have different number of parts.")
+        R=SO3vecArr()
+        for l in range(len(self.parts)):
+            R.parts.append(torch.einsum('bimk,ij->bjmk',self.parts[l],w.parts[l]))
+        return R
 
-    def odot(self,y):
+    def odot(self,y) -> int:
         assert(len(self.parts)==len(y.parts))
         r=0
         for l in range(0, len(self.parts)):
@@ -223,62 +263,77 @@ class SO3vecArr:
     ## ---- Products -----------------------------------------------------------------------------------------
 
 
-    def CGproduct(self,y,maxl=-1):
+    def CGproduct(self, y : 'SO3vecArr', maxl : Optional[int] =-1) -> 'SO3vecArr':
         """
         Compute the full Clesbsch--Gordan product of this SO3vecArr with another SO3vecArr y.
         """
+        assert isinstance(y, SO3vecArr)
+        if maxl == None:
+            maxl = -1
+            
         r=SO3vecArr()
         r.parts=list(SO3vecArr_CGproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
         return r
 
 
-    def ReducingCGproduct(self,y,maxl=-1):
+    def ReducingCGproduct(self, y : 'SO3vecArr', maxl : Optional[int] =-1) -> 'SO3vecArr':
         """
         Compute the full Clesbsch--Gordan product of this SO3vecArr with another SO3vecArr y,
         reducing over extra array dimensions as necesssary.
         """
+        assert isinstance(y, SO3vecArr)
+        if maxl == None:
+            maxl = -1
+
         r=SO3vecArr()
         r.parts=list(SO3vecArr_ReducingCGproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
         return r
 
 
-    def DiagCGproduct(self,y,maxl=-1):
+    def DiagCGproduct(self, y : 'SO3vecArr', maxl : Optional[int] =-1) -> 'SO3vecArr':
         """
         Compute the diagonal Clesbsch--Gordan product of this SO3vecArr with another SO3vecArr y.
         """
+        assert isinstance(y, SO3vecArr)
+        if maxl == None:
+            maxl = -1
+
         r=SO3vecArr()
         r.parts=list(SO3vecArr_DiagCGproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
         return r
 
 
-    def DiagCGproductB(self,y,maxl=-1):
+    def DiagCGproductB(self, y : 'SO3vecArr', maxl : Optional[int] =-1) -> 'SO3vecArr':
         """
         Compute the diagonal Clesbsch--Gordan product of this SO3vecArr with another SO3vecArr y.
         """
+        assert isinstance(y, SO3vecArr)
         r=SO3vecArr()
         r.parts=list(SO3vecArr_DiagCGproductBFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
         return r
 
 
-    def DDiagCGproduct(self,y,maxl=-1):
+    def DDiagCGproduct(self, y : 'SO3vecArr', maxl : Optional[int] =-1) -> 'SO3vecArr':
         """
         Compute the reduced diagonal Clesbsch--Gordan product of this SO3vecArr with another SO3vecArr y.
         """
+        assert isinstance(y, SO3vecArr)
         r=SO3vecArr()
         r.parts=list(SO3vecArr_DDiagCGproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
         return r
 
 
-    def Fproduct(self,y,maxl=-1):
+    def Fproduct(self, y : 'SO3vecArr', maxl : Optional[int] =-1) -> 'SO3vecArr':
         """
         Compute the Fourier space product of this SO3Fvec with another SO3Fvec y.
         """
+        assert isinstance(y, SO3vecArr)
         r=SO3vecArr()
         r.parts=list(SO3vecArr_FproductFn.apply(len(self.parts),len(y.parts),maxl,*(self.parts+y.parts)))
         return r
 
 
-    def Fmodsq(self,maxl=-1):
+    def Fmodsq(self, maxl : Optional[int] =-1) -> 'SO3vecArr':
         """
         Compute the Fourier transform of the squared modulus of f. 
         """
@@ -305,35 +360,42 @@ class SO3vecArr:
 ## ----------------------------------------------------------------------------------------------------------
 
 
-def CGproduct(x,y,maxl=-1):
+def CGproduct(x : SO3vecArr, y : SO3vecArr, maxl : Optional[int] = -1) -> SO3vecArr:
+    assert isinstance(x, SO3vecArr)
     return x.CGproduct(y,maxl)
     
-def ReducingCGproduct(x,y,maxl=-1):
+def ReducingCGproduct(x : SO3vecArr, y : SO3vecArr, maxl : Optional[int] = -1) -> SO3vecArr:
+    assert isinstance(x, SO3vecArr)
     return x.ReducingCGproduct(y,maxl)
     
-def DiagCGproduct(x,y,maxl=-1):
+def DiagCGproduct(x : SO3vecArr, y : SO3vecArr, maxl : Optional[int] = -1) -> SO3vecArr:
+    assert isinstance(x, SO3vecArr)
     return x.DiagCGproduct(y,maxl)
     
-def DiagCGproductB(x,y,maxl=-1):
+def DiagCGproductB(x : SO3vecArr, y : SO3vecArr, maxl : Optional[int] = -1) -> SO3vecArr:
+    assert isinstance(x, SO3vecArr)
     return x.DiagCGproductB(y,maxl)
     
-def DDiagCGproduct(x,y,maxl=-1):
+def DDiagCGproduct(x : SO3vecArr, y : SO3vecArr, maxl : Optional[int] = -1) -> SO3vecArr:
+    assert isinstance(x, SO3vecArr)
     return x.DDiagCGproduct(y,maxl)
     
-def Fproduct(x,y,maxl=-1):
+def Fproduct(x : SO3vecArr, y : SO3vecArr, maxl : Optional[int] = -1) -> SO3vecArr:
+    assert isinstance(x, SO3vecArr)
     return x.Fproduct(y,maxl)
 
-def Fmodsq(x,a=-1):
+def Fmodsq(x : SO3vecArr, a : Optional[int] = -1) -> SO3vecArr:
+    assert isinstance(x, SO3vecArr)
     return x.Fmodsq(a)
 
 
-def tau_type(x):
+def tau_type(x : int) -> List[int]:
     r=[]
     for t in x:
         r.append(t.size(-1))
     return r
 
-def CGproductType(x,y,maxl=-1):
+def CGproductType(x, y, maxl : Optional[int] = -1):
     if maxl==-1:
         maxl=len(x)+len(y)-2
     r=[0]*(maxl+1)
@@ -377,8 +439,8 @@ class SO3vecArr_CGproductFn(torch.autograd.Function):
         tau=CGproductType(tau_type(args[0:k1]),tau_type(args[k1:k1+k2]),maxl)
         r=MakeZeroSO3partArrs(adims,tau,args[0].device)
 
-        _x=_SO3vecB_array.view(args[0:k1]);
-        _y=_SO3vecB_array.view(args[k1:k1+k2]);
+        _x=_SO3vecB_array.view(args[0:k1])
+        _y=_SO3vecB_array.view(args[k1:k1+k2])
         _r=_SO3vecB_array.view(r)
         _r.addCGproduct(_x,_y)
 
@@ -398,12 +460,12 @@ class SO3vecArr_CGproductFn(torch.autograd.Function):
         for i in range(k1+k2):
             grads.append(torch.zeros_like(inputs[i]))
 
-        _x=_SO3vecB_array.view(inputs[0:k1]);
-        _y=_SO3vecB_array.view(inputs[k1:k1+k2]);
+        _x=_SO3vecB_array.view(inputs[0:k1])
+        _y=_SO3vecB_array.view(inputs[k1:k1+k2])
 
-        _g=_SO3vecB_array.view(args);
-        _xg=_SO3vecB_array.view(grads[3:k1+3]);
-        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3]);
+        _g=_SO3vecB_array.view(args)
+        _xg=_SO3vecB_array.view(grads[3:k1+3])
+        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3])
 
         _xg.addCGproduct_back0(_g,_y)
         _yg.addCGproduct_back1(_g,_x)
@@ -429,8 +491,8 @@ class SO3vecArr_ReducingCGproductFn(torch.autograd.Function):
         tau=CGproductType(tau_type(args[0:k1]),tau_type(args[k1:k1+k2]),maxl)
         r=MakeZeroSO3partArrs(adims,tau,args[0].device)
 
-        _x=_SO3vecB_array.view(args[0:k1]);
-        _y=_SO3vecB_array.view(args[k1:k1+k2]);
+        _x=_SO3vecB_array.view(args[0:k1])
+        _y=_SO3vecB_array.view(args[k1:k1+k2])
         _r=_SO3vecB_array.view(r)
         _r.addCGproduct(_x,_y)
 
@@ -450,12 +512,12 @@ class SO3vecArr_ReducingCGproductFn(torch.autograd.Function):
         for i in range(k1+k2):
             grads.append(torch.zeros_like(inputs[i]))
 
-        _x=_SO3vecB_array.view(inputs[0:k1]);
-        _y=_SO3vecB_array.view(inputs[k1:k1+k2]);
+        _x=_SO3vecB_array.view(inputs[0:k1])
+        _y=_SO3vecB_array.view(inputs[k1:k1+k2])
 
-        _g=_SO3vecB_array.view(args);
-        _xg=_SO3vecB_array.view(grads[3:k1+3]);
-        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3]);
+        _g=_SO3vecB_array.view(args)
+        _xg=_SO3vecB_array.view(grads[3:k1+3])
+        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3])
 
         _xg.addCGproduct_back0(_g,_y)
         _yg.addCGproduct_back1(_g,_x)
@@ -476,8 +538,8 @@ class SO3vecArr_DiagCGproductFn(torch.autograd.Function):
         tau=DiagCGproductType(tau_type(args[0:k1]),tau_type(args[k1:k1+k2]),maxl)
         r=MakeZeroSO3partArrs(adims,tau,args[0].device)
 
-        _x=_SO3vecB_array.view(args[0:k1]);
-        _y=_SO3vecB_array.view(args[k1:k1+k2]);
+        _x=_SO3vecB_array.view(args[0:k1])
+        _y=_SO3vecB_array.view(args[k1:k1+k2])
         _r=_SO3vecB_array.view(r)
         _r.addDiagCGproduct(_x,_y)
 
@@ -497,12 +559,12 @@ class SO3vecArr_DiagCGproductFn(torch.autograd.Function):
         for i in range(k1+k2):
             grads.append(torch.zeros_like(inputs[i]))
 
-        _x=_SO3vecB_array.view(inputs[0:k1]);
-        _y=_SO3vecB_array.view(inputs[k1:k1+k2]);
+        _x=_SO3vecB_array.view(inputs[0:k1])
+        _y=_SO3vecB_array.view(inputs[k1:k1+k2])
 
-        _g=_SO3vecB_array.view(args);
-        _xg=_SO3vecB_array.view(grads[3:k1+3]);
-        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3]);
+        _g=_SO3vecB_array.view(args)
+        _xg=_SO3vecB_array.view(grads[3:k1+3])
+        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3])
 
         _xg.addDiagCGproduct_back0(_g,_y)
         _yg.addDiagCGproduct_back1(_g,_x)
@@ -523,8 +585,8 @@ class SO3vecArr_DiagCGproductBFn(torch.autograd.Function):
         tau=DiagCGproductType(tau_type(args[0:k1]),tau_type(args[k1:k1+k2]),maxl)
         r=MakeZeroSO3partArrs(adims,tau,args[0].device)
 
-        _x=_SO3vecB_array.view(args[0:k1]);
-        _y=_SO3vecB_array.view(args[k1:k1+k2]);
+        _x=_SO3vecB_array.view(args[0:k1])
+        _y=_SO3vecB_array.view(args[k1:k1+k2])
         _r=_SO3vecB_array.view(r)
         _r.addDiagCGproductB(_x,_y)
 
@@ -544,12 +606,12 @@ class SO3vecArr_DiagCGproductBFn(torch.autograd.Function):
         for i in range(k1+k2):
             grads.append(torch.zeros_like(inputs[i]))
 
-        _x=_SO3vecB_array.view(inputs[0:k1]);
-        _y=_SO3vecB_array.view(inputs[k1:k1+k2]);
+        _x=_SO3vecB_array.view(inputs[0:k1])
+        _y=_SO3vecB_array.view(inputs[k1:k1+k2])
 
-        _g=_SO3vecB_array.view(args);
-        _xg=_SO3vecB_array.view(grads[3:k1+3]);
-        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3]);
+        _g=_SO3vecB_array.view(args)
+        _xg=_SO3vecB_array.view(grads[3:k1+3])
+        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3])
 
         _xg.addDiagCGproductB_back0(_g,_y)
         _yg.addDiagCGproductB_back1(_g,_x)
@@ -569,8 +631,8 @@ class SO3vecArr_DDiagCGproductFn(torch.autograd.Function):
         tau=DDiagCGproductType(tau_type(args[0:k1]),maxl)
         r=MakeZeroSO3partArrs(adims,tau,args[0].device)
         
-        _x=_SO3vecB_array.view(args[0:k1]);
-        _y=_SO3vecB_array.view(args[k1:k1+k2]);
+        _x=_SO3vecB_array.view(args[0:k1])
+        _y=_SO3vecB_array.view(args[k1:k1+k2])
         _r=_SO3vecB_array.view(r)
         _r.addDDiagCGproduct(_x,_y)
 
@@ -588,12 +650,12 @@ class SO3vecArr_DDiagCGproductFn(torch.autograd.Function):
         for i in range(k1+k2):
             grads.append(torch.zeros_like(inputs[i]))
 
-        _x=_SO3vecB_array.view(inputs[0:k1]);
-        _y=_SO3vecB_array.view(inputs[k1:k1+k2]);
+        _x=_SO3vecB_array.view(inputs[0:k1])
+        _y=_SO3vecB_array.view(inputs[k1:k1+k2])
 
-        _g=_SO3vecB_array.view(args);
-        _xg=_SO3vecB_array.view(grads[3:k1+3]);
-        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3]);
+        _g=_SO3vecB_array.view(args)
+        _xg=_SO3vecB_array.view(grads[3:k1+3])
+        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3])
 
         _xg.addDDiagCGproduct_back0(_g,_y)
         _yg.addDDiagCGproduct_back1(_g,_x)
@@ -617,8 +679,8 @@ class SO3vecArr_FproductFn(torch.autograd.Function): #todo
 
         r=makeZeroSO3FpartArrs(adims,maxl,args[0].device)
 
-        _x=_SO3vecB_array.view(args[0:k1]);
-        _y=_SO3vecB_array.view(args[k1:k1+k2]);
+        _x=_SO3vecB_array.view(args[0:k1])
+        _y=_SO3vecB_array.view(args[k1:k1+k2])
         _r=_SO3vecB_array.view(r)
         _r.addFproduct(_x,_y)
 
@@ -638,12 +700,12 @@ class SO3vecArr_FproductFn(torch.autograd.Function): #todo
         for i in range(k1+k2):
             grads.append(torch.zeros_like(inputs[i]))
 
-        _x=_SO3vecB_array.view(inputs[0:k1]);
-        _y=_SO3vecB_array.view(inputs[k1:k1+k2]);
+        _x=_SO3vecB_array.view(inputs[0:k1])
+        _y=_SO3vecB_array.view(inputs[k1:k1+k2])
 
-        _g=_SO3vecB_array.view(args);
-        _xg=_SO3vecB_array.view(grads[3:k1+3]);
-        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3]);
+        _g=_SO3vecB_array.view(args)
+        _xg=_SO3vecB_array.view(grads[3:k1+3])
+        _yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3])
 
         _xg.addFproduct_back0(_g,_y)
         _yg.addFproduct_back1(_g,_x)
@@ -667,8 +729,7 @@ class SO3vecArr_FmodsqFn(torch.autograd.Function): #todo
 
         r=makeZeroSO3FpartArrs(adims,maxl,args[0].device)
 
-        _x=_SO3vecB_array.view(args[0:k1]);
-        #_y=_SO3vecB_array.view(args[k1:k1+k2]);
+        _x=_SO3vecB_array.view(args[0:k1])
         _r=_SO3vecB_array.view(r)
         _r.addFproduct(_x,_x)
 
@@ -687,12 +748,10 @@ class SO3vecArr_FmodsqFn(torch.autograd.Function): #todo
         for i in range(k1):
             grads.append(torch.zeros_like(inputs[i]))
 
-        _x=_SO3vecB_array.view(inputs[0:k1]);
-        #_y=_SO3vecB_array.view(inputs[k1:k1+k2]);
+        _x=_SO3vecB_array.view(inputs[0:k1])
 
-        _g=_SO3vecB_array.view(args);
-        _xg=_SO3vecB_array.view(grads[2:k1+2]);
-        #_yg=_SO3vecB_array.view(grads[k1+3:k1+k2+3]);
+        _g=_SO3vecB_array.view(args)
+        _xg=_SO3vecB_array.view(grads[2:k1+2])
 
         _xg.addFproduct_back0(_g,_x)
         _xg.addFproduct_back1(_g,_x)

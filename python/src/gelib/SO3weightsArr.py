@@ -13,9 +13,6 @@ from cnine import ctensorb
 from gelib_base import SO3partB as _SO3partB
 from gelib_base import SO3vecB as _SO3vecB
 from gelib_base import SO3weights as _SO3weights
-#from gelib_base import SO3Fvec as _SO3Fvec
-
-from gelib import *
 
 #from SO3part import SO3part
 

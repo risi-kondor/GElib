@@ -39,6 +39,14 @@ class SO3part(torch.Tensor):
         return torch.view_as_complex(SO3part(torch.zeros([b, 2*l+1, n,2],device=device)))
 
     @classmethod
+    def ones(self, b, l, n, device='cpu'):
+        """
+        Create an SO(3)-part consisting of b lots of n vectors transforming according to the l'th irrep of SO(3).
+        The vectors are initialized to zero, resulting in an b*(2+l+1)*n dimensional complex tensor of zeros.
+        """
+        return torch.view_as_complex(SO3part(torch.ones([b, 2*l+1, n,2],device=device)))
+
+    @classmethod
     def randn(self, b, l, n, device='cpu'):
         """
         Create an SO(3)-part consisting of b lots of n vectors transforming according to the l'th irrep of SO(3).

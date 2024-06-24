@@ -59,7 +59,7 @@ class SO3partB(torch.Tensor):
     @classmethod
     def Fraw(self, b, l, _dev=0):
         r=SO3partB([1])
-        r.obj=_SO3partB.Fraw(b,l,n,_dev)
+        r.obj=_SO3partB.Fraw(b,l,_dev)
         return r
 
     @classmethod
@@ -134,12 +134,12 @@ class SO3partB(torch.Tensor):
     def __add__(self,y):
         print("add")
         r=SO3partB(1)
-        r.obj=obj.plus(y)
+        r.obj=self.obj.plus(y)
         return r
         
     def __radd__(self,y):
         print("radd")
-        obj.add(y)
+        self.obj.add(y)
         
 
     def __mult__(self,y):
@@ -235,7 +235,8 @@ class SO3partB_InitFromTorchTensorFn(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx,g):
-        return r.view_of_grad().torch()
+        assert ctx.r != None
+        return ctx.r.view_of_grad().torch()
 
 
 class SO3partB_ToTorchTensorFn(torch.autograd.Function):
@@ -250,7 +251,9 @@ class SO3partB_ToTorchTensorFn(torch.autograd.Function):
         assert(g.dim()==4)
         assert(g.size(3)==2)
         assert(g.size(1)%2==1)
-        return x.add_to_grad(_SO3partB(g))
+
+        assert ctx.x != None
+        return ctx.x.add_to_grad(_SO3partB(g))
 
 
 class SO3partB_timesCtensorFn(torch.autograd.Function):
@@ -276,7 +279,7 @@ class SO3partB_inpFn(torch.autograd.Function):
 
     @staticmethod
     def forward(ctx,x,y):
-        r=ctensor(1)
+        r=ctensorb(1)
         r.obj=x.mprod(y)
         ctx.x=x
         ctx.y=y
