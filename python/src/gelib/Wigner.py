@@ -10,14 +10,7 @@
 import torch
 
 from cnine import ctensorb 
-from gelib_base import SO3partB as _SO3partB
-from gelib_base import SO3vecB as _SO3vecB
-#from gelib_base import add_WignerMatrix
-#from gelib_base import SO3Fvec as _SO3Fvec
-
-import gelib_base
-
-from gelib import *
+from gelib_base import add_WignerMatrix_to
 
 
 def WignerMatrix(l,phi,theta,psi,_dev=0):
@@ -26,6 +19,6 @@ def WignerMatrix(l,phi,theta,psi,_dev=0):
     else:
         r=torch.zeros(2*l+1,2*l+1,dtype=torch.cfloat).cuda()
     _r=ctensorb.view(r)
-    gelib_base.add_WignerMatrix_to(_r,l,phi,theta,psi)
+    add_WignerMatrix_to(_r,l,phi,theta,psi)
     return r
 

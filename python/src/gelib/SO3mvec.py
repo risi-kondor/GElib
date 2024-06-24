@@ -15,9 +15,10 @@ from gelib_base import SO3partB as _SO3partB
 from gelib_base import SO3vecB as _SO3vecB
 from gelib_base import SO3partB_array as _SO3partArr
 from gelib_base import SO3mvec as _SO3mvec
-#from gelib_base import SO3Fvec as _SO3Fvec
+from gelib_base import SO3mweights as _SO3mweights
 
-from gelib import *
+from gelib import SO3part
+from gelib import makeZeroSO3Fparts
 
 #from SO3part import SO3part
 
@@ -100,10 +101,10 @@ class SO3mvec:
 
 
     def getb(self):
-        return parts[0].size(0)
+        return self.parts[0].size(0)
 
     def getk(self):
-        return parts[0].size(1)
+        return self.parts[0].size(1)
 
     def tau(self):
         "Return the 'type' of the SO3mvec, i.e., how many components it has corresponding to l=0,1,2,..."
@@ -167,7 +168,7 @@ class SO3mvec:
         return r
 
     def __mul__(self, w): #TODO
-        if(isinstance(w,SO3mweights)):
+        if(isinstance(w,_SO3mweights)):
             if(len(self.parts)!=len(w.parts)):
                 raise IndexError("SO3mvec and SO3weights have different number of parts.")
             R=SO3mvec()
@@ -467,9 +468,10 @@ class SO3mvec_FFTFn(torch.autograd.Function):
 
         inputs = ctx.saved_tensors
 
+        # TODO: Should fg be modified here beore added to the tuple?
         fg=torch.zeros_like(inputs[0])
         _fg=ctensorb.view(fg)
-        _vg.add_iFFT_to(_fg)
+        vg.add_iFFT_to(_fg)
         
         return tuple([None, fg])
 

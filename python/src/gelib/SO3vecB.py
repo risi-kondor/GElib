@@ -12,7 +12,7 @@ from cnine import ctensorb
 from gelib_base import SO3type as _SO3type
 from gelib_base import SO3partB as _SO3partB
 from gelib_base import SO3vecB as _SO3vecB
-from gelib import *
+from gelib import SO3partB
 
 # ----------------------------------------------------------------------------------------------------------
 # ---- SO3vecB ---------------------------------------------------------------------------------------------
@@ -149,11 +149,13 @@ class SO3vecB(torch.Tensor):
     def __add__(self,y):
         print("add")
         r=SO3vecB(1)
-        r.obj=obj.plus(y)
+        # TODO: Here and below, what is obj?
+        r.obj=r.obj.plus(y)
         return r
         
     def __radd__(self,y):
         print("radd")
+        # TODO: What is |obj| here?
         obj.add(y)
         
 
@@ -239,7 +241,7 @@ class SO3vecB_FproductFn(torch.autograd.Function):
     @staticmethod
     def forward(ctx,x,y,l):
         r=SO3vecB(1)
-        r.obj=x.obj.Fproduct(y.obj,maxl)
+        r.obj=x.obj.Fproduct(y.obj,l)
         ctx.x=x
         ctx.y=y
         ctx.r=r
@@ -287,11 +289,13 @@ class SO3vecB_ToTorchTensorsFn(torch.autograd.Function):
     @staticmethod
     def forward(ctx,x):
         ctx.x=x
+        # TODO: What is obj?
         return obj.view_of_grad().torch()
 
     @staticmethod
     def backward(ctx,g):
-        return x.obj.add_to_grad(_SO3vecB(g))
+        assert ctx.x != None
+        return ctx.x.obj.add_to_grad(_SO3vecB(g))
 
     
 # ----------------------------------------------------------------------------------------------------------
