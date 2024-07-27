@@ -17,41 +17,6 @@
 
 namespace GElib{
 
-  template<typename TYPE>
-  class SO3partE;
-
-  template<typename TYPE>
-  class SO3partSpec: public GpartSpecBase<SO3partSpec<TYPE> >{
-  public:
-
-    typedef GpartSpecBase<SO3partSpec<TYPE> > BASE;
-
-    using BASE::ddims;
-    using BASE::ix;
-
-    SO3partSpec():
-      BASE(new SO3group()){}
-
-    SO3partSpec(const BASE& x): 
-      BASE(x){
-      if(ddims.size()!=2) ddims=cnine::Gdims(0,0);
-    }
-
-    SO3partE<TYPE> operator ()() const{
-      return SO3partE<TYPE>(*this);
-    }
-
-    SO3partSpec& l(const int _l){
-      ix.reset(new SO3irrepIx(_l));
-      ddims[0]=2*_l+1;
-      return *this;
-    }
-
-  };
-
-
-  // ---------------------------------------------------------------------------------------------------------
-
 
   template<typename TYPE>
   class SO3partE: public GpartE<complex<TYPE> >{
@@ -63,11 +28,12 @@ namespace GElib{
     SO3partE(const BASE& x):
       BASE(x){}
 
-    SO3partE(const SO3partSpec<TYPE>& x):
-      BASE(x){}
-    
 
   public: // ---- SO3partSpec -------------------------------------------------------------------------------
+
+
+    SO3partE(const SO3partSpec<TYPE>& x):
+      BASE(x){}
 
     static SO3partSpec<TYPE> raw() {return SO3partSpec<TYPE>().raw();}
     static SO3partSpec<TYPE> zero() {return SO3partSpec<TYPE>().zero();}

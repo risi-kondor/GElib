@@ -54,6 +54,7 @@ namespace GElib{
 
   public: // ---- Construction --------------------------------------------------------------------------------
 
+
     SPEC batch(const int b) {nbatch=b; return *this;}
     SPEC batches(const int b) {nbatch=b; return *this;}
 
@@ -70,7 +71,8 @@ namespace GElib{
 
     SPEC dev(const int i) {_dev=i; return *this;}
 
-    SPEC tau(GtypeE* x){_tau.reset(x); return *this;}
+    //SPEC tau(GtypeE* x){_tau.reset(x); return *this;}
+    //SPEC tau(const GtypeE& x){_tau.reset(x); return *this;}
 
 
   public: // ---- Access ------------------------------------------------------------------------------------
