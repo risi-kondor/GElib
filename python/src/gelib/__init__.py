@@ -20,15 +20,15 @@ from gelib.CGtensor import *
 from gelib.SO3partB import *
 from gelib.SO3vecB import *
 
-from gelib.SO3partC import *
-from gelib.SO3vecC import *
-from gelib.SO3partArrC import *
-from gelib.SO3vecArrC import *
+#from gelib.SO3partC import *
+#from gelib.SO3vecC import *
+#from gelib.SO3partArrC import *
+#from gelib.SO3vecArrC import *
 
-from gelib.SO3bipart import *
-from gelib.SO3bipartArr import *
-from gelib.SO3bivec import *
-from gelib.SO3bivecArr import *
+#from gelib.SO3bipart import *
+#from gelib.SO3bipartArr import *
+#from gelib.SO3bivec import *
+#from gelib.SO3bivecArr import *
 
 
 def CGproduct(x, y, maxl=-1):
