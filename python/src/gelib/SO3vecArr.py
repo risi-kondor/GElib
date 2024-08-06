@@ -10,7 +10,7 @@
 
 
 from ctypes import Array
-from typing import Iterable, List, Optional
+from typing import Iterable, List, Optional, Union
 import torch
 from gelib_base import SO3partB_array as _SO3partB_array
 from gelib_base import SO3vecB_array as _SO3vecB_array
@@ -219,7 +219,7 @@ class SO3vecArr:
             R.parts.append(self.parts[l] + (-1) * y.parts[l])
         return R
 
-    def __mul__(self, w : 'SO3vecArr' | SO3weightsArr | SO3weights) -> 'SO3vecArr':
+    def __mul__(self, w : Union['SO3vecArr', SO3weightsArr, SO3weights]) -> 'SO3vecArr':
         if(isinstance(w,SO3weights)):
             if(len(self.parts)!=len(w.parts)):
                 raise IndexError("SO3vecArr and SO3weights have different number of parts.")
