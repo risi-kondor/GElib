@@ -10,7 +10,7 @@
 
 
 from ctypes import Array
-from typing import List, Optional
+from typing import Iterable, List, Optional
 import torch
 from gelib_base import SO3partB_array as _SO3partB_array
 from gelib_base import SO3vecB_array as _SO3vecB_array
@@ -30,8 +30,13 @@ class SO3vecArr:
     to a specific irrep of SO(3).
     """
     
-    def __init__(self):
-        self.parts=[]
+    def __init__(self, parts : Optional[Iterable[SO3partArr]] = None):
+        if parts is None:
+            parts = []
+
+        self.parts = []
+        for part in parts:
+            self.parts.append(SO3partArr(part))
 
 
     ## ---- Static constructors ------------------------------------------------------------------------------
@@ -45,7 +50,7 @@ class SO3vecArr:
 
         R=SO3vecArr()
         for l in range(0,len(_tau)):
-            R.parts.append(torch.zeros([b]+_adims+[2*l+1,_tau[l]],dtype=torch.cfloat,device=device))
+            R.parts.append(SO3partArr.zeros(b, _adims, l, _tau[l], device))
             #R.parts.append(SO3partArr.zeros(_adims,l,_tau[l],_dev))
         return R
     
@@ -57,7 +62,7 @@ class SO3vecArr:
 
         R=SO3vecArr()
         for l in range(0,len(_tau)):
-            R.parts.append(torch.ones([b]+_adims+[2*l+1,_tau[l]],dtype=torch.cfloat,device=device))
+            R.parts.append(SO3partArr.ones(b, _adims, l, _tau[l], device))
         return R
 
     @staticmethod
@@ -68,8 +73,7 @@ class SO3vecArr:
             
         R=SO3vecArr()
         for l in range(0,len(_tau)):
-            R.parts.append(torch.randn([b]+_adims+[2*l+1,_tau[l]],dtype=torch.cfloat,device=device))
-            #R.parts.append(SO3partArr.randn(_adims,l,_tau[l],_dev))
+            R.parts.append(SO3partArr.randn(b, _adims, l, _tau[l], device))
         return R
 
     @staticmethod
@@ -80,7 +84,7 @@ class SO3vecArr:
             
         R=SO3vecArr()
         for l in range(0,maxl+1):
-            R.parts.append(torch.zeros([b]+_adims+[2*l+1,2*l+1],dtype=torch.cfloat,device=device))
+            R.parts.append(SO3partArr.Fzeros(b, _adims, l, device))
         return R
 
     @staticmethod
@@ -91,21 +95,21 @@ class SO3vecArr:
             
         R=SO3vecArr()
         for l in range(0,maxl+1):
-            R.parts.append(torch.randn([b]+_adims+[2*l+1,2*l+1],dtype=torch.cfloat,device=device))
+            R.parts.append(SO3partArr.Frandn(b, _adims, l, device))
         return R
 
     @staticmethod
     def zeros_like(x : 'SO3vecArr') -> 'SO3vecArr':
         R=SO3vecArr()
         for l in range(0,len(x.parts)):
-            R.parts.append(torch.zeros_like(x.parts[l]))
+            R.parts.append(SO3partArr.zeros_like(x.parts[l]))
         return R
                            
     @staticmethod
     def randn_like(x: 'SO3vecArr') -> 'SO3vecArr':
         R=SO3vecArr()
         for l in range(0,len(x.parts)):
-            R.parts.append(torch.randn_like(x.parts[l]))
+            R.parts.append(SO3partArr.randn_like(x.parts[l]))
         return R
     
     @staticmethod
@@ -116,6 +120,13 @@ class SO3vecArr:
         result.parts[part.getl()] = part
         return result
 
+    @classmethod
+    def spharm(self, max_l : int, X : torch.Tensor, device : str = 'cpu') -> 'SO3vecArr':
+        """
+        Return the spherical harmonics of the vector (x,y,z) for all l <= max_l.
+        """
+        parts = [ SO3partArr.spharm(l, X, device) for l in range(max_l + 1) ]
+        return SO3vecArr(parts)
     
     
     ## ---- Access -------------------------------------------------------------------------------------------
@@ -199,7 +210,16 @@ class SO3vecArr:
             R.parts.append(self.parts[l]+y.parts[l])
         return R
 
-    def __mul__(self, w : 'SO3vecArr') -> 'SO3vecArr':
+    def __sub__(self, y : 'SO3vecArr') -> 'SO3vecArr':
+        assert isinstance(y, SO3vecArr)
+        if(len(self.parts)!=len(y.parts)):
+            raise IndexError("SO3vecArr must have the same number of parts.")
+        R=SO3vecArr()
+        for l in range(len(self.parts)):
+            R.parts.append(self.parts[l] + (-1) * y.parts[l])
+        return R
+
+    def __mul__(self, w : 'SO3vecArr' | SO3weightsArr | SO3weights) -> 'SO3vecArr':
         if(isinstance(w,SO3weights)):
             if(len(self.parts)!=len(w.parts)):
                 raise IndexError("SO3vecArr and SO3weights have different number of parts.")
@@ -224,7 +244,7 @@ class SO3vecArr:
                 n=w.parts[l].size(-2)
                 m=w.parts[l].size(-1)
                 x=self.parts[l].reshape([b,N,(2*l+1),n])
-                t=torch.einsum('bami,aij->bamj',x,w.parts[l].reshape([N,n,m]))
+                t=torch.einsum('...ami,...aij->...amj',x,w.parts[l].reshape([N,n,m]))
                 R.parts.append(t.reshape([b]+adims+[2*l+1,m]))
             return R
         if(isinstance(w,torch.Tensor)):
@@ -240,16 +260,57 @@ class SO3vecArr:
             raise IndexError("SO3vecArr and SO3weights have different number of parts.")
         R=SO3vecArr()
         for l in range(len(self.parts)):
-            R.parts.append(torch.einsum('bimk,ij->bjmk',self.parts[l],w.parts[l]))
+            R.parts.append(torch.einsum('...imk,...ij->...jmk',self.parts[l],w.parts[l]))
         return R
-
-    def odot(self,y) -> int:
+    
+    def odot(self,
+             y : 'SO3vecArr',
+             last_dim : Optional[int] = None) -> float | torch.Tensor:
+        assert isinstance(y, SO3vecArr)
         assert(len(self.parts)==len(y.parts))
-        r=0
-        for l in range(0, len(self.parts)):
-            r+=torch.sum(torch.mul(torch.view_as_real(self.parts[l]),torch.view_as_real(y.parts[l])))
-        return r
 
+        # Simple case where the result is a number.
+        if last_dim is None:
+            r=0
+            for l in range(0, len(self.parts)):
+                self_parts = torch.view_as_real(self.parts[l])
+                y_parts = torch.view_as_real(y.parts[l])
+                mul = torch.mul(self_parts, y_parts)
+                r+=torch.sum(mul)
+            return r
+        
+        # Handle negative indices.
+        if last_dim < 0:
+            last_dim += self.parts[0].dim()
+            assert last_dim >= 0
+        assert last_dim < self.parts[0].dim() - 2
+
+        # Create the starting "zero".
+        size = list(self.parts(0).size())[:last_dim + 1]
+        size.append(size[-1])
+        r = torch.zeros(size,
+                        device = self.parts[0].device,
+                        requires_grad = False)
+        
+        # Extra indices for einsum().
+        extra_letters = "cdefghmnopqrstuvwxyz"
+
+        # Sum across all rotation orders.
+        for l in range(0, len(self.parts)):
+            # TODO: Do I need view_as_real()?
+            self_parts = self.parts[l]
+            y_parts = y.parts[l]
+            
+            # Extra 1 for the new dimension from view_as_real().
+            summed_dims = self_parts.dim() - last_dim # -1
+            assert summed_dims < len(extra_letters)
+
+            # entry []...,i,j] is the sum of self[...,i,...]*other[...,j,...].
+            ein = "...a{0},...b{0}->...ab".format(extra_letters[:summed_dims])
+            einsum = torch.einsum(ein, self_parts, y_parts)
+            assert einsum.size() == r.size()
+            r = r + einsum
+        return r
 
     def gather(self,_mask):
         """

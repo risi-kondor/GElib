@@ -26,10 +26,6 @@ class SO3weightsArr:
     """
     Vector of weight tensors to multiply SO3vec by.
     """
-
-    def __init__(self):
-        self.parts = []
-
     def __init__(self,parts=None):
         self.parts=[]
         if parts is not None:
@@ -40,42 +36,50 @@ class SO3weightsArr:
     # ---- Static constructors ------------------------------------------------------------------------------
 
     @classmethod
-    def zeros(self, adims, _tau1, _tau2, device='cpu'):
+    def zeros(self, adims, _tau1, _tau2, device='cpu', requires_grad=False):
         R = SO3weightsArr()
         assert len(_tau1)==len(_tau2)
         for l in range(0, len(_tau1)):
-            R.parts.append(torch.zeros(adims+[_tau1[l],_tau2[l]],dtype=torch.cfloat,device=device))
+            R.parts.append(torch.zeros(adims+[_tau1[l],_tau2[l]],dtype=torch.cfloat,device=device,requires_grad=requires_grad))
         return R
-
+        
     @classmethod
-    def randn(self, adims, _tau1, _tau2, device='cpu'):
+    def zeros(self, adims, _tau1, _tau2, device='cpu', requires_grad=False):
         R = SO3weightsArr()
         assert len(_tau1)==len(_tau2)
         for l in range(0, len(_tau1)):
-            R.parts.append(torch.randn(adims+[_tau1[l],_tau2[l]],dtype=torch.cfloat,device=device))
+            R.parts.append(torch.zeros(adims+[_tau1[l],_tau2[l]],dtype=torch.cfloat,device=device,requires_grad=requires_grad))
         return R
 
     @classmethod
-    def Fzeros(self, adims, _tau1, _tau2, device='cpu'):
+    def randn(self, adims, _tau1, _tau2, device='cpu', requires_grad=False):
         R = SO3weightsArr()
         assert len(_tau1)==len(_tau2)
         for l in range(0, len(_tau1)):
-            R.parts.append(torch.zeros(adims+[2*l+1,2*l+1],dtype=torch.cfloat,device=device))
+            R.parts.append(torch.randn(adims+[_tau1[l],_tau2[l]],dtype=torch.cfloat,device=device,requires_grad=requires_grad))
         return R
 
     @classmethod
-    def Frandn(self, adims, _tau1, _tau2, device='cpu'):
+    def Fzeros(self, adims, _tau1, _tau2, device='cpu', requires_grad=False):
         R = SO3weightsArr()
         assert len(_tau1)==len(_tau2)
         for l in range(0, len(_tau1)):
-            R.parts.append(torch.randn(adims+[2*l+1,2*l+1],dtype=torch.cfloat,device=device))
+            R.parts.append(torch.zeros(adims+[2*l+1,2*l+1],dtype=torch.cfloat,device=device,requires_grad=requires_grad))
         return R
 
     @classmethod
-    def zeros_like(self, x):
+    def Frandn(self, adims, _tau1, _tau2, device='cpu', requires_grad=False):
+        R = SO3weightsArr()
+        assert len(_tau1)==len(_tau2)
+        for l in range(0, len(_tau1)):
+            R.parts.append(torch.randn(adims+[2*l+1,2*l+1],dtype=torch.cfloat,device=device,requires_grad=requires_grad))
+        return R
+
+    @classmethod
+    def zeros_like(self, x, requires_grad=False):
         R = SO3weightsArr()
         for l in range(0, len(x.parts)):
-            R.parts.append(torch.zeros_like(x.parts[l]))
+            R.parts.append(torch.zeros_like(x.parts[l], requires_grad=requires_grad))
         return R
 
     
@@ -83,12 +87,11 @@ class SO3weightsArr:
 
 
     def __mul__(self, w):
-        if(isinstance(w,torch.Tensor)):
-            R=SO3weightsArr()
-            for l in range(len(self.parts)):
-                R.parts.append(self.parts[l]*w)
-            return R
-        raise TypeError("SO3weightsArr can only be multiplied by a scalar tensor.")
+        assert isinstance(w,torch.Tensor), "SO3weightsArr can only be multiplied by a scalar tensor."
+        R=SO3weightsArr()
+        for l in range(len(self.parts)):
+            R.parts.append(self.parts[l]*w)
+        return R
 
 
     # ---- Access -------------------------------------------------------------------------------------------
@@ -110,6 +113,12 @@ class SO3weightsArr:
         for l in range(0, len(self.parts)):
             r.append(self.parts[l].size(-1))
         return r
+    
+    def get_device(self):
+        return self.parts[0].device
+    
+    def get_requires_grad(self):
+        return self.parts[0].requires_grad
 
     def requires_grad_(self):
         for p in self.parts:

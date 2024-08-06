@@ -22,7 +22,7 @@ class SO3partArr(torch.Tensor):
     The vectors are stacked into a fourth order tensor. The first index is the site index, the second index
     is the batch index, the third is m=-l,...,l, and the fourth index is the fragment index. 
     """
-    def __new__(cls, x, *args, **kwargs):
+    def __new__(cls, x : torch.Tensor, *args, **kwargs):
         if(torch.is_complex(x)):
             return torch.view_as_complex(super().__new__(cls, torch.view_as_real(x), *args, **kwargs))
         else:
@@ -59,7 +59,9 @@ class SO3partArr(torch.Tensor):
         """        
         if _adims == None:
             _adims = []
-        return SO3partArr(torch.ones([b]+_adims+[2*l+1,n,2],device=device))
+        ones = torch.ones([b]+_adims+[2*l+1,n],device=device)
+        zeros = torch.zeros([b]+_adims+[2*l+1,n],device=device)
+        return SO3partArr(torch.stack([ones, zeros], dim = -1))
 
     @staticmethod
     def randn(b : int, _adims : List[int], l : int, n : int, device : str = 'cpu') -> 'SO3partArr':
@@ -81,7 +83,6 @@ class SO3partArr(torch.Tensor):
         R =SO3partArr.zeros(X.size(0),list(X.size())[1:X.dim()-2], l, X.size(-1), device=device)
         _SO3partB_array.view(R).add_spharm(X)
         return R.to(device)
-
 
     @staticmethod
     def Fzeros(b : int, _adims : List[int], l : int, device : str = 'cpu') -> 'SO3partArr':
