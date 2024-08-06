@@ -10,18 +10,16 @@
 import torch
 
 from cnine import rtensor 
-import gelib_base
-
-from gelib import *
+from gelib_base import add_CGtensor_to, add_CGmatrix_to
 
 def SO3CGtensor(l1,l2,l):
     r=torch.zeros(2*l1+1,2*l2+1,2*l+1)
-    gelib_base.add_CGtensor_to(rtensor.view(r),l1,l2,l)
+    add_CGtensor_to(rtensor.view(r),l1,l2,l)
     return r
 
 def SO3CGmatrix(l1,l2,l):
     r=torch.zeros(2*l1+1,2*l2+1)
-    gelib_base.add_CGmatrix_to(rtensor.view(r),l1,l2,l)
+    add_CGmatrix_to(rtensor.view(r),l1,l2,l)
     return r
 
 
