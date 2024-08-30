@@ -59,21 +59,3 @@ namespace GElib{
 
 #endif 
 
-
-     /*
-    template<typename TYPE>
-    virtual void add_CGproduct(GpartE<TYPE>& r, const GpartE<TYPE>& x, const GpartE<TYPE>& y, const int _offs=0){
-      cout<<333<<endl;
-      //G->add_CGproduct(*this,x,y,_offs);
-    }
-
-    template<typename TYPE>
-    virtual void add_CGproduct_back0(GpartE<TYPE>& r, const GpartE<TYPE>& g, const GpartE<TYPE>& y, const int _offs=0){
-      //G->add_CGproduct_back0(*this,g,y,_offs);
-    }
-
-    template<typename TYPE>
-    virtual void add_CGproduct_back1(GpartE<TYPE>& r, const GpartE<TYPE>& g, const GpartE<TYPE>& x, const int _offs=0){
-      //G->add_CGproduct_back1(*this,g,g,_offs);
-    }
-      */

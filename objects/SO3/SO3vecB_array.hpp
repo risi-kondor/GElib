@@ -251,7 +251,7 @@ namespace GElib{
 
     Gdims get_adims() const{
       if(parts.size()>0) return parts[0]->get_adims();
-      return 0;
+      return Gdims({0});
     }
 
     SO3type get_tau() const{
@@ -760,7 +760,7 @@ namespace GElib{
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
-	    SO3part_addFproduct_Fn(0,method)(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3());
+	    SO3part_addFproductFn(0,method)(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3());
 	  }
 	}
       }
@@ -849,7 +849,7 @@ namespace GElib{
       for(int l1=0; l1<=L1; l1++){
 	for(int l2=0; l2<=L2; l2++){
 	  for(int l=std::abs(l2-l1); l<=l1+l2 && l<=L ; l++){
-	    SO3part_addFproduct_Fn(1)(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3().flip());
+	    SO3part_addFproductFn(1)(parts[l]->view3(),x.parts[l1]->view3(),y.parts[l2]->view3().flip());
 	  }
 	}
       }

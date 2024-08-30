@@ -12,9 +12,12 @@
 #ifndef _GElibGvecSpec
 #define _GElibGvecSpec
 
+#include "Ltensor.hpp"
+
 #include "GElib_base.hpp"
 #include "Ggroup.hpp"
 #include "GtypeE.hpp"
+
 
 namespace GElib{
 
@@ -72,7 +75,7 @@ namespace GElib{
     SPEC dev(const int i) {_dev=i; return *this;}
 
     //SPEC tau(GtypeE* x){_tau.reset(x); return *this;}
-    //SPEC tau(const GtypeE& x){_tau.reset(x); return *this;}
+    SPEC tau(const GtypeE& x){_tau.reset(new GtypeE(x)); return *this;}
 
 
   public: // ---- Access ------------------------------------------------------------------------------------

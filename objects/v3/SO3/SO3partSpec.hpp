@@ -33,7 +33,7 @@ namespace GElib{
 
     SO3partSpec(const BASE& x): 
       BASE(x){
-      if(ddims.size()!=2) ddims=cnine::Gdims(0,0);
+      if(ddims.size()!=2) ddims=cnine::Gdims({0,0});
     }
 
     SO3partE<TYPE> operator ()() const{

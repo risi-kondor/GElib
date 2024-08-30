@@ -19,16 +19,10 @@
 #include "GElibSession.hpp"
 #include "diff_class.hpp"
 
-#include "RtensorObj.hpp"
+//#include "RtensorObj.hpp"
 
 #include "WignerMatrix.hpp"
 #include "SO3type.hpp"
-//#include "SO3bitype.hpp"
-//#include "SO3part.hpp"
-//#include "SO3vec.hpp"
-//#include "SO3partArray.hpp"
-//#include "SO3vecArray.hpp"
-
 #include "SO3partB.hpp"
 #include "SO3vecB.hpp"
 #include "SO3mvec.hpp"
@@ -39,16 +33,6 @@
 #include "SO3CGtensor.hpp"
 
 //#include "SO3partC.hpp"
-//#include "SO3vecC.hpp"
-//#include "SO3partArrayC.hpp"
-//#include "SO3vecArrayC.hpp"
-
-//#include "SO3bipart.hpp"
-//#include "SO3bivec.hpp"
-//#include "SO3bipartArray.hpp"
-//#include "SO3bivecArray.hpp"
-
-#include "SO3partC.hpp"
 
 #include "CtensorConvolve2d.hpp"
 //#include "CtensorConvolve2dSparse.hpp"
@@ -116,17 +100,6 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   #include "SO3partB_array_py.cpp"
   #include "SO3vecB_array_py.cpp"
 
-  //#include "SO3part_py.cpp"
-  //#include "SO3vec_py.cpp"
-  //#include "SO3partArray_py.cpp"
-  //#include "SO3vecArray_py.cpp"
-
-  //#include "SO3bipart_py.cpp"
-  //#include "SO3bivec_py.cpp"
-  //#include "SO3bipartArray_py.cpp"
-  //#include "SO3bivecArray_py.cpp"
-
-  #include "SO3partC_py.cpp"
 
 }
 

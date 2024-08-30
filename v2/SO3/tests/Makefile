@@ -1,9 +1,8 @@
-ROOTDIR=../../..
+ROOTDIR=../..
 include $(ROOTDIR)/common.txt
 
-INCLUDE= $(CNINE_INCLUDES) -I$(GELIB_INCLUDEDIR) -I$(SO2DIR) -I$(SO3DIR) -I$(SO3DIR)/cell_ops -I$(SO3DIR)/functions 
-INCLUDE+=-I$(SO3DDIR) -I$(SO3NDIR)/functions -I../
-INCLUDE+=-I$(SO2DIR) -I$(SO2DIR)/functions 
+INCLUDE= $(CNINE_INCLUDES) 
+INCLUDE+=-I$(INCLUDEDIR) -I$(COREDIR) -I$(SO3DIR)  
 
 TESTS=$(patsubst %.cpp,%,$(wildcard *.cpp))
 

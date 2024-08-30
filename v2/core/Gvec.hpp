@@ -8,111 +8,72 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _GElibGvecE
-#define _GElibGvecE
+#ifndef _GElibGvec
+#define _GElibGvec
 
 #include "GElib_base.hpp"
-#include "GvecSpec.hpp"
+#include "Gpart.hpp"
 
 
 namespace GElib{
 
-  template<typename TYPE>
-  class GvecE{
+  template<typename PART>
+  class Gvec{
   public:
 
     typedef cnine::Gdims Gdims;
     typedef cnine::Gindex Gindex;
+    typedef typename PART::IrrepIx IrrepIx;
 
-    shared_ptr<Ggroup> G;
     int _nbatch=0;
     Gdims _gdims;
     int dev;
-    mutable map<GirrepIxWrapper,GpartE<TYPE>*> parts;
 
-    GvecE(shared_ptr<Ggroup>& _G): 
-      G(_G){}
-
-    ~GvecE(){
-      for(auto& p: parts)
-	delete p.second;
-    }
+    mutable map<IrrepIx,PART> parts;
 
 
   public: // ---- Constructors ------------------------------------------------------------------------------
 
 
-    GvecE(shared_ptr<Ggroup>& _G, const int __nbatch, const Gdims& __gdims, const int _dev=0):
-      G(_G),
-      _nbatch(__nbatch),
-      _gdims(__gdims),
-      dev(_dev){}
-
-    GvecE(const GvecSpec& spec):
-      G(spec.G),
-      _nbatch(spec.nbatch), 
-      _gdims(spec.adims),
-      dev(spec._dev) //labels(spec.get_labels())
-    {}
+  public: // ---- Named parameter constructors ---------------------------------------------------------------
 
 
-  public: // ---- Copying -----------------------------------------------------------------------------------
+    struct vparams{
+      int b=1;
+      Gdims gdims;
+      int nc=1;
+      std::any tau;
+      int fcode=0;
+      int dev=0;
+    };      
 
+    template<typename... Args>
+    void unroller(vparams& v, const cnine::BatchArgument& x, const Args&... args){
+      v.b=x.get(); unroller(v, args...);}
 
-    GvecE(const GvecE& x):
-      G(x.G),
-      _nbatch(x._nbatch),
-      _gdims(x._gdims),
-      dev(x.dev){
-      GELIB_COPY_WARNING();
-      for(auto& p:x.parts)
-	parts[p.first]=new GpartE<TYPE>(*p.second);
+    template<typename... Args>
+    void unroller(vparams& v, const cnine::GridArgument& x, const Args&... args){
+      v.gdims=x.get(); unroller(v, args...);}
+
+    template<typename... Args>
+    void unroller(vparams& v, const TtypeArgument& x, const Args&... args){
+      v.tau=x.get(); unroller(v, args...);}
+
+    template<typename... Args>
+    void unroller(vparams& v, const cnine::FillArgument& x, const Args&... args){
+      v.fcode=x.get(); unroller(v, args...);}
+
+    template<typename... Args>
+    void unroller(vparams& v, const cnine::DeviceArgument& x, const Args&... args){
+      v.dev=x.get(); unroller(v, args...);}
+
+    void unroller(vparams& v){}
+
+    void reset(const vparams& v){
+      _nbatch=v.b;
+      _gdims=v.gdims;
+      dev=v.dev;
     }
-    
-    GvecE(GvecE&& x):
-      G(x.G),
-      _nbatch(x._nbatch),
-      _gdims(x._gdims),
-      dev(x.dev),
-      parts(std::move(x.parts)){
-      GELIB_MOVE_WARNING();
-    }
-      
-    GvecE& operator=(const GvecE& x){
-      GELIB_ASSIGN_WARNING();
-      GELIB_ASSRT(_nbatch==x._nbatch);
-      GELIB_ASSRT(_gdims==x._gdims);
-      G.reset(x.G);
-      for(auto& p:parts)
-	(*p.second)=(*x.parts[p.first]);
-      return *this;
-    }
-
-    GvecE copy() const{
-      GvecE r(G,_nbatch,_gdims,dev);
-      for(auto& p:parts)
-	r.parts(p.first)=new GpartE<TYPE>(p.second->copy());
-      return r;
-    }
-
-
-  public: // ---- ATen --------------------------------------------------------------------------------------
-
-    
-    #ifdef _WITH_ATEN
-    
-    vector<at::Tensor> torch() const{
-      vector<at::Tensor> R;
-      for_each_part([&](const KEY& key, const PART& part){
-	  R.push_back(part.torch());});
-      return R;
-    }
-
-    #endif 
-
-
-  public: // ---- Access ------------------------------------------------------------------------------------
-
 
 
   public: // ---- Parts -------------------------------------------------------------------------------------
@@ -122,6 +83,7 @@ namespace GElib{
       return parts.size();
     }
 
+    /*
     GtypeE tau() const{
       GtypeE r;
       for(auto p:parts)
@@ -129,7 +91,6 @@ namespace GElib{
       return r;
     }
 
-    /*
     bool has_part(const KEY& l) const{
       return parts.find(l)!=parts.end();
     }
@@ -151,6 +112,14 @@ namespace GElib{
 	lambda(p.first,*p.second);
     }
     */
+
+  public: // ---- Access -----------------------------------------------------------------------------------
+
+
+    int get_dev() const{
+      return dev;
+    }
+
 
   public: // ---- Batches -----------------------------------------------------------------------------------
 
@@ -235,42 +204,21 @@ namespace GElib{
 
 
     string classname() const{
-      return "GElib::GvecE";
+      return "GElib::Gvec";
     }
 
     string repr() const{
       ostringstream oss;
-      //oss<<"GvecE(";
-      oss<<"GvecE("<<G->repr()<<",";
-      if(is_batched()) oss<<"b="<<nbatch()<<",";
-      if(is_grid()) oss<<"grid="<<gdims()<<",";
-      oss<<"tau="<<tau()<<",";
-      if(dev>0) oss<<"dev="<<dev<<",";
-      oss<<"\b)";
-      //"<<"["<<dev<<"]";
       return oss.str();
     }
     
     string str(const string indent="", bool norepr=false) const{
       ostringstream oss;
       if(!norepr) oss<<indent<<repr()<<":"<<endl;
-      /*
-     if(is_batched()){
-	for_each_batch([&](const int b, const GvecE& x){
-	    oss<<indent<<"  "<<"Batch "<<b<<":"<<endl;
-	    oss<<x.str(indent+"  ",true);
-	  });
-      }else{
-	for_each_part([&](const KEY p, const PART& x){
-	    oss<<indent<<"  "<<"Part "<<p<<":"<<endl;
-	    oss<<x.str(indent+"  ");
-	  });
-      }
-      */
       return oss.str();
     }
 
-    friend ostream& operator<<(ostream& stream, const GvecE& x){
+    friend ostream& operator<<(ostream& stream, const Gvec& x){
       stream<<x.str(); return stream;
     }
 

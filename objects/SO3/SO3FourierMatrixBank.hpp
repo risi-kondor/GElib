@@ -71,7 +71,7 @@ namespace GElib{
       auto it=Fmatrices.find(pair<int,int>(l,n));
       if(it!=Fmatrices.end()) return *it->second;
 
-      Ctensor* F=new Ctensor(cnine::Gdims(2*l+1,n));
+      Ctensor* F=new Ctensor(cnine::Gdims({2*l+1,n}));
       float fact=1.0/sqrt(n);
       for(int i=0; i<n; i++){
 	float a=M_PI*2.0*i/n;
@@ -100,7 +100,7 @@ namespace GElib{
       auto it=iFmatrices.find(pair<int,int>(l,n));
       if(it!=iFmatrices.end()) return *it->second;
 
-      Ctensor* F=new Ctensor(cnine::Gdims(n,2*l+1));
+      Ctensor* F=new Ctensor(cnine::Gdims({n,2*l+1}));
       float fact=1.0/sqrt(n);
       for(int i=0; i<n; i++){
 	float a=M_PI*2.0*i/n;
@@ -130,7 +130,7 @@ namespace GElib{
       auto it=Dmatrices.find(ix);
       if(it!=Dmatrices.end()) return *it->second;
 
-      Ctensor* D=new Ctensor(cnine::Gdims(2*l+1,n,2*l+1));
+      Ctensor* D=new Ctensor(cnine::Gdims({2*l+1,n,2*l+1}));
       WignerMatrix<float> Wigner;
       float fact=sqrt(2*l+1)/sqrt(n); ///sqrt(M_PI*8);
       for(int i=0; i<n; i++){

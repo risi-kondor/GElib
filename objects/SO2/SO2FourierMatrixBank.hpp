@@ -51,7 +51,7 @@ namespace GElib{
       auto it=matrices.find(pair<int,int>(m,n));
       if(it!=matrices.end()) return *it->second;
 
-      Ctensor* F=new Ctensor(cnine::Gdims(m,n));
+      Ctensor* F=new Ctensor(cnine::Gdims({m,n}));
       for(int i=0; i<m; i++){
 	float a=M_PI*2.0*i/n;
 	for(int j=0; j<n; j++)

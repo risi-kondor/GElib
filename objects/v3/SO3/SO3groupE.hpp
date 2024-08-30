@@ -18,6 +18,8 @@
 #include "GpartSpec.hpp"
 #include "GpartE.hpp"
 
+#include "SO3irrepIx.hpp"
+
 #include "SO3part_addCGproductFn.hpp"
 #include "SO3part_addCGproduct_back0Fn.hpp"
 #include "SO3part_addCGproduct_back1Fn.hpp"
@@ -31,44 +33,6 @@
 
 namespace GElib{
 
-
-  class SO3irrepIx: public GirrepIx{
-  public:
-    
-    int l=0;
-
-    SO3irrepIx(const int _l): l(_l){}
-
-    SO3irrepIx* clone() const{
-      return new SO3irrepIx(*this);
-    }
-
-    bool operator==(const GirrepIx& y) const{
-      return l==static_cast<const SO3irrepIx&>(y).l;
-    }
-
-    bool operator<(const GirrepIx& y) const{
-      return l<static_cast<const SO3irrepIx&>(y).l;
-    }
-
-
-  public: // ---- I/O ----------------------------------------------------------------------------------------
-
-
-    string classname() const{
-      return "GElib::SO3irrepIx";
-    }
-
-    string repr() const{
-      return "l="+to_string(l);
-    }
-
-    string str() const{
-      return to_string(l);
-    }
-
-
-  };
 
 
 

@@ -13,6 +13,8 @@
 #define _GElib_base
 
 #include "Cnine_base.hpp"
+#include "TensorView.hpp"
+
 
 using namespace std; 
 //using namespace Cnine; 
@@ -83,16 +85,6 @@ namespace GElib{
   }
 
   // ---- Helpers --------------------------------------------------------------------------------------------
-
-  /*
-  inline ostream& operator<<(ostream& stream, const vector<int>& v){
-    stream<<"(";
-    for(int i=0; i<v.size()-1; i++)
-      stream<<v[i]<<",";
-    if(v.size()>0) stream<<v[v.size()-1]<<")";
-    return stream;
-  }
-  */
 
 
 }

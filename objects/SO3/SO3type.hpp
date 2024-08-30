@@ -250,7 +250,7 @@ namespace GElib{
     const int n=std::min(tau1.size(),tau2.size());
     cnine::GdimsPack R;
     for(int i=0; i<n; i++)
-      R.push_back(cnine::Gdims(tau1[i],tau2[i]));
+      R.push_back(cnine::Gdims({tau1[i],tau2[i]}));
     return R;
   }
 

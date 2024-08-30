@@ -11,11 +11,6 @@ CNINE_INCLUDES+=-I$(CNINE_ROOT)/utility
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/wrappers
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/legacy/scalar 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/legacy/tensor 
-#CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/ntensor 
-#CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/ntensor/functions  
-#CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_views 
-#CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_views/functions  
-#CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_array 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/legacy/backendA 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/legacy/backendB 
 CNINE_INCLUDES+=-I$(CNINE_ROOT)/objects/tensor_array/cell_maps 
@@ -28,14 +23,10 @@ CNINE_INCLUDES+=-I$(CNINE_ROOT)/tensor_views
 
 CNINE_CUDADIR=$(CNINE_ROOT)/cuda
 
-SNOB2_INCLUDES=-I$(SNOB2_ROOT)/include -I$(SNOB2_ROOT)/combinatorial -I$(SNOB2_ROOT)/Sn 
-
-GELIB_INCLUDEDIR=$(ROOTDIR)/include
-SO2DIR=$(ROOTDIR)/objects/SO2
-SO3DIR=$(ROOTDIR)/objects/SO3
-SO3NDIR=$(ROOTDIR)/objects/SO3n
-SO3CDIR=$(ROOTDIR)/objects/SO3c
-SO3DDIR=$(ROOTDIR)/objects/SO3d
+INCLUDEDIR=$(ROOTDIR)/include
+COREDIR=$(ROOTDIR)/core
+SO2DIR=$(ROOTDIR)/SO2
+SO3DIR=$(ROOTDIR)/SO3
 GELIB_CUDADIR=$(ROOTDIR)/cuda
 
 # COMBINATORIALDIR=$(ROOTDIR)/objects/combinatorial

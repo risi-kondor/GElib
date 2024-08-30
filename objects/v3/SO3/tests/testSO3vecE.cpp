@@ -12,7 +12,7 @@ int main(int argc, char** argv){
   int b=3;
   int l=2;
   int n=2;
-  Gdims grid(2,2);
+  Gdims grid({2,2});
   SO3typeE tau({1,1,1});
   cout<<tau<<endl;
 

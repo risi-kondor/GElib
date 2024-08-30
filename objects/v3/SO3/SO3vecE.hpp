@@ -10,67 +10,15 @@
 #ifndef _SO3vecE
 #define _SO3vecE
 
-#include "SO3groupE.hpp"
 #include "GtypeE.hpp"
 #include "GvecSpec.hpp"
 #include "GvecE.hpp"
 
+#include "SO3groupE.hpp"
+#include "SO3vecSpec.hpp"
+
 
 namespace GElib{
-
-
-  template<typename TYPE>
-  class SO3vecE;
-
-
-  class SO3typeE: public GtypeE{
-  public:
-
-    typedef GtypeE BASE;
-
-
-    SO3typeE(const initializer_list<int>& list){
-      int l=0;
-      for(auto p:list)
-	(*this)[SO3irrepIx(l++)]=p;
-    }
-
-  };
-
-
-  // ---------------------------------------------------------------------------------------------------------
-
-
-  template<typename TYPE>
-  class SO3vecSpec: public GvecSpecBase<SO3vecSpec<TYPE> >{
-  public:
-
-    typedef GvecSpecBase<SO3vecSpec<TYPE> > BASE;
-
-    SO3vecSpec():
-      BASE(new SO3group()){}
-
-    SO3vecSpec(const BASE& x): 
-      BASE(x){
-      //if(ddims.size()!=2) ddims=cnine::Gdims(0,0);
-    }
-
-    SO3vecE<TYPE> operator ()() const{
-      return SO3vecE<TYPE>(*this);
-    }
-
-    /*
-    SO3vecSpec& l(const int _l){
-      ix.reset(new SO3irrepIx(_l));
-      ddims[0]=2*_l+1;
-      return *this;
-    }
-    */
-
-  };
-
-
-  // ---------------------------------------------------------------------------------------------------------
 
 
   template<typename TYPE>

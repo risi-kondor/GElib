@@ -25,9 +25,9 @@ int main(int argc, char** argv){
   cout<<u<<endl;
   cout<<v<<endl;
 
-  auto M=Ltensor<complex<float> >::gaussian().dims({2,3})();
+  auto M=TensorView<complex<float> >({2,3},4);
   cout<<M<<endl;
-  cout<<u*M<<endl;
+  //cout<<u*M<<endl;
 
   auto w=CGproduct(u,u,2);
   cout<<w<<endl;

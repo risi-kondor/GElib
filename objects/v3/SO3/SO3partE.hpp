@@ -13,6 +13,7 @@
 #include "SO3groupE.hpp"
 #include "GpartSpec.hpp"
 #include "GpartE.hpp"
+#include "SO3partSpec.hpp"
 
 
 namespace GElib{

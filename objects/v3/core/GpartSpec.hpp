@@ -37,7 +37,7 @@ namespace GElib{
     shared_ptr<GirrepIx> ix;
 
     GpartSpecBase(Ggroup* _G): G(_G){
-      ddims=cnine::Gdims(0,0);
+      ddims=cnine::Gdims({0,0});
     }
 
     GpartSpecBase(const cnine::Gdims& dims, const cnine::DimLabels& labels, const int d, 
