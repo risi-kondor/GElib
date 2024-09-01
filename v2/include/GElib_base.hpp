@@ -37,9 +37,20 @@ using namespace std;
 
 namespace GElib{
 
+
+  template<typename TYPE>
+  auto print_if_possible(const TYPE& x, int) -> decltype(x.to_print(),std::to_string(1)){
+    return x.to_print();
+  }
+
+  template<typename TYPE>
+  string print_if_possible(const TYPE& x, long){
+    return x.str();
+  }
+
   template<typename TYPE>
   inline void print(const TYPE& x){
-    cout<<x.to_print()<<endl;
+    cout<<print_if_possible(x,0)<<endl;
   }
   
   using IrrepArgument=cnine::NamedType<std::any, struct IrrepArgumentTag>;

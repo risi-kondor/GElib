@@ -11,9 +11,12 @@
 #include "Cnine_base.cpp"
 #include "GElib_base.hpp"
 
+#include "SO3CGbank.hpp"
 
 
 namespace GElib{
+
+  SO3CGbank SO3_CGbank;
 
 }
 

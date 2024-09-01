@@ -17,22 +17,39 @@
 
 namespace GElib{
 
-  template<typename PART>
+  template<typename GVEC, typename GPART>
   class Gvec{
   public:
 
     typedef cnine::Gdims Gdims;
     typedef cnine::Gindex Gindex;
-    typedef typename PART::IrrepIx IrrepIx;
+
+    typedef typename GPART::GROUP GROUP;
+    typedef typename GPART::IRREP_IX IRREP_IX;
+    typedef typename GPART::GTYPE GTYPE;
 
     int _nbatch=0;
     Gdims _gdims;
     int dev;
 
-    mutable map<IrrepIx,PART> parts;
+    mutable map<IRREP_IX,GPART> parts;
 
 
   public: // ---- Constructors ------------------------------------------------------------------------------
+
+
+    Gvec(){}
+
+    Gvec(const int __nbatch, const Gdims& __gdims, const int _dev=0):
+      _nbatch(__nbatch),
+      _gdims(__gdims),
+      dev(_dev){}
+
+    Gvec(const int __nbatch, const Gdims& __gdims, const GTYPE& tau, const int fcode=0, const int _dev=0):
+      Gvec(__nbatch,__gdims,_dev){
+      for(auto& p: tau.map)
+	parts.emplace(p.first,GPART(__nbatch,__gdims,p.first,p.second,fcode,_dev));
+    }
 
 
   public: // ---- Named parameter constructors ---------------------------------------------------------------
@@ -76,6 +93,24 @@ namespace GElib{
     }
 
 
+  public: // ---- Factory methods -------------------------------------------------------------------------------------
+
+
+    GVEC zeros_like() const{
+      GVEC R(_nbatch,_gdims,dev);
+      for(auto& p: parts)
+	R.parts[p.first]=p.second.zeros_like();
+    }
+
+    template<typename GTYPE>
+    GVEC zeros_like(const GTYPE& tau) const{
+      GVEC R(_nbatch,_gdims,dev);
+      for(auto& p: tau.map)
+	R.parts.emplace(p.first,GPART(getb(),gdims(),p.first,p.second,0,get_dev()));
+      return R;
+    }
+
+
   public: // ---- Parts -------------------------------------------------------------------------------------
 
 
@@ -83,35 +118,34 @@ namespace GElib{
       return parts.size();
     }
 
-    /*
-    GtypeE tau() const{
-      GtypeE r;
+    GTYPE get_tau() const{
+      GTYPE r;
       for(auto p:parts)
-	r.map[p.first]=p.second->getn();
+	r.map[p.first]=p.second.getn();
       return r;
     }
 
-    bool has_part(const KEY& l) const{
+    bool has_part(const IRREP_IX& l) const{
       return parts.find(l)!=parts.end();
     }
 
-    PART operator()(const KEY& l) const{
+    //PART operator()(const IRREP_IX& l) const{
+    //auto it=parts.find(l);
+    //assert(it!=parts.end());
+    //return PART(*it->second);
+    //}
+
+    GPART part(const IRREP_IX& l) const{
       auto it=parts.find(l);
       assert(it!=parts.end());
-      return PART(*it->second);
+      return it->second;
     }
 
-    PART part(const KEY& l) const{
-      auto it=parts.find(l);
-      assert(it!=parts.end());
-      return PART(*it->second);
-    }
-
-    void for_each_part(const std::function<void(const KEY&, const PART&)>& lambda) const{
+    void for_each_part(const std::function<void(const IRREP_IX&, const GPART&)>& lambda) const{
       for(auto& p:parts) 
 	lambda(p.first,*p.second);
     }
-    */
+
 
   public: // ---- Access -----------------------------------------------------------------------------------
 
@@ -126,6 +160,10 @@ namespace GElib{
 
     bool is_batched() const{
       return _nbatch>0;
+    }
+
+    int getb() const{
+      return _nbatch;
     }
 
     int nbatch() const{
@@ -175,6 +213,32 @@ namespace GElib{
     }
     */
 
+  public: // ---- Promotions ---------------------------------------------------------------------------------
+
+
+    int dominant_batch(const GVEC& y) const{
+      int xb=getb();
+      int yb=y.getb();
+      if(xb==yb) return xb;
+      if(xb==1) return yb;
+      if(yb==1) return xb;
+      throw std::invalid_argument("Gelib error: the batch dimensions of "+repr()+" and "+y.repr()+
+	" cannot be reconciled.");
+      return 0;
+    }
+
+    Gdims dominant_gdims(const GVEC& y) const{
+      Gdims xg=gdims();
+      Gdims yg=y.gdims();
+      if(xg==yg) return xg;
+      if(!is_grid()) return yg;
+      if(!y.is_grid()) return xg;
+      throw std::invalid_argument("Gelib error: the grid dimensions of "+repr()+" and "+y.repr()+
+	" cannot be reconciled.");
+      return Gdims();
+    }
+
+
   public: // ---- Cumulative operations ----------------------------------------------------------------------
 
     /*
@@ -198,7 +262,58 @@ namespace GElib{
     */
 
 
+  public: // ---- CG-products --------------------------------------------------------------------------------
+
     
+    GVEC CGproduct(const GVEC& y) const{
+      auto& x=static_cast<const GVEC&>(*this);
+      //GVEC R=x.zeros_like(x.get_tau().CGproduct(y.get_tau()));
+      GVEC R(x.dominant_batch(y),x.dominant_gdims(y),x.get_tau().CGproduct(y.get_tau()),0,x.get_dev());
+      R.add_CGproduct(x,y);
+      return R;
+    }
+
+    GVEC CGproduct(const GVEC& y, const IRREP_IX& limit) const{
+      auto& x=static_cast<const GVEC&>(*this);
+      //GVEC R=x.zeros_like(x.get_tau().CGproduct(y.get_tau(),limit));
+      GVEC R(x.dominant_batch(y),x.dominant_gdims(y),x.get_tau().CGproduct(y.get_tau(),limit),0,x.get_dev());
+      R.add_CGproduct(x,y);
+      return R;
+    }
+
+    void add_CGproduct(const GVEC& x, const GVEC& y){
+      GTYPE offset;
+      for(auto& p:x.parts)
+	for(auto& q:y.parts)
+	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const IRREP_IX& z, const int m){
+	      if(!has_part(z)) return;
+	      part(z).add_CGproduct(p.second,q.second,offset[z]);
+	      offset[z]+=m*p.second.getn()*q.second.getn();
+	    });
+    }
+
+    void add_CGproduct_back0(const GVEC& g, const GVEC& y){
+      GTYPE offset;
+      for(auto& p:parts)
+	for(auto& q:y.parts)
+	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const IRREP_IX& z, const int m){
+	      if(!g.has_part(z)) return;
+	      p.second.add_CGproduct_back0(g.part(z),q.second,offset[z]);
+	      offset[z]+=m*p.second.getn()*q.second.getn();
+	    });
+    }
+
+    void add_CGproduct_back1(const GVEC& g, const GVEC& x){
+      GTYPE offset;
+      for(auto& p:x.parts)
+	for(auto& q:parts)
+	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const IRREP_IX& z, const int m){
+	      if(!g.has_part(z)) return;
+	      q.second.add_CGproduct_back1(g.part(z),p.second,offset[z]);
+	      offset[z]+=m*p.second.getn()*q.second.getn();
+	    });
+    }
+
 
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
@@ -212,9 +327,19 @@ namespace GElib{
       return oss.str();
     }
     
-    string str(const string indent="", bool norepr=false) const{
+    string str(const string indent="") const{
       ostringstream oss;
-      if(!norepr) oss<<indent<<repr()<<":"<<endl;
+      for(auto& p:parts){
+	oss<<indent<<"Part "<<p.first<<":"<<endl;
+	oss<<p.second.str(indent+"  ")<<endl;
+      }
+      return oss.str();
+    }
+
+    string to_print(const string indent="") const{
+      ostringstream oss;
+      oss<<indent<<static_cast<const GVEC&>(*this).repr()<<":"<<endl;
+      oss<<str(indent+"  ");
       return oss.str();
     }
 

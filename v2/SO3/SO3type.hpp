@@ -12,6 +12,7 @@
 
 #include "GElib_base.hpp"
 #include "Gtype.hpp"
+#include "SO3group.hpp"
 
 
 namespace GElib{
@@ -20,6 +21,8 @@ namespace GElib{
   public:
 
     typedef Gtype<int> BASE;
+    typedef int IrrepIx;
+    typedef SO3group Group;
 
     using BASE::map;
 

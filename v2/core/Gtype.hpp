@@ -15,9 +15,11 @@
 
 namespace GElib{
 
+  struct Gtype_type{};
+
 
   template<typename IrrepIx>
-  class Gtype{
+  class Gtype: public Gtype_type{
   public:
 
     //typedef map<GirrepIxWrapper,int> BASE;
@@ -43,14 +45,14 @@ namespace GElib{
     static Gtype Fourier(const int maxl){
       Gtype r;
       for(int l=0; l<=maxl; l++)
-	r[l]=GROUP::dim_of_irrep(l);
+	r[l]=Group::dim_of_irrep(l);
       return r;
     }
 
     static Gtype Fourier(const initializer_list<int>& list){
       Gtype r;
       for(auto l:list)
-	r[l]=GROUP::dim_of_irrep(l);
+	r[l]=Group::dim_of_irrep(l);
       return r;
     }
     */
@@ -66,6 +68,10 @@ namespace GElib{
     }
     */
 
+    IrrepIx highest() const{
+      return (map.crbegin()++)->first;
+    }
+
     int& operator[](const IrrepIx& ix){
       return map[ix];
     }
@@ -73,6 +79,32 @@ namespace GElib{
     int operator()(const IrrepIx& ix) const{
       if(map.find(ix)==map.end()) return 0;
       return map[ix];
+    }
+
+
+  public: // ---- CG-products --------------------------------------------------------------------------------
+
+
+    template<typename GTYPE>
+    GTYPE CGproduct(const GTYPE& y) const{
+      auto& x=static_cast<const GTYPE&>(*this);
+      GTYPE R;
+      for(auto& p:x.map)
+	for(auto& q:y.map)
+	  GTYPE::Group::for_each_CGcomponent(p.first,q.first,[&](const typename GTYPE::IrrepIx& z, const int m){
+	      R.map[z]+=m*p.second*q.second;});
+      return R;
+    }
+
+    template<typename GTYPE>
+    GTYPE CGproduct(const GTYPE& y, const typename GTYPE::IrrepIx& limit) const{
+      auto& x=static_cast<const GTYPE&>(*this);
+      GTYPE R;
+      for(auto& p:x.map)
+	for(auto& q:y.map)
+	  GTYPE::Group::for_each_CGcomponent(p.first,q.first,[&](const typename GTYPE::IrrepIx& z, const int m){
+	      if(z<=limit) R.map[z]+=m*p.second*q.second;});
+      return R;
     }
 
 

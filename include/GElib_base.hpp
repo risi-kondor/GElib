@@ -13,7 +13,6 @@
 #define _GElib_base
 
 #include "Cnine_base.hpp"
-#include "TensorView.hpp"
 
 
 using namespace std; 

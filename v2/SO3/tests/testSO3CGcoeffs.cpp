@@ -1,6 +1,5 @@
 #include "GElib_base.cpp"
-#include "SO3type.hpp"
-#include "SO3functions.hpp"
+
 
 using namespace cnine;
 using namespace GElib;
@@ -9,10 +8,10 @@ int main(int argc, char** argv){
   //GElibSession session;
   cout<<endl;
 
-  SO3type tau({{1,3},{2,4}});
-  print(tau);
+  //SO3_CGcoeffs<float> C(CGindex(1,1,1));
+  //print(C);
 
-  auto tau2=CGproduct(tau,tau);
-  print(tau2);
+  auto CGmatrix=SO3_CGbank.get<float>(1,1,1);
+  cout<<CGmatrix<<endl;
 
 }
