@@ -21,8 +21,10 @@ namespace GElib{
   public:
 
     typedef Gtype<int> BASE;
-    typedef int IrrepIx;
+    typedef int IRREP_IX;
     typedef SO3group Group;
+
+    static constexpr int null_ix=-1;
 
     using BASE::map;
 

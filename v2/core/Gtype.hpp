@@ -91,19 +91,34 @@ namespace GElib{
       GTYPE R;
       for(auto& p:x.map)
 	for(auto& q:y.map)
-	  GTYPE::Group::for_each_CGcomponent(p.first,q.first,[&](const typename GTYPE::IrrepIx& z, const int m){
+	  GTYPE::Group::for_each_CGcomponent(p.first,q.first,[&](const typename GTYPE::IRREP_IX& z, const int m){
 	      R.map[z]+=m*p.second*q.second;});
       return R;
     }
 
     template<typename GTYPE>
-    GTYPE CGproduct(const GTYPE& y, const typename GTYPE::IrrepIx& limit) const{
+    GTYPE CGproduct(const GTYPE& y, const typename GTYPE::IRREP_IX& limit) const{
       auto& x=static_cast<const GTYPE&>(*this);
       GTYPE R;
       for(auto& p:x.map)
 	for(auto& q:y.map)
-	  GTYPE::Group::for_each_CGcomponent(p.first,q.first,[&](const typename GTYPE::IrrepIx& z, const int m){
+	  GTYPE::Group::for_each_CGcomponent(p.first,q.first,[&](const typename GTYPE::IRREP_IX& z, const int m){
 	      if(z<=limit) R.map[z]+=m*p.second*q.second;});
+      return R;
+    }
+
+
+  public: // ---- Diag CG-products ---------------------------------------------------------------------------
+
+
+    template<typename GTYPE>
+    GTYPE DiagCGproduct(const GTYPE& y, const typename GTYPE::IRREP_IX& limit=GTYPE::null_ix) const{
+      auto& x=static_cast<const GTYPE&>(*this);
+      GTYPE R;
+      for(auto& p:x.map)
+	for(auto& q:y.map)
+	  GTYPE::Group::for_each_CGcomponent(p.first,q.first,[&](const typename GTYPE::IRREP_IX& z, const int m){
+	      if(limit==GTYPE::null_ix || z<=limit) R.map[z]+=m*p.second;});
       return R;
     }
 

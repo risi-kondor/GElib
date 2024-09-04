@@ -111,6 +111,18 @@ namespace GElib{
     }
 
 
+  public: // ---- Conversions -------------------------------------------------------------------------------
+
+
+    GVEC& downcast(){
+      return static_cast<GVEC&>(*this);
+    }
+
+    const GVEC& downcast() const{
+      return static_cast<const GVEC&>(*this);
+    }
+
+
   public: // ---- Parts -------------------------------------------------------------------------------------
 
 
@@ -315,6 +327,50 @@ namespace GElib{
     }
 
 
+  public: // ---- CG-products --------------------------------------------------------------------------------
+
+    
+    GVEC DiagCGproduct(const GVEC& y, const IRREP_IX& limit=GPART::null_ix) const{
+      auto& x=static_cast<const GVEC&>(*this);
+      GVEC R(x.dominant_batch(y),x.dominant_gdims(y),x.get_tau().DiagCGproduct(y.get_tau(),limit),0,x.get_dev());
+      R.add_DiagCGproduct(x,y);
+      return R;
+    }
+
+    void add_DiagCGproduct(const GVEC& x, const GVEC& y){
+      GTYPE offset;
+      for(auto& p:x.parts)
+	for(auto& q:y.parts)
+	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const IRREP_IX& z, const int m){
+	      if(!has_part(z)) return;
+	      part(z).add_CGproduct(p.second,q.second,offset[z]);
+	      offset[z]+=m*p.second.getn();
+	    });
+    }
+
+    void add_DiagCGproduct_back0(const GVEC& g, const GVEC& y){
+      GTYPE offset;
+      for(auto& p:parts)
+	for(auto& q:y.parts)
+	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const IRREP_IX& z, const int m){
+	      if(!g.has_part(z)) return;
+	      p.second.add_CGproduct_back0(g.part(z),q.second,offset[z]);
+	      offset[z]+=m*p.second.getn();
+	    });
+    }
+
+    void add_DiagCGproduct_back1(const GVEC& g, const GVEC& x){
+      GTYPE offset;
+      for(auto& p:x.parts)
+	for(auto& q:parts)
+	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const IRREP_IX& z, const int m){
+	      if(!g.has_part(z)) return;
+	      q.second.add_CGproduct_back1(g.part(z),p.second,offset[z]);
+	      offset[z]+=m*p.second.getn();
+	    });
+    }
+
+
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
 
@@ -323,8 +379,9 @@ namespace GElib{
     }
 
     string repr() const{
-      ostringstream oss;
-      return oss.str();
+      return downcast().repr();
+    //ostringstream oss;
+    //return oss.str();
     }
     
     string str(const string indent="") const{

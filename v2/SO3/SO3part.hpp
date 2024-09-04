@@ -14,7 +14,17 @@
 #include "Gpart.hpp"
 #include "SO3group.hpp"
 #include "SO3type.hpp"
+
+#include "SO3part_addSpharmFn.hpp"
+
 #include "SO3part_addCGproductFn.hpp"
+#include "SO3part_addCGproduct_back0Fn.hpp"
+#include "SO3part_addCGproduct_back1Fn.hpp"
+
+#include "SO3part_addDiagCGproductFn.hpp"
+#include "SO3part_addDiagCGproduct_back0Fn.hpp"
+#include "SO3part_addDiagCGproduct_back1Fn.hpp"
+
 
 namespace GElib{
 
@@ -25,10 +35,13 @@ namespace GElib{
 
     typedef Gpart<SO3part<TYPE>,complex<TYPE> > BASE;
     typedef cnine::TensorView<complex<TYPE> > TENSOR;
+    typedef cnine::TensorView<TYPE> RTENSOR;
 
     typedef SO3group GROUP;
     typedef int IRREP_IX; 
     typedef SO3type GTYPE;
+
+    static constexpr int null_ix=-1;
 
     typedef cnine::Gdims Gdims;
 
@@ -38,10 +51,14 @@ namespace GElib{
     using TENSOR::dims;
 
     using BASE::unroller;
+    using BASE::zeros_like;
     using BASE::getn;
     using BASE::dominant_batch;
     using BASE::dominant_gdims;
-    using BASE::co_promote;
+    //using BASE::co_promote;
+    //using BASE::fuse_and_co_promote;
+    //using BASE::canonicalize;
+    //using BASE::co_canonicalize;
 
 
   public: // ---- Constructors -------------------------------------------------------------------------------
@@ -92,6 +109,24 @@ namespace GElib{
       return BASE::zeros_like(2*l+1,n);
     }
 
+    static SO3part zeros_like(const int l, const cnine::TensorView<TYPE>& x, const int fcode=0, const int dev=0){
+      int d=x.ndims();
+      int nc=cnine::ifthen(d>1,x.dims(-1),1);
+      int b=cnine::ifthen(d>2,x.dims[0],1);
+      Gdims gdims=cnine::ifthen(d>3,x.dims.chunk(1,d-3),Gdims());
+      return SO3part(b,gdims,l,nc,fcode,dev);
+    }
+
+
+  public: // ---- Named constructors -------------------------------------------------------------------------
+
+
+    static SO3part spharm(const cnine::TensorView<TYPE>& x, const int l){
+      auto R=zeros_like(l,x);
+      R.add_spharm(x);
+      return R;
+    }
+
 
   public: // ---- Copying ------------------------------------------------------------------------------------
 
@@ -104,6 +139,12 @@ namespace GElib{
       BASE(x){
       GELIB_ASSRT(ndims()>=3);
       GELIB_ASSRT(dims(1)%2==1);
+    }
+
+    SO3part like(const TENSOR& x) const{
+      GELIB_ASSRT(ndims()>=3);
+      GELIB_ASSRT(dims(-2)==x.dims(-2));
+      return SO3part(x);
     }
 
 
@@ -119,24 +160,47 @@ namespace GElib{
 
     
     int getl() const{
-      return (TENSOR::dims(-2)-1)/2;
+      return (dims(-2)-1)/2;
     }
 
 
   public: // ---- CG-products --------------------------------------------------------------------------------
 
     
-    void add_CGproduct(const SO3part& x, const SO3part& y, const int _offs=0){
-      auto [x0,y0]=x.co_promote(y);
-      SO3part_addCGproductFn<SO3part,TYPE>()(*this,x,y,_offs);
+    void add_CGproduct(const SO3part& x, const SO3part& y, const int offs=0){
+      SO3part_addCGproductFn<SO3part,TYPE>()(*this,x,y,offs);
     }
 
-    void add_CGproduct_back0(const SO3part& g, const SO3part& y, const int _offs=0){
-      //SO3part_addCGproduct_back0Fn()(*this,g,y,_offs);
+    void add_CGproduct_back0(const SO3part& g, const SO3part& y, const int offs=0){
+      SO3part_addCGproduct_back0Fn<SO3part,TYPE>()(*this,g,y,offs);
     }
 
-    void add_CGproduct_back1(const SO3part& g, const SO3part& x, const int _offs=0){
-      //SO3part_addCGproduct_back1Fn()(*this,g,x,_offs);
+    void add_CGproduct_back1(const SO3part& g, const SO3part& x, const int offs=0){
+      SO3part_addCGproduct_back1Fn<SO3part,TYPE>()(*this,g,x,offs);
+    }
+
+
+  public: // ---- Diag CG-products --------------------------------------------------------------------------------
+
+    
+    void add_DiagCGproduct(const SO3part& x, const SO3part& y, const int offs=0){
+      SO3part_addDiagCGproductFn<SO3part,TYPE>()(*this,x,y,offs);
+    }
+
+    void add_DiagCGproduct_back0(const SO3part& g, const SO3part& y, const int offs=0){
+      SO3part_addDiagCGproduct_back0Fn<SO3part,TYPE>()(*this,g,y,offs);
+    }
+
+    void add_DiagCGproduct_back1(const SO3part& g, const SO3part& x, const int offs=0){
+      SO3part_addDiagCGproduct_back1Fn<SO3part,TYPE>()(*this,g,x,offs);
+    }
+
+
+  public: // ---- Spherical harmonics -----------------------------------------------------------------------
+
+
+    void add_spharm(const RTENSOR& x){
+      SO3part_addSpharmFn<TYPE>()(*this,x);
     }
 
 

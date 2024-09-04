@@ -16,14 +16,15 @@
 
 namespace GElib{
 
-  template<typename OBJ>
-  OBJ CGproduct(const OBJ& x, const OBJ& y){
-    return x.CGproduct(y); 
+
+  template<typename OBJ, typename... Args>
+  OBJ CGproduct(const OBJ& x, const OBJ& y, const Args&... args){
+    return x.CGproduct(y,args...); 
   }
 
-  template<typename OBJ, typename ARG0>
-  OBJ CGproduct(const OBJ& x, const OBJ& y, const ARG0 arg0){
-    return x.CGproduct(y,arg0); 
+  template<typename OBJ, typename... Args>
+  OBJ DiagCGproduct(const OBJ& x, const OBJ& y, const Args&... args){
+    return x.DiagCGproduct(y,args...); 
   }
 
 }
@@ -64,3 +65,13 @@ namespace GElib{
     return R;
   }
   */
+//   template<typename OBJ>
+//   OBJ CGproduct(const OBJ& x, const OBJ& y){
+//     return x.CGproduct(y); 
+//   }
+
+//   template<typename OBJ, typename ARG0>
+//   OBJ CGproduct(const OBJ& x, const OBJ& y, const ARG0 arg0){
+//     return x.CGproduct(y,arg0); 
+//   }
+

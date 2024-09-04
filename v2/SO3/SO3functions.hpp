@@ -19,7 +19,8 @@
 
 namespace GElib{
 
-
+  //template<typename TYPE>
+  //inline spharm(const cnine::TensorView<TYPE>& x, const int l)
 
 }
 

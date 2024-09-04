@@ -42,7 +42,7 @@ namespace GElib{
       FTENSOR R({2*l1+1,2*l2+1});
       for(int m1=-l1; m1<=l1; m1++)
 	for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++)
-	  R(m1+l1,m2+l1)=slowCG(l1,l2,l,m1,m2);
+	  R(m1+l1,m2+l2)=slowCG(l1,l2,l,m1,m2);
       return R;
     }
 

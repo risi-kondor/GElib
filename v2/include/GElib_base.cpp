@@ -12,11 +12,13 @@
 #include "GElib_base.hpp"
 
 #include "SO3CGbank.hpp"
+#include "SO3SPHgen.hpp"
 
 
 namespace GElib{
 
   SO3CGbank SO3_CGbank;
+  SO3SPHgen SO3_SPHgen;
 
 }
 
