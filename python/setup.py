@@ -46,9 +46,6 @@ def main():
                      cwd + cnine_folder + '/include/cmaps',
                      cwd + cnine_folder + '/legacy/scalar',
                      cwd + cnine_folder + '/objects/matrix',
-                     cwd + cnine_folder + '/legacy/tensor',
-                     cwd + cnine_folder + '/legacy/backendA',
-                     cwd + cnine_folder + '/legacy/backendB',
                      cwd + cnine_folder + '/tensor_views',
                      cwd + cnine_folder + '/tensor_views/functions',
                      cwd + cnine_folder + '/objects/tensor_array',
@@ -60,14 +57,9 @@ def main():
                      cwd + cnine_folder + '/objects/ntensor/functions',
                      cwd + '/../include',
                      cwd + '/../cuda',
-                     cwd + '/../objects/SO2',
-                     cwd + '/../objects/SO2/functions',
-                     cwd + '/../objects/SO3',
-                     cwd + '/../objects/SO3/cell_ops',
-                     cwd + '/../objects/SO3/functions',
-#                     cwd + '/../objects/SO3n',
-                     cwd + '/../objects/SO3c',
-                     cwd + '/../objects/SO3n/functions'
+                     cwd + '/../core',
+                     cwd + '/../SO3',
+                     cwd + '/../SO3/functions'
                      ]
 
 
