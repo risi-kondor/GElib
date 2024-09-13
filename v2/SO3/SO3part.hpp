@@ -72,6 +72,9 @@ namespace GElib{
     SO3part(const int _b, const Gdims& _gdims, const int _l, const int _nc, const int _fcode=0, const int _dev=0):
       BASE(_b,_gdims,2*_l+1,_nc,_fcode,_dev){}
 
+    //SO3part(const cnine::TensorView<complex<TYPE> >& M):
+    //BASE(M){}
+
 
   public: // ---- Named parameter constructors ---------------------------------------------------------------
 
@@ -121,8 +124,10 @@ namespace GElib{
   public: // ---- Named constructors -------------------------------------------------------------------------
 
 
-    static SO3part spharm(const cnine::TensorView<TYPE>& x, const int l){
-      auto R=zeros_like(l,x);
+    static SO3part spharm(const int l, const cnine::TensorView<TYPE>& x){
+      CNINE_ASSRT(x.ndims()==3);
+      CNINE_ASSRT(x.dim(2)==3);
+      SO3part R=zeros_like(l,x);
       R.add_spharm(x);
       return R;
     }
@@ -138,7 +143,7 @@ namespace GElib{
     SO3part(const TENSOR& x):
       BASE(x){
       GELIB_ASSRT(ndims()>=3);
-      GELIB_ASSRT(dims(1)%2==1);
+      GELIB_ASSRT(dims(-2)%2==1);
     }
 
     SO3part like(const TENSOR& x) const{

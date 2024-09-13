@@ -53,7 +53,7 @@ namespace GElib{
       if(v.tau.has_value()==false) 
 	throw std::invalid_argument("GElib error: constructor of SO3vec must have an ttype argument.");
       SO3type tau=any_cast<SO3type>(v.tau);
-      for(auto& p:tau.map){
+      for(auto& p:tau.parts){
 	if(v.gdims.size()>0) parts.emplace(p.first,SO3part<TYPE>(v.b,v.gdims,p.first,p.second,v.fcode,v.dev));
 	else parts.emplace(p.first,SO3part<TYPE>(v.b,p.first,p.second,v.fcode,v.dev));
       }
@@ -101,18 +101,3 @@ namespace GElib{
 }
 
 #endif 
-//   string str(const string indent="") const{
-//     ostringstream oss;
-//       for(auto& p:parts){
-// 	oss<<indent<<"Part l="<<p.first<<":"<<endl;
-// 	oss<<p.second.str(indent+"  ")<<endl;
-//       }
-//       return oss.str();
-//     }
-
-//     string to_print(const string indent="") const{
-//       ostringstream oss;
-//       oss<<indent<<repr()<<":"<<endl;
-//       oss<<str(indent+"  ")<<endl;
-//       return oss.str();
-//     }

@@ -26,13 +26,23 @@ namespace GElib{
 
     static constexpr int null_ix=-1;
 
-    using BASE::map;
+    using BASE::parts;
+
 
     SO3type(){}
 
+    SO3type(const std::map<int,int>& _parts):
+      BASE(_parts){}
+
     SO3type(const initializer_list<pair<int,int> >& list){
       for(auto p:list)
-	map[p.first]=p.second;
+	parts[p.first]=p.second;
+    }
+
+    SO3type(const vector<int>& v){
+      int l=0;
+      for(auto& p:v)
+	parts[l++]=p;
     }
 
 
@@ -52,7 +62,7 @@ namespace GElib{
     string str(const string indent="") const{
       ostringstream oss;
       oss<<"(";
-      for(auto& p:map)
+      for(auto& p:parts)
 	oss<<p.first<<":"<<p.second<<",";
       oss<<"\b)";
       return oss.str();

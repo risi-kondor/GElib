@@ -15,7 +15,7 @@
 #include "TensorView.hpp"
 
 
-namespace GElib{
+namespace cnine{
 
   template<typename TYPE>
   class BatchedTensor: public cnine::TensorView<TYPE>{

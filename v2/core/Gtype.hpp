@@ -24,7 +24,12 @@ namespace GElib{
 
     //typedef map<GirrepIxWrapper,int> BASE;
 
-    mutable map<IrrepIx,int> map;
+    mutable map<IrrepIx,int> parts;
+
+    Gtype(){}
+
+    Gtype(const std::map<IrrepIx,int>& _parts):
+      parts(_parts){}
 
     /*
     shared_ptr<Ggroup> G;
@@ -59,26 +64,26 @@ namespace GElib{
 
   public: // ---- Access ------------------------------------------------------------------------------------
 
-    /*
-    GirrepIx max_irrep() const{
-      GirrepIx t=begin().first;
-      for(auto p: *this)
-	t=std::max(t,p.first);
-      return t;
+
+    int size() const{
+      return parts.size();
     }
-    */
 
     IrrepIx highest() const{
-      return (map.crbegin()++)->first;
+      return (parts.crbegin()++)->first;
     }
 
     int& operator[](const IrrepIx& ix){
-      return map[ix];
+      return parts[ix];
     }
 
     int operator()(const IrrepIx& ix) const{
-      if(map.find(ix)==map.end()) return 0;
-      return map[ix];
+      if(parts.find(ix)==parts.end()) return 0;
+      return parts[ix];
+    }
+
+    void set(const IrrepIx& ix, const int n){
+      parts[ix]=n;
     }
 
 
@@ -89,10 +94,10 @@ namespace GElib{
     GTYPE CGproduct(const GTYPE& y) const{
       auto& x=static_cast<const GTYPE&>(*this);
       GTYPE R;
-      for(auto& p:x.map)
-	for(auto& q:y.map)
+      for(auto& p:x.parts)
+	for(auto& q:y.parts)
 	  GTYPE::Group::for_each_CGcomponent(p.first,q.first,[&](const typename GTYPE::IRREP_IX& z, const int m){
-	      R.map[z]+=m*p.second*q.second;});
+	      R.parts[z]+=m*p.second*q.second;});
       return R;
     }
 
@@ -100,10 +105,10 @@ namespace GElib{
     GTYPE CGproduct(const GTYPE& y, const typename GTYPE::IRREP_IX& limit) const{
       auto& x=static_cast<const GTYPE&>(*this);
       GTYPE R;
-      for(auto& p:x.map)
-	for(auto& q:y.map)
+      for(auto& p:x.parts)
+	for(auto& q:y.parts)
 	  GTYPE::Group::for_each_CGcomponent(p.first,q.first,[&](const typename GTYPE::IRREP_IX& z, const int m){
-	      if(z<=limit) R.map[z]+=m*p.second*q.second;});
+	      if(z<=limit) R.parts[z]+=m*p.second*q.second;});
       return R;
     }
 
@@ -115,10 +120,10 @@ namespace GElib{
     GTYPE DiagCGproduct(const GTYPE& y, const typename GTYPE::IRREP_IX& limit=GTYPE::null_ix) const{
       auto& x=static_cast<const GTYPE&>(*this);
       GTYPE R;
-      for(auto& p:x.map)
-	for(auto& q:y.map)
+      for(auto& p:x.parts)
+	for(auto& q:y.parts)
 	  GTYPE::Group::for_each_CGcomponent(p.first,q.first,[&](const typename GTYPE::IRREP_IX& z, const int m){
-	      if(limit==GTYPE::null_ix || z<=limit) R.map[z]+=m*p.second;});
+	      if(limit==GTYPE::null_ix || z<=limit) R.parts[z]+=m*p.second;});
       return R;
     }
 
@@ -134,7 +139,7 @@ namespace GElib{
       ostringstream oss;
       int i=0; 
       oss<<"(";
-      for(auto& p:map){
+      for(auto& p:parts){
 	oss<<p.first<<":"<<p.second<<",";
       }
       oss<<"\b)";

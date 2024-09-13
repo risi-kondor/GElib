@@ -24,11 +24,11 @@ namespace GElib{
 
   template<typename GPART, typename TYPE>
   class Gpart: //public cnine::TensorView<TYPE>, 
-	       public BatchedTensor<TYPE>{
+    public cnine::BatchedTensor<TYPE>{
   public:
 
     using TENSOR=cnine::TensorView<TYPE>;
-    using BASE=BatchedTensor<TYPE>;
+    using BASE=cnine::BatchedTensor<TYPE>;
 
     using Gdims=cnine::Gdims;
 
@@ -64,6 +64,9 @@ namespace GElib{
     Gpart(const int _b, const Gdims& _gdims, const int _d, const int _nc, const int _fcode=0, const int _dev=0):
       BASE(Gdims(_b,_gdims,{_d,_nc}),_fcode,_dev){}
       
+    Gpart(const cnine::BatchedTensor<TYPE>& M):
+      BASE(M){}
+
     void reset(const int _b, const Gdims& _gdims, const int _d, const int _nc, const int _fcode=0, const int _dev=0){
       BASE::reset(BASE(Gdims(_b,_gdims,{_d,_nc}),_fcode,_dev));
     }
@@ -142,6 +145,10 @@ namespace GElib{
 
     int getn() const{
       return dims.last();
+    }
+
+    Gdims get_gdims() const{
+      return dims.chunk(1,dims.size()-3);
     }
 
     
@@ -262,10 +269,10 @@ namespace GElib{
       GPART _r=r.fuse_grid();
       auto _x=GElib::canonicalize(x);
       int G=std::max(_r.dims[1],_x.dims[1]);
-      GELIB_ASSRT(_r.dims[0]==G || _r.dims[0]==1);
-      GELIB_ASSRT(_x.dims[0]==G || _x.dims[0]==1);
-      int mr=(_r.dims[0]>1);
-      int mx=(_x.dims[0]>1);
+      GELIB_ASSRT(_r.dims[1]==G || _r.dims[1]==1);
+      GELIB_ASSRT(_x.dims[1]==G || _x.dims[1]==1);
+      int mr=(_r.dims[1]>1);
+      int mx=(_x.dims[1]>1);
       _r.template for_each_batch_multi<TYPE2>(_x,[&](const int b, const TENSOR& r, const cnine::TensorView<TYPE2>& x){
 	  for(int g=0; g<G; g++)
 	    lambda(b,g,r.slice(0,mr*g),x.slice(0,mx*g));
@@ -287,12 +294,12 @@ namespace GElib{
       GPART _x=x.fuse_grid();
       GPART _y=y.fuse_grid();
       int G=std::max(std::max(_x.dims[1],_y.dims[1]),_r.dims[1]);
-      GELIB_ASSRT(_r.dims[0]==G || _r.dims[0]==1);
-      GELIB_ASSRT(_x.dims[0]==G || _x.dims[0]==1);
-      GELIB_ASSRT(_y.dims[0]==G || _y.dims[0]==1);
-      int mr=(_r.dims[0]>1);
-      int mx=(_x.dims[0]>1);
-      int my=(_y.dims[0]>1);
+      GELIB_ASSRT(_r.dims[1]==G || _r.dims[1]==1);
+      GELIB_ASSRT(_x.dims[1]==G || _x.dims[1]==1);
+      GELIB_ASSRT(_y.dims[1]==G || _y.dims[1]==1);
+      int mr=(_r.dims[1]>1);
+      int mx=(_x.dims[1]>1);
+      int my=(_y.dims[1]>1);
       _r.for_each_batch_multi(_x,_y,[&](const int b, const TENSOR& __r, const TENSOR& __x, const TENSOR& __y){
 	  for(int g=0; g<G; g++)
 	    lambda(b,g,__r.slice(0,mr*g),__x.slice(0,mx*g),__y.slice(0,my*g));
@@ -303,7 +310,6 @@ namespace GElib{
   public: // ---- Promotions ---------------------------------------------------------------------------------
 
 
-    template<typename TYPE>
     void canonicalize_to_4d(){
       int d=dims.size();
       if(d==3){

@@ -133,7 +133,7 @@ namespace GElib{
     GTYPE get_tau() const{
       GTYPE r;
       for(auto p:parts)
-	r.map[p.first]=p.second.getn();
+	r.parts[p.first]=p.second.getn();
       return r;
     }
 
@@ -279,7 +279,6 @@ namespace GElib{
     
     GVEC CGproduct(const GVEC& y) const{
       auto& x=static_cast<const GVEC&>(*this);
-      //GVEC R=x.zeros_like(x.get_tau().CGproduct(y.get_tau()));
       GVEC R(x.dominant_batch(y),x.dominant_gdims(y),x.get_tau().CGproduct(y.get_tau()),0,x.get_dev());
       R.add_CGproduct(x,y);
       return R;
@@ -327,7 +326,7 @@ namespace GElib{
     }
 
 
-  public: // ---- CG-products --------------------------------------------------------------------------------
+  public: // ---- Diag CG-products ---------------------------------------------------------------------------
 
     
     GVEC DiagCGproduct(const GVEC& y, const IRREP_IX& limit=GPART::null_ix) const{
@@ -380,8 +379,6 @@ namespace GElib{
 
     string repr() const{
       return downcast().repr();
-    //ostringstream oss;
-    //return oss.str();
     }
     
     string str(const string indent="") const{

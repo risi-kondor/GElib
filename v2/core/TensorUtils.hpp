@@ -11,6 +11,7 @@
 #ifndef _TensorUtils
 #define _TensorUtils
 
+#include "BatchedTensor.hpp"
 
 namespace GElib{
 
@@ -28,7 +29,7 @@ namespace GElib{
   cnine::BatchedTensor<TYPE> canonicalize(const cnine::TensorView<TYPE>& x){
     int d=x.ndims();
     if(d==3) return x;
-    if(d>3) return r.fuse_chunk(1,d-3);
+    if(d>3) return x.fuse_chunk(1,d-3);
 
     cnine::TensorView<TYPE> r(x);
     if(d==1){
@@ -66,9 +67,10 @@ namespace GElib{
     return r;
   }
 
-
-  template<typename TYPE>
-  GPART fuse_grid() const{
+  
+  /*
+  template<typename GPART>
+  GPART fuse_grid(){
     if(!is_grid()){
       GPART r(*this);
       r.dims=r.dims.insert(1,1);
@@ -77,12 +79,12 @@ namespace GElib{
       }
     return static_cast<const GPART&>(*this).like(fuse_chunk(1,ndims()-3));
   }
-  
+  */
 
   // This replaces the analogous method in Gpart
   template<typename TYPE1, typename TYPE2>
   void for_each_cell_multi(const cnine::BatchedTensor<TYPE1>& r, const cnine::BatchedTensor<TYPE2>& x, 
-    const std::function<void(const int, const int, const cnine::TensorView<TYPE1>& r, const cnine::TensorView<TYPE2>& x)>& lambda) const{
+    const std::function<void(const int, const int, const cnine::TensorView<TYPE1>& r, const cnine::TensorView<TYPE2>& x)>& lambda){
 
     if(r.ndims()==3 && x.ndims()==3){
       r.template for_each_batch_multi<TYPE2>(x,[&](const int b, const cnine::TensorView<TYPE1>& r, const cnine::TensorView<TYPE2>& x){
@@ -98,7 +100,8 @@ namespace GElib{
     GELIB_ASSRT(_x.dims[0]==G || _x.dims[0]==1);
     int mr=(_r.dims[0]>1);
     int mx=(_x.dims[0]>1);
-    _r.template for_each_batch_multi<TYPE2>(_x,[&](const int b, const TENSOR& r, const cnine::TensorView<TYPE2>& x){
+    _r.template for_each_batch_multi<TYPE2>(_x,[&](const int b, const cnine::TensorView<TYPE1>& r, 
+	const cnine::TensorView<TYPE2>& x){
 	for(int g=0; g<G; g++)
 	  lambda(b,g,r.slice(0,mr*g),x.slice(0,mx*g));
       });
