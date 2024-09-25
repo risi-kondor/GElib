@@ -13,7 +13,7 @@ from gelib.SO3vec import *
 # from gelib.SO3weights import *
 # from gelib.SO3mvec import *
 from gelib.SO3partArr import *
-# from gelib.SO3vecArr import *
+from gelib.SO3vecArr import *
 # from gelib.SO3weightsArr import *
 # from gelib.Wigner import *
 # from gelib.CGtensor import *
