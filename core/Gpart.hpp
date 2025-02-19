@@ -224,6 +224,12 @@ namespace GElib{
       return dims.size()>3;
     }
 
+    bool grid_is_fusible() const{
+      if(!is_grid()) return true;
+      auto [s,d]=strides.chunk(1,ndims()-3).fuser(dims.chunk(1,ndims()-3));
+      return d!=-1;
+    }
+
     Gdims gdims() const{
       return dims.chunk(1,dims.size()-3);
     }
@@ -290,20 +296,45 @@ namespace GElib{
 	return;
       }
 
-      GPART _r=r.fuse_grid();
-      GPART _x=x.fuse_grid();
-      GPART _y=y.fuse_grid();
-      int G=std::max(std::max(_x.dims[1],_y.dims[1]),_r.dims[1]);
-      GELIB_ASSRT(_r.dims[1]==G || _r.dims[1]==1);
-      GELIB_ASSRT(_x.dims[1]==G || _x.dims[1]==1);
-      GELIB_ASSRT(_y.dims[1]==G || _y.dims[1]==1);
-      int mr=(_r.dims[1]>1);
-      int mx=(_x.dims[1]>1);
-      int my=(_y.dims[1]>1);
-      _r.for_each_batch_multi(_x,_y,[&](const int b, const TENSOR& __r, const TENSOR& __x, const TENSOR& __y){
-	  for(int g=0; g<G; g++)
-	    lambda(b,g,__r.slice(0,mr*g),__x.slice(0,mx*g),__y.slice(0,my*g));
-	});
+      if(r.grid_is_fusible() && x.grid_is_fusible() && y.grid_is_fusible()){
+	GPART _r=r.fuse_grid();
+	GPART _x=x.fuse_grid();
+	GPART _y=y.fuse_grid();
+	int G=std::max(std::max(_x.dims[1],_y.dims[1]),_r.dims[1]);
+	GELIB_ASSRT(_r.dims[1]==G || _r.dims[1]==1);
+	GELIB_ASSRT(_x.dims[1]==G || _x.dims[1]==1);
+	GELIB_ASSRT(_y.dims[1]==G || _y.dims[1]==1);
+	int mr=(_r.dims[1]>1);
+	int mx=(_x.dims[1]>1);
+	int my=(_y.dims[1]>1);
+	_r.for_each_batch_multi(_x,_y,[&](const int b, const TENSOR& __r, const TENSOR& __x, const TENSOR& __y){
+	    for(int g=0; g<G; g++)
+	      lambda(b,g,__r.slice(0,mr*g),__x.slice(0,mx*g),__y.slice(0,my*g));
+	  });
+	return;
+      }
+
+      if((r.ndims()==3 || r.ndims()==5) && (x.ndims()==3 || x.ndims()==5) && (y.ndims()==3 || y.ndims()==5)){
+	int g0=1;
+	int g1=1;
+	if(r.ndims()==5){g0=r.dims[1]; g1=r.dims[2];}
+	if(x.ndims()==5){g0=x.dims[1]; g1=x.dims[2];}
+	if(y.ndims()==5){g0=y.dims[1]; g1=y.dims[2];}
+	GPART _r(r);
+	GPART _x(x);
+	GPART _y(y);
+	_r.promote_grid_to(g0,g1);
+	_x.promote_grid_to(g0,g1);
+	_y.promote_grid_to(g0,g1);
+	_r.for_each_batch_multi(_x,_y,[&](const int b, const TENSOR& __r, const TENSOR& __x, const TENSOR& __y){
+	    for(int _g0=0; _g0<g0; _g0++)
+	      for(int _g1=0; _g1<g1; _g1++)
+		lambda(b,_g0*g1+_g1,__r.slice(0,_g0).slice(0,_g1),__x.slice(0,_g0).slice(0,_g1),__y.slice(0,_g0).slice(0,_g1));
+	  });
+	return;
+      }
+      
+      GELIB_ERROR("Error: if the grid dimensions are not fusible then the grid dimension of each tensor must be 2.");
     }
 
 
@@ -335,6 +366,34 @@ namespace GElib{
       dims[1]=g;
       strides[1]=0;
     }
+
+    void promote_grid_to(const int g0, const int g1){
+      int d=dims.size();
+      if(d==3){
+	dims=cnine::Gdims({dims[0],g0,g1,dims[1],dims[2]});
+	strides=cnine::GstridesB(vector<size_t>({strides[0],0,0,strides[1],strides[2]}));
+	return;
+      }
+      if(d==5){
+	GELIB_ASSRT(dims[1]==g0);
+	GELIB_ASSRT(dims[2]==g1);
+	return;
+      }
+      GELIB_ERROR("The number of grid dimensions is not 0 or 2.");
+    }
+
+    /*
+    void promote_grid_to(const Gdims& g){
+      int d=dims.size();
+      if(d==3){
+	dims=cnine::Gdims(dims[0],g,cnine::Gdims({dims[1],dims[2]}));
+	strides=cnine::GstridesB(strides[0],vector<size_t>(g.size(),0),cnine::GstridesB({strides[1],strides[2]}));
+	return;
+      }
+      GELIB_ASSRT(d==3+g.size());
+      GELIB_ASSRT(dims.chunk(1,d-3)==g);
+    }
+    */
 
     //TENSOR tile_channels(const int n){
     //GELIB_ASSRT(ndims()==4);
