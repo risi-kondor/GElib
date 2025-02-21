@@ -1,18 +1,20 @@
 # WE SHOULD REMOVE THE import *  !!!
 import torch
 
-from gelib_base import SO3element 
-from gelib_base import SO3type 
-from gelib_base import SO3bitype 
+#from gelib_base import SO3element 
+#from gelib_base import SO3type 
+#from gelib_base import SO3bitype 
 
+from gelib.SO3type import *
 from gelib.SO3part import *
-from gelib.SO3weights import *
-from gelib.SO3weightsArr import *
 from gelib.SO3vec import *
-from gelib.SO3weights import *
-from gelib.SO3mvec import *
+#from gelib.SO3weights import *
+#from gelib.SO3weightsArr import *
+# from gelib.SO3weights import *
+# from gelib.SO3mvec import *
 from gelib.SO3partArr import *
 from gelib.SO3vecArr import *
+<<<<<<< HEAD
 from gelib.SO3weightsArr import *
 from gelib.Wigner import *
 from gelib.CGtensor import *
@@ -29,6 +31,11 @@ from gelib.SO3vecB import *
 #from gelib.SO3bipartArr import *
 #from gelib.SO3bivec import *
 #from gelib.SO3bivecArr import *
+=======
+# from gelib.SO3weightsArr import *
+# from gelib.Wigner import *
+# from gelib.CGtensor import *
+>>>>>>> dev2
 
 
 def CGproduct(x, y, maxl=-1):
