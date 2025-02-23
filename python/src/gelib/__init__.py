@@ -14,13 +14,12 @@ from gelib.SO3vec import *
 # from gelib.SO3mvec import *
 from gelib.SO3partArr import *
 from gelib.SO3vecArr import *
-<<<<<<< HEAD
-from gelib.SO3weightsArr import *
-from gelib.Wigner import *
-from gelib.CGtensor import *
+#from gelib.SO3weightsArr import *
+#from gelib.Wigner import *
+#from gelib.CGtensor import *
 
-from gelib.SO3partB import *
-from gelib.SO3vecB import *
+#from gelib.SO3partB import *
+#from gelib.SO3vecB import *
 
 #from gelib.SO3partC import *
 #from gelib.SO3vecC import *
@@ -31,11 +30,9 @@ from gelib.SO3vecB import *
 #from gelib.SO3bipartArr import *
 #from gelib.SO3bivec import *
 #from gelib.SO3bivecArr import *
-=======
 # from gelib.SO3weightsArr import *
 # from gelib.Wigner import *
 # from gelib.CGtensor import *
->>>>>>> dev2
 
 
 def CGproduct(x, y, maxl=-1):

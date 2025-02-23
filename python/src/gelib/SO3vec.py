@@ -133,7 +133,7 @@ class SO3vec:
     def tau(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
         r={}
-        for l,p in parts.items():
+        for l,p in self.parts.items():
             r[l]=p.getn()
         return r
 
