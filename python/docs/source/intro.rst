@@ -1,4 +1,4 @@
-############
+ ############
 Introduction
 ############
 
@@ -114,6 +114,7 @@ Troubleshooting
 Known issues
 ************
 
+``GElib`` is undergoing a major version change. Not all of its functionality is currently live.
 
  
 *****

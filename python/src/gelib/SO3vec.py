@@ -252,7 +252,7 @@ class SO3vec_DiagCGproductFn(torch.autograd.Function):
         x=gb.SO3vec.view(args[0:k1])
         y=gb.SO3vec.view(args[k1:k1+k2])
         b=args[0].size(0)
-        tau=x.get_tau().DiagCGproduct(y.get_tau())
+        tau=x.get_tau() #.DiagCGproduct(y.get_tau())
         rparts=MakeZeroSO3parts(b,tau.get_parts(),args[0].device)
         r=gb.SO3vec.view(rparts)
         r.addDiagCGproduct(x,y)

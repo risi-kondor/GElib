@@ -8,6 +8,12 @@ print(P)
 print(P.getb())
 print(P.getl())
 print(P.getn())
+print(P.__repr__())
+
+B=torch.randn([1,3,2],dtype=torch.complex64)
+print(type(B))
+P=gelib.SO3part(B)
+print(P)
 
 A=torch.randn([2,3,4])
 P=gelib.SO3part.spharm(1,A)

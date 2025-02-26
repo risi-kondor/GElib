@@ -11,8 +11,9 @@ to the ``l=2`` irrep of SO(3) and prints it out.
 
 .. code-block:: python
 
- >>> A=gelib.SO3partArr.randn(1,[2,2],2,3)
- >>> print(A)
+ >> A=gelib.SO3partArr.randn(1,[2,2],2,3)
+ >> print(A)
+
  Cell(0,0,0)
  [ (0.311398,-1.80913) (-0.921517,1.3563) (-0.463656,-0.153738) ]
  [ (-0.107248,-0.91566) (-0.268635,-0.934234) (0.292521,-0.466788) ]
@@ -48,9 +49,10 @@ natural syntax.
 
 .. code-block:: python
 
- >>> A=gelib.SO3partArr.randn(1,[2,2],2,2)
- >>> B=gelib.CGproduct(A,A,2)
- >>> print(B)
+ >> A=gelib.SO3partArr.randn(1,[2,2],2,2)
+ >>  B=gelib.CGproduct(A,A,2)
+ >>  print(B)
+
  Cell(0,0,0)
  [ (-3.68829,2.1156) (0.70249,0.237766) (0.70249,0.237766) (0.779456,-1.94687) ]
  [ (-1.23101,-2.19237) (-1.71898,1.0264) (-1.71898,1.0264) (0.292517,2.35244) ]
@@ -108,16 +110,16 @@ and constructing the corresponding ``cnine.Rmask1`` object:
 
 .. code-block:: python
 
- >>> import cnine
- >>> C=torch.tensor([[0,1,0],[0,0,0],[1,0,0]],dtype=torch.float32);
- >>> mask=cnine.Rmask1(C)
+ >> import cnine
+ >> C=torch.tensor([[0,1,0],[0,0,0],[1,0,0]],dtype=torch.float32);
+ >> mask=cnine.Rmask1(C)
 
 The gather operation is then called as 
 
 .. code-block:: python
 
- >>> X=gelib.SO3partArr.randn(1,[3],1,1,2)
- >>> Y=X.gather(mask)
+ >> X=gelib.SO3partArr.randn(1,[3],1,1,2)
+ >> Y=X.gather(mask)
 
 Naturally, ``gather`` is a differentiable operation.
 

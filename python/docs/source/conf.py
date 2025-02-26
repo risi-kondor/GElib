@@ -28,7 +28,7 @@ author = 'Risi Kondor'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc','sphinx.ext.intersphinx','sphinx.ext.autosummary','sphinx.ext.napoleon',
-              'sphinx.ext.imgmath'
+              'sphinx.ext.imgmath','sphinx.ext.mathjax'
               #,'sphinx_copybutton'
               ]
 

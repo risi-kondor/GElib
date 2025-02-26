@@ -4,18 +4,18 @@ SO3vec
 
 
 An ``SO3vec`` object represents a general SO(3)-covariant vector, stored 
-as a sequence of complex PyTorch tensors. 
-Similarly to ``SO3part``, ``SO3vec`` also has a batch dimension. 
+as a combination of of ``SO3part`` s. 
+All the ``SO3part`` s must have the same batch dimension. 
 
-The `type` of an ``SO3vec`` is a list specifying the number of fragments in each of its parts. 
+The `type` of an ``SO3vec`` is a dictionary specifying the number of fragments in each of its parts. 
 For example, the following creates a random ``SO3vec`` of type (2,3,1). 
 
 .. code-block:: python
 
-  >>> v=gelib.SO3vec.randn(1,[2,3,1])
-  >>> v
-  <GElib::SO3vecB of type (2,3,1)>
-  >>> print(v)
+  >> v=gelib.SO3vec.randn(1,{0:2,1:3,2:1})
+  >> print(v.repr())
+  <GElib::SO3vec of type (2,3,1)>
+  >> print(v)
   Part l=0:
     [ (0.132629,0.950553) (0.719683,1.16923) ]
    
@@ -34,16 +34,17 @@ The batch dimension and type of an SO(3)-vector can be accessed as follows.
 
 .. code-block:: python
 
- >>> v.getb()
+ >> v.getb()
  1
- >>> v.tau()
- [2, 3, 1]
+ >> v.tau()
+ {0:2, 1:3, 2:1}
 
 The invidual parts are stored in the ``parts`` member variable
 
 .. code-block:: python
 
-  >>> print(v.parts[1])
+  >> print(v.parts[1])
+
   tensor([[[-0.3089+1.3424j, -0.0749+0.7876j,  0.1248-0.6818j],
            [-0.3958-0.4522j, -0.3014-0.4984j,  0.3682+0.2515j],
            [ 1.7390-0.4233j, -0.4120+0.2936j, -1.1108-0.5376j]]])
@@ -54,17 +55,21 @@ The invidual parts are stored in the ``parts`` member variable
 Fourier vectors
 ===============
 
-As mentioned before, one context in which ``SO3vec`` objects appear is when computing the 
-Fourier transform of functions on SO(3). In this case, however, all the ``SO3part``\s are square. 
+One context in which ``SO3vec`` objects appear is when computing the 
+Fourier transform of functions on SO(3). In this case, the ``SO3part``\s have the same number of fragments 
+(channels) as the dimensionality of the corresponding irreps. 
 Such ``SO3vec`` objects are created with the ``Fzero`` or ``Frandn`` constructors, which take only two 
 arguments: the batch dimension and :math:`\ell_{\textrm{max}}`. 
 
 .. code-block:: python
 
- >>> v=gelib.SO3vec.Frandn(1,2)
- >>> v
- <GElib::SO3vecB of type (1,3,5)>
- >>> print(v)
+ >> v=gelib.SO3vec.Frandn(1,2)
+ >> print(v.repr())
+
+ <GElib::SO3vec of type (1,3,5)>
+
+ >> print(v)
+
  Part l=0:
    [ (1.87611,-0.890737) ]
 
@@ -95,14 +100,13 @@ The full Clebsch-Gordan product (CG-product) of two SO3-vectors is computed as f
 
 .. code-block:: python
 
-  >>> v=gelib.SO3vec.randn(1,[2,2])
-  >>> u=gelib.SO3vec.randn(1,[2,2])
-  >>> v=gelib.SO3vec.randn(1,[2,2])
-  >>> w=gelib.CGproduct(u,v)
-  >>> print(w)
+  >> u=gelib.SO3vec.randn(1,{0:2,1:2})
+  >> v=gelib.SO3vec.randn(1,{0:2,1:2})
+  >> w=gelib.CGproduct(u,v)
+  >> print(w)
+
   Part l=0:
     [ (0.152031,-0.140948) (-0.176707,0.0986708) (-0.0514539,2.16813) (0.54849,-2.04492) (-1.24255,-0.815015) (-1.40811,-0.123935) (-0.391867,1.13209) (-0.161307,-0.330928) ]
-
 
   Part l=1:
     [ (0.0961476,-0.243252) (0.171405,-0.405961) (1.1234,2.495) (1.79502,4.24597) (-0.730597,0.187905) (0.736381,-0.00987765) (0.698929,0.568218) (-0.532079,-0.700114) (-0.163401,0.429268) (-0.412671,1.27816) (0.850947,-1.12338) (2.10184,-2.1415) ]
@@ -122,8 +126,9 @@ The optional third argument of ``CGproduct`` can be used to limit the result to 
 
 .. code-block:: python
 
-  >>> w=gelib.CGproduct(u,v,1)
-  >>> print(w)
+  >> w=gelib.CGproduct(u,v,1)
+  >> print(w)
+
   Part l=0:
     [ (0.152031,-0.140948) (-0.176707,0.0986708) (-0.0514539,2.16813) (0.54849,-2.04492) (-1.24255,-0.815015) (-1.40811,-0.123935) (-0.391867,1.13209) (-0.161307,-0.330928) ]
 
@@ -139,15 +144,16 @@ The optional third argument of ``CGproduct`` can be used to limit the result to 
 Diagonal Clebsch-Gordan products
 ================================
 
-In the full CG-product, every fragment of ``u`` is multiplied with every fragment of ``v``, 
-often leading to output vectors with very large numbers of fragments. In 
+In the full CG-product, every fragment of ``u`` is multiplied with every fragment of ``v``.  
+This can lead to output vectors with a very large numbers of fragments. In 
 contrast, the ``DiagCGproduct`` function only computes the product between corresponding fragments. 
 Naturally, this means that ``u`` and ``v`` must have the same type.
 
 .. code-block:: python
 
-  >>> w=gelib.DiagCGproduct(u,v)
-  >>> print(w)
+  >> w=gelib.DiagCGproduct(u,v)
+  >> print(w)
+
   Part l=0:
     [ (0.152031,-0.140948) (0.54849,-2.04492) (-1.24255,-0.815015) (-0.161307,-0.330928) ]
 
