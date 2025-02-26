@@ -1,4 +1,4 @@
-############
+ ############
 Introduction
 ############
 
@@ -32,7 +32,7 @@ Features
 GElib provides the following features:
 
 #. Classes to store and manipulate SO(3)-covariant (equivariant) vectors.
-#. Fast implementations of different variants of the Clebsch-Gordan transforms on both the CPU and the GPU.
+#. Fast implementations of different variants of the Clebsch-Gordan product on both the CPU and the GPU.
 #. Facilities for operating on arrays of SO(3)-covariant vectors in parallel, 
    including in irregular patterns (graphs).
 #. Interoperability with PyTorch's ``autograd`` functionality. 
@@ -44,13 +44,13 @@ Installation
 
 GElib is installed as a PyTorch C++ (or CUDA) extension and requires the following: 
 
-#. C++14 or higher
+#. C++17 or higher
 #. PyTorch
-#. cnine (see below) 
+#. `cnine <https://github.com/risi-kondor/cnine>`_ (see below) 
 
 GElib is easiest to install with ``pip``:
 
-#. Download the `cnine <https://github.com/risi-kondor/cnine>`_  library 
+#. Download the `cnine <https://github.com/risi-kondor/cnine>`_  tensor library 
    and install it on your system
 #. Download `GElib <https://github.com/risi-kondor/GElib>`_. 
    By default, it is assumed that cnine and GElib are downloaded to the same directory 
@@ -114,6 +114,7 @@ Troubleshooting
 Known issues
 ************
 
+``GElib`` is undergoing a major version change. Not all of its functionality is currently live.
 
  
 *****

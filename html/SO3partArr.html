@@ -1,15 +1,15 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3vecArr" href="SO3vecArr.html" /><link rel="prev" title="SO3vec" href="SO3vecB.html" />
 
-    <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.07.18 -->
         <title>SO3partArr - GElib documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=0254c309f5cadf746f1a613e7677379ac9c8cdcd" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=16fb25fabf47304eee183a5e9af80b1ba98259b1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=613ab9ff" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
     
     
 
@@ -18,40 +18,44 @@
   body {
     --color-code-background: #f8f8f8;
   --color-code-foreground: black;
+  --font-stack: Arial, sans-serif;
+  --font-stack--monospace: Courier, monospace;
+  --font-stack--headings: Geneva, sans-serif;
+  --font-weight--headings: light;
   
   }
-  body[data-theme="dark"] {
-    --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
-  
-  }
-  @media (prefers-color-scheme: dark) {
-    body:not([data-theme="light"]) {
+  @media not print {
+    body[data-theme="dark"] {
       --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
   
     }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" />
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="10" y1="12" x2="20" y2="12" />
-      <line x1="6" y1="18" x2="20" y2="18" />
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
     </svg>
   </symbol>
   <symbol id="svg-menu" viewBox="0 0 24 24">
     <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
       <line x1="3" y1="12" x2="21" y2="12"></line>
       <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -60,15 +64,15 @@
   </symbol>
   <symbol id="svg-arrow-right" viewBox="0 0 24 24">
     <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   </symbol>
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -82,23 +86,64 @@
   </symbol>
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
 </svg>
@@ -111,6 +156,8 @@
 <label class="overlay toc-overlay" for="__toc">
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 
 
@@ -129,7 +176,8 @@
       <div class="theme-toggle-container theme-toggle-header">
         <button class="theme-toggle">
           <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
@@ -149,7 +197,7 @@
   <span class="sidebar-brand-text">GElib  documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -157,20 +205,16 @@
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="WignerMatrix.html">Wigner matrices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3CG.html">Clebsch–Gordan matrices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3elementB.html">SO3element</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Mathematical background</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3partArr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3bipart.html">SO3bipart/SO3bipartArr</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3bivec.html">SO3bivec/SObivecArr</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SO3weights.html">SO3 weights</a></li>
 </ul>
 
 </div>
 </div>
+
       </div>
       
     </div>
@@ -178,11 +222,24 @@
   <div class="main">
     <div class="content">
       <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
         <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/SO3partArr.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
@@ -192,79 +249,81 @@
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
-        <article role="main">
+        <article role="main" id="furo-main-content">
           <section id="so3partarr">
-<h1>SO3partArr<a class="headerlink" href="#so3partarr" title="Permalink to this headline">¶</a></h1>
-<p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object is an array of <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg" style="vertical-align: 0px"/> <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>s, called cells,
+<h1>SO3partArr<a class="headerlink" href="#so3partarr" title="Link to this heading">¶</a></h1>
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object is an array of <img class="math" src="_images/math/90c30b280cd1d7525ca506d30cf48d0398951058.svg" alt="N" style="vertical-align: 0px"/> <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>s, called cells,
 stored in a single tensor.
 The following constructs an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object with batch dimension 1,
-consisting of <img alt="2\times 2" class="math" src="_images/math/43b45bc78b2ec575d1aa08e58a24bdf90f664bd7.svg" style="vertical-align: -2px"/> cells, each
+consisting of <img class="math" src="_images/math/a103212929b314387269b12b06782c1fd7185e72.svg" alt="2\times 2" style="vertical-align: -2px"/> cells, each
 holding <code class="docutils literal notranslate"><span class="pre">n=3</span></code> Gaussian distributed random vectors corresponding
 to the <code class="docutils literal notranslate"><span class="pre">l=2</span></code> irrep of SO(3) and prints it out.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
-<span class="go">Cell(0,0,0)</span>
-<span class="go">[ (0.311398,-1.80913) (-0.921517,1.3563) (-0.463656,-0.153738) ]</span>
-<span class="go">[ (-0.107248,-0.91566) (-0.268635,-0.934234) (0.292521,-0.466788) ]</span>
-<span class="go">[ (2.03572,-0.917957) (0.231427,-0.438412) (-0.360624,0.0279882) ]</span>
-<span class="go">[ (0.115751,1.16965) (0.588774,0.845822) (-0.291249,0.947408) ]</span>
-<span class="go">[ (-0.0814305,0.592962) (-0.761416,0.177536) (-1.1615,-0.492729) ]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 
-<span class="go">Cell(0,0,1)</span>
-<span class="go">[ (2.35398,0.425596) (-0.194245,0.566688) (1.38338,-2.13741) ]</span>
-<span class="go">[ (-1.06957,-0.526105) (-0.759776,1.04892) (-1.01595,0.392939) ]</span>
-<span class="go">[ (-0.581912,-1.07034) (-1.22874,1.92764) (-2.87221,-0.404009) ]</span>
-<span class="go">[ (-0.609044,1.48928) (-0.236781,1.73229) (0.0744118,1.05315) ]</span>
-<span class="go">[ (0.0746617,-0.272857) (0.225767,1.6043) (0.509717,1.18577) ]</span>
+<span class="n">Cell</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">0.311398</span><span class="p">,</span><span class="o">-</span><span class="mf">1.80913</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.921517</span><span class="p">,</span><span class="mf">1.3563</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.463656</span><span class="p">,</span><span class="o">-</span><span class="mf">0.153738</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.107248</span><span class="p">,</span><span class="o">-</span><span class="mf">0.91566</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.268635</span><span class="p">,</span><span class="o">-</span><span class="mf">0.934234</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.292521</span><span class="p">,</span><span class="o">-</span><span class="mf">0.466788</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">2.03572</span><span class="p">,</span><span class="o">-</span><span class="mf">0.917957</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.231427</span><span class="p">,</span><span class="o">-</span><span class="mf">0.438412</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.360624</span><span class="p">,</span><span class="mf">0.0279882</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">0.115751</span><span class="p">,</span><span class="mf">1.16965</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.588774</span><span class="p">,</span><span class="mf">0.845822</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.291249</span><span class="p">,</span><span class="mf">0.947408</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.0814305</span><span class="p">,</span><span class="mf">0.592962</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.761416</span><span class="p">,</span><span class="mf">0.177536</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.1615</span><span class="p">,</span><span class="o">-</span><span class="mf">0.492729</span><span class="p">)</span> <span class="p">]</span>
 
-<span class="go">Cell(0,1,0)</span>
-<span class="go">[ (0.947831,-3.48871) (-0.0304763,-2.04327) (0.564578,-1.22349) ]</span>
-<span class="go">[ (-0.0346214,-1.32766) (-2.03267,-2.02395) (1.6006,1.92112) ]</span>
-<span class="go">[ (-0.115995,-1.38828) (-1.59841,0.899515) (-1.56611,1.03086) ]</span>
-<span class="go">[ (-1.72669,-1.18976) (-1.35317,0.0381025) (0.993481,-0.300125) ]</span>
-<span class="go">[ (-1.89355,-0.901076) (-0.678269,-0.57792) (-1.81518,0.037866) ]</span>
+<span class="n">Cell</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">2.35398</span><span class="p">,</span><span class="mf">0.425596</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.194245</span><span class="p">,</span><span class="mf">0.566688</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.38338</span><span class="p">,</span><span class="o">-</span><span class="mf">2.13741</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.06957</span><span class="p">,</span><span class="o">-</span><span class="mf">0.526105</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.759776</span><span class="p">,</span><span class="mf">1.04892</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.01595</span><span class="p">,</span><span class="mf">0.392939</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.581912</span><span class="p">,</span><span class="o">-</span><span class="mf">1.07034</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.22874</span><span class="p">,</span><span class="mf">1.92764</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.87221</span><span class="p">,</span><span class="o">-</span><span class="mf">0.404009</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.609044</span><span class="p">,</span><span class="mf">1.48928</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.236781</span><span class="p">,</span><span class="mf">1.73229</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.0744118</span><span class="p">,</span><span class="mf">1.05315</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">0.0746617</span><span class="p">,</span><span class="o">-</span><span class="mf">0.272857</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.225767</span><span class="p">,</span><span class="mf">1.6043</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.509717</span><span class="p">,</span><span class="mf">1.18577</span><span class="p">)</span> <span class="p">]</span>
 
-<span class="go">Cell(0,1,1)</span>
-<span class="go">[ (-1.29319,-1.78938) (-0.129255,-0.423372) (1.28934,-1.46638) ]</span>
-<span class="go">[ (-1.03102,-0.603144) (0.0982916,-0.0189021) (0.0997176,-0.0518933) ]</span>
-<span class="go">[ (1.18114,-0.145281) (1.03506,-1.23571) (-0.149596,-0.473458) ]</span>
-<span class="go">[ (-1.46849,1.28294) (2.07751,-1.02977) (1.08815,0.0456315) ]</span>
-<span class="go">[ (-1.47393,0.276098) (1.88762,0.878272) (-2.43639,1.74515) ]</span>
+<span class="n">Cell</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">0.947831</span><span class="p">,</span><span class="o">-</span><span class="mf">3.48871</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.0304763</span><span class="p">,</span><span class="o">-</span><span class="mf">2.04327</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.564578</span><span class="p">,</span><span class="o">-</span><span class="mf">1.22349</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.0346214</span><span class="p">,</span><span class="o">-</span><span class="mf">1.32766</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.03267</span><span class="p">,</span><span class="o">-</span><span class="mf">2.02395</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.6006</span><span class="p">,</span><span class="mf">1.92112</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.115995</span><span class="p">,</span><span class="o">-</span><span class="mf">1.38828</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.59841</span><span class="p">,</span><span class="mf">0.899515</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.56611</span><span class="p">,</span><span class="mf">1.03086</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.72669</span><span class="p">,</span><span class="o">-</span><span class="mf">1.18976</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.35317</span><span class="p">,</span><span class="mf">0.0381025</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.993481</span><span class="p">,</span><span class="o">-</span><span class="mf">0.300125</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.89355</span><span class="p">,</span><span class="o">-</span><span class="mf">0.901076</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.678269</span><span class="p">,</span><span class="o">-</span><span class="mf">0.57792</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.81518</span><span class="p">,</span><span class="mf">0.037866</span><span class="p">)</span> <span class="p">]</span>
+
+<span class="n">Cell</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.29319</span><span class="p">,</span><span class="o">-</span><span class="mf">1.78938</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.129255</span><span class="p">,</span><span class="o">-</span><span class="mf">0.423372</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.28934</span><span class="p">,</span><span class="o">-</span><span class="mf">1.46638</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.03102</span><span class="p">,</span><span class="o">-</span><span class="mf">0.603144</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.0982916</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0189021</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.0997176</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0518933</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">1.18114</span><span class="p">,</span><span class="o">-</span><span class="mf">0.145281</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.03506</span><span class="p">,</span><span class="o">-</span><span class="mf">1.23571</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.149596</span><span class="p">,</span><span class="o">-</span><span class="mf">0.473458</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.46849</span><span class="p">,</span><span class="mf">1.28294</span><span class="p">)</span> <span class="p">(</span><span class="mf">2.07751</span><span class="p">,</span><span class="o">-</span><span class="mf">1.02977</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.08815</span><span class="p">,</span><span class="mf">0.0456315</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.47393</span><span class="p">,</span><span class="mf">0.276098</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.88762</span><span class="p">,</span><span class="mf">0.878272</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.43639</span><span class="p">,</span><span class="mf">1.74515</span><span class="p">)</span> <span class="p">]</span>
 </pre></div>
 </div>
-<p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> is stored as an <img alt="b\times a_1\times \ldots\times a_k\times (2\ell+1)\times n" class="math" src="_images/math/86e0005a449d160efef2e1d156a22b304c937c37.svg" style="vertical-align: -5px"/>
+<p>An <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> is stored as an <img class="math" src="_images/math/a182fb20d6cbff1100bc01ac4f9c9be0ead37c2e.svg" alt="b\times a_1\times \ldots\times a_k\times (2\ell+1)\times n" style="vertical-align: -5px"/>
 dimensional complex PyTorch tensor and supports the same operations as <code class="docutils literal notranslate"><span class="pre">SO3part</span></code>, with the
 natural syntax.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
-<span class="go">Cell(0,0,0)</span>
-<span class="go">[ (-3.68829,2.1156) (0.70249,0.237766) (0.70249,0.237766) (0.779456,-1.94687) ]</span>
-<span class="go">[ (-1.23101,-2.19237) (-1.71898,1.0264) (-1.71898,1.0264) (0.292517,2.35244) ]</span>
-<span class="go">[ (-3.84478,1.74094) (-0.230101,0.727197) (-0.230101,0.727197) (-1.10904,2.02747) ]</span>
-<span class="go">[ (-1.07394,-0.727521) (-0.295923,1.08078) (-0.295923,1.08078) (0.491645,-0.325617) ]</span>
-<span class="go">[ (2.41142,-1.13035) (-0.65661,-0.304086) (-0.65661,-0.304086) (-1.05191,1.62797) ]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">A</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span>  <span class="n">B</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">CGproduct</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span>  <span class="nb">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
 
-<span class="go">Cell(0,0,1)</span>
-<span class="go">[ (1.36789,-0.482399) (0.26131,-0.382551) (0.26131,-0.382551) (1.30767,-0.258516) ]</span>
-<span class="go">[ (-2.16126,-0.749785) (0.0529939,1.20392) (0.0529938,1.20392) (0.122059,-2.28648) ]</span>
-<span class="go">[ (-0.336205,1.51531) (0.736288,0.452221) (0.736288,0.452221) (0.804226,0.625281) ]</span>
-<span class="go">[ (-0.160749,0.499992) (-0.0490017,0.55788) (-0.0490018,0.55788) (-1.2649,0.562428) ]</span>
-<span class="go">[ (1.16493,0.181675) (0.53126,-0.995217) (0.53126,-0.995217) (1.13421,1.01864) ]</span>
+<span class="n">Cell</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.68829</span><span class="p">,</span><span class="mf">2.1156</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.70249</span><span class="p">,</span><span class="mf">0.237766</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.70249</span><span class="p">,</span><span class="mf">0.237766</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.779456</span><span class="p">,</span><span class="o">-</span><span class="mf">1.94687</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.23101</span><span class="p">,</span><span class="o">-</span><span class="mf">2.19237</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.71898</span><span class="p">,</span><span class="mf">1.0264</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.71898</span><span class="p">,</span><span class="mf">1.0264</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.292517</span><span class="p">,</span><span class="mf">2.35244</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.84478</span><span class="p">,</span><span class="mf">1.74094</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.230101</span><span class="p">,</span><span class="mf">0.727197</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.230101</span><span class="p">,</span><span class="mf">0.727197</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.10904</span><span class="p">,</span><span class="mf">2.02747</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.07394</span><span class="p">,</span><span class="o">-</span><span class="mf">0.727521</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.295923</span><span class="p">,</span><span class="mf">1.08078</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.295923</span><span class="p">,</span><span class="mf">1.08078</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.491645</span><span class="p">,</span><span class="o">-</span><span class="mf">0.325617</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">2.41142</span><span class="p">,</span><span class="o">-</span><span class="mf">1.13035</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.65661</span><span class="p">,</span><span class="o">-</span><span class="mf">0.304086</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.65661</span><span class="p">,</span><span class="o">-</span><span class="mf">0.304086</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.05191</span><span class="p">,</span><span class="mf">1.62797</span><span class="p">)</span> <span class="p">]</span>
 
-<span class="go">Cell(0,1,0)</span>
-<span class="go">[ (1.79327,0.325623) (0.0509059,0.148115) (0.0509059,0.148115) (0.22462,1.42646) ]</span>
-<span class="go">[ (-3.50149,2.00715) (0.240442,-2.60512) (0.240442,-2.60512) (1.87925,1.41955) ]</span>
-<span class="go">[ (-1.0096,-1.02473) (1.18226,-1.02291) (1.18226,-1.02291) (-0.576821,0.960422) ]</span>
-<span class="go">[ (0.881412,1.7066) (-0.399855,0.0449982) (-0.399855,0.0449983) (-0.419007,-0.498288) ]</span>
-<span class="go">[ (-2.69044,-2.11147) (2.12463,0.593042) (2.12463,0.593042) (-1.49771,0.35531) ]</span>
+<span class="n">Cell</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">1.36789</span><span class="p">,</span><span class="o">-</span><span class="mf">0.482399</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.26131</span><span class="p">,</span><span class="o">-</span><span class="mf">0.382551</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.26131</span><span class="p">,</span><span class="o">-</span><span class="mf">0.382551</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.30767</span><span class="p">,</span><span class="o">-</span><span class="mf">0.258516</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.16126</span><span class="p">,</span><span class="o">-</span><span class="mf">0.749785</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.0529939</span><span class="p">,</span><span class="mf">1.20392</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.0529938</span><span class="p">,</span><span class="mf">1.20392</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.122059</span><span class="p">,</span><span class="o">-</span><span class="mf">2.28648</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.336205</span><span class="p">,</span><span class="mf">1.51531</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.736288</span><span class="p">,</span><span class="mf">0.452221</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.736288</span><span class="p">,</span><span class="mf">0.452221</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.804226</span><span class="p">,</span><span class="mf">0.625281</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.160749</span><span class="p">,</span><span class="mf">0.499992</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.0490017</span><span class="p">,</span><span class="mf">0.55788</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.0490018</span><span class="p">,</span><span class="mf">0.55788</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.2649</span><span class="p">,</span><span class="mf">0.562428</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">1.16493</span><span class="p">,</span><span class="mf">0.181675</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.53126</span><span class="p">,</span><span class="o">-</span><span class="mf">0.995217</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.53126</span><span class="p">,</span><span class="o">-</span><span class="mf">0.995217</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.13421</span><span class="p">,</span><span class="mf">1.01864</span><span class="p">)</span> <span class="p">]</span>
 
-<span class="go">Cell(0,1,1)</span>
-<span class="go">[ (-1.4145,3.08397) (2.16428,-0.107854) (2.16428,-0.107854) (-0.665168,-1.2601) ]</span>
-<span class="go">[ (-3.04274,-3.63055) (-1.96958,3.30893) (-1.96958,3.30893) (3.23503,0.646061) ]</span>
-<span class="go">[ (1.77954,-2.04437) (-1.35374,0.407467) (-1.35374,0.407467) (1.30007,-0.173447) ]</span>
-<span class="go">[ (1.09669,1.0829) (0.786561,-0.675544) (0.786561,-0.675544) (-0.809771,-0.891165) ]</span>
-<span class="go">[ (-1.0491,-0.0903285) (0.201155,2.46153) (0.201155,2.46153) (2.47398,-0.676472) ]</span>
+<span class="n">Cell</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">1.79327</span><span class="p">,</span><span class="mf">0.325623</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.0509059</span><span class="p">,</span><span class="mf">0.148115</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.0509059</span><span class="p">,</span><span class="mf">0.148115</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.22462</span><span class="p">,</span><span class="mf">1.42646</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.50149</span><span class="p">,</span><span class="mf">2.00715</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.240442</span><span class="p">,</span><span class="o">-</span><span class="mf">2.60512</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.240442</span><span class="p">,</span><span class="o">-</span><span class="mf">2.60512</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.87925</span><span class="p">,</span><span class="mf">1.41955</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0096</span><span class="p">,</span><span class="o">-</span><span class="mf">1.02473</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.18226</span><span class="p">,</span><span class="o">-</span><span class="mf">1.02291</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.18226</span><span class="p">,</span><span class="o">-</span><span class="mf">1.02291</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.576821</span><span class="p">,</span><span class="mf">0.960422</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">0.881412</span><span class="p">,</span><span class="mf">1.7066</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.399855</span><span class="p">,</span><span class="mf">0.0449982</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.399855</span><span class="p">,</span><span class="mf">0.0449983</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.419007</span><span class="p">,</span><span class="o">-</span><span class="mf">0.498288</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.69044</span><span class="p">,</span><span class="o">-</span><span class="mf">2.11147</span><span class="p">)</span> <span class="p">(</span><span class="mf">2.12463</span><span class="p">,</span><span class="mf">0.593042</span><span class="p">)</span> <span class="p">(</span><span class="mf">2.12463</span><span class="p">,</span><span class="mf">0.593042</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.49771</span><span class="p">,</span><span class="mf">0.35531</span><span class="p">)</span> <span class="p">]</span>
+
+<span class="n">Cell</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.4145</span><span class="p">,</span><span class="mf">3.08397</span><span class="p">)</span> <span class="p">(</span><span class="mf">2.16428</span><span class="p">,</span><span class="o">-</span><span class="mf">0.107854</span><span class="p">)</span> <span class="p">(</span><span class="mf">2.16428</span><span class="p">,</span><span class="o">-</span><span class="mf">0.107854</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.665168</span><span class="p">,</span><span class="o">-</span><span class="mf">1.2601</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.04274</span><span class="p">,</span><span class="o">-</span><span class="mf">3.63055</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.96958</span><span class="p">,</span><span class="mf">3.30893</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.96958</span><span class="p">,</span><span class="mf">3.30893</span><span class="p">)</span> <span class="p">(</span><span class="mf">3.23503</span><span class="p">,</span><span class="mf">0.646061</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">1.77954</span><span class="p">,</span><span class="o">-</span><span class="mf">2.04437</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.35374</span><span class="p">,</span><span class="mf">0.407467</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.35374</span><span class="p">,</span><span class="mf">0.407467</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.30007</span><span class="p">,</span><span class="o">-</span><span class="mf">0.173447</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">1.09669</span><span class="p">,</span><span class="mf">1.0829</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.786561</span><span class="p">,</span><span class="o">-</span><span class="mf">0.675544</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.786561</span><span class="p">,</span><span class="o">-</span><span class="mf">0.675544</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.809771</span><span class="p">,</span><span class="o">-</span><span class="mf">0.891165</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0491</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0903285</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.201155</span><span class="p">,</span><span class="mf">2.46153</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.201155</span><span class="p">,</span><span class="mf">2.46153</span><span class="p">)</span> <span class="p">(</span><span class="mf">2.47398</span><span class="p">,</span><span class="o">-</span><span class="mf">0.676472</span><span class="p">)</span> <span class="p">]</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -279,28 +338,30 @@ all the array dimensions into a single batch dimension.</p>
 along the array dimensions.
 The simplest of these operations is <code class="docutils literal notranslate"><span class="pre">gather</span></code>.</p>
 <section id="gather">
-<h2>Gather<a class="headerlink" href="#gather" title="Permalink to this headline">¶</a></h2>
-<p>Given an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object <code class="docutils literal notranslate"><span class="pre">X</span></code> with array dimension <img alt="N" class="math" src="_images/math/696e4a984ba3f82a7cd270230ace110ef751b52a.svg" style="vertical-align: 0px"/> and an <img alt="N\times N" class="math" src="_images/math/49ce981f1e286e4ca0005ce3f441d955c08c30b7.svg" style="vertical-align: -2px"/>
-real matrix <img alt="C" class="math" src="_images/math/e86c6a238f03820c341bcabb7ffb67131f8d38ac.svg" style="vertical-align: 0px"/>, <code class="docutils literal notranslate"><span class="pre">gather</span></code> return an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> in which the <img alt="i" class="math" src="_images/math/4beb4858fd47cbeee3a992f0d65c3bd7dc1464de.svg" style="vertical-align: 0px"/>’th cell is</p>
-<div class="math-wrapper"><div class="math">
-<p><img alt="Y^{(i)}=\sum_{j\::\:c_{i,j}\neq 0} c_{i,j}\,X^{(j)}." src="_images/math/a2d94487361f51adfc63eee840fea45d1b4f8a8b.svg"/></p>
-</div></div><p>Using cnine’s array functionality, GElib can efficiently parallelize this operation on the GPU,
-even when the number of terms in the sum for different values of <img alt="i" class="math" src="_images/math/4beb4858fd47cbeee3a992f0d65c3bd7dc1464de.svg" style="vertical-align: 0px"/> is different.</p>
+<h2>Gather<a class="headerlink" href="#gather" title="Link to this heading">¶</a></h2>
+<p>Given an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> object <code class="docutils literal notranslate"><span class="pre">X</span></code> with array dimension <img class="math" src="_images/math/90c30b280cd1d7525ca506d30cf48d0398951058.svg" alt="N" style="vertical-align: 0px"/> and an <img class="math" src="_images/math/f66ce8e289487fc696fd92c3f394105d3adc1cf8.svg" alt="N\times N" style="vertical-align: -2px"/>
+real matrix <img class="math" src="_images/math/20dceca2f1aa2d66f83a5c7e85c6291f2747fdde.svg" alt="C" style="vertical-align: 0px"/>, <code class="docutils literal notranslate"><span class="pre">gather</span></code> return an <code class="docutils literal notranslate"><span class="pre">SO3partArr</span></code> in which the <img class="math" src="_images/math/358a171969b390e800f87d9598de19508fe5fe19.svg" alt="i" style="vertical-align: 0px"/>’th cell is</p>
+<div class="math-wrapper docutils container">
+<div class="math">
+<p><img src="_images/math/eab5403933fd4391b4d053b398f0556a2d436f87.svg" alt="Y^{(i)}=\sum_{j\::\:c_{i,j}\neq 0} c_{i,j}\,X^{(j)}."/></p>
+</div></div>
+<p>Using cnine’s array functionality, GElib can efficiently parallelize this operation on the GPU,
+even when the number of terms in the sum for different values of <img class="math" src="_images/math/358a171969b390e800f87d9598de19508fe5fe19.svg" alt="i" style="vertical-align: 0px"/> is different.</p>
 <p>Invoking this functionality requires defining <code class="docutils literal notranslate"><span class="pre">C</span></code> as a single precision PyTorch tensor
 and constructing the corresponding <code class="docutils literal notranslate"><span class="pre">cnine.Rmask1</span></code> object:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cnine</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">);</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span><span class="o">=</span><span class="n">cnine</span><span class="o">.</span><span class="n">Rmask1</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="kn">import</span> <span class="nn">cnine</span>
+<span class="o">&gt;&gt;</span> <span class="n">C</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">);</span>
+<span class="o">&gt;&gt;</span> <span class="n">mask</span><span class="o">=</span><span class="n">cnine</span><span class="o">.</span><span class="n">Rmask1</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The gather operation is then called as</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">3</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Y</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">X</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3partArr</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">3</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="n">Y</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Naturally, <code class="docutils literal notranslate"><span class="pre">gather</span></code> is a differentiable operation.</p>
 <div class="line-block">
-<div class="line"><br/></div>
+<div class="line"><br /></div>
 </div>
 </section>
 </section>
@@ -317,10 +378,10 @@ and constructing the corresponding <code class="docutils literal notranslate"><s
                 </div>
                 <div class="title">SO3vecArr</div>
               </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
           <a class="prev-page" href="SO3vecB.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -331,17 +392,19 @@ and constructing the corresponding <code class="docutils literal notranslate"><s
               </div>
             </a>
         </div>
-
-        <div class="related-information">
-              Copyright &#169; 2021-2022, Risi Kondor |
-            Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
-              and
-              <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-              <a href="https://github.com/pradyunsg/furo">Furo theme</a>. |
-            <a class="muted-link" href="_sources/SO3partArr.rst.txt"
-               rel="nofollow">
-              Show Source
-            </a>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021-2022, Risi Kondor
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
         </div>
         
       </footer>
@@ -352,7 +415,7 @@ and constructing the corresponding <code class="docutils literal notranslate"><s
       <div class="toc-sticky toc-scroll">
         <div class="toc-title-container">
           <span class="toc-title">
-            Contents
+            On this page
           </span>
         </div>
         <div class="toc-tree-container">
@@ -371,10 +434,9 @@ and constructing the corresponding <code class="docutils literal notranslate"><s
       
     </aside>
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/scripts/main.js"></script>
+</div><script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
     </body>
 </html>

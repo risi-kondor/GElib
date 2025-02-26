@@ -1,0 +1,426 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3part" href="SO3partB.html" /><link rel="prev" title="Introduction" href="intro.html" />
+
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.07.18 -->
+        <title>Mathematical background - GElib documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=613ab9ff" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --font-stack: Arial, sans-serif;
+  --font-stack--monospace: Courier, monospace;
+  --font-stack--headings: Geneva, sans-serif;
+  --font-weight--headings: light;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">GElib  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">GElib  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Mathematical background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partB.html">SO3part</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SO3vecArr.html">SO3vecArr</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/background.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="mathematical-background">
+<h1>Mathematical background<a class="headerlink" href="#mathematical-background" title="Link to this heading">¶</a></h1>
+<p>A finite dimensional <strong>representation</strong> of a group <img class="math" src="_images/math/c34e970897f837246b7e4bf446133dc17ce0e6a2.svg" alt="G" style="vertical-align: 0px"/> over a field <img class="math" src="_images/math/1b1625e8c59ad60321f071e6a803670fb259a3d0.svg" alt="\mathbb{F}" style="vertical-align: 0px"/> is a
+matrix valued function <img class="math" src="_images/math/127c4f4592e610894586f756f5636c66b63fa507.svg" alt="\rho\colon G\to\mathbb{F}^{d\times d}" style="vertical-align: -4px"/> such that</p>
+<div class="math-wrapper docutils container">
+<div class="math">
+<p><img src="_images/math/4eb052ad48309c2c1594d77052beb832fae177b1.svg" alt="\rho(xy)=\rho(x)\,\rho(y)"/></p>
+</div></div>
+<p>for any <img class="math" src="_images/math/ead2998f550a265580ca94c97e1f3d56dd92ee1a.svg" alt="x,y\in G" style="vertical-align: -4px"/>. While it is possible to define representations over different fields,
+in <cite>GElib</cite> we only consider complex valued representations (<img class="math" src="_images/math/4d84d958b0854ed561d072481f4c06371674a701.svg" alt="\mathbb{F}=\mathbb{C}" style="vertical-align: 0px"/>)
+which is the most common and generally the most straightforward choice.</p>
+<p>Different representations of the same group can be related to each other in various ways, for example,
+<img class="math" src="_images/math/8c589327804761af7605082e125543cd47fed388.svg" alt="\rho" style="vertical-align: -4px"/> might decompose into a direct sum of smaller representations in the form</p>
+<div class="math-wrapper docutils container">
+<div class="math">
+<p><img src="_images/math/cf58d315404f9cb1caeb7e7473460de8999e4476.svg" alt="\rho(x)=\left(\begin{array}{c|c} \rho_1(x)&amp; \\ \hline &amp;\rho_2(x)\end{array}\right)"/></p>
+</div></div>
+<p>However, provided that <img class="math" src="_images/math/c34e970897f837246b7e4bf446133dc17ce0e6a2.svg" alt="G" style="vertical-align: 0px"/> is a ‘compact` group, it always has a finite or countable sequence of
+elementary representations <img class="math" src="_images/math/337ae87ae3ffe2be5f31ce34dab486996316b7d6.svg" alt="\rho_1,\rho_2,\ldots" style="vertical-align: -4px"/> called its <strong>irreducible representations</strong>
+(or just <strong>irreps</strong> for short) such that any representation of <img class="math" src="_images/math/c34e970897f837246b7e4bf446133dc17ce0e6a2.svg" alt="G" style="vertical-align: 0px"/> can be reduced into a direct
+sum of some subset of <img class="math" src="_images/math/337ae87ae3ffe2be5f31ce34dab486996316b7d6.svg" alt="\rho_1,\rho_2,\ldots" style="vertical-align: -4px"/>.</p>
+<section id="equivariant-neural-networks">
+<h2>Equivariant neural networks<a class="headerlink" href="#equivariant-neural-networks" title="Link to this heading">¶</a></h2>
+<p>Equivariant neural networks are a class of neural architectures that are designed to strictly obey certain
+underlying symmetries of the learning problem, such as invariance to translations, rotations, and so on.
+In order to achieve this, equivariant archtectures store information in objects that transform
+according to the individual irreps of the group <img class="math" src="_images/math/c34e970897f837246b7e4bf446133dc17ce0e6a2.svg" alt="G" style="vertical-align: 0px"/> corresponding to the underlying symmetry.
+Technically, such objects are called <strong>G-covariant</strong>.</p>
+<p><cite>GElib</cite> provides two basic classes to facilitate working G-covariant objects:</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Gpart</span></code> class stores a collection of <img class="math" src="_images/math/122fb949cd3cfc526b3c5c5a2f98e1614f108923.svg" alt="n" style="vertical-align: 0px"/> vectors transforming according to the <cite>same</cite>
+irrep <img class="math" src="_images/math/8c589327804761af7605082e125543cd47fed388.svg" alt="\rho" style="vertical-align: -4px"/> of <img class="math" src="_images/math/c34e970897f837246b7e4bf446133dc17ce0e6a2.svg" alt="G" style="vertical-align: 0px"/>. Denoting the dimensionality of <img class="math" src="_images/math/8c589327804761af7605082e125543cd47fed388.svg" alt="\rho" style="vertical-align: -4px"/> by <img class="math" src="_images/math/180f6b838dfad78b025845775f43e41f3286eab4.svg" alt="d_\rho" style="vertical-align: -6px"/>, a <code class="docutils literal notranslate"><span class="pre">Gpart</span></code> object can be
+thought of as a <img class="math" src="_images/math/9de328a4c503ee2445302a8218af9515251ddb63.svg" alt="d_\rho\times n" style="vertical-align: -6px"/> dimensional matrix <img class="math" src="_images/math/70a72fb359e8a0c5ba54630542ce485e026ab6f3.svg" alt="F" style="vertical-align: 0px"/>, and the group acts on <img class="math" src="_images/math/70a72fb359e8a0c5ba54630542ce485e026ab6f3.svg" alt="F" style="vertical-align: 0px"/> by
+<img class="math" src="_images/math/783f68a7796a5395d4b6949763ae20badc1ff17f.svg" alt="F\mapsto \rho(x) F" style="vertical-align: -5px"/>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Gvec</span></code> object stores a collection of <code class="docutils literal notranslate"><span class="pre">Gpart</span></code>s corresponding to different irreps. Hence it can
+store more general <img class="math" src="_images/math/c34e970897f837246b7e4bf446133dc17ce0e6a2.svg" alt="G" style="vertical-align: 0px"/>-covariant objects that transform according to any representation.</p></li>
+</ol>
+<p>Here <code class="docutils literal notranslate"><span class="pre">G</span></code> is to be replaced by the name of the actual group. For example, in the case of the three dimensional
+rotation group <code class="docutils literal notranslate"><span class="pre">SO3</span></code> the relevant <cite>GElib</cite> classes are <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> and <code class="docutils literal notranslate"><span class="pre">SO3vec</span></code>.
+Since the irreps are always assumed to be complex valued, the <code class="docutils literal notranslate"><span class="pre">Gpart</span></code> and <code class="docutils literal notranslate"><span class="pre">Gvec</span></code> objects are also complex.</p>
+<p><cite>GElib</cite> provides various facilities for operating on G-covariant objects.
+The most important of these is the <em>Clebsch–Gordan product</em> described below.</p>
+</section>
+<section id="the-clebsch-gordan-product">
+<h2>The Clebsch–Gordan product<a class="headerlink" href="#the-clebsch-gordan-product" title="Link to this heading">¶</a></h2>
+<p>Given any two irreducible representations <img class="math" src="_images/math/910a5152e4c128a08c216c2b9601def55c1595a7.svg" alt="\rho_a" style="vertical-align: -4px"/> and <img class="math" src="_images/math/cb92f55bdde92c102284707c3f312c2e9d86c90e.svg" alt="\rho_b" style="vertical-align: -4px"/> of <img class="math" src="_images/math/c34e970897f837246b7e4bf446133dc17ce0e6a2.svg" alt="G" style="vertical-align: 0px"/>, their tensor
+(Kronecker) product <img class="math" src="_images/math/5b99d19d752810e7cc4e750b0b4dea95daac3a0a.svg" alt="(\rho_a\!\otimes\!\rho_b)(x):=\rho_a(x)\!\otimes\!\rho_b(x)" style="vertical-align: -5px"/> is also a representation, but,
+in general, it is not irreducible. By the general theory of representations of compact groups it must
+then be reducible to a direct sum of irreps in the form</p>
+<div class="math-wrapper docutils container" id="equation-cgdecomp">
+<div class="math" id="equation-cgdecomp">
+<p><span class="eqno">(1)<a class="headerlink" href="#equation-cgdecomp" title="Link to this equation">¶</a></span><img src="_images/math/8b7855612a92daaf5d516c8a19316ef2d0b82014.svg" alt="\rho_a(x)\otimes\rho_b(x)=C^\dag_{a,b} \bigg[\bigoplus_i \bigoplus_{j=1}^{\kappa(a,b,i)} \rho_i(x) \bigg] C_{a,b}"/></p>
+</div></div>
+<p>for some combination of <img class="math" src="_images/math/bf80b5c7ca573e2cb19e29902cc74e33398d8957.svg" alt="\kappa(a,b,i)" style="vertical-align: -5px"/> multiplicities and <img class="math" src="_images/math/f219db474b78c92e35fc9d6ddeb54526c7bbfb08.svg" alt="C_{a,b}" style="vertical-align: -6px"/> unitary transformation matrix.
+This is called the <strong>Clebsch-Gordan decomposition</strong>.</p>
+<p>What irreps exactly appear in the decomposition, what the multiplicities are, and what the matrix <img class="math" src="_images/math/f219db474b78c92e35fc9d6ddeb54526c7bbfb08.svg" alt="C_{a,b}" style="vertical-align: -6px"/>
+is are nontrivial questions that must be derived on a group-by-group basis. For the groups most commonly
+used in equivariant nets however the answer to these questions is can generally be readily found in the mathematics literature.
+For the purposes of software like GElib the decomposition can be hard coded, since it depends on the group,
+and not any form of “data”.</p>
+<p>The significance of the Clebsch–Gordan transform for equivariant nets is that it also prescribes
+the way that the tensor product of G-covariant
+parts and vectors transform. In particular, if <img class="math" src="_images/math/5ef7d3309a6f00980eccfd088bc933e86b3f6f05.svg" alt="F_a" style="vertical-align: -3px"/> and <img class="math" src="_images/math/6abc45c46e468b10f9a10b19b23eb2c0e8660a7b.svg" alt="F_b" style="vertical-align: -3px"/> are two G-covariant parts corresponding
+to <img class="math" src="_images/math/910a5152e4c128a08c216c2b9601def55c1595a7.svg" alt="\rho_a" style="vertical-align: -4px"/> resp. <img class="math" src="_images/math/cb92f55bdde92c102284707c3f312c2e9d86c90e.svg" alt="\rho_b" style="vertical-align: -4px"/>, i.e., they transform under the action of the group as</p>
+<div class="math-wrapper docutils container">
+<div class="math">
+<p><img src="_images/math/b67ac1c9b192b2c5a866d5299924be1782b6d8a1.svg" alt="F_a\longmapsto \rho_a(g)\,F_a \hspace{50pt} F_b\longmapsto \rho_b(g)\,F_b,"/></p>
+</div></div>
+<p>then their tensor product transforms as</p>
+<div class="math-wrapper docutils container">
+<div class="math">
+<p><img src="_images/math/35edb68c62bdc8134c7e31bf07be07912ac8a017.svg" alt="F_a\otimes F_b \longmapsto (\rho_a(x)\otimes\rho_b(x))(F_a\otimes F_b)."/></p>
+</div></div>
+<p>However, if we break <img class="math" src="_images/math/f219db474b78c92e35fc9d6ddeb54526c7bbfb08.svg" alt="C_{a,b}" style="vertical-align: -6px"/> into a sequence of horizontal blocks <img class="math" src="_images/math/e6c26ddb1348ff19ff0fe010ba0df6615633294a.svg" alt="C_{a,b}^{i,j}" style="vertical-align: -8px"/>
+corresponding to the block structure of the matrix appearing in the square brackets in
+<a class="reference internal" href="#equation-cgdecomp">(1)</a>, and form the so-called <strong>Clebsch–Gordan product</strong> (<strong>CG-product</strong> for short) matrices</p>
+<div class="math-wrapper docutils container">
+<div class="math">
+<p><img src="_images/math/b8e65a778cd89e84f231fc4e856fac3ace759f82.svg" alt="F_a\otimes_{i,j} F_b:=C_{a,b}^{i,j}(F_a\otimes F_b),"/></p>
+</div></div>
+<p>it is relatively easy to see that each of these matrices transforms simply as</p>
+<div class="math-wrapper docutils container">
+<div class="math">
+<p><img src="_images/math/de848a08e6635d3bdff9e13038442d64a3e3e810.svg" alt="F_a\otimes_{i,j}\! F_b\longmapsto \rho_i(x) (F_a\otimes_{i,j}\! F_b),"/></p>
+</div></div>
+<p>i.e., each <img class="math" src="_images/math/c3c9d764c3ac74c4fa9daa55997bc41e9d11b6cd.svg" alt="F_a\otimes_{i,j}\! F_b" style="vertical-align: -6px"/> is itself an <img class="math" src="_images/math/9b6ab07fd26448e02b4bcebb086e983f90f59f54.svg" alt="\rho_i" style="vertical-align: -4px"/>–covariant part.
+Thus, the Clebsch–Gordan product is a bilinear operation on G-covariant objects that produces
+other G-covariant objects.</p>
+<p>The concept of Clebsch–Gordan product also readily extends to <code class="docutils literal notranslate"><span class="pre">Gvec</span></code>s. To compute the CG-product
+of two <code class="docutils literal notranslate"><span class="pre">Gvec</span></code>s <img class="math" src="_images/math/973d517bf0327c024a0d8e65f613e1bb8bf89799.svg" alt="\mathbf{u}" style="vertical-align: 0px"/> and <img class="math" src="_images/math/d82ad27cd18fd96ef43068a601ac07e9d1da5c4a.svg" alt="\mathbf{v}" style="vertical-align: 0px"/>, we simply compute the CG-product of each
+part in <img class="math" src="_images/math/973d517bf0327c024a0d8e65f613e1bb8bf89799.svg" alt="\mathbf{u}" style="vertical-align: 0px"/> with each part in <img class="math" src="_images/math/d82ad27cd18fd96ef43068a601ac07e9d1da5c4a.svg" alt="\mathbf{v}" style="vertical-align: 0px"/> and concatenate all components
+that correspond to the same irrep.</p>
+<p>Due to their ability to nontrivially combine objects transforming according to the different irreps of
+the same group Clebsch–Gordan products play a ciritical role in equivariant neural architectures.
+Unfortunately, they are also relatively costly, and often end up becoming the computational bottleneck.
+One of the most important components of <cite>GElib</cite> is providing fast implemntations of CG-products.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="SO3partB.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">SO3part</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="intro.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Introduction</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021-2022, Risi Kondor
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Mathematical background</a><ul>
+<li><a class="reference internal" href="#equivariant-neural-networks">Equivariant neural networks</a></li>
+<li><a class="reference internal" href="#the-clebsch-gordan-product">The Clebsch–Gordan product</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
+</html>

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3vec" href="SO3vecB.html" /><link rel="prev" title="Introduction" href="intro.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SO3vec" href="SO3vecB.html" /><link rel="prev" title="Mathematical background" href="background.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.07.18 -->
         <title>SO3part - GElib documentation</title>
@@ -205,6 +205,7 @@
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Mathematical background</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SO3part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3vecB.html">SO3vec</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SO3partArr.html">SO3partArr</a></li>
@@ -259,11 +260,15 @@ The irreducible representations of SO(3) are sometimes referred to as Wigner D-m
 <img class="math" src="_images/math/af0337ade1632b0d3b3b99b0f79bfc38beb419c6.svg" alt="P" style="vertical-align: 0px"/> can be thought of as a matrix <img class="math" src="_images/math/38ae54ab39151b31119590651cb68cd553275043.svg" alt="\mathbb{C}^{(2\ell+1)\times n}" style="vertical-align: 0px"/>.
 However, to aid in parallelizing certain operations, the
 <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> class in GElib also admits a “batch dimension”, <img class="math" src="_images/math/b20e45c1930baf3856718e277e6093a849409303.svg" alt="b" style="vertical-align: 0px"/>.
-Therefore, <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is implemented as a
-<code class="docutils literal notranslate"><span class="pre">(b,2l+1,n)</span></code> -dimensional single precision complex <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>.</p>
+Therefore, an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is a
+<code class="docutils literal notranslate"><span class="pre">(b,2l+1,n)</span></code> -dimensional single precision complex tensor.</p>
 <p>The following code constructs an <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> object holding <code class="docutils literal notranslate"><span class="pre">n=3</span></code> Gaussian distributed random vectors corresponding
 to the <code class="docutils literal notranslate"><span class="pre">l=2</span></code> irrep of SO(3) (batch size 1) and prints it out in GElib’s own compact format.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
+
+<span class="o">&lt;</span><span class="n">SO3part</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span> <span class="n">nc</span><span class="o">=</span><span class="mi">3</span><span class="o">&gt;</span>
+
 <span class="o">&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
 
 <span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.254751</span><span class="p">,</span><span class="mf">1.06977</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.0920261</span><span class="p">,</span><span class="mf">0.568582</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.61119</span><span class="p">,</span><span class="mf">0.145976</span><span class="p">)</span> <span class="p">]</span>
@@ -274,7 +279,7 @@ to the <code class="docutils literal notranslate"><span class="pre">l=2</span></
 </pre></div>
 </div>
 <p>A zero <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> would be constructed similarly using the <code class="docutils literal notranslate"><span class="pre">gelib.SO3part.zeros(b,l,n)</span></code> constructor.
-In both cases, similar to <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>s,  the optional <code class="docutils literal notranslate"><span class="pre">device</span></code> argument selects whether the
+In both cases, similar to regular PyTorch tensors,  an optional <code class="docutils literal notranslate"><span class="pre">device</span></code> argument selects whether the
 <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is  placed on the CPU (<code class="docutils literal notranslate"><span class="pre">device='cpu'</span></code>) or the GPU (<code class="docutils literal notranslate"><span class="pre">device='cuda'</span></code>).
 The batch dimension, <code class="docutils literal notranslate"><span class="pre">b</span></code>, the order <code class="docutils literal notranslate"><span class="pre">l</span></code>, and multiplicity <code class="docutils literal notranslate"><span class="pre">n</span></code> of the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> are read out as follows.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">getb</span><span class="p">()</span>
@@ -285,9 +290,23 @@ The batch dimension, <code class="docutils literal notranslate"><span class="pre
 <span class="mi">3</span>
 </pre></div>
 </div>
-<p>Since <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> is derived from <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, it supports all the usual
-tensor arithmetic operations, and its elements can be
-accessed directly, just like any PyTorch tensor.</p>
+<p>Since the <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> class is implemented as a subclass of <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>,
+<code class="docutils literal notranslate"><span class="pre">SO3part</span></code> objects can freely partake in PyTorch’s <code class="docutils literal notranslate"><span class="pre">autograd</span></code> (backpropagation) functionality.
+They can also be initialized directly from Pytorch tensors:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">B</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">=</span><span class="n">gelib</span><span class="o">.</span><span class="n">SO3part</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+
+<span class="p">[</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.324381</span><span class="p">,</span><span class="o">-</span><span class="mf">0.283861</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.360746</span><span class="p">,</span><span class="mf">1.33882</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">0.0292294</span><span class="p">,</span><span class="mf">0.443425</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.461236</span><span class="p">,</span><span class="o">-</span><span class="mf">0.129146</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">[</span> <span class="p">(</span><span class="mf">0.67595</span><span class="p">,</span><span class="o">-</span><span class="mf">0.201834</span><span class="p">)</span> <span class="p">(</span><span class="mf">1.04561</span><span class="p">,</span><span class="o">-</span><span class="mf">0.380853</span><span class="p">)</span> <span class="p">]</span>
+</pre></div>
+</div>
+<p>Note that the initializing tensor must be complex valued and single precision, since currently <cite>GElib</cite> only supports
+single precision arithmetic.</p>
+<p>As a further consequence of <code class="docutils literal notranslate"><span class="pre">SO3part</span></code> being a subclass of <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>,
+it supports all the usual tensor arithmetic operations.
+Its elements can be also be accessed individually, just like for any PyTorch tensor.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
@@ -426,7 +445,7 @@ Such “Fourier” <code class="docutils literal notranslate"><span class="pre">
 </pre></div>
 </div>
 <p>In general, when all operands of a given operation are on the GPU, the computation is performed on
-the GPU and the result placed on the same GPU.</p>
+the GPU and the result is placed on the same GPU.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
@@ -447,14 +466,14 @@ the GPU and the result placed on the same GPU.</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="intro.html">
+          <a class="prev-page" href="background.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Introduction</div>
+                <div class="title">Mathematical background</div>
                 
               </div>
             </a>

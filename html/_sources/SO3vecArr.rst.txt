@@ -7,10 +7,13 @@ list of ``SO3partArr`` s.
 
 .. code-block:: python
 
- >>> v=gelib.SO3vecArr.randn(1,[2,2],[2,3,1])
- >>> v
+ >> v=gelib.SO3vecArr.randn(1,[2,2],{0:2,1:3,2:1})
+ >> print(v.repr())
+
  <GElib::SO3vecB_array of type(1,(2,2),(2,3,1))>
- >>> print(v)
+
+ >> print(v)
+
  Part l=0:
    Cell(0,0,0)
    [ (-1.67126,-0.419833) (-2.07704,-0.409032) ]
@@ -86,9 +89,11 @@ Gather
 
 ``SO3vecArr`` supports ``gather`` functionality, just like ``SO3partArr``:
 
- >>> import cnine
- >>> C=torch.tensor([[0,1,0],[0,0,0],[1,0,0]],dtype=torch.float32);
- >>> mask=cnine.Rmask1(C)
- >>> X=gelib.SO3vecArr.randn(1,[3],[1,1,1])
- >>> Y=X.gather(mask)
+.. code-block:: python
+
+ >> import cnine
+ >> C=torch.tensor([[0,1,0],[0,0,0],[1,0,0]],dtype=torch.float32);
+ >> mask=cnine.Rmask1(C)
+ >> X=gelib.SO3vecArr.randn(1,[3],[1,1,1])
+ >> Y=X.gather(mask)
 
