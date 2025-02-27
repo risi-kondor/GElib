@@ -156,10 +156,8 @@ namespace GElib{
   public: // ---- Transport -----------------------------------------------------------------------------------
 
 
-    SO3part(const SO3part& x, const int _dev){
-      return SO3part(TENSOR(x,_dev));
-      //return R; 
-    }
+    SO3part(const SO3part& x, const int _dev):
+      SO3part(TENSOR(x,_dev)){}
 
 
   public: // ---- Access -------------------------------------------------------------------------------------
