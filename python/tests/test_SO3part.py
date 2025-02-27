@@ -16,5 +16,3 @@ P=g.SO3part.randn(1,1,2)
 Q=g.SO3part.randn(1,2,2)
 R=g.CGproduct(P,Q,1)
 print(R)
-
-

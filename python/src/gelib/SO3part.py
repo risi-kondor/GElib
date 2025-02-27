@@ -85,9 +85,18 @@ class SO3part(torch.Tensor):
             dims[-1]=args[1]
             return SO3part(torch.zeros(dims,dtype=torch.complex64,device=self.device))
     
-    #@classmethod
-    #def randn_like(self,x):
-    #    return SO3part(torch.randn_like(x))
+#     @classmethod
+#     def randn_like(self):
+#         """
+#         Create an SO(3)-part consisting of b lots of n vectors transforming according to the l'th irrep of SO(3).
+#         The vectors are initialized as random gaussian vectors, resulting in an b*(2+l+1)*n dimensional random
+#         complex tensor.
+#         """
+#         return SO3part(torch.randn(self.size(),dtype=torch.complex64,device=self.device))
+
+    @classmethod
+    def randn_like(self,x):
+        return SO3part(torch.randn_like(x))
 
     def backend(self):
         return gb.SO3part.view(self)
@@ -164,8 +173,8 @@ class SO3part_CGproductFn(torch.autograd.Function):
         #g=SO3part(_g)
         xg=x.zeros_like()
         yg=y.zeros_like()
-        xg.backend().add_CGproduct_back0(g.backend(),y.backend())
-        yg.backend().add_CGproduct_back1(g.backend(),x.backend())
+        gb.SO3part.view(xg).add_CGproduct_back0(gb.SO3part.view(g),gb.SO3part.view(y))
+        gb.SO3part.view(yg).add_CGproduct_back1(gb.SO3part.view(g),gb.SO3part.view(x))
         return xg,yg,None
 
 
@@ -184,11 +193,10 @@ class SO3part_DiagCGproductFn(torch.autograd.Function):
     @staticmethod
     def backward(ctx,g):
         x,y = ctx.saved_tensors
-        #g=SO3part(_g)
         xg=x.zeros_like()
         yg=y.zeros_like()
-        xg.backend().add_DiagCGproduct_back0(g.backend(),y.backend())
-        yg.backend().add_DiagCGproduct_back1(g.backend(),x.backend())
+        gb.SO3part.view(xg).add_DiagCGproduct_back0(gb.SO3part.view(g),gb.SO3part.view(y))
+        gb.SO3part.view(yg).add_DiagCGproduct_back1(gb.SO3part.view(g),gb.SO3part.view(x))
         return xg,yg,None
 
 
