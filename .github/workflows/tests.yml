@@ -36,7 +36,7 @@ jobs:
         cd ..
         git clone https://github.com/risi-kondor/cnine.git
         cd cnine/python
-        pip install --no-build-isolation -e .
+        # pip install --no-build-isolation -e .
         cd ../../GElib  
         # GElib
         cd python
