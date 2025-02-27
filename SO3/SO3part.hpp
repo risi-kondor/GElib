@@ -157,8 +157,8 @@ namespace GElib{
 
 
     SO3part(const SO3part& x, const int _dev){
-      SO3partB R(TENSOR(x,_dev));
-      return R; 
+      return SO3part(TENSOR(x,_dev));
+      //return R; 
     }
 
 
