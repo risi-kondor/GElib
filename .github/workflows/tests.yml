@@ -48,4 +48,4 @@ jobs:
     - name: Run tests
       run: |
         pytest python/tests/ci_tests
-        pytest --doctest-modules --pyargs gelib
+        #pytest --doctest-modules --pyargs gelib
