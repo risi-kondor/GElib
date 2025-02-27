@@ -115,7 +115,7 @@ that correspond to the same irrep.
 Due to their ability to nontrivially combine objects transforming according to the different irreps of 
 the same group Clebsch--Gordan products play a ciritical role in equivariant neural architectures. 
 Unfortunately, they are also relatively costly, and often end up becoming the computational bottleneck. 
-One of the most important components of `GElib` is providing fast implemntations of CG-products. 
+One of the most important components of `GElib` is providing fast implementations of CG-products. 
  
  
 
