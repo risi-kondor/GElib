@@ -168,15 +168,14 @@ class SO3partArr(torch.Tensor):
         """
         return gelib.SO3part_DiagCGproductFn.apply(self,y,l)
 
-
     ## ---- I/O ----------------------------------------------------------------------------------------------
 
         
-    def __repr__(self):
-        return self.backend().__repr__()
+    # def __repr__(self):
+    #     return self.backend().__repr__()
 
-    def __str__(self):
-        return self.backend().__str__()
+    # def __str__(self):
+    #     return self.backend().__str__()
 
 
 ## ----------------------------------------------------------------------------------------------------------
