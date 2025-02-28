@@ -234,15 +234,6 @@ class SO3vecArr:
 
         xparts=list(self.parts.values())
         yparts=list(y.parts.values())
-        for x in xparts:
-            x : SO3partArr = x
-            l = (x.size(-2) - 1) / 2
-            print("l:", l, ", strides:", x.stride())
-        for x in yparts:
-            x : SO3partArr = x
-            l = (x.size(-2) - 1) / 2
-            print("l:", l, ", strides:", x.stride())
-        print("DONE")
         rparts =list(SO3vecArr_CGproductFn.apply(len(xparts), len(yparts), maxl,*(xparts+yparts)))
         return SO3vecArr(*rparts)
 
