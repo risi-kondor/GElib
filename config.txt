@@ -15,10 +15,14 @@ SNOB2_ROOT=$(ROOTDIR)/../Snob2/
 
 # ---- CUDA OPTIONS ----------------------------------
 
-WITH_CUDA=t
+# WITH_CUDA=t
 # CUDA_HOME=/usr/local/cuda
+# WITH_CUBLAS=t
 
-WITH_CUBLAS=t
+ifeq ($(WITH_CUDA),TRUE)
+WITH_CUDA=t
+WITH_CULBAS=t
+endif 
 
 NVCC=nvcc #/usr/local/cuda/bin/nvc c #/Developer/NVIDIA/CUDA-9.1/bin/nvcc
 
