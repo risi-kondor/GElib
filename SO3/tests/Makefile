@@ -26,9 +26,9 @@ CUDA_OBJECTS+=$(CNINE_CUDADIR)/RtensorUtils.o $(CNINE_CUDADIR)/TensorView_accumu
 $(CNINE_ROOT)/cuda/CtensorA_add.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/GElib_base.o 
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partB_addCGproduct.o $(GELIB_CUDADIR)/SO3partB_addCGproduct_back0.o $(GELIB_CUDADIR)/SO3partB_addCGproduct_back1.o 
-CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partB_addDiagCGproduct.o $(GELIB_CUDADIR)/SO3partB_addDiagCGproduct_back0.o $(GELIB_CUDADIR)/SO3partB_addDiagCGproduct_back1.o 
-CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3Fpart_addFproduct.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back0.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back1.o 
-CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3part_addCGtransform.o 
+#CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partB_addDiagCGproduct.o $(GELIB_CUDADIR)/SO3partB_addDiagCGproduct_back0.o $(GELIB_CUDADIR)/SO3partB_addDiagCGproduct_back1.o 
+#CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3Fpart_addFproduct.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back0.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back1.o 
+#CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3part_addCGtransform.o 
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
 endif 
 

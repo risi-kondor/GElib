@@ -15,6 +15,8 @@
 #include "TensorView.hpp"
 #include "MultiLoop.hpp"
 #include "TensorUtils.hpp"
+#include "SO3SPHgen.hpp"
+
 
 extern GElib::SO3SPHgen SO3_SPHgen;
 

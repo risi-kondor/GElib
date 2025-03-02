@@ -18,13 +18,16 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 
-#include "SO3_CGbank.hpp"
+#include "SO3CGbank.hpp"
 #include "Ctensor5_view.hpp"
 #include "utils.hpp"
 #include "utils.cu"
+#include "SO3part.hpp"
 
 
-extern GElib::SO3_CGbank SO3_cgbank;
+extern GElib::SO3CGbank SO3_CGbank;
+
+extern __device__ __constant__ unsigned char cg_cmem[]; 
 
 
 __global__ void SO3part_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r, 
@@ -120,7 +123,7 @@ __global__ void SO3part_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
 namespace GElib{
 
 
-  void SO3part_addCGproduct_cu(const SO3part& r, const SO3part x, const SO3part& y, const int offs, const cudaStream_t& stream){
+  void SO3part_addCGproduct_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream){
 
     GELIB_ASSRT(r.get_dev()==1);
     GELIB_ASSRT(x.get_dev()==1);
@@ -155,7 +158,7 @@ namespace GElib{
       rv.arrc+=rv.s3*offs;
       //r.n2=x.n2*y.n2;
 
-      float* cptr=SO3_CGbank.get<float>(l1,l2,l,r.dev).get_arr();
+      float* cptr=SO3_CGbank.get<float>(l1,l2,l,r.dev).get_arr(); // TODO 
       int clines=cnine::roundup(L1*L2,32)/32;
       int nlines=cnine::roundup(L1*xn*2,32)/32+cnine::roundup(L2*yn*2,32)/32;
 

@@ -141,8 +141,9 @@ def main():
             '../../cnine/cuda/RtensorUtils.cu',
             '../../cnine/cuda/RtensorConvolve2d.cu',
             '../../cnine/cuda/RtensorConvolve3d.cu',
-            #'../cuda/SO3CGproducts_combo.cu',
-            ext_cuda_folder+'SO3CGproducts_combo.cu',
+            'cuda/SO3part_addCGproduct.cu',
+            'cuda/SO3part_addCGproduct_back0.cu',
+            'cuda/SO3part_addCGproduct_back1.cu',
             'bindings/GElib_py.cpp'
         ],
             include_dirs=_include_dirs,

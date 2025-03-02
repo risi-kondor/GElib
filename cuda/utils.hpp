@@ -19,6 +19,8 @@
 #include <cuda_runtime.h>
 #include "Ctensor3_view.hpp"
 #include "Ctensor4_view.hpp"
+#include "Ctensor5_view.hpp"
+#include "Ctensor6_view.hpp"
 
 #define tix threadIdx.x
 
@@ -60,9 +62,9 @@ namespace GElib{
       2*x.stride(0),2*x.stride(1),2*x.stride(2),2*x.stride(3)*n,2*x.stride(3),x.get_dev());
   }
 
-  cnine::Ctensor5_view tiled_view5_of(const cnine::TensorView<complex<float> >& x){
+  cnine::Ctensor6_view tiled_view5_of(const cnine::TensorView<complex<float> >& x, const int n){
     GELIB_ASSRT(x.ndims()==5);
-    return cnine::Ctensor5_view(x.mem_as<float>(),x.mem_as<float>()+1,
+    return cnine::Ctensor6_view(x.mem_as<float>(),x.mem_as<float>()+1,
       x.dim(0),x.dim(1),x.dim(2),x.dim(3),x.dim(4)/n,n,
       2*x.stride(0),2*x.stride(1),2*x.stride(2),2*x.stride(3),2*x.stride(4)*n,2*x.stride(4),x.get_dev());
   }
