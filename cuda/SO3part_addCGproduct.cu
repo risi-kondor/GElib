@@ -86,7 +86,7 @@ __global__ void SO3part_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
 	float* _ypi=ypi+t%yn;
     
 	float* _rpr=r.arr+r.s0*b0+r.s1*b1+r.s3*((i*x.n4+t/yn)*ytot+(j*y.n4+t%yn));
-	float* _rpi=r.arrc+r.s0*b+r.s1*b1+r.s3*((i*x.n4+t/yn)*ytot+(j*y.n4+t%yn));
+	float* _rpi=r.arrc+r.s0*b0+r.s1*b1+r.s3*((i*x.n4+t/yn)*ytot+(j*y.n4+t%yn));
 
 	for(int m=-l; m<=l; m++){
 	  float r_r=0;
@@ -120,7 +120,7 @@ __global__ void SO3part_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
 namespace GElib{
 
 
-  void SO3part_addCGproduct_cu(SO3part r, SO3part x, SO3part y, const int offs, const cudaStream_t& stream){
+  void SO3part_addCGproduct_cu(const SO3part& r, const SO3part x, const SO3part& y, const int offs, const cudaStream_t& stream){
 
     GELIB_ASSRT(r.get_dev()==1);
     GELIB_ASSRT(x.get_dev()==1);
@@ -134,47 +134,44 @@ namespace GElib{
     GELIB_ASSRT(l>=std::abs(l1-l2) && l<=l1+l2);
     GELIB_ASSRT(r.getn()>=x.getn()*y.getn()+offs);
 
-    r.canonicalize_to_4d();
-    x.canonicalize_to_4d();
-    y.canonicalize_to_4d();
-
-    const int b=r.getb();
-    x.promote_batch_to(b);
-    y.promote_batch_to(b);
-
-    const int g=r.getg();
-    x.promote_grid_to(g);
-    y.promote_grid_to(g);
+    GELIB_ASSRT(r.dims.size()==5);
+    GELIB_ASSRT(x.dims.size()==5);
+    GELIB_ASSRT(y.dims.size()==5);
+    auto rsubdims=r.dims.chunk(0,3);
+    GELIB_ASSRT(x.dims.chunk(0,3)==rsubdims);
+    GELIB_ASSRT(y.dims.chunk(0,3)==rsubdims);
 
     auto [xn,yn]=optimal_tile_size(x.getn(),y.getn());
-    int xremainder=tile_channels(x,xn);
-    int yremainder=tile_channels(y,yn);
+    int xremainder=x.dims.back()%xn;
+    int yremainder=y.dims.back()%yn;
 
-    auto rv=view4_of(r);
-    auto xv=view5_of(x);
-    auto yv=view5_of(y);
+    if(r.dims[2]==1){
 
-    rv.arr+=rv.s3*offs;
-    rv.arrc+=rv.s3*offs;
-    //r.n2=x.n2*y.n2;
+      auto rv=view4_of(r.fuse(1,2));
+      auto xv=tiled_view4_of(x.fuse(1,2),xn);
+      auto yv=tiled_view4_of(y.fuse(1,2),yn);
 
-    float* cptr=nullptr;
-    int Cptr=-1; //SO3_cgbank.getfC(xl,yl,l)/4; // const memory switched off for now
-    if(Cptr<0) cptr=SO3_CGbank.get<float>(l1,l2,l,r.dev).get_arr();
-    int clines=cnine::roundup(L1*L2,32)/32;
+      rv.arr+=rv.s3*offs;
+      rv.arrc+=rv.s3*offs;
+      //r.n2=x.n2*y.n2;
 
-    int nlines=cnine::roundup(L1*xn*2,32)/32+
-      cnine::roundup(L2*yn*2,32)/32;
+      float* cptr=SO3_CGbank.get<float>(l1,l2,l,r.dev).get_arr();
+      int clines=cnine::roundup(L1*L2,32)/32;
+      int nlines=cnine::roundup(L1*xn*2,32)/32+cnine::roundup(L2*yn*2,32)/32;
 
-    if(nlines<=384){
-      bool preloadCG=(nlines+clines<=384);
-      dim3 blocks(b,g);
-      SO3part_addCGproduct_tiled_kernel<<<blocks,cnine::roundup(xn*yn,32),(nlines+preloadCG*clines)*128,stream>>>
-	(rv,xv,yv,xremainder,yremainder,Cptr,cptr,preloadCG);
-      return;
+      if(nlines<=384){
+	bool preloadCG=(nlines+clines<=384);
+	dim3 blocks(b,g);
+	SO3part_addCGproduct_tiled_kernel<<<blocks,cnine::roundup(xn*yn,32),(nlines+preloadCG*clines)*128,stream>>>
+	  (rv,xv,yv,xremainder,yremainder,-1,cptr,preloadCG);
+	return;
+      }
+
+      GELIB_ERROR("A single tile of the input and output tensors does not fit in shared memory.");
+
     }
 
-    GELIB_ERROR("A single tile of the input and output tensors does not fit in shared memory.")
+    GELIB_ERROR("5D SO3parts not supported.");
 
   }    
 

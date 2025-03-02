@@ -31,6 +31,7 @@ namespace GElib{
     using BASE=cnine::BatchedTensor<TYPE>;
 
     using Gdims=cnine::Gdims;
+    using GstridesB=cnine::GstridesB;
 
     using BASE::BASE;
     using BASE::arr;
@@ -154,67 +155,6 @@ namespace GElib{
     
   public: // ---- Batches -----------------------------------------------------------------------------------
 
-    /*
-    bool is_batched() const{
-      return dims[0]>1;
-    }
-
-    int getb() const{
-      return dims[0];
-    }
-    */
-
-    //TENSOR batch(const int b) const{
-    //return slice(0,b);
-    //}
-
-    /*
-    int dominant_batch(const GPART& y) const{
-      int xb=getb();
-      int yb=y.getb();
-      if(xb==yb) return xb;
-      if(xb==1) return yb;
-      if(yb==1) return xb;
-      throw std::invalid_argument("Gelib error: the batch dimensions of "+repr()+" and "+y.repr()+
-	" cannot be reconciled.");
-      return 0;
-    }
-
-    template<typename TYPE2>
-    void for_each_batch_multi(const cnine::TensorView<TYPE2>& x,
-      const std::function<void(const int, const TENSOR& r, const cnine::TensorView<TYPE2>& x)>& lambda) const{
-      //auto& r=static_cast<const GPART&>(*this);
-      
-      if(getb()==1){
-	int B=x.dim(0);
-	for(int b=0; b<B; b++)
-	  lambda(b,slice(0,0),x.slice(0,b));
-	return;
-      }
-
-      if(x.dim(0)==1){
-	cnine::MultiLoop(getb(),[&](const int b){
-	    lambda(b,slice(0,b),x.slice(0,0));
-	  });
-      }
-
-      cnine::MultiLoop(getb(),[&](const int b){
-	  lambda(b,slice(0,b),x.slice(0,b));
-	});
-     }
-
-
-    void for_each_batch_multi(const GPART& x, const GPART& y,
-      const std::function<void(const int, const TENSOR& r, const TENSOR& x, const TENSOR& y)>& lambda) const{
-      auto& r=static_cast<const GPART&>(*this);
-      int B=r.getb();
-      GELIB_ASSRT(x.getb()==B);
-      GELIB_ASSRT(y.getb()==B);
-      cnine::MultiLoop(B,[&](const int b){
-	  lambda(b,r.slice(0,b),x.slice(0,b),y.slice(0,b));
-	});
-    }
-    */
 
 
   public: // ---- Grid ---------------------------------------------------------------------------------------
@@ -260,6 +200,10 @@ namespace GElib{
       return static_cast<const GPART&>(*this).like(fuse_chunk(1,ndims()-3));
     }
 
+
+  public: // ---- Lambdas ------------------------------------------------------------------------------------
+
+
     template<typename TYPE2>
     void for_each_cell_multi(const cnine::TensorView<TYPE2>& x, 
       const std::function<void(const int, const int, const TENSOR& r, const cnine::TensorView<TYPE2>& x)>& lambda) const{
@@ -284,6 +228,7 @@ namespace GElib{
 	    lambda(b,g,r.slice(0,mr*g),x.slice(0,mx*g));
 	});
     }
+
 
     void for_each_cell_multi(const GPART& x, const GPART& y,
       const std::function<void(const int, const int, const TENSOR& r, const TENSOR& x, const TENSOR& y)>& lambda) const{
@@ -338,19 +283,46 @@ namespace GElib{
     }
 
 
+    void for_each_cell_multi(const GPART& x, const GPART& y,
+      const std::function<void(const TENSOR& r, const TENSOR& x, const TENSOR& y)>& lambda) const{
+      auto& r=static_cast<const GPART&>(*this);
+
+      int d=r.ndims();
+      GELIB_ASSRT(x.ndims()==d);
+      GELIB_ASSRT(y.ndims()==d);
+
+      int b=r.getb();
+      GELIB_ASSRT(x.getb()==b);
+      GELIB_ASSRT(y.getb()==b);
+
+      auto gdims=r.get_gdims();
+      GELIB_ASSRT(x.get_gdims()==gdims);
+      GELIB_ASSRT(y.get_gdims()==gdims);
+
+      if(d==3){
+	r.for_each_batch_multi(x,y,[&](const int b, const TENSOR& r, const TENSOR& x, const TENSOR& y){
+	    lambda(r,x,y);
+	  });
+	return;
+      }
+
+      if(d==5){
+	int g0=r.dims[1];
+	int g1=r.dims[2];
+	r.for_each_batch_multi(x,y,[&](const int b, const TENSOR& r, const TENSOR& x, const TENSOR& y){
+	    for(int _g0=0; _g0<g0; _g0++)
+	      for(int _g1=0; _g1<g1; _g1++)
+		lambda(r.slice(0,_g0).slice(0,_g1),x.slice(0,_g0).slice(0,_g1),y.slice(0,_g0).slice(0,_g1));
+	  });
+	return;
+      }
+
+      GELIB_ASSRT(false);
+    }
+
+
   public: // ---- Promotions ---------------------------------------------------------------------------------
 
-
-    void canonicalize_to_4d(){
-      int d=dims.size();
-      if(d==3){
-	dims=cnine::Gdims({dims[0],1,dims[1],dims[2]});
-	strides=cnine::GstridesB({strides[0],0,strides[1],strides[2]});
-      }
-      if(d>4){
-	reset(fuse_chunk(1,d-3));
-      }
-    }
 
     void promote_batch_to(const int b){
       if(dims[0]==b) return;
@@ -359,6 +331,7 @@ namespace GElib{
       strides[0]=0;
     }
 
+
     void promote_grid_to(const int g){
       GELIB_ASSRT(ndims()==4);
       if(dims[1]==g) return;
@@ -366,6 +339,7 @@ namespace GElib{
       dims[1]=g;
       strides[1]=0;
     }
+
 
     void promote_grid_to(const int g0, const int g1){
       int d=dims.size();
@@ -382,26 +356,135 @@ namespace GElib{
       GELIB_ERROR("The number of grid dimensions is not 0 or 2.");
     }
 
-    /*
-    void promote_grid_to(const Gdims& g){
+
+    void promote_grid_to(const Gdims& _gdims){
+      int d=dims.size();
+      int n=_gdims.size();
+      GELIB_ASSRT(d==3);
+      if(n==0) return;
+
+      Gdims new_dims(n+3);
+      new_dims[0]=dims[0];
+      std::copy(_gdims.begin(),_gdims.end(),new_dims.begin()+1);
+      new_dims[n+1]=dims[1];
+      new_dims[n+2]=dims[2];
+      dims=new_dims;
+
+      GstridesB new_strides(n+3,cnine::fill_raw());
+      new_strides[0]=strides[0];
+      for(int i=0; i<n; i++)
+	new_strides[i+1]=0;
+      new_strides[n+1]=strides[1];
+      new_strides[n+2]=strides[2];
+      strides=new_strides;
+    }
+
+
+    bool reconcile_batches(Gpart& x, Gpart& y){
+      int b=std::max(getb(),std::max(x.getb(),y.getb()));
+      if(dims[0]!=0 &&  dims[0]!=b) return false;
+      if(x.dims[0]!=0 &&  x.dims[0]!=b) return false;
+      if(y.dims[0]!=0 &&  y.dims[0]!=b) return false;
+      promote_batch_to(b);
+      x.promote_batch_to(b);
+      y.promote_batch_to(b);
+      return true;
+    }
+
+
+    bool reconcile_grids(Gpart& x, Gpart& y){
+      Gdims common_gdims=gdims();
+      if(x.dims.size()>3) common_gdims=x.gdims();
+      if(y.dims.size()>3) common_gdims=y.gdims();
+      if(common_gdims.size()==0) return true;
+      
+      if(dims.size()==3) promote_grid_to(common_gdims);
+      else if(gdims()!=common_gdims) return false;
+
+      if(x.dims.size()==3) x.promote_grid_to(common_gdims);
+      else if(x.gdims()!=common_gdims) return false;
+
+      if(y.dims.size()==3) y.promote_grid_to(common_gdims);
+      else if(y.gdims()!=common_gdims) return false;
+
+      return true;
+    }
+
+
+  public: // ---- Canonicalization ---------------------------------------------------------------------------
+
+
+    void canonicalize_to_4d(){
       int d=dims.size();
       if(d==3){
-	dims=cnine::Gdims(dims[0],g,cnine::Gdims({dims[1],dims[2]}));
-	strides=cnine::GstridesB(strides[0],vector<size_t>(g.size(),0),cnine::GstridesB({strides[1],strides[2]}));
-	return;
+	dims=cnine::Gdims({dims[0],1,dims[1],dims[2]});
+	strides=cnine::GstridesB({strides[0],0,strides[1],strides[2]});
       }
-      GELIB_ASSRT(d==3+g.size());
-      GELIB_ASSRT(dims.chunk(1,d-3)==g);
+      if(d>4){
+	reset(fuse_chunk(1,d-3));
+      }
     }
-    */
 
-    //TENSOR tile_channels(const int n){
-    //GELIB_ASSRT(ndims()==4);
-    //TENSOR r(*this);
-    //dims=Gdims({dims[0],dims[1],dims[2],dims[3]/n,n});
-    //return r;
-    //}
 
+    void canonicalize_to_5d(){
+      int d=dims.size();
+      if(d==3){
+	dims=cnine::Gdims({dims[0],1,1,dims[1],dims[2]});
+	strides=cnine::GstridesB({strides[0],(size_t)0,(size_t)0,strides[1],strides[2]});
+      }
+      if(d==4){
+	dims=cnine::Gdims({dims[0],dims[1],1,dims[2],dims[3]});
+	strides=cnine::GstridesB({strides[0],strides[1],(size_t)0,strides[2],strides[3]});
+      }
+      if(d==5) return;
+      if(d>5){
+	Gdims gdims=dims.chunk(1,d-3);
+	GstridesB gstrides=strides.chunk(1,d-3);
+	auto [s,g]=gstrides.fuser(gdims);
+	GELIB_ASSRT(g!=-1);
+	dims=cnine::Gdims({dims[0],g,1,dims[d-2],dims[d-1]});
+	strides=cnine::GstridesB({strides[0],(size_t)s,(size_t)0,strides[d-2],strides[d-1]});
+      }
+    }
+
+
+    bool co_canonicalize_to_5d(Gpart& x, Gpart& y){
+      int d=dims.size();
+      GELIB_ASSRT(x.dims.size()==d);
+      GELIB_ASSRT(y.dims.size()==d);
+      if(d==5) return true;
+
+      if(d>5){
+	int n=d-3;
+	vector<int> ordering(n);
+	for(int i=0; i<n; i++)
+	  ordering[i]=i;
+
+	GstridesB rstrides=strides.chunk(1,n);
+	if(rstrides.max()!=rstrides.min()) 
+	  ordering=rstrides.ordering();
+
+	GstridesB xstrides=x.strides.chunk(1,n);
+	if(xstrides.max()!=xstrides.min()) 
+	  ordering=xstrides.ordering();
+
+	GstridesB ystrides=y.strides.chunk(1,n);
+	if(ystrides.max()!=ystrides.min()) 
+	  ordering=ystrides.ordering();
+
+	Gdims rdims=dims.chunk(1,d-3);
+	GELIB_ASSRT(x.dims.chunk(1,d-3)==rdims);
+	GELIB_ASSRT(y.dims.chunk(1,d-3)==rdims);
+	GELIB_ASSRT(rstrides.fusible(rdims,ordering));
+	GELIB_ASSRT(xstrides.fusible(rdims,ordering));
+	GELIB_ASSRT(ystrides.fusible(rdims,ordering));
+      }
+
+      canonicalize_to_5d();
+      x.canonicalize_to_5d();
+      y.canonicalize_to_5d();
+      return true;
+    }
 
 
   public: // ---- Operations ---------------------------------------------------------------------------------
@@ -434,6 +517,88 @@ namespace GElib{
     }
 
 
+    void add_CGproduct(GPART x, GPART y, const int offs=0){
+      GPART r(*this);
+      const int dev=r.dev;
+      GELIB_ASSRT(x.get_dev()==dev);
+      GELIB_ASSRT(y.get_dev()==dev);
+
+      if(!r.reconcile_batches(x,y))
+	GELIB_NONFATAL("Skipping CGproduct: batch dimensions cannot be reconciled.");
+
+      if(!r.reconcile_grids(x,y))
+	GELIB_NONFATAL("Skipping CGproduct: grid dimensions cannot be reconciled.");
+
+      r.co_canonicalize_to_5d(x,y);
+
+      if(dev==0){
+	auto C=r.get_CGmatrix(x,y);
+	r.for_each_cell_multi(x,y,[&](const TENSOR& r, const TENSOR& x, const TENSOR& y){
+	    GPART::add_CGproduct_kernel(r,x,y,C,offs);
+	      });
+      }
+
+      if(dev==1){
+	GPART::add_CGproduct_dev(r,x,y,offs);
+      }
+
+    }
+
+
+    void add_CGproduct_back0(GPART r, GPART y, const int offs=0){
+      GPART x(*this);
+      const int dev=r.dev;
+      GELIB_ASSRT(x.get_dev()==dev);
+      GELIB_ASSRT(y.get_dev()==dev);
+
+      if(!r.reconcile_batches(x,y))
+	GELIB_NONFATAL("Skipping CGproduct: batch dimensions cannot be reconciled.");
+
+      if(!r.reconcile_grids(x,y))
+	GELIB_NONFATAL("Skipping CGproduct: grid dimensions cannot be reconciled.");
+
+      r.co_canonicalize_to_5d(x,y);
+
+      if(dev==0){
+	auto C=r.get_CGmatrix(x,y);
+	x.for_each_cell_multi(r,y,[&](const TENSOR& x, const TENSOR& r, const TENSOR& y){
+	    GPART::add_CGproduct_back0_kernel(r,x,y,C,offs);});
+      }
+
+      if(dev==1){
+	GPART::add_CGproduct_back0_dev(r,x,y,offs);
+      }
+
+    }
+
+
+    void add_CGproduct_back1(GPART r, GPART x, const int offs=0){
+      GPART y(*this);
+      const int dev=r.dev;
+      GELIB_ASSRT(x.get_dev()==dev);
+      GELIB_ASSRT(y.get_dev()==dev);
+
+      if(!r.reconcile_batches(x,y))
+	GELIB_NONFATAL("Skipping CGproduct: batch dimensions cannot be reconciled.");
+
+      if(!r.reconcile_grids(x,y))
+	GELIB_NONFATAL("Skipping CGproduct: grid dimensions cannot be reconciled.");
+
+      r.co_canonicalize_to_5d(x,y);
+
+      if(dev==0){
+	auto C=r.get_CGmatrix(x,y);
+	y.for_each_cell_multi(r,x,[&](const TENSOR& y, const TENSOR& r, const TENSOR& x){
+	    GPART::add_CGproduct_back1_kernel(r,x,y,C,offs);});
+      }
+
+      if(dev==1){
+	GPART::add_CGproduct_back1_dev(r,x,y,offs);
+      }
+
+    }
+
+
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
 
@@ -458,7 +623,7 @@ namespace GElib{
 
     string to_print(const string indent="") const{
       ostringstream oss;
-      oss<<indent<<dynamic_cast<const GPART&>(*this).repr()<<":"<<endl;
+      oss<<indent<<static_cast<const GPART&>(*this).repr()<<":"<<endl;
       oss<<str(indent+"  ");
       return oss.str();
     }
@@ -636,4 +801,100 @@ namespace GElib{
 	" cannot be reconciled.");
     }
     */
+
+    /*
+    bool is_batched() const{
+      return dims[0]>1;
+    }
+
+    int getb() const{
+      return dims[0];
+    }
+    */
+
+    //TENSOR batch(const int b) const{
+    //return slice(0,b);
+    //}
+
+    /*
+    int dominant_batch(const GPART& y) const{
+      int xb=getb();
+      int yb=y.getb();
+      if(xb==yb) return xb;
+      if(xb==1) return yb;
+      if(yb==1) return xb;
+      throw std::invalid_argument("Gelib error: the batch dimensions of "+repr()+" and "+y.repr()+
+	" cannot be reconciled.");
+      return 0;
+    }
+
+    template<typename TYPE2>
+    void for_each_batch_multi(const cnine::TensorView<TYPE2>& x,
+      const std::function<void(const int, const TENSOR& r, const cnine::TensorView<TYPE2>& x)>& lambda) const{
+      //auto& r=static_cast<const GPART&>(*this);
+      
+      if(getb()==1){
+	int B=x.dim(0);
+	for(int b=0; b<B; b++)
+	  lambda(b,slice(0,0),x.slice(0,b));
+	return;
+      }
+
+      if(x.dim(0)==1){
+	cnine::MultiLoop(getb(),[&](const int b){
+	    lambda(b,slice(0,b),x.slice(0,0));
+	  });
+      }
+
+      cnine::MultiLoop(getb(),[&](const int b){
+	  lambda(b,slice(0,b),x.slice(0,b));
+	});
+     }
+
+
+    void for_each_batch_multi(const GPART& x, const GPART& y,
+      const std::function<void(const int, const TENSOR& r, const TENSOR& x, const TENSOR& y)>& lambda) const{
+      auto& r=static_cast<const GPART&>(*this);
+      int B=r.getb();
+      GELIB_ASSRT(x.getb()==B);
+      GELIB_ASSRT(y.getb()==B);
+      cnine::MultiLoop(B,[&](const int b){
+	  lambda(b,r.slice(0,b),x.slice(0,b),y.slice(0,b));
+	});
+    }
+    */
+    /*
+    template<typename GPART2> // dummy template to break circular dependency
+    void add_CGproduct(const GPART2& _x, const GPART2& _y){
+      GPART r(*this);
+      GPART x(_x);
+      GPART y(_y);
+      r.reconcile_batches(x,y);
+      r.reconcile_grids(x,y);
+      r.co_canonicalize_to_5d(x,y);
+
+
+      r.for_each_cell_multi(x,y,[&](const TENSOR& );
+    }
+    */
+
+    /*
+    void promote_grid_to(const Gdims& g){
+      int d=dims.size();
+      if(d==3){
+	dims=cnine::Gdims(dims[0],g,cnine::Gdims({dims[1],dims[2]}));
+	strides=cnine::GstridesB(strides[0],vector<size_t>(g.size(),0),cnine::GstridesB({strides[1],strides[2]}));
+	return;
+      }
+      GELIB_ASSRT(d==3+g.size());
+      GELIB_ASSRT(dims.chunk(1,d-3)==g);
+    }
+    */
+
+    //TENSOR tile_channels(const int n){
+    //GELIB_ASSRT(ndims()==4);
+    //TENSOR r(*this);
+    //dims=Gdims({dims[0],dims[1],dims[2],dims[3]/n,n});
+    //return r;
+    //}
 

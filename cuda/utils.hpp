@@ -46,12 +46,25 @@ namespace GElib{
       2*x.stride(0),2*x.stride(1),2*x.stride(2),2*x.stride(3),x.get_dev());
   }
 
-
   cnine::Ctensor5_view view5_of(const cnine::TensorView<complex<float> >& x){
     GELIB_ASSRT(x.ndims()==5);
-    return cnine::Ctensor4_view(x.mem_as<float>(),x.mem_as<float>()+1,
+    return cnine::Ctensor5_view(x.mem_as<float>(),x.mem_as<float>()+1,
       x.dim(0),x.dim(1),x.dim(2),x.dim(3),x.dim(4),
       2*x.stride(0),2*x.stride(1),2*x.stride(2),2*x.stride(3),2*x.stride(4),x.get_dev());
+  }
+
+  cnine::Ctensor5_view tiled_view4_of(const cnine::TensorView<complex<float> >& x, const int n){
+    GELIB_ASSRT(x.ndims()==4);
+    return cnine::Ctensor5_view(x.mem_as<float>(),x.mem_as<float>()+1,
+      x.dim(0),x.dim(1),x.dim(2),x.dim(3)/n,n,
+      2*x.stride(0),2*x.stride(1),2*x.stride(2),2*x.stride(3)*n,2*x.stride(3),x.get_dev());
+  }
+
+  cnine::Ctensor5_view tiled_view5_of(const cnine::TensorView<complex<float> >& x){
+    GELIB_ASSRT(x.ndims()==5);
+    return cnine::Ctensor5_view(x.mem_as<float>(),x.mem_as<float>()+1,
+      x.dim(0),x.dim(1),x.dim(2),x.dim(3),x.dim(4)/n,n,
+      2*x.stride(0),2*x.stride(1),2*x.stride(2),2*x.stride(3),2*x.stride(4)*n,2*x.stride(4),x.get_dev());
   }
 
 }
