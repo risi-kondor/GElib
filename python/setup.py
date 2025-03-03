@@ -95,8 +95,9 @@ def main():
                           '-D_WITH_CUBLAS',
                           '-D_DEF_CGCMEM',
                           '-DGELIB_RANGE_CHECKING',
-                          '-DWITH_FAKE_GRAD'
-                          # '-rdc=true'
+                          '-DWITH_FAKE_GRAD',
+                          '-std=c++17',
+                          '-rdc=true'
                           ]
 
     if copy_warnings:
@@ -136,14 +137,16 @@ def main():
     if compile_with_cuda:
         ext_modules = [CUDAExtension('gelib_base', [
             '../../cnine/include/Cnine_base.cu',
-            '../../cnine/cuda/TensorView_accumulators.cu',
-            '../../cnine/cuda/BasicCtensorProducts.cu',
-            '../../cnine/cuda/RtensorUtils.cu',
-            '../../cnine/cuda/RtensorConvolve2d.cu',
-            '../../cnine/cuda/RtensorConvolve3d.cu',
-            'cuda/SO3part_addCGproduct.cu',
-            'cuda/SO3part_addCGproduct_back0.cu',
-            'cuda/SO3part_addCGproduct_back1.cu',
+            '../../cnine/cuda/TensorView_assign.cu',
+#            '../../cnine/cuda/TensorView_accumulators.cu',
+#            '../../cnine/cuda/BasicCtensorProducts.cu',
+#            '../../cnine/cuda/RtensorUtils.cu',
+#            '../../cnine/cuda/RtensorConvolve2d.cu',
+#            '../../cnine/cuda/RtensorConvolve3d.cu',
+            '../cuda/GElib_base.cu',
+            '../cuda/SO3part_addCGproduct.cu',
+            '../cuda/SO3part_addCGproduct_back0.cu',
+            '../cuda/SO3part_addCGproduct_back1.cu',
             'bindings/GElib_py.cpp'
         ],
             include_dirs=_include_dirs,

@@ -26,7 +26,6 @@
 
 
 extern GElib::SO3CGbank SO3_CGbank;
-
 extern __device__ __constant__ unsigned char cg_cmem[]; 
 
 
@@ -158,13 +157,13 @@ namespace GElib{
       rv.arrc+=rv.s3*offs;
       //r.n2=x.n2*y.n2;
 
-      float* cptr=SO3_CGbank.get<float>(l1,l2,l,r.dev).get_arr(); // TODO 
+      float* cptr=SO3_CGbank.get<float>(l1,l2,l,r.dev).get_arr(); 
       int clines=cnine::roundup(L1*L2,32)/32;
       int nlines=cnine::roundup(L1*xn*2,32)/32+cnine::roundup(L2*yn*2,32)/32;
 
       if(nlines<=384){
 	bool preloadCG=(nlines+clines<=384);
-	dim3 blocks(b,g);
+	dim3 blocks(r.dims[0],r.dims[1]);
 	SO3part_addCGproduct_tiled_kernel<<<blocks,cnine::roundup(xn*yn,32),(nlines+preloadCG*clines)*128,stream>>>
 	  (rv,xv,yv,xremainder,yremainder,-1,cptr,preloadCG);
 	return;

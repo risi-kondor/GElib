@@ -31,12 +31,10 @@ namespace GElib{
 
 
   #ifdef _WITH_CUDA
-  template<typename TYPE>
-  class SO3part;
-
-  void SO3part_addCGproduct_cu(SO3part<float> r, SO3part<float> x, SO3part<float> y, const int offs, const cudaStream_t& stream);
-  void SO3part_addCGproduct_back0_cu(SO3part<float> r, SO3part<float> x, SO3part<float> y, const int offs, const cudaStream_t& stream);
-  void SO3part_addCGproduct_back1_cu(SO3part<float> r, SO3part<float> x, SO3part<float> y, const int offs, const cudaStream_t& stream);
+  template<typename TYPE> class SO3part;
+  void SO3part_addCGproduct_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
+  void SO3part_addCGproduct_back0_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
+  void SO3part_addCGproduct_back1_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
   #endif
 
   
