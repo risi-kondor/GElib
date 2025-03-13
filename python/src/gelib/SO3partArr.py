@@ -171,11 +171,11 @@ class SO3partArr(torch.Tensor):
     ## ---- I/O ----------------------------------------------------------------------------------------------
 
         
-    # def __repr__(self):
-    #     return self.backend().__repr__()
+    def __repr__(self):
+        return self.backend().__repr__()
 
-    # def __str__(self):
-    #     return self.backend().__str__()
+    def __str__(self):
+        return self.backend().__str__()
 
 
 ## ----------------------------------------------------------------------------------------------------------

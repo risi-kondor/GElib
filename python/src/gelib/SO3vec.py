@@ -251,7 +251,7 @@ class SO3vec_CGproductFn(torch.autograd.Function):
 
         del inputs # Avoid memory leaks!
 
-        return None,None,None,grads
+        return tuple([None,None,None]+grads)
 
 
 class SO3vec_DiagCGproductFn(torch.autograd.Function):

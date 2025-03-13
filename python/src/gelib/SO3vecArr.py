@@ -120,11 +120,6 @@ class SO3vecArr:
             for l,n in tau.items():
                 R.parts[l]=SO3partArr.Fzeros(b,adims,l,n,device=device)
                 
-        else:
-            assert hasattr(tau, '__iter__')
-            for i in range(len(tau)):
-                R.parts[i] = SO3partArr.Fzeros(b, adims, i, tau[i], device)
-                
         return R
 
     @classmethod
@@ -135,19 +130,7 @@ class SO3vecArr:
         if isinstance(tau,dict):
             for l,n in tau.items():
                 R.parts[l]=SO3partArr.Frandn(b,adims,l,n,device=device)
-        else:
-            assert hasattr(tau, '__iter__')
-            for i in range(len(tau)):
-                R.parts[i] = SO3partArr.Frandn(b, adims, i, tau[i], device)
         return R
-
-    @staticmethod
-    def from_part(part : SO3partArr, max_l : int,device='cpu') -> 'SO3vecArr':
-        assert isinstance(part, SO3partArr)
-        tau = [ 0 for _ in range(max_l + 1)]
-        result = SO3vecArr.zeros(part.getb(), part.get_adims(), tau, device)
-        result.parts[part.getl()] = part
-        return result
 
     @classmethod
     def spharm(self, max_l : int, X : torch.Tensor, device : str = 'cpu') -> 'SO3vecArr':
@@ -291,9 +274,6 @@ class SO3vecArr:
 
     def __str__(self):
         return self.backend().__str__()
-    
-    def _dict_sizes(self):
-        return [ f"{i}, {self.parts[i].size()}" for i in self.parts.keys() ]
 
 
 
