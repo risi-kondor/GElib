@@ -225,17 +225,23 @@ class SO3vec_CGproductFn(torch.autograd.Function):
 
         k1 = ctx.k1
         k2 = ctx.k2
-        grads=[torch.zeros_like(x) for x in ctx.saved_tensors]
+        
+        inputs = ctx.saved_tensors
+        grads = [None, None, None]  # Gradients for k1, k2, maxl
+        for _ in range(k1 + k2):
+            grads.append(torch.zeros_like(inputs[_]))
 
         x=gb.SO3vec.view(inputs[0:k1])
         y=gb.SO3vec.view(inputs[k1:k1+k2])
         g=gb.SO3vec.view(args)
-        xg=gb.SO3vec.view(grads[0:k1])
-        yg=gb.SO3vec.view(grads[k1:k1+k2])
+        xg=gb.SO3vec.view(grads[3 : k1 + 3]) #grads after the first three which were added above
+        yg=gb.SO3vec.view(grads[k1 + 3 : k1 + k2 + 3])
         xg.addCGproduct_back0(g,y)
         yg.addCGproduct_back1(g,x)
 
-        return tuple(None,None,None,grads)
+        del inputs # Avoid memory leaks!
+
+        return None,None,None,grads
 
 
 class SO3vec_DiagCGproductFn(torch.autograd.Function):
@@ -252,7 +258,7 @@ class SO3vec_DiagCGproductFn(torch.autograd.Function):
         x=gb.SO3vec.view(args[0:k1])
         y=gb.SO3vec.view(args[k1:k1+k2])
         b=args[0].size(0)
-        tau=x.get_tau() #.DiagCGproduct(y.get_tau())
+        tau=x.get_tau().DiagCGproduct(y.get_tau())
         rparts=MakeZeroSO3parts(b,tau.get_parts(),args[0].device)
         r=gb.SO3vec.view(rparts)
         r.addDiagCGproduct(x,y)
@@ -264,17 +270,23 @@ class SO3vec_DiagCGproductFn(torch.autograd.Function):
 
         k1 = ctx.k1
         k2 = ctx.k2
-        grads=[torch.zeros_like(x) for x in ctx.saved_tensors]
+
+        inputs = ctx.saved_tensors
+        grads = [None, None, None]  # Gradients for k1, k2, maxl
+        for _ in range(k1 + k2):
+            grads.append(torch.zeros_like(inputs[_]))
 
         x=gb.SO3vec.view(inputs[0:k1])
         y=gb.SO3vec.view(inputs[k1:k1+k2])
         g=gb.SO3vec.view(args)
-        xg=gb.SO3vec.view(grads[0:k1])
-        yg=gb.SO3vec.view(grads[k1:k1+k2])
+        xg=gb.SO3vec.view(grads[3 : k1 + 3]) #grads after the first three which were added above
+        yg=gb.SO3vec.view(grads[k1 + 3 : k1 + k2 + 3])
         xg.addDiagCGproduct_back0(g,y)
         yg.addDiagCGproduct_back1(g,x)
 
-        return tuple(None,None,None,grads)
+        del inputs # Avoid memory leaks!
+
+        return None,None,None,grads
 
 
 class SO3vec_FproductFn(torch.autograd.Function):
