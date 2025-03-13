@@ -7,6 +7,16 @@ import time
 from os.path import splitext
 from os.path import basename
 from glob import glob
+from typing import Union, Tuple
+
+def interpret_bool_string(string:Union[str,bool], _true_values:Tuple[str] = ("TRUE", "ON"), _false_values:Tuple[str] = ("FALSE", "OFF")):
+    if isinstance(string, bool):
+        return string
+    if string.strip().upper() in _true_values:
+        return True
+    if string.strip().upper() in _false_values:
+        return False
+    raise ValueError(f"String {string} cannot be interpreted as True or False. Any upper/lower-case version of {_true_values} is True, {_false_values} is False. {string} was neither.")
 
 
 def main():
@@ -15,8 +25,10 @@ def main():
     # os.environ['CUDA_HOME']='/usr/local/cuda'
     #os.environ["CC"] = "clang"
 
+    compile_with_cuda = interpret_bool_string(os.environ.get("WITH_CUDA", False))
+
     # compile_with_cuda = True 
-    compile_with_cuda = False
+    # compile_with_cuda = False
 
     copy_warnings = False
     torch_convert_warnings = True
@@ -83,8 +95,9 @@ def main():
                           '-D_WITH_CUBLAS',
                           '-D_DEF_CGCMEM',
                           '-DGELIB_RANGE_CHECKING',
-                          '-DWITH_FAKE_GRAD'
-                          # '-rdc=true'
+                          '-DWITH_FAKE_GRAD',
+                          '-std=c++17',
+                          '-rdc=true'
                           ]
 
     if copy_warnings:
@@ -124,13 +137,16 @@ def main():
     if compile_with_cuda:
         ext_modules = [CUDAExtension('gelib_base', [
             '../../cnine/include/Cnine_base.cu',
-            '../../cnine/cuda/TensorView_accumulators.cu',
-            '../../cnine/cuda/BasicCtensorProducts.cu',
-            '../../cnine/cuda/RtensorUtils.cu',
-            '../../cnine/cuda/RtensorConvolve2d.cu',
-            '../../cnine/cuda/RtensorConvolve3d.cu',
-            #'../cuda/SO3CGproducts_combo.cu',
-            ext_cuda_folder+'SO3CGproducts_combo.cu',
+            '../../cnine/cuda/TensorView_assign.cu',
+#            '../../cnine/cuda/TensorView_accumulators.cu',
+#            '../../cnine/cuda/BasicCtensorProducts.cu',
+#            '../../cnine/cuda/RtensorUtils.cu',
+#            '../../cnine/cuda/RtensorConvolve2d.cu',
+#            '../../cnine/cuda/RtensorConvolve3d.cu',
+            '../cuda/GElib_base.cu',
+            '../cuda/SO3part_addCGproduct.cu',
+            '../cuda/SO3part_addCGproduct_back0.cu',
+            '../cuda/SO3part_addCGproduct_back1.cu',
             'bindings/GElib_py.cpp'
         ],
             include_dirs=_include_dirs,

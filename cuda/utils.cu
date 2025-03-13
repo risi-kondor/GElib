@@ -60,8 +60,8 @@ __forceinline__ __device__ int loadg_tile(float* dest, const cnine::Ctensor5_vie
   int s2=x.s2;
   int s4=x.s4;
   float* destc=dest+I*J;
-  float* source=x.arr+x.s0*blockIx.x+x.s1*blockIx.y+i*x.s3;
-  float* sourcec=x.arrc+x.s0*blockIx.x+x.s1*blockIx.y+i*x.s3;
+  float* source=x.arr+x.s0*blockIdx.x+x.s1*blockIdx.y+i*x.s3;
+  float* sourcec=x.arrc+x.s0*blockIdx.x+x.s1*blockIdx.y+i*x.s3;
   if(tix<n){
     for(int i=0; i<I; i++)
       dest[i*J+tix]=source[i*s2+tix*s4];
@@ -80,9 +80,9 @@ __forceinline__ __device__ void saveg_tile(float* src, const cnine::Ctensor5_vie
   int s2=x.s2;
   int s4=x.s4;
   float* srcc=src+I*J;
-  float* dest=x.arr+x.s0*blockIx.x+x.s1*blockIx.y+i*x.s3;
-  float* destc=x.arrc+x.s0*blockIx.x+x.s1*blockIx.y+i*x.s3
-  if(tix<n){
+  float* dest=x.arr+x.s0*blockIdx.x+x.s1*blockIdx.y+i*x.s3;
+  float* destc=x.arrc+x.s0*blockIdx.x+x.s1*blockIdx.y+i*x.s3; 
+    if(tix<n){
     for(int i=0; i<I; i++)
       dest[i*s2+tix*s4]=src[i*J+tix];
     for(int i=0; i<I; i++)

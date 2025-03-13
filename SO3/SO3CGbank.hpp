@@ -24,16 +24,29 @@ namespace GElib{
     typedef cnine::TensorView<float> FTENSOR;
 
     unordered_map<SO3CGindex,FTENSOR> coeffsf;
+    unordered_map<SO3CGindex,FTENSOR> coeffsf_gpu;
 
     template<typename TYPE>
-    cnine::TensorView<TYPE>& get(const int l1, const int l2, const int l){
+    cnine::TensorView<TYPE>& get(const int l1, const int l2, const int l, const int dev=0){
       SO3CGindex ix(l1,l2,l);
       if constexpr(std::is_same<TYPE,float>::value){
-	auto it=coeffsf.find(ix);
-	if(it!=coeffsf.end()) return it->second;
-	coeffsf.emplace(ix,CGmatrix(l1,l2,l));
-	return coeffsf[ix];
+	if(dev==0){
+	  auto it=coeffsf.find(ix);
+	  if(it!=coeffsf.end()) return it->second;
+	  coeffsf.emplace(ix,CGmatrix(l1,l2,l));
+	  return coeffsf[ix];
+	}
+	if(dev==1){
+	  auto it=coeffsf_gpu.find(ix);
+	  if(it!=coeffsf_gpu.end()) return it->second;
+	  coeffsf_gpu.emplace(ix,FTENSOR(get<float>(l1,l2,l,0),dev));
+	  return coeffsf_gpu[ix];
+	}
+	GELIB_ERROR("CG matrix must be on CPU or GPU0.");
+	return *(new cnine::TensorView<TYPE>());
       }
+      GELIB_ERROR("Currenly only single precision CG matrices supported.");
+      return *(new cnine::TensorView<TYPE>());
     }
 
   private:

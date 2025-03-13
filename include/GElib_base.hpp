@@ -32,6 +32,8 @@ using namespace std;
 #define GELIB_UNIMPL() printf("GElib error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
 #define GELIB_ERROR(msg) throw std::runtime_error("GElib error in "+string(__PRETTY_FUNCTION__)+" : "+msg+".");
 
+#define GELIB_NONFATAL(msg) {cnine::CoutLock lk; cerr<<"GElib exception in function '"<<__PRETTY_FUNCTION__<<"' : "<<msg<<endl;};
+
 
 // ---- Helpers ------------------------------------------------------------------------------------------------------
 

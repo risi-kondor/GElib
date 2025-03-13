@@ -52,7 +52,7 @@ class SO3vec:
         Construct a random SO3vec object of given type _tau.
         >>> import gelib
         >>> import torch
-         >>> g = torch.manual_seed(0)
+        >>> g = torch.manual_seed(0)
         >>> v = gelib.SO3vec.randn(1,[2,3,1])
         >>> v
         <GElib::SO3vecB of type (2,3,1) [b=1]>

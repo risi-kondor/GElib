@@ -21,14 +21,12 @@ CUDA_EXTERNS=
 
 ifdef WITH_CUDA
 INCLUDE+=-I$(CUDA_HOME)/include
-CUDA_OBJECTS+=$(CNINE_CUDADIR)/RtensorUtils.o $(CNINE_CUDADIR)/TensorView_accumulators.o  
-#CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partA_CGproduct.o $(GELIB_CUDADIR)/SO3partA_DiagCGproduct.o \
-$(CNINE_ROOT)/cuda/CtensorA_add.o 
+CUDA_OBJECTS+=$(CNINE_CUDADIR)/TensorView_assign.o #$(CNINE_CUDADIR)/TensorView_accumulators.o  
 CUDA_OBJECTS+=$(GELIB_CUDADIR)/GElib_base.o 
-CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partB_addCGproduct.o $(GELIB_CUDADIR)/SO3partB_addCGproduct_back0.o $(GELIB_CUDADIR)/SO3partB_addCGproduct_back1.o 
-CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3partB_addDiagCGproduct.o $(GELIB_CUDADIR)/SO3partB_addDiagCGproduct_back0.o $(GELIB_CUDADIR)/SO3partB_addDiagCGproduct_back1.o 
-CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3Fpart_addFproduct.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back0.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back1.o 
-CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3part_addCGtransform.o 
+CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3part_addCGproduct.o $(GELIB_CUDADIR)/SO3part_addCGproduct_back0.o $(GELIB_CUDADIR)/SO3part_addCGproduct_back1.o 
+#CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3part_addDiagCGproduct.o $(GELIB_CUDADIR)/SO3part_addDiagCGproduct_back0.o $(GELIB_CUDADIR)/SO3part_addDiagCGproduct_back1.o 
+#CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3Fpart_addFproduct.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back0.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back1.o 
+#CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3part_addCGtransform.o 
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
 endif 
 

@@ -15,14 +15,18 @@ SNOB2_ROOT=$(ROOTDIR)/../Snob2/
 
 # ---- CUDA OPTIONS ----------------------------------
 
-WITH_CUDA=t
-CUDA_HOME=/usr/local/cuda
-
+# WITH_CUDA=t
+# CUDA_HOME=/usr/local/cuda
 # WITH_CUBLAS=t
+
+ifeq ($(WITH_CUDA),TRUE)
+WITH_CUDA=t
+WITH_CUBLAS=t
+endif 
 
 NVCC=nvcc #/usr/local/cuda/bin/nvc c #/Developer/NVIDIA/CUDA-9.1/bin/nvcc
 
-NVCCFLAGS= -lcublas #-rdc=true
+NVCCFLAGS= -lcublas -rdc=true # rdc is required for separate compilation 
 
 #NVCCFLAGS= -ccbin clang++ -m64  -Xcompiler -arch -Xcompiler x86_64  \
 #-gencode arch=compute_61,code=sm_61 -lcublas 

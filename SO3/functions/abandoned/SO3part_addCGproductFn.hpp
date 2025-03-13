@@ -37,11 +37,10 @@ namespace GElib{
     //typedef SO3part<TYPE> PART;
     typedef cnine::TensorView<complex<TYPE> > TENSOR;
 
-    void operator()(const PART& r, const PART& x, const PART& y, const int _offs=0){
+    void operator()(PART r, PART x, PART y, const int _offs=0){
       const int l=r.getl(); 
       const int l1=x.getl(); 
       const int l2=y.getl();
- 
       const int N1=x.getn();
       const int N2=y.getn();
 
@@ -49,9 +48,13 @@ namespace GElib{
       GELIB_ASSRT(x.get_dev()==dev);
       GELIB_ASSRT(x.get_dev()==dev);
 
+      r.reconcile_batches(x,y);
+      r.reconcile_grids(x,y);
+      r.cocanonicalize_to_5d(x,y);
+
       if(dev==0){
 	auto& C=SO3_CGbank.get<TYPE>(l1,l2,l);
-	r.for_each_cell_multi(x,y,[&](const int b, const int g, const TENSOR& _r, const TENSOR& _x, const TENSOR& _y){
+	r.for_each_cell_multi(x,y,[&](const TENSOR& _r, const TENSOR& _x, const TENSOR& _y){
 	    int offs=_offs;
 	    for(int n1=0; n1<N1; n1++){
 	      for(int n2=0; n2<N2; n2++){
@@ -80,3 +83,20 @@ namespace GElib{
 
 #endif 
 
+
+
+	/*
+	r.for_each_cell_multi(x,y,[&](const int b, const int g, const TENSOR& _r, const TENSOR& _x, const TENSOR& _y){
+	    int offs=_offs;
+	    for(int n1=0; n1<N1; n1++){
+	      for(int n2=0; n2<N2; n2++){
+		for(int m1=-l1; m1<=l1; m1++){
+		  for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+		    _r.inc(m1+m2+l,offs+n2,C(m1+l1,m2+l2)*_x(m1+l1,n1)*_y(m2+l2,n2));
+		  }
+		}
+	      }
+	      offs+=N2;
+	    }
+	  });
+	*/
