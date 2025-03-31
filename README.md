@@ -4,8 +4,8 @@ GElib is a high performance C++/CUDA library implementing certain operations rel
 
 Documentation for C++ API can be found in the 'doc' directory. 
 Documentation for the Python/PyTorch API is at https://risi-kondor.github.io/GElib/.
-GElib is released under the Mozilla Public License v. 2.0..
+GElib is released under a combination of the Mozilla Public License v. 2.0. and a custom noncommercial license to be found in the file NONCOMMERCIAL.TXT.
 
 Lead developer: Risi Kondor
 
-Contributors: Erik Henning Thiede
+Contributors: Erik Henning Thiede, Ryan Keane

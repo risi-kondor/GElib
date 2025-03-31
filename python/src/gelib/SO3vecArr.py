@@ -136,13 +136,20 @@ class SO3vecArr:
     def get_type(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
         r={}
-        for l,p in parts.items():
+        for l,p in self.parts.items():
             r[l]=p.getn()
         return r
 
 
     # ---- Operations ---------------------------------------------------------------------------------------
 
+
+    def apply(self, R):
+        "Apply the group element to this vector"
+        r = SO3vecArr()
+        for l,p in self.parts.items():
+            r.parts[l]=p.apply(R)
+        return r
 
 #     def rotate(self, R):
 #         "Apply the group element to this vector"

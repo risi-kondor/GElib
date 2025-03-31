@@ -9,6 +9,7 @@
 
 import torch
 import gelib_base as gb
+from gelib import *
 
 
 # ----------------------------------------------------------------------------------------------------------
@@ -118,9 +119,10 @@ class SO3part(torch.Tensor):
     # ---- Operations --------------------------------------------------------------------------------------
 
 
-    #def rotate(self, R):
-     #   A = _SO3partB.view(self).apply(R)
-      #  return torch.view_as_complex(SO3part(torch.view_as_real(A.torch())))
+    def apply(self, R):
+        assert(isinstance(R,SO3element))
+        rho=SO3irrep(self.getl())
+        return SO3part(torch.matmul(rho.matrix(R),self))
 
 
     # ---- Products -----------------------------------------------------------------------------------------

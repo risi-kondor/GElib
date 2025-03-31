@@ -12,6 +12,7 @@
 import torch
 import gelib_base as gb
 import gelib
+from gelib import *
 
 
 class SO3partArr(torch.Tensor):
@@ -95,6 +96,9 @@ class SO3partArr(torch.Tensor):
     def backend(self):
         return gb.SO3part.view(self)
 
+    def collapse(self):
+        return SO3part(self.reshape(self.size(0),-1,self.size(-2),self.size(-1)))
+
 
     ## ---- Access ------------------------------------------------------------------------------------------
 
@@ -121,10 +125,10 @@ class SO3partArr(torch.Tensor):
 #     def odot(self,y):
 #             return torch.sum(torch.mul(torch.view_as_real(self),torch.view_as_real(y)))
 
-#     def rotate(self,R):
-#         A= _SO3partB_array.view(self).rotate(R).torch()
-#         return SO3partArr(torch.view_as_real(A))
-#         #return torch.view_as_complex(SO3partArr(torch.view_as_real(A)))
+    def apply(self, R):
+        assert(isinstance(R,SO3element))
+        rho=SO3irrep(self.getl())
+        return SO3partArr(torch.matmul(rho.matrix(R),self.collapse()).reshape(self.size()))
 
 #     def gather(self,_mask):
 #         """
@@ -221,7 +225,6 @@ class SO3partArr_ConterpolateFn(torch.autograd.Function):
             _r.add_conterpolate2d(_x,_M)
         if(x.get_nadims()==3):
             r=SO3partArr.zeros(x.getb(),x.get_adims()+list(M.size()[:-3]),x.getl(),x.getn(),x.device)
-            print(r.size())
             _r=_SO3partB_array.view(r)
             _r.add_conterpolate3d(_x,_M)
         return r
@@ -260,7 +263,6 @@ class SO3partArr_ConterpolateBFn(torch.autograd.Function):
         _g=_ctensor.view(g)
         _M=_rtensor.view(ctx.M)
         gx=SO3partArr.zeros(ctx.b,ctx.adims,ctx.l,ctx.n,g.device)
-        print(gx.size())
         _gx=_SO3partB_array.view(gx)
         gelib_base.add_conterpolate3dB_back(_gx,_g,_M)
         return gx,None

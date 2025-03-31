@@ -81,6 +81,9 @@ natural syntax.
  [ (1.09669,1.0829) (0.786561,-0.675544) (0.786561,-0.675544) (-0.809771,-0.891165) ]
  [ (-1.0491,-0.0903285) (0.201155,2.46153) (0.201155,2.46153) (2.47398,-0.676472) ]
 
+The ``CGproduct``, ``DiagCGproduct``, ``apply`` etc., functions work analogously on 
+``SO3partArr`` as on regular ``SO3part``s. 
+
 .. note::
 
  In some ways, the array dimensions of ``SO3partArr`` can be regarded as multiple batch indices. 
