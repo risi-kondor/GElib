@@ -103,12 +103,13 @@ Group action
 ============
 
 The group SO(3) acts on :math:`P` by :math:`P\mapsto D^{(l)}(r) P`.  
-This is implemented in the ``rotate`` method.  
+This can be computed by getting :math:`D^{(l)}(r)` from the ```matrix`` method 
+of ``SO3irrep``, but a more direct way is to just call the ``apply`` method of ``SO3part``:  
 
 .. code-block:: python
 
-  >> r=gelib.SO3element.uniform()
-  >> Pr=P.rotate(r)
+  >> R=gelib.SO3element.uniform()
+  >> Pr=P.apply(R)
   >> print(Pr)
 
   [ (-1.11709,0.147657) (-1.11769,1.24745) ]

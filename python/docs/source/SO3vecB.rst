@@ -49,6 +49,15 @@ The invidual parts are stored in the ``parts`` member variable
            [-0.3958-0.4522j, -0.3014-0.4984j,  0.3682+0.2515j],
            [ 1.7390-0.4233j, -0.4120+0.2936j, -1.1108-0.5376j]]])
 
+
+Acting on a group element by a group element :math:`R\in\mathrm{SO}(3)` amounts to multiplying 
+each part by the corresponding :math:`D^{(l)}(r)` matrix:
+
+.. code-block:: python
+
+  >> R=gelib.SO3element.random()
+  >> vr=v.apply(R) 
+
 |
 
 ===============

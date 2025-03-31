@@ -19,17 +19,13 @@
 #include "GElibSession.hpp"
 //#include "diff_class.hpp"
 
-//#include "WignerMatrix.hpp"
+#include "SO3element.hpp"
+#include "SO3irrep.hpp"
 #include "SO3type.hpp"
 #include "SO3part.hpp"
 #include "SO3vec.hpp"
 #include "SO3functions.hpp"
-//#include "SO3mvec.hpp"
-//#include "SO3weights.hpp"
-//#include "SO3mweights.hpp"
-//#include "SO3partB_array.hpp"
-//#include "SO3vecB_array.hpp"
-//#include "SO3CGtensor.hpp"
+
 
 GElib::GElibSession session;
 
@@ -48,16 +44,11 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   typedef cnine::TensorView<float> tensorf;
   typedef cnine::TensorView<complex<float> > tensorc;
 
+  #include "SO3element_py.cpp"
+  #include "SO3irrep_py.cpp"
   #include "SO3type_py.cpp"
   #include "SO3part_py.cpp"
   #include "SO3vec_py.cpp"
-  //#include "SO3mvec_py.cpp"
-  //#include "SO3weights_py.cpp"
-  //#include "SO3mweights_py.cpp"
-
-  //#include "SO3partB_array_py.cpp"
-  //#include "SO3vecB_array_py.cpp"
-
 
 }
 

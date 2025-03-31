@@ -16,6 +16,9 @@ GElib
 
    background.rst
 
+   SO3element.rst 
+   SO3irrep.rst 
+
    SO3partB.rst
    SO3vecB.rst
    SO3partArr.rst
