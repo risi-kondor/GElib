@@ -58,12 +58,12 @@ class TestSO3vec(object):
         xr=x.apply(R)
         yr=y.apply(R)
 
-        #z=G.DiagCGproduct(x,y,maxl=maxl)
-        #zr=G.DiagCGproduct(xr,yr,maxl=maxl)
-        #rz=z.rotate(R)
+        z=G.DiagCGproduct(x,y,maxl=maxl)
+        zr=G.DiagCGproduct(xr,yr,maxl=maxl)
+        rz=z.apply(R)
 
-        #for i in range(maxl+1 ):
-        #    assert (torch.allclose(rz.parts[i] , zr.parts[i], rtol=1e-3, atol=1e-5))
+        for i in range(maxl+1 ):
+            assert (torch.allclose(rz.parts[i] , zr.parts[i], rtol=1e-3, atol=1e-5))
 
 
     @pytest.mark.parametrize('nc', [1, 2, 32])
@@ -79,5 +79,5 @@ class TestSO3vec(object):
     @pytest.mark.parametrize('b', [1, 2, 4])    
     def test_DiagCGproduct_backprop(self,b,nc,maxl):
         tau={l:nc for l in range(maxl+1)}
-        #self.vec_vec_backprop(b,tau,G.DiagCGproduct)
+        self.vec_vec_backprop(b,tau,G.DiagCGproduct)
         return

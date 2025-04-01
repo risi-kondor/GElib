@@ -10,3 +10,7 @@ print(A1)
 
 C=g.CGproduct(A,A)
 print(C)
+
+D=g.DiagCGproduct(A,A)
+print(D)
+

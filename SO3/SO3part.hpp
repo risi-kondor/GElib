@@ -35,6 +35,9 @@ namespace GElib{
   void SO3part_addCGproduct_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
   void SO3part_addCGproduct_back0_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
   void SO3part_addCGproduct_back1_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
+  // void SO3part_addDiagCGproduct_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
+  // void SO3part_addDiagCGproduct_back0_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
+  // void SO3part_addDiagCGproduct_back1_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
   #endif
 
   
@@ -198,7 +201,7 @@ namespace GElib{
 	    for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
 	      r.inc(m1+m2+l,offs+n2,C(m1+l1,m2+l2)*x(m1+l1,n1)*y(m2+l2,n2));
 	    }
-		}
+	  }
 	}
 	offs+=N2;
       }
@@ -257,17 +260,77 @@ namespace GElib{
   public: // ---- Diag CG-products --------------------------------------------------------------------------------
 
     
-    void add_DiagCGproduct(const SO3part& x, const SO3part& y, const int offs=0){
+    static void add_DiagCGproduct_kernel(const TENSOR& r, const TENSOR& x, const TENSOR& y, const RTENSOR& C, int offs=0){
+      const int l=(r.dims[0]-1)/2; 
+      const int l1=(x.dims[0]-1)/2; 
+      const int l2=(y.dims[0]-1)/2;
+      const int N1=x.dims[1];
+      const int N2=y.dims[1];
+      GELIB_ASSRT(N1==N2);
+      for(int n=0; n<N1; n++){
+	for(int m1=-l1; m1<=l1; m1++){
+	  for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+	    r.inc(m1+m2+l,offs+n,C(m1+l1,m2+l2)*x(m1+l1,n)*y(m2+l2,n));
+	  }
+	}
+      }
+    }
+
+    static void add_DiagCGproduct_back0_kernel(const TENSOR& r, const TENSOR& x, const TENSOR& y, const RTENSOR& C, int offs=0){
+      const int l=(r.dims[0]-1)/2; 
+      const int l1=(x.dims[0]-1)/2; 
+      const int l2=(y.dims[0]-1)/2;
+      const int N1=x.dims[1];
+      const int N2=y.dims[1];
+      GELIB_ASSRT(N1==N2);
+      for(int n=0; n<N1; n++){
+	for(int m1=-l1; m1<=l1; m1++){
+	  for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+	    x.inc(m1+l1,n,C(m1+l1,m2+l2)*r(m1+m2+l,offs+n)*std::conj(y(m2+l2,n)));
+	  }
+	}
+      }
+    }
+
+    static void add_DiagCGproduct_back1_kernel(const TENSOR& r, const TENSOR& x, const TENSOR& y, const RTENSOR& C, int offs=0){
+      const int l=(r.dims[0]-1)/2; 
+      const int l1=(x.dims[0]-1)/2; 
+      const int l2=(y.dims[0]-1)/2;
+      const int N1=x.dims[1];
+      const int N2=y.dims[1];
+      GELIB_ASSRT(N1==N2);
+      for(int n=0; n<N1; n++){
+	for(int m1=-l1; m1<=l1; m1++){
+	  for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
+	    y.inc(m2+l2,n,C(m1+l1,m2+l2)*r(m1+m2+l,offs+n)*std::conj(x(m1+l1,n)));
+	  }
+	}
+      }
+    }
+
+    static void add_DiagCGproduct_dev(const SO3part& r, SO3part x, SO3part y, const int _offs=0){
+      //CUDA_STREAM(SO3part_addDiagCGproduct_cu(r,x,y,_offs,stream));
+    }
+
+    static void add_DiagCGproduct_back0_dev(const SO3part& r, SO3part x, SO3part y, const int _offs=0){
+      //CUDA_STREAM(SO3part_addDiagCGproduct_back0_cu(r,x,y,_offs,stream));
+    }
+
+    static void add_DiagCGproduct_back1_dev(const SO3part& r, SO3part x, SO3part y, const int _offs=0){
+      //CUDA_STREAM(SO3part_addDiagCGproduct_back1_cu(r,x,y,_offs,stream));
+    }
+
+    //void add_DiagCGproduct(const SO3part& x, const SO3part& y, const int offs=0){
       //SO3part_addDiagCGproductFn<SO3part,TYPE>()(*this,x,y,offs);
-    }
+    //}
 
-    void add_DiagCGproduct_back0(const SO3part& g, const SO3part& y, const int offs=0){
+    //void add_DiagCGproduct_back0(const SO3part& g, const SO3part& y, const int offs=0){
       //SO3part_addDiagCGproduct_back0Fn<SO3part,TYPE>()(*this,g,y,offs);
-    }
+    //}
 
-    void add_DiagCGproduct_back1(const SO3part& g, const SO3part& x, const int offs=0){
+    //void add_DiagCGproduct_back1(const SO3part& g, const SO3part& x, const int offs=0){
       //SO3part_addDiagCGproduct_back1Fn<SO3part,TYPE>()(*this,g,x,offs);
-    }
+    //}
 
 
   public: // ---- Spherical harmonics -----------------------------------------------------------------------
