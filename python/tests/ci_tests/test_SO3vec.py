@@ -13,6 +13,7 @@ class TestSO3vec(object):
 
         test_vec=G.SO3vec.randn_like(z)
         loss=z.odot(test_vec)
+        #print(torch.Tensor(loss))
         loss.backward(torch.tensor(1.0))
         xgrad=x.get_grad()
         ygrad=y.get_grad()
