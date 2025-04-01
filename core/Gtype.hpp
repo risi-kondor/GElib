@@ -107,13 +107,13 @@ namespace GElib{
     }
 
     template<typename GTYPE>
-    GTYPE CGproduct(const GTYPE& y, const typename GTYPE::IRREP_IX& limit) const{
+    GTYPE CGproduct(const GTYPE& y, const typename GTYPE::IRREP_IX& limit=GTYPE::null_ix) const{
       auto& x=static_cast<const GTYPE&>(*this);
       GTYPE R;
       for(auto& p:x.parts)
 	for(auto& q:y.parts)
 	  GTYPE::Group::for_each_CGcomponent(p.first,q.first,[&](const typename GTYPE::IRREP_IX& z, const int m){
-	      if(z<=limit) R.parts[z]+=m*p.second*q.second;});
+	      if(limit==GTYPE::null_ix || z<=limit) R.parts[z]+=m*p.second*q.second;});
       return R;
     }
 
