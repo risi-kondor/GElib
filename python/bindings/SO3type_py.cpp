@@ -15,6 +15,9 @@ py::class_<SO3type>(m,"SO3type","Class to store the type of an SO3-vector")
   .def("CGproduct",[](const SO3type& x, const SO3type& y) {return x.CGproduct(y);})
   .def("CGproduct",[](const SO3type& x, const SO3type& y, int maxl) {return x.CGproduct(y,maxl);})
 
+  .def("DiagCGproduct",[](const SO3type& x, const SO3type& y) {return x.DiagCGproduct(y);})
+  .def("DiagCGproduct",[](const SO3type& x, const SO3type& y, int maxl) {return x.DiagCGproduct(y,maxl);})
+
   .def("str",&SO3type::str,py::arg("indent")="","Print the SO3type to string.")
   .def("__str__",&SO3type::str,py::arg("indent")="","Print the SO3type to string.")
   .def("__repr__",&SO3type::repr,"Print the SO3type to string.");

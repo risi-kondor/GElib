@@ -21,4 +21,5 @@ Q=g.SO3part.randn(1,2,2)
 R=g.CGproduct(P,Q,1)
 print(R)
 
-
+S=g.DiagCGproduct(P,P,2)
+print(S)
