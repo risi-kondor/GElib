@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef _genetSO3element
-#define _genetSO3element
+#ifndef _GElibSO3element
+#define _GElibSO3element
 
 #include "GElib_base.hpp"
 #include "Gelement.hpp"
@@ -52,8 +52,6 @@ namespace GElib{
       else return SO3element(B*(-1.0));
     }
 
-
-  public: // ---- Conversions --------------------------------------------------------------------------------
 
   public: // ---- Operations --------------------------------------------------------------------------------
 

@@ -160,6 +160,25 @@ namespace GElib{
   public: // ---- Batches -----------------------------------------------------------------------------------
 
 
+    bool promote_batch_to(const int b){
+      if(dims[0]==b) return true;
+      if(dims[0]!=1) return false;
+      dims[0]=b;
+      strides[0]=0;
+      return true;
+    }
+
+    bool reconcile_batches(Gpart& x, Gpart& y){
+      int b=std::max(getb(),std::max(x.getb(),y.getb()));
+      if(dims[0]!=1 &&  dims[0]!=b) return false;
+      if(x.dims[0]!=1 &&  x.dims[0]!=b) return false;
+      if(y.dims[0]!=1 &&  y.dims[0]!=b) return false;
+      promote_batch_to(b);
+      x.promote_batch_to(b);
+      y.promote_batch_to(b);
+      return true;
+    }
+
 
   public: // ---- Grid ---------------------------------------------------------------------------------------
 
@@ -328,14 +347,6 @@ namespace GElib{
   public: // ---- Promotions ---------------------------------------------------------------------------------
 
 
-    void promote_batch_to(const int b){
-      if(dims[0]==b) return;
-      GELIB_ASSRT(dims[0]==1);
-      dims[0]=b;
-      strides[0]=0;
-    }
-
-
     void promote_grid_to(const int g){
       GELIB_ASSRT(ndims()==4);
       if(dims[1]==g) return;
@@ -384,16 +395,6 @@ namespace GElib{
     }
 
 
-    bool reconcile_batches(Gpart& x, Gpart& y){
-      int b=std::max(getb(),std::max(x.getb(),y.getb()));
-      if(dims[0]!=0 &&  dims[0]!=b) return false;
-      if(x.dims[0]!=0 &&  x.dims[0]!=b) return false;
-      if(y.dims[0]!=0 &&  y.dims[0]!=b) return false;
-      promote_batch_to(b);
-      x.promote_batch_to(b);
-      y.promote_batch_to(b);
-      return true;
-    }
 
 
     bool reconcile_grids(Gpart& x, Gpart& y){
@@ -730,261 +731,4 @@ namespace GElib{
 #endif 
 
 
-  /*
-  template<typename OBJ>
-  int dominant_batch(const OBJ& x, const OBJ& y){
-    int xb=x.getb();
-    int yb=y.getb();
-    if(xb==yb) return xb;
-    if(xb==1) return yb;
-    if(yb==1) return xb;
-    throw std::invalid_argument("Gelib error: the batch dimensions of two objects can only be reconciled if they are the same or one of them is 1.");
-    return 0;
-  }
-
-  template<typename OBJ>
-  Gdims dominant_gdims(const OBJ& x, const OBJ& y){
-    Gdims xg=x.gdims();
-    Gdims yg=y.gdims();
-    if(xg==yg) return xg;
-    if(!x.is_grid()) return yg;
-    if(!y.is_grid()) return xg;
-    throw std::invalid_argument("Gelib error: the grid dimensions of two objects can only be reconciled if they are the same or one of them is none.");
-    return Gdims();
-  }
-
-  template<typename GPART, typename TYPE>
-  inline std::pair<Gpart<GPART,TYPE>,Gpart<GPART,TYPE> >
-  co_promote(const Gpart<GPART,TYPE>& x, const Gpart<GPART,TYPE>& y){
-
-    if(x.getb()==y.getb() && !x.is_grid() && !y.is_grid()) 
-      return make_pair(x,y);
-
-    int xb=x.getb();
-    int yb=y.getb();
-    
-
-  }
-
-  template<typename GPART, typename TYPE>
-  inline std::pair<Gpart<GPART,TYPE>,Gpart<GPART,TYPE> >
-  co_promote(const Gpart<GPART,TYPE>& x, const Gpart<GPART,TYPE>& y){
-
-    if(x.getb()==y.getb() && !x.is_grid() && !y.is_grid()) 
-      return make_pair(x,y);
-
-    int xb=x.getb();
-    int yb=y.getb();
-    
-
-  }
-  */
-    /*
-    pair<GPART,GPART> co_promote_grid(const GPART& y) const{
-      if(!is_grid() && !y.is_grid()) return make_pair(*this,y);
-      Gdims xg=gdims();
-      Gdims yg=y.gdims();
-      if(xg==yg) return make_pair(*this,y);
-      if(xg.size()==0){
-	//GPART r(arr,dims.insert(1,yg),strides.insert(1,yg.size(),0));
-	GPART r(*this);
-	r.dims=r.dims.insert(1,yg);
-	r.strides.insert(1,yg.size(),0);
-	return make_pair(r,y);
-      }
-      if(yg.size()==0){
-	//GPART r(y.arr,y.dims.insert(1,xg),y.strides.insert(1,xg.size(),0));
-	GPART r(y);
-	r.dims=r.dims.insert(1,xg);
-	r.strides.insert(1,xg.size(),0);
-	return make_pair(*this,r);
-      }
-      throw std::invalid_argument("Gelib error: the grid dimensions of "+repr()+" and "+y.repr()+
-	" cannot be reconciled.");
-      return make_pair(*this,y);
-    }
-    
-    pair<GPART,GPART> co_promote(const GPART& y) const{
-      auto [x1,y1]=co_promote_batch(y);
-      auto [x2,y2]=x1.co_promote_grid(y1);
-      return make_pair(x2,y2);
-    }
-    */
-    /*
-    pair<GPART,GPART> co_promote_batch(const GPART& y) const{
-      if(getb()==y.getb()) return make_pair(*this,y);
-      int xb=getb();
-      int yb=y.getb();
-      if(xb==1){
-	GPART r(*this);
-	r.dims[0]=yb;
-	r.strides[0]=0;
-	return make_pair(r,y);
-      }
-      if(yb==1){
-	GPART r(y);
-	r.dims[0]=xb;
-	r.strides[0]=0;
-	return make_pair(*this,r);
-      }
-      throw std::invalid_argument("Gelib error: the batch dimensions of "+repr()+" and "+y.repr()+
-	" cannot be reconciled.");
-      return make_pair(*this,y);
-    }
-    
-    pair<GPART,GPART> co_promote_fused_grid(const GPART& y) const{
-      GELIB_ASSRT(dims.size()==4);
-      GELIB_ASSRT(y.dims.size()==4);
-      int xg=dims[1];
-      int yg=y.dims[1];
-      if(xg==yg) return make_pair(*this,y);
-      if(xg==1){
-	GPART r(*this);
-	r.dims[1]=yg;
-	r.strides[1]=0;
-	return make_pair(r,y);
-      }
-      if(yg==1){
-	GPART r(y);
-	r.dims[1]=xg;
-	r.strides[1]=0;
-	return make_pair(*this,r);
-      }
-      throw std::invalid_argument("Gelib error: the fused grid dimensions of "+repr()+" and "+y.repr()+
-	" cannot be reconciled.");
-      return make_pair(*this,y);
-    }
-    
-    pair<GPART,GPART> fuse_and_co_promote(const GPART& y) const{
-      auto [x1,y1]=fuse_grid().co_promote_batch(y.fuse_grid());
-      auto [x2,y2]=x1.co_promote_fused_grid(y1);
-      return make_pair(x2,y2);
-    }
-    */
-    /*
-    GPART canonicalize() const{
-      return fuse_grid();
-    }
-
-    pair<GPART,GPART> co_canonicalize(const GPART& _y) const{
-      GPART x=fuse_grid();
-      GPART y=_y.fuse_grid();
-      co_promote_sub<0>(x,y);
-      co_promote_sub<1>(x,y);
-      return make_pair(x,y);
-    }
-
-    template<int i>
-    static void co_promote_sub(GPART& x, GPART& y){
-      int dx=x.dims[i];
-      int dy=y.dims[i];
-      if(dx==dy) return; 
-      if(dx==1){
-	x.dims[i]=dy;
-	return;
-      }
-      if(dy==1){
-	y.dims[i]=dx;
-	return;
-      }
-      throw std::invalid_argument("Gelib error: dimensions "+to_string(i)+" of "+x.repr()+" and "+y.repr()+
-	" cannot be reconciled.");
-    }
-    */
-
-    /*
-    bool is_batched() const{
-      return dims[0]>1;
-    }
-
-    int getb() const{
-      return dims[0];
-    }
-    */
-
-    //TENSOR batch(const int b) const{
-    //return slice(0,b);
-    //}
-
-    /*
-    int dominant_batch(const GPART& y) const{
-      int xb=getb();
-      int yb=y.getb();
-      if(xb==yb) return xb;
-      if(xb==1) return yb;
-      if(yb==1) return xb;
-      throw std::invalid_argument("Gelib error: the batch dimensions of "+repr()+" and "+y.repr()+
-	" cannot be reconciled.");
-      return 0;
-    }
-
-    template<typename TYPE2>
-    void for_each_batch_multi(const cnine::TensorView<TYPE2>& x,
-      const std::function<void(const int, const TENSOR& r, const cnine::TensorView<TYPE2>& x)>& lambda) const{
-      //auto& r=static_cast<const GPART&>(*this);
-      
-      if(getb()==1){
-	int B=x.dim(0);
-	for(int b=0; b<B; b++)
-	  lambda(b,slice(0,0),x.slice(0,b));
-	return;
-      }
-
-      if(x.dim(0)==1){
-	cnine::MultiLoop(getb(),[&](const int b){
-	    lambda(b,slice(0,b),x.slice(0,0));
-	  });
-      }
-
-      cnine::MultiLoop(getb(),[&](const int b){
-	  lambda(b,slice(0,b),x.slice(0,b));
-	});
-     }
-
-
-    void for_each_batch_multi(const GPART& x, const GPART& y,
-      const std::function<void(const int, const TENSOR& r, const TENSOR& x, const TENSOR& y)>& lambda) const{
-      auto& r=static_cast<const GPART&>(*this);
-      int B=r.getb();
-      GELIB_ASSRT(x.getb()==B);
-      GELIB_ASSRT(y.getb()==B);
-      cnine::MultiLoop(B,[&](const int b){
-	  lambda(b,r.slice(0,b),x.slice(0,b),y.slice(0,b));
-	});
-    }
-    */
-    /*
-    template<typename GPART2> // dummy template to break circular dependency
-    void add_CGproduct(const GPART2& _x, const GPART2& _y){
-      GPART r(*this);
-      GPART x(_x);
-      GPART y(_y);
-      r.reconcile_batches(x,y);
-      r.reconcile_grids(x,y);
-      r.co_canonicalize_to_5d(x,y);
-
-
-      r.for_each_cell_multi(x,y,[&](const TENSOR& );
-    }
-    */
-
-    /*
-    void promote_grid_to(const Gdims& g){
-      int d=dims.size();
-      if(d==3){
-	dims=cnine::Gdims(dims[0],g,cnine::Gdims({dims[1],dims[2]}));
-	strides=cnine::GstridesB(strides[0],vector<size_t>(g.size(),0),cnine::GstridesB({strides[1],strides[2]}));
-	return;
-      }
-      GELIB_ASSRT(d==3+g.size());
-      GELIB_ASSRT(dims.chunk(1,d-3)==g);
-    }
-    */
-
-    //TENSOR tile_channels(const int n){
-    //GELIB_ASSRT(ndims()==4);
-    //TENSOR r(*this);
-    //dims=Gdims({dims[0],dims[1],dims[2],dims[3]/n,n});
-    //return r;
-    //}
 

@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef _SO3group
-#define _SO3group
+#ifndef _GElibSO3group
+#define _GElibSO3group
 
 #include "GElib_base.hpp"
 #include "Gtype.hpp"
