@@ -8,8 +8,8 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#ifndef _SO3part
-#define _SO3part
+#ifndef _GElibSO3part
+#define _GElibSO3part
 
 #include "Gpart.hpp"
 #include "SO3group.hpp"
@@ -17,13 +17,6 @@
 
 #include "SO3part_addSpharmFn.hpp"
 
-//#include "SO3part_addCGproductFn.hpp"
-//#include "SO3part_addCGproduct_back0Fn.hpp"
-//#include "SO3part_addCGproduct_back1Fn.hpp"
-
-//#include "SO3part_addDiagCGproductFn.hpp"
-//#include "SO3part_addDiagCGproduct_back0Fn.hpp"
-//#include "SO3part_addDiagCGproduct_back1Fn.hpp"
 
 namespace GElib{
 
@@ -320,18 +313,6 @@ namespace GElib{
       //CUDA_STREAM(SO3part_addDiagCGproduct_back1_cu(r,x,y,_offs,stream));
     }
 
-    //void add_DiagCGproduct(const SO3part& x, const SO3part& y, const int offs=0){
-      //SO3part_addDiagCGproductFn<SO3part,TYPE>()(*this,x,y,offs);
-    //}
-
-    //void add_DiagCGproduct_back0(const SO3part& g, const SO3part& y, const int offs=0){
-      //SO3part_addDiagCGproduct_back0Fn<SO3part,TYPE>()(*this,g,y,offs);
-    //}
-
-    //void add_DiagCGproduct_back1(const SO3part& g, const SO3part& x, const int offs=0){
-      //SO3part_addDiagCGproduct_back1Fn<SO3part,TYPE>()(*this,g,x,offs);
-    //}
-
 
   public: // ---- Spherical harmonics -----------------------------------------------------------------------
 
@@ -371,132 +352,3 @@ namespace GElib{
 
 #endif 
 
-    /*
-    void add_CGproduct(SO3part x, SO3part y, const int _offs=0){
-      SO3part r(*this);
-      const int dev=r.dev;
-      GELIB_ASSRT(x.get_dev()==dev);
-      GELIB_ASSRT(y.get_dev()==dev);
-
-      if(!r.reconcile_batches(x,y))
-	GELIB_NONFATAL("Skipping SO3 CGproduct: batch dimensions cannot be reconciled.");
-
-      if(!r.reconcile_grids(x,y))
-	GELIB_NONFATAL("Skipping SO3 CGproduct: grid dimensions cannot be reconciled.");
-
-      r.co_canonicalize_to_5d(x,y);
-
-      if(dev==0){
-	const int l=r.getl(); 
-	const int l1=x.getl(); 
-	const int l2=y.getl();
-	const int N1=x.getn();
-	const int N2=y.getn();
-	auto& C=SO3_CGbank.get<TYPE>(l1,l2,l);
-
-	r.for_each_cell_multi(x,y,[&](const TENSOR& _r, const TENSOR& _x, const TENSOR& _y){
-	    int offs=_offs;
-	    for(int n1=0; n1<N1; n1++){
-	      for(int n2=0; n2<N2; n2++){
-		for(int m1=-l1; m1<=l1; m1++){
-		  for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
-		    _r.inc(m1+m2+l,offs+n2,C(m1+l1,m2+l2)*_x(m1+l1,n1)*_y(m2+l2,n2));
-		  }
-		}
-	      }
-	      offs+=N2;
-	    }
-	  });
-      }
-
-      if(dev==1){
-	//CUDA_STREAM(SO3part_addCGproduct_cu(r,x,y,_offs,stream));
-      }
-    }
-    */
-    /*
-    void add_CGproduct_back0(SO3part r, SO3part y, const int _offs=0){
-      SO3part x(*this);
-      const int dev=r.dev;
-      GELIB_ASSRT(x.get_dev()==dev);
-      GELIB_ASSRT(x.get_dev()==dev);
-
-      if(!r.reconcile_batches(x,y))
-	GELIB_NONFATAL("Skipping SO3 CGproduct_back0: batch dimensions cannot be reconciled.");
-
-      if(!r.reconcile_grids(x,y))
-	GELIB_NONFATAL("Skipping SO3 CGproduct_back0: grid dimensions cannot be reconciled.");
-
-      r.co_canonicalize_to_5d(x,y);
-
-      if(dev==0){
-	const int l=r.getl(); 
-	const int l1=x.getl(); 
-	const int l2=y.getl();
-	const int N1=x.getn();
-	const int N2=y.getn();
-	auto& C=SO3_CGbank.get<TYPE>(l1,l2,l);
-
-	x.for_each_cell_multi(r,y,[&](const TENSOR& x, const TENSOR& r, const TENSOR& y){
-	    int offs=_offs;
-	    for(int n1=0; n1<N1; n1++){
-	      for(int n2=0; n2<N2; n2++){
-		for(int m1=-l1; m1<=l1; m1++){
-		  for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
-		    x.inc(m1+l1,n1,C(m1+l1,m2+l2)*r(m1+m2+l,offs+n2)*std::conj(y(m2+l2,n2)));
-		  }
-		}
-	      }
-	      offs+=N2;
-	    }
-	  });
-      }
-
-      if(dev==1){
-	//CUDA_STREAM(SO3part_addCGproduct_back0_cu(r,x,y,_offs,stream));
-      }
-    }
-    */
-    /*
-    void add_CGproduct_back1(SO3part r, SO3part x, const int _offs=0){
-      SO3part y(*this);
-      const int dev=r.dev;
-      GELIB_ASSRT(x.get_dev()==dev);
-      GELIB_ASSRT(x.get_dev()==dev);
-
-      if(!r.reconcile_batches(x,y))
-	GELIB_NONFATAL("Skipping SO3 CGproduct_back1: batch dimensions cannot be reconciled.");
-
-      if(!r.reconcile_grids(x,y))
-	GELIB_NONFATAL("Skipping SO3 CGproduct_back1: grid dimensions cannot be reconciled.");
-
-      r.co_canonicalize_to_5d(x,y);
-
-      if(dev==0){
-	const int l=r.getl(); 
-	const int l1=x.getl(); 
-	const int l2=y.getl();
-	const int N1=x.getn();
-	const int N2=y.getn();
-	auto& C=SO3_CGbank.get<TYPE>(l1,l2,l);
-
-	y.for_each_cell_multi(r,x,[&](const TENSOR& y, const TENSOR& r, const TENSOR& x){
-	    int offs=_offs;
-	    for(int n1=0; n1<N1; n1++){
-	      for(int n2=0; n2<N2; n2++){
-		for(int m1=-l1; m1<=l1; m1++){
-		  for(int m2=std::max(-l2,-l-m1); m2<=std::min(l2,l-m1); m2++){
-		    y.inc(m2+l2,n2,C(m1+l1,m2+l2)*r(m1+m2+l,offs+n2)*std::conj(x(m1+l1,n1)));
-		  }
-		}
-	      }
-	      offs+=N2;
-	    }
-	  });
-      }
-
-      if(dev==1){
-	//CUDA_STREAM(SO3part_addCGproduct_back1_cu(r,x,y,_offs,stream));
-      }
-    }
-    */

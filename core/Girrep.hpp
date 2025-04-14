@@ -45,7 +45,7 @@ namespace GElib{
       return obj->dim();
     }
 
-   bool operator<(const Girrep& y) const{
+    bool operator<(const Girrep& y) const{
       return (*obj)<(*y.obj);
     }
 

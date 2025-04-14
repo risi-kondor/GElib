@@ -94,7 +94,7 @@ namespace GElib{
 
   public: // ---- CG-products --------------------------------------------------------------------------------
 
-
+    /*
     template<typename GTYPE>
     GTYPE CGproduct(const GTYPE& y) const{
       auto& x=static_cast<const GTYPE&>(*this);
@@ -105,6 +105,7 @@ namespace GElib{
 	      R.parts[z]+=m*p.second*q.second;});
       return R;
     }
+    */
 
     template<typename GTYPE>
     GTYPE CGproduct(const GTYPE& y, const typename GTYPE::IRREP_IX& limit=GTYPE::null_ix) const{

@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef _genetSO3irrep
-#define _genetSO3irrep
+#ifndef _GElibSO3irrep
+#define _GElibSO3irrep
 
 #include "GElib_base.hpp"
 #include "SO3element.hpp"
