@@ -2,7 +2,7 @@ ROOTDIR=../..
 include $(ROOTDIR)/common.txt
 
 INCLUDE= $(CNINE_INCLUDES) 
-INCLUDE+=-I$(INCLUDEDIR) -I$(COREDIR) -I$(SO3DIR) # -I$(SO3DIR)/functions   
+INCLUDE+=-I$(INCLUDEDIR) -I$(COREDIR) -I$(SO3DIR) -I$(O3DIR) #-I$(SO3DIR)/functions   
 
 TESTS=$(patsubst %.cpp,%,$(wildcard *.cpp))
 
