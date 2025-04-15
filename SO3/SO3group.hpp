@@ -16,15 +16,19 @@
 #define _GElibSO3group
 
 #include "GElib_base.hpp"
-#include "Gtype.hpp"
+//#include "Gtype.hpp"
 
 
 namespace GElib{
 
+  class SO3type;
+
+
   class SO3group{
   public:
 
-    typedef int IrrepIx;
+    typedef int IRREP_IX;
+    typedef SO3type GTYPE;
 
 
   public: // ---- CG-products --------------------------------------------------------------------------------

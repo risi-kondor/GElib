@@ -11,16 +11,17 @@
 #define _SO3type
 
 #include "GElib_base.hpp"
-#include "Gtype.hpp"
 #include "SO3group.hpp"
+#include "Gtype.hpp"
 
 
 namespace GElib{
 
-  class SO3type: public Gtype<int>{
+  //class SO3type: public Gtype<int>{
+  class SO3type: public Gtype<SO3group>{
   public:
 
-    typedef Gtype<int> BASE;
+    typedef Gtype<SO3group> BASE;
     typedef int IRREP_IX;
     typedef SO3group Group;
 
