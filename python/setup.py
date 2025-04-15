@@ -72,7 +72,8 @@ def main():
                      cwd + '/../cuda',
                      cwd + '/../core',
                      cwd + '/../SO3',
-                     cwd + '/../SO3/functions'
+                     cwd + '/../O3'
+#                     cwd + '/../SO3/functions'
                      ]
 
 
