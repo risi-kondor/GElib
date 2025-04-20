@@ -23,3 +23,7 @@ print(R)
 
 S=g.DiagCGproduct(P,P,2)
 print(S)
+
+Q=g.SO3part.randn(3,2,2)
+R=g.CGproduct(Q,P,1)
+print(R)

@@ -85,6 +85,14 @@ class SO3part(torch.Tensor):
             dims[-2]=2*args[0]+1
             dims[-1]=args[1]
             return SO3part(torch.zeros(dims,dtype=torch.complex64,device=self.device))
+        if len(args)==3:
+            assert isinstance(args[0],int)
+            assert isinstance(args[1],int)
+            dims=list(self.size())
+            dims[0]=args[0]
+            dims[-2]=2*args[1]+1
+            dims[-1]=args[2]
+            return SO3part(torch.zeros(dims,dtype=torch.complex64,device=self.device))
     
 #     @classmethod
 #     def randn_like(self):
@@ -129,18 +137,22 @@ class SO3part(torch.Tensor):
 
 
     def odot(self,y):
-            return torch.sum(torch.mul(torch.view_as_real(self),torch.view_as_real(y)))
+            return torch.Tensor(torch.sum(torch.mul(torch.view_as_real(self),torch.view_as_real(y))))
 
     def CGproduct(self, y, l):
         """
         Compute the l component of the Clesbsch--Gordan product of this SO3part with another SO3part y.
         """
+        assert isinstance(y,SO3part)
+        assert isinstance(l,int)
         return SO3part_CGproductFn.apply(self,y,l)
 
     def DiagCGproduct(self, y, l):
         """
         Compute the l component of the diagonal Clesbsch--Gordan product of this SO3part with another SO3part y.
         """
+        assert isinstance(y,SO3part)
+        assert isinstance(l,int)
         return SO3part_DiagCGproductFn.apply(self,y,l)
 
 
@@ -164,8 +176,10 @@ class SO3part_CGproductFn(torch.autograd.Function):
     def forward(ctx,x,y,l):
         ctx.l=l
         ctx.save_for_backward(x,y)
-        b=max(x.size(0),y.size(0))
-        r=x.zeros_like(l,x.size(-1)*y.size(-1))
+        #b=max(x.size(0),y.size(0))
+        #r=x.zeros_like(l,x.size(-1)*y.size(-1))
+        b=common_batch(x,y)
+        r=SO3part.zeros(b,l,x.size(-1)*y.size(-1),device=x.device)
         r.backend().add_CGproduct(x.backend(),y.backend())
         return r
 
@@ -186,9 +200,11 @@ class SO3part_DiagCGproductFn(torch.autograd.Function):
     def forward(ctx,x,y,l):
         ctx.l=l
         ctx.save_for_backward(x,y)
-        b=max(x.size(0),y.size(0))
+        #b=max(x.size(0),y.size(0))
+        #r=x.zeros_like(l,x.size(-1))
+        b=common_batch(x,y)
         assert x.size(-1)==y.size(-1)
-        r=x.zeros_like(l,x.size(-1))
+        r=SO3part.zeros(b,l,x.size(-1),device=x.device)
         r.backend().add_DiagCGproduct(x.backend(),y.backend())
         return r
 

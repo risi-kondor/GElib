@@ -220,7 +220,7 @@ class SO3vec_CGproductFn(torch.autograd.Function):
 
         x=gb.SO3vec.view(args[0:k1])
         y=gb.SO3vec.view(args[k1:k1+k2])
-        b=args[0].size(0)
+        b=common_batch(args[0],args[k1])
         tau=x.get_tau().CGproduct(y.get_tau(),maxl)
         rparts=MakeZeroSO3parts(b,tau.get_parts(),args[0].device) # just use regular constructor?
         r=gb.SO3vec.view(rparts)
@@ -266,7 +266,7 @@ class SO3vec_DiagCGproductFn(torch.autograd.Function):
 
         x=gb.SO3vec.view(args[0:k1])
         y=gb.SO3vec.view(args[k1:k1+k2])
-        b=args[0].size(0)
+        b=common_batch(args[0],args[k1])
         tau=x.get_tau().DiagCGproduct(y.get_tau(),maxl)
         rparts=MakeZeroSO3parts(b,tau.get_parts(),args[0].device)
         r=gb.SO3vec.view(rparts)
@@ -519,7 +519,6 @@ def Fmodsq(x, a=-1):
 
 def MakeZeroSO3parts(b, tau, device):
     R=[]
-    print(tau)
     for l,n in tau.items():
         R.append(SO3part.zeros(b,l,n,device))
         #R.append(torch.zeros([b,2*l+1,tau[l]],dtype=torch.cfloat,device=device))
