@@ -21,4 +21,4 @@ Q=g.SO3partArr.randn(1,[2,2],2,2)
 R=g.CGproduct(P,Q,1)
 print(R)
 
-
+print(P.odot(P))

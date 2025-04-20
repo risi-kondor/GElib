@@ -133,7 +133,7 @@ namespace GElib{
       for(auto& p:x.parts)
 	for(auto& q:y.parts)
 	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const GINDEX& z, const int m){
-	      if(limit==GTYPE::null_ix || limit<=z ) R.parts[z]+=m*p.second;});
+	      if(limit==GTYPE::null_ix || z<=limit ) R.parts[z]+=m*p.second;});
       return R;
     }
 

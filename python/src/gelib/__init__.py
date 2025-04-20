@@ -5,6 +5,8 @@ import torch
 #from gelib_base import SO3type 
 #from gelib_base import SO3bitype 
 
+from gelib.gelib_common import *
+
 from gelib.SO3element import *
 from gelib.SO3irrep import *
 from gelib.SO3type import *

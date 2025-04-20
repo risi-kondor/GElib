@@ -64,7 +64,7 @@ class SO3partArr(torch.Tensor):
         Create an SO(3)-part corresponding to the l'th matrix in the Fourier transform of a function on SO(3).
         This gives a N*b*(2+l+1)*(2l+1) dimensional complex tensor. 
         """
-        return SO3part(torch.zeros([b]+adims+[2*l+1,2*l+1],dtype=torch.complex64,device=device))
+        return SO3partArr(torch.zeros([b]+adims+[2*l+1,2*l+1],dtype=torch.complex64,device=device))
 
 
     @staticmethod
@@ -73,12 +73,12 @@ class SO3partArr(torch.Tensor):
         Create an SO(3)-part corresponding to the l'th matrix in the Fourier transform of a function on SO(3).
         This gives a b*(2+l+1)*(2l+1) dimensional complex random tensor. 
         """
-        return SO3part(torch.randn([b]+adims+[2*l+1,2*l+1],dtype=torch.complex64,device=device))
+        return SO3partArr(torch.randn([b]+adims+[2*l+1,2*l+1],dtype=torch.complex64,device=device))
 
 
     def zeros_like(self,*args):
         if not args:
-            return SO3part(torch.zeros_like(self))
+            return SO3partArr(torch.zeros_like(self))
         if len(args)==2:
             assert isinstance(args[0],int)
             assert isinstance(args[1],int)
@@ -122,8 +122,8 @@ class SO3partArr(torch.Tensor):
     ## ---- Operations --------------------------------------------------------------------------------------
 
 
-#     def odot(self,y):
-#             return torch.sum(torch.mul(torch.view_as_real(self),torch.view_as_real(y)))
+    def odot(self,y):
+        return torch.Tensor(torch.sum(torch.mul(torch.view_as_real(self),torch.view_as_real(y))))
 
     def apply(self, R):
         assert(isinstance(R,SO3element))
@@ -150,14 +150,14 @@ class SO3partArr(torch.Tensor):
         """
         Compute the l component of the Clesbsch--Gordan product of this SO3partArr with another SO3partArr y.
         """
-        return gelib.SO3part_CGproductFn.apply(self,y,l)
+        return gelib.SO3partArr_CGproductFn.apply(self,y,l)
 
 
     def DiagCGproduct(self,y,l):
         """
         Compute the l component of the diagonal Clesbsch--Gordan product of this SO3partArr with another SO3partArr y.
         """
-        return SO3part_DiagCGproductFn.apply(self,y,l)
+        return SO3partArr_DiagCGproductFn.apply(self,y,l)
 
 
     ## ---- I/O ----------------------------------------------------------------------------------------------
@@ -175,6 +175,54 @@ class SO3partArr(torch.Tensor):
 ## ----------------------------------------------------------------------------------------------------------
 
 
+class SO3partArr_CGproductFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,x,y,l):
+        ctx.l=l
+        ctx.save_for_backward(x,y)
+        #b=max(x.size(0),y.size(0))
+        #r=x.zeros_like(l,x.size(-1)*y.size(-1))
+        b=common_batch(x,y)
+        a=x.get_adims()
+        r=SO3partArr.zeros(b,a,l,x.size(-1)*y.size(-1),device=x.device)
+        r.backend().add_CGproduct(x.backend(),y.backend())
+        return r
+
+    @staticmethod
+    def backward(ctx,g):
+        x,y = ctx.saved_tensors
+        #g=SO3part(_g)
+        xg=x.zeros_like()
+        yg=y.zeros_like()
+        gb.SO3part.view(xg).add_CGproduct_back0(gb.SO3part.view(g),gb.SO3part.view(y))
+        gb.SO3part.view(yg).add_CGproduct_back1(gb.SO3part.view(g),gb.SO3part.view(x))
+        return xg,yg,None
+
+
+class SO3partArr_DiagCGproductFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,x,y,l):
+        ctx.l=l
+        ctx.save_for_backward(x,y)
+        #b=max(x.size(0),y.size(0))
+        #r=x.zeros_like(l,x.size(-1))
+        b=common_batch(x,y)
+        a=x.get_adims()
+        assert x.size(-1)==y.size(-1)
+        r=SO3partArr.zeros(b,a,l,x.size(-1),device=x.device)
+        r.backend().add_DiagCGproduct(x.backend(),y.backend())
+        return r
+
+    @staticmethod
+    def backward(ctx,g):
+        x,y = ctx.saved_tensors
+        xg=x.zeros_like()
+        yg=y.zeros_like()
+        gb.SO3part.view(xg).add_DiagCGproduct_back0(gb.SO3part.view(g),gb.SO3part.view(y))
+        gb.SO3part.view(yg).add_DiagCGproduct_back1(gb.SO3part.view(g),gb.SO3part.view(x))
+        return xg,yg,None
 
 
 class SO3partArr_GatherFn(torch.autograd.Function): 

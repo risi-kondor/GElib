@@ -10,3 +10,4 @@ print(A1)
 
 C=g.CGproduct(A,A)
 print(C)
+

@@ -45,6 +45,10 @@ namespace GElib{
     static SO3element random(){
       cnine::TensorView<TYPE> A(cnine::dims(3,3),4,0);
       cnine::TensorView<TYPE> B((cnine::ColumnSpace<float>(A)()));
+      while(B.dim(1)<3){
+	cnine::TensorView<TYPE> A(cnine::dims(3,3),4,0);
+	B.reset(cnine::ColumnSpace<float>(A)());
+      }
       float det=B(0,0)*(B(1,1)*B(2,2)-B(1,2)*B(2,1));
       det+=B(0,1)*(B(1,2)*B(2,0)-B(1,0)*B(2,2));
       det+=B(0,2)*(B(1,0)*B(2,1)-B(1,1)*B(2,0));

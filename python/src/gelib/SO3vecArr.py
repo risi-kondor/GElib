@@ -112,7 +112,7 @@ class SO3vecArr:
     @classmethod
     def randn_like(self, x):
         R=SO3vecArr()
-        for l,p in self.tau.parts.items():
+        for l,p in x.parts.items():
             R.parts[l]=SO3partArr.randn_like(p)
         return R
 
@@ -140,6 +140,13 @@ class SO3vecArr:
             r[l]=p.getn()
         return r
 
+    def requires_grad_(self):
+        for l,p in self.parts.items():
+            p.requires_grad_()
+
+    def get_grad(self):
+        return SO3vecArr(*[p.grad for l,p in self.parts.items()])
+
 
     # ---- Operations ---------------------------------------------------------------------------------------
 
@@ -151,19 +158,13 @@ class SO3vecArr:
             r.parts[l]=p.apply(R)
         return r
 
-#     def rotate(self, R):
-#         "Apply the group element to this vector"
-#         r = SO3vec()
-#         for l in range(0, len(self.parts)):
-#             r.parts.append(_SO3partB.view(self.parts[l]).apply(R).torch())
-#         return r
+    def odot(self,y):
+        assert(list(self.parts.keys())==list(y.parts.keys()))
+        return sum([self.parts[l].odot(y.parts[l]) for l in self.parts.keys()])
 
-#     def odot(self,y):
-#         assert(len(self.parts)==len(y.parts))
-#         r=0
-#         for l in range(0, len(self.parts)):
-#             r+=torch.sum(torch.mul(torch.view_as_real(self.parts[l]),torch.view_as_real(y.parts[l])))
-#         return r
+    def __add__(self,y):
+        assert(list(self.parts.keys())==list(y.parts.keys()))
+        return SO3vecArr(*[self.parts[l]+y.parts[l] for l in self.parts.keys()])
 
         
     # ---- Products -----------------------------------------------------------------------------------------
@@ -216,7 +217,7 @@ class SO3vecArr_CGproductFn(torch.autograd.Function):
 
         x=gb.SO3vec.view(args[0:k1])
         y=gb.SO3vec.view(args[k1:k1+k2])
-        b=args[0].size(0)
+        b=common_batch(args[0],args[k1])
         adims=args[0].get_adims()
         tau=x.get_tau().CGproduct(y.get_tau())
         rparts=MakeZeroSO3partArrs(b,adims,tau.get_parts(),args[0].device)
@@ -232,15 +233,15 @@ class SO3vecArr_CGproductFn(torch.autograd.Function):
         k2 = ctx.k2
         grads=[torch.zeros_like(x) for x in ctx.saved_tensors]
 
-        x=gb.SO3vec.view(inputs[0:k1])
-        y=gb.SO3vec.view(inputs[k1:k1+k2])
+        x=gb.SO3vec.view(ctx.saved_tensors[0:k1])
+        y=gb.SO3vec.view(ctx.saved_tensors[k1:k1+k2])
         g=gb.SO3vec.view(args)
         xg=gb.SO3vec.view(grads[0:k1])
         yg=gb.SO3vec.view(grads[k1:k1+k2])
         xg.addCGproduct_back0(g,y)
         yg.addCGproduct_back1(g,x)
 
-        return tuple(None,None,None,grads)
+        return tuple([None,None,None]+grads)
 
 
 class SO3vecArr_DiagCGproductFn(torch.autograd.Function):
@@ -256,7 +257,7 @@ class SO3vecArr_DiagCGproductFn(torch.autograd.Function):
 
         x=gb.SO3vec.view(args[0:k1])
         y=gb.SO3vec.view(args[k1:k1+k2])
-        b=args[0].size(0)
+        b=common_batch(args[0],args[k1])
         adims=args[0].get_adims()
         tau=x.get_tau().DiagCGproduct(y.get_tau())
         rparts=MakeZeroSO3partArrs(b,adims,tau.get_parts(),args[0].device)
@@ -272,15 +273,15 @@ class SO3vecArr_DiagCGproductFn(torch.autograd.Function):
         k2 = ctx.k2
         grads=[torch.zeros_like(x) for x in ctx.saved_tensors]
 
-        x=gb.SO3vec.view(inputs[0:k1])
-        y=gb.SO3vec.view(inputs[k1:k1+k2])
+        x=gb.SO3vec.view(ctx.saved_tensors[0:k1])
+        y=gb.SO3vec.view(ctx.saved_tensors[k1:k1+k2])
         g=gb.SO3vec.view(args)
         xg=gb.SO3vec.view(grads[0:k1])
         yg=gb.SO3vec.view(grads[k1:k1+k2])
         xg.addDiagCGproduct_back0(g,y)
         yg.addDiagCGproduct_back1(g,x)
 
-        return tuple(None,None,None,grads)
+        return tuple([None,None,None]+grads)
 
 
 class SO3vecArr_FproductFn(torch.autograd.Function):
