@@ -19,6 +19,8 @@
 #include "GElibSession.hpp"
 //#include "diff_class.hpp"
 
+#include "GatherMapB.hpp" // temporary 
+
 #include "SO3element.hpp"
 #include "SO3irrep.hpp"
 #include "SO3type.hpp"
@@ -43,6 +45,8 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
 
   typedef cnine::TensorView<float> tensorf;
   typedef cnine::TensorView<complex<float> > tensorc;
+
+  #include "gather_map_py.cpp"
 
   #include "SO3element_py.cpp"
   #include "SO3irrep_py.cpp"
