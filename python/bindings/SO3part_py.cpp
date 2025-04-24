@@ -15,6 +15,11 @@ py::class_<SO3part<float> >(m,"SO3part",
   .def_static("view",[](at::Tensor& x){
       return SO3part<float>(tensorc::view(x));})
 
+  .def("add_gather",[](SO3part<float>& r, const SO3part<float>& x, const GatherMapB& gmap, const int d){
+      r.add_gather(x,gmap,d);})
+  .def("add_gather_back",[](SO3part<float>& xg, const SO3part<float>& rg, const GatherMapB& gmap, const int d){
+      xg.add_gather(rg,gmap,d);})
+
 //  .def("add_spharm",[](SO3part<float>& obj, const float x, const float y, const float z){
 //    obj.add_spharm(x,y,z);})
   .def("add_spharm",[](SO3part<float>& obj, at::Tensor& X){

@@ -8,14 +8,16 @@ import torch
 from gelib.gelib_common import *
 #from gelib.gather_map import *
 
+from gelib.gather_map import *
+
 from gelib.SO3element import *
 from gelib.SO3irrep import *
-from gelib.SO3type import *
 from gelib.SO3part import *
 from gelib.SO3vec import *
 
-#from gelib.SO3weights import *
-#from gelib.SO3weightsArr import *
+# from gelib.SO3type import *
+# from gelib.SO3weights import *
+# from gelib.SO3weightsArr import *
 # from gelib.SO3weights import *
 # from gelib.SO3mvec import *
 
@@ -51,4 +53,7 @@ def DiagCGproduct(x, y, maxl=-1):
 
 def CGtransform(x,l=-1):
     return x.CGtransform(l)
+
+def gather(x,gmap,dim=0):
+    return x.gather(gmap,dim)
 

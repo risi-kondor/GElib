@@ -159,7 +159,7 @@ namespace GElib{
 
     void for_each_part(const std::function<void(const IRREP_IX&, const GPART&)>& lambda) const{
       for(auto& p:parts) 
-	lambda(p.first,*p.second);
+	lambda(p.first,p.second);
     }
 
 
@@ -266,6 +266,18 @@ namespace GElib{
     */
 
   public: // ---- Operations ---------------------------------------------------------------------------------
+
+    
+    GVEC gather(const cnine::GatherMapB& gmap, const int d=0){
+      Gdims adims(_gdims);
+      GELIB_ASSRT(d<adims.size());
+      GELIB_ASSRT(gmap.n_in==adims(d));
+      adims[d]=gmap.n_out;
+      GVEC R(getb(),adims,get_dev());
+      for_each_part([&](const IRREP_IX& ix , const GPART& p){
+	  R.parts[ix]=p.gather(gmap,d);});
+      return R;
+    }
 
 
     /*
