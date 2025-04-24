@@ -1,14 +1,15 @@
-# This file is part of GElib, a C++/CUDA library for group
-# equivariant tensor operations. 
-# 
-# Copyright (c) 2022, Imre Risi Kondor
+# This file is part of GElib, a C++/CUDA library for group equivariant 
+# tensor operations. 
+#  
+# Copyright (c) 2024, Imre Risi Kondor
 #
-# This Source Code Form is subject to the terms of the Mozilla
-# Public License v. 2.0. If a copy of the MPL was not distributed
-# with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+# This source code file is subject to the terms of the noncommercial 
+# license distributed with GElib in the file NONCOMMERICAL.TXT. Commercial 
+# use is prohibited. All redistributed versions of this file (in orginal
+# or modified form) must retain this copyright notice and must be 
+# accompanied by a verbatim copy of the license. 
 
 import torch
-
 import gelib_base as gb
 from gelib import *
 

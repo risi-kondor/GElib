@@ -59,6 +59,7 @@ namespace GElib{
 
     using BASE::unroller;
     //using BASE::zeros_like;
+    using BASE::getb;
     using BASE::getn;
     //using BASE::dominant_batch;
     //using BASE::dominant_gdims;
@@ -125,6 +126,10 @@ namespace GElib{
       int b=cnine::ifthen(d>2,x.dims[0],1);
       Gdims gdims=cnine::ifthen(d>3,x.dims.chunk(1,d-3),Gdims());
       return SO3part(b,gdims,l,nc,fcode,dev);
+    }
+
+    static SO3part zeros_like(const SO3part& x, const Gdims& gdims){
+      return SO3part(x.getb(),gdims,x.getl(),x.getn(),0,x.get_dev());
     }
 
 

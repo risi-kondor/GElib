@@ -139,11 +139,11 @@ class SO3partArr(torch.Tensor):
         rho=SO3irrep(self.getl())
         return SO3partArr(torch.matmul(rho.matrix(R),self.collapse()).reshape(self.size()))
 
-#     def gather(self,_mask):
-#         """
-#         Gather the elements of this SO3partArr into a new SO3partArr according to the mask
-#         """
-#         return SO3partArr_GatherFn.apply(_mask,self)
+    def gather(self,gmap,dim=0):
+        """
+        Gather the cells of this SO3partArr into a new SO3partArr according to the gather_map
+        """
+        return SO3partArr_GatherFn.apply(self,gmap,dim)
 
 #     def conterpolate(self,M):
 #         return SO3partArr_ConterpolateFn.apply(self,M)
@@ -237,35 +237,21 @@ class SO3partArr_DiagCGproductFn(torch.autograd.Function):
 class SO3partArr_GatherFn(torch.autograd.Function): 
 
     @staticmethod
-    def forward(ctx,_mask,x):
-
-        ctx.mask=_mask
-        l=x.getl()
-        n=x.getn()
-        r=SO3partArr.zeros(x.getb(),x.get_adims(),l,n,x.device) # TODO
-        
-        _x=_SO3partB_array.view(x)
-        _r=_SO3partB_array.view(r)
-        _r.add_gather(_x,_mask)
-
+    def forward(ctx,x,gmap,d):
+        ctx.gmap=gmap
+        ctx.d=d
+        ctx.adims=x.get_adims()
+        new_adims=ctx.adims
+        new_adims[d]=gmap.d_out()
+        r=SO3partArr.zeros(x.getb(),ctx.new_adims,x.getl(),x.getn(),device=x.device)
+        r.backend().add_gather(x,gmap,d)
         return r
 
     @staticmethod
-    def backward(ctx,yg):
-
-        #N=yg.size(0)
-        #b=yg.size(1)
-        #l=int((y.size(2)-1)/2)
-        #n=y.size(3)
-        #dev=int(y.is_cuda)
-        #r=MakeZeroSO3partArrs(N,b,l,n,dev)
-        r=torch.zeros_like(yg) # change this
-
-        _x=_SO3partB_array.view(args)
-        _r=_SO3partB_array.view(r)
-        _r.gather(_x,ctx.mask.inv())
-
-        return tuple([None]+r)
+    def backward(ctx,rg):
+        xg=SO3partArr.zeros(rg.getb(),ctx.adims,rg.getl(),rg.getn(),device=rg.device)
+        xg.backend().add_gather_back(rg,ctx.gmap,ctx.d)
+        return xg,None,None
 
 
 class SO3partArr_ConterpolateFn(torch.autograd.Function): 

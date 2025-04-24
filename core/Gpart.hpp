@@ -20,6 +20,7 @@
 #include "NamedTypes.hpp"
 #include "MultiLoop.hpp"
 #include "TensorUtils.hpp"
+#include "GatherSlices.hpp"
 #include "BatchedTensor.hpp"
 
 
@@ -494,6 +495,34 @@ namespace GElib{
 
   public: // ---- Operations ---------------------------------------------------------------------------------
 
+
+    GPART gather(const cnine::GatherMapB& gmap, const int d=0) const{
+      Gdims adims=gdims();
+      GELIB_ASSRT(d<adims.size());
+      GELIB_ASSRT(gmap.n_in==adims(d));
+      adims[d]=gmap.n_out;
+      auto R=GPART::zeros_like(*this,adims);
+      R.add_gather(*this,gmap,d);
+      return R;
+    }
+
+    GPART gather_back(const cnine::GatherMapB& gmap, const int d=0) const{
+      Gdims adims=gdims();
+      GELIB_ASSRT(d<adims.size());
+      GELIB_ASSRT(gmap.n_out==adims(d));
+      adims[d]=gmap.n_in;
+      auto R=GPART::zeros_like(*this,adims);
+      R.add_gather_back(*this,gmap,d);
+      return R;
+    }
+
+    void add_gather(const GPART& x, const cnine::GatherMapB& gmap, const int d=0){
+      cnine::GatherSlices()(*this,x,gmap,d+1);
+    }
+
+    void add_gather_back(const GPART& r, const cnine::GatherMapB& gmap, const int d=0){
+      cnine::GatherSlices()(*this,r,gmap.inv(),d+1);
+    }
 
  
   public: // ---- CG-products --------------------------------------------------------------------------------

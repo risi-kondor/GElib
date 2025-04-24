@@ -163,6 +163,9 @@ class SO3vecArr:
     def getb(self):
         return self.parts[min(self.parts)].getb()
 
+    def get_adims(self):
+        return self.parts[min(self.parts)].get_adims()
+
     def tau(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
         r={}
@@ -211,6 +214,12 @@ class SO3vecArr:
         assert(list(self.parts.keys())==list(y.parts.keys()))
         return SO3vecArr(*[self.parts[l]+y.parts[l] for l in self.parts.keys()])
 
+    def gather(self,gmap,dim=0):
+        """
+        Gather the elements of this SO3vecArr into a new SO3vecArr according to the gather_map
+        """
+        return SO3vecArr(*[p.gather(gmap,dim) for p in self.parts.values])
+
         
     # ---- Products -----------------------------------------------------------------------------------------
 
@@ -256,6 +265,27 @@ class SO3vecArr:
 # ----------------------------------------------------------------------------------------------------------
 # ---- Autograd functions -----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------
+
+
+class SO3vecArr_GatherFn(torch.autograd.Function): # scrap this
+
+    @staticmethod
+    def forward(ctx, k1, gmap, d, *args):
+        ctx.k1 = k1
+        ctx.gmap=gmap
+        ctx.save_for_backward(*args)
+        ctx.adims=x.get_adims()
+        new_adims=ctx.adims
+        new_adims[d]=gmap.d_out()
+        r=SO3partArr.zeros(x.getb(),ctx.new_adims,x.getl(),x.getn(),device=x.device)
+        r.backend().add_gather(x,gmap,d)
+        return r
+
+    @staticmethod
+    def backward(ctx,rg):
+        xg=SO3partArr.zeros(rg.getb(),ctx.adims,rg.getl(),rg.getn(),device=rg.device)
+        xg.backend().add_gather_back(rg,gmap,d)
+        return xg,None,None
 
 
 class SO3vecArr_CGproductFn(torch.autograd.Function):
