@@ -118,8 +118,7 @@ class SO3vecArr:
         R=SO3vecArr()
         if isinstance(tau,dict):
             for l,n in tau.items():
-                R.parts[l]=SO3partArr.Fzeros(b,adims,l,n,device=device)
-                
+                R.parts[l]=SO3part.Fzeros(b,l,n,device=device)
         return R
 
     @classmethod
@@ -274,6 +273,13 @@ class SO3vecArr:
 
     def __str__(self):
         return self.backend().__str__()
+    
+    @property
+    def dtype(self) -> torch.dtype:
+        if len(self.parts) == 0:
+            return torch.cfloat
+        key, val = self.parts[0]
+        return val.dtype
 
 
 
