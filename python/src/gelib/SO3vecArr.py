@@ -7,6 +7,7 @@
 # Public License v. 2.0. If a copy of the MPL was not distributed
 # with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from typing import Dict
 import torch
 
 import gelib_base as gb
@@ -24,9 +25,15 @@ class SO3vecArr:
     """
 
     def __init__(self,*args):
-        self.parts={}
-        if not args:
+        self.parts : Dict[int, SO3partArr]={}
+        if args is None:
             return
+        
+        if len(args) == 1 and \
+                not isinstance(args[0], torch.Tensor) and \
+                hasattr(args[0], '__iter__'):
+            args = list(args[0])
+        
         for x in args:
             assert isinstance(x,torch.Tensor)
             p=SO3partArr(x)
@@ -39,10 +46,31 @@ class SO3vecArr:
     @classmethod
     def zeros(self,b,adims,tau,device='cpu'):
         "Construct a zero SO3vecArr object of given type _tau."
+        if adims == None:
+            adims = []
         R=SO3vecArr()
         if isinstance(tau,dict):
             for l,n in tau.items():
                 R.parts[l]=SO3partArr.zeros(b,adims,l,n,device=device)
+        else:
+            assert hasattr(tau, '__iter__')
+            for i in range(len(tau)):
+                R.parts[i] = SO3partArr.zeros(b, adims, i, tau[i], device)
+        return R
+    
+    @classmethod
+    def ones(self,b,adims,tau,device='cpu'):
+        "Construct a zero SO3vecArr object of given type _tau."
+        if adims == None:
+            adims = []
+        R=SO3vecArr()
+        if isinstance(tau,dict):
+            for l,n in tau.items():
+                R.parts[l]=SO3partArr.ones(b,adims,l,n,device=device)
+        else:
+            assert hasattr(tau, '__iter__')
+            for i in range(len(tau)):
+                R.parts[i] = SO3partArr.ones(b, adims, i, tau[i], device)
         return R
 
     @classmethod
@@ -71,14 +99,22 @@ class SO3vecArr:
         <BLANKLINE>
         <BLANKLINE>
         """
+        if adims == None:
+            adims = []
         R=SO3vecArr()
         if isinstance(tau,dict):
             for l,n in tau.items():
                 R.parts[l]=SO3partArr.randn(b,adims,l,n,device=device)
+        else:
+            assert hasattr(tau, '__iter__')
+            for i in range(len(tau)):
+                R.parts[i] = SO3partArr.randn(b, adims, i, tau[i], device)
         return R
 
     @classmethod
     def Fzeros(self,b,adims,tau,device='cpu'):
+        if adims == None:
+            adims = []
         R=SO3vecArr()
         if isinstance(tau,dict):
             for l,n in tau.items():
@@ -87,6 +123,8 @@ class SO3vecArr:
 
     @classmethod
     def Frandn(self,b,adims,tau,device='cpu'):
+        if adims == None:
+            adims = []
         R=SO3vecArr()
         if isinstance(tau,dict):
             for l,n in tau.items():
@@ -94,12 +132,12 @@ class SO3vecArr:
         return R
 
     @classmethod
-    def spharm(self,l,X,device='cpu'):
+    def spharm(self, l : int, X : torch.Tensor, device : str = 'cpu') -> 'SO3vecArr':
         """
-        Return the spherical harmonics of the vectors in the tensor X
+        Return the spherical harmonics of the vector (x,y,z) for all ro <= l.
         """
         R=SO3vecArr()
-        R.parts[l]=SO3partArr.spharm(b,l,X,device=device)
+        R.parts[l]=SO3partArr.spharm(l,X,device=device)
         return R
 
     @classmethod
@@ -135,6 +173,9 @@ class SO3vecArr:
         for l,p in self.parts.items():
             r[l]=p.getn()
         return r
+    
+    def get_adims(self):
+        return self.parts[min(self.parts)].get_adims()
 
     def get_type(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
@@ -143,12 +184,22 @@ class SO3vecArr:
             r[l]=p.getn()
         return r
 
+    def l_max(self) -> int:
+        if len(self.parts) == 0:
+            return 0
+        return max(self.parts.keys())
+
     def requires_grad_(self):
         for l,p in self.parts.items():
             p.requires_grad_()
 
     def get_grad(self):
         return SO3vecArr(*[p.grad for l,p in self.parts.items()])
+
+    def l_max(self) -> int:
+        if len(self.parts) == 0:
+            return 0
+        return max(self.parts.keys())
 
 
     # ---- Operations ---------------------------------------------------------------------------------------
@@ -183,6 +234,11 @@ class SO3vecArr:
         """
         Compute the full Clesbsch--Gordan product of this SO3vec with another SO3vec y.
         """
+
+        assert isinstance(y, SO3vecArr)
+        if maxl == None:
+            maxl = -1
+
         xparts=list(self.parts.values())
         yparts=list(y.parts.values())
         rparts =list(SO3vecArr_CGproductFn.apply(len(xparts), len(yparts), maxl,*(xparts+yparts)))
@@ -192,6 +248,10 @@ class SO3vecArr:
         """
         Compute the diagonal Clesbsch--Gordan product of this SO3vec with another SO3vec y.
         """
+        assert isinstance(y, SO3vecArr)
+        if maxl == None:
+            maxl = -1
+
         xparts=list(self.parts.values())
         yparts=list(y.parts.values())
         rparts =list(SO3vecArr_DiagCGproductFn.apply(len(xparts), len(yparts), maxl,*(xparts+yparts)))
@@ -205,6 +265,13 @@ class SO3vecArr:
 
     def __str__(self):
         return self.backend().__str__()
+    
+    @property
+    def dtype(self) -> torch.dtype:
+        if len(self.parts) == 0:
+            return torch.cfloat
+        key, val = self.parts[0]
+        return val.dtype
 
 
 
