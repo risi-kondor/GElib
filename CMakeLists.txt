@@ -134,24 +134,25 @@ if(TORCH_INCLUDE_DIRS)
 endif()
 
 # --- pybind11 Integration ---
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+set(PYBIND11_FINDPYTHON ON)
 find_package(pybind11 REQUIRED)
-if(pybind11_FOUND)
-    message(STATUS "pybind11 found. Version: ${pybind11_VERSION}")
-else()
-    message(FATAL_ERROR "pybind11 was not found. Ensure pybind11 is installed or discoverable by CMake.")
+
+if(NOT Python3_FOUND)
+    message(FATAL_ERROR "Python3 development components were not found.")
+endif()
+if(NOT pybind11_FOUND)
+    message(FATAL_ERROR "pybind11 was not found.")
 endif()
 
 # --- Python Extension Module (gelib_base) ---
 
 # 1. Identify Binding Source Files
-# Based on setup.py, GElib_py.cpp is the main entry point for the 'gelib_base' extension.
-# It's assumed that if other _py.cpp files in python/bindings/ are needed by gelib_base,
-# they are included by GElib_py.cpp or compiled separately if they were part of other extensions.
-file(GLOB GELIB_BINDING_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/python/bindings/*.cpp")
+set(GELIB_BINDING_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/python/bindings/GElib_py.cpp")
 
 # Check if the main binding file exists
-if(NOT GELIB_BINDING_SOURCES)
-    message(FATAL_ERROR "No binding source files found in python/bindings/*.cpp")
+if(NOT EXISTS ${GELIB_BINDING_SOURCES})
+    message(FATAL_ERROR "Main binding source file GElib_py.cpp not found.")
 endif()
 
 # 2. Define Python Extension Target
@@ -159,9 +160,18 @@ endif()
 # implying custom C++/ATen bindings.
 add_library(gelib_base MODULE ${GELIB_BINDING_SOURCES})
 
+# Add Python include directories if Python found
+if(Python3_FOUND AND Python3_INCLUDE_DIRS)
+    target_include_directories(gelib_base SYSTEM PRIVATE ${Python3_INCLUDE_DIRS})
+    target_compile_options(gelib_base PRIVATE "-I${Python3_INCLUDE_DIRS}") # Keep as forceful backup
+    message(STATUS "Added Python3 include directories to gelib_base (SYSTEM): ${Python3_INCLUDE_DIRS}")
+else()
+    message(WARNING "Python3 development headers not found (Python3_INCLUDE_DIRS not set). Compilation of gelib_base may fail.")
+endif()
+
 # 3. Link against gelib_cpp_core (which brings cnine and PyTorch)
 # gelib_cpp_core should have PUBLIC/INTERFACE linkage for includes and libraries it uses.
-target_link_libraries(gelib_base PRIVATE gelib_cpp_core pybind11::headers)
+target_link_libraries(gelib_base PRIVATE gelib_cpp_core pybind11::pybind11)
 
 # 4. Include Directories for bindings
 # The necessary include directories (project-specific, cnine, PyTorch)
