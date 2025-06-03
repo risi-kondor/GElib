@@ -1,9 +1,10 @@
 [build-system]
 requires = [
-    "scikit-build-core>=0.7.0", # Specify a recent, reasonable version
-    "cmake>=3.18",
+    "scikit-build-core>=0.11.0", # Specify a recent, reasonable version
+    "cmake>=3.21",
     "ninja",                   # Recommended CMake generator
-    "torch"                    # For torch.utils.cmake_prefix_path and as a runtime dep
+    "torch==2.7.0",            # For torch.utils.cmake_prefix_path and as a runtime dep
+    "pybind11>=2.10.0"         # Added pybind11
 ]
 build-backend = "scikit_build_core.build"
 # backend-path = ["python"] # Not strictly needed if pyproject.toml is at the root and setup.py is not essential for build backend discovery
@@ -16,7 +17,7 @@ readme = "README.md"
 license = { file = "LICENSE.txt" } # Assuming LICENSE.txt exists at the root
 # authors = [{ name = "Your Name", email = "you@example.com" }] # Optional: Add author info
 dependencies = [
-    "torch" # Runtime dependency
+    "torch==2.7.0" # Runtime dependency
 ]
 
 [project.optional-dependencies]
@@ -49,7 +50,6 @@ cmake.targets = ["gelib_base"]
 # If pyproject.toml is at the root, this should point to where the 'gelib' package source is.
 # The original setup.py used find_packages('src') and package_dir={'': 'src'}.
 # Assuming 'src' is 'python/src' relative to the project root.
-package-dir = "python/src"
 
 # List of Python packages to include in the wheel.
 # This should find 'gelib' inside 'python/src/'.

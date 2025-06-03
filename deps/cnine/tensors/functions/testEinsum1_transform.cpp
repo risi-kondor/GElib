@@ -16,7 +16,7 @@
 #include "CnineSession.hpp"
 #include "TensorView_functions.hpp"
 #include "Einsum1.hpp"
-#include "TensorTransform1.hpp"
+#include "TensorTransform0.hpp"
 
 using namespace cnine;
 
@@ -46,7 +46,7 @@ int main(int argc, char** argv){
   for(int iter=0; iter<niter; iter++){
 
     TensorView<float> x(dims(n,n),3,0);
-    ExampleTransform transf;
+    ExampleTransform1<float> transf;
     GatherMapB gmap=GatherMapB::random(n,n);
     cout<<gmap<<endl;
 
@@ -55,7 +55,7 @@ int main(int argc, char** argv){
     vector<int> rdims(EinsumForm1(estr).bcast_ids.size(),3);
     cout<<estr<<endl;
 
-    auto z=einsum_transform(estr,x,transf,rdims);
+    auto z=Einsum1(estr)(x,transf,rdims);
     cout<<z<<endl;
 
 

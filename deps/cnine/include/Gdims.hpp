@@ -19,6 +19,11 @@
 #include "gvectr.hpp"
 #include "GindexSet.hpp"
 #include "GindexMap.hpp"
+
+#ifdef _WITH_ATEN
+#include <torch/torch.h>
+#endif
+
 //#include "Bifstream.hpp"
 //#include "Bofstream.hpp"
 

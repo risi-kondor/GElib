@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.25)
 project( cnine VERSION 0.2.0 LANGUAGES CXX)
 include(CheckLanguage)
+find_package(Eigen3 REQUIRED)
+message(STATUS "Eigen3 include directory: ${EIGEN3_INCLUDE_DIR}") # Debug message
 
 option(WITH_CUDA "Compiling with CUDA support" OFF)
 
@@ -33,7 +35,41 @@ endif(WITH_CUDA)
 find_package(Torch REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
-add_library(cnine STATIC cuda/dummy.cpp)
+# Initialize list for CPU source files
+set(CNINE_CPU_SOURCES "")
+
+# Add specific core files
+list(APPEND CNINE_CPU_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/include/Cnine_base.cpp")
+list(APPEND CNINE_CPU_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/external/EigenRoutines.cpp")
+
+# Define cnine's primary source directories
+set(CNINE_CORE_CPP_DIRS include external algorithms combinatorial containers hpc math matrices tensors utility wrappers tensor_views "tensors/functions")
+
+# Loop through each directory and glob for .cpp files
+foreach(SUBDIR ${CNINE_CORE_CPP_DIRS})
+    file(GLOB CPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/${SUBDIR}/*.cpp")
+    foreach(CPP_FILE ${CPP_FILES})
+        # Exclude test files, files from 'cuda' subdirectories, and already added files
+        if(NOT CPP_FILE MATCHES "/tests?/" AND
+           NOT CPP_FILE MATCHES "/cuda/" AND
+           NOT CPP_FILE STREQUAL "include/Cnine_base.cpp" AND
+           NOT CPP_FILE STREQUAL "external/EigenRoutines.cpp")
+            list(APPEND CNINE_CPU_SOURCES "${CPP_FILE}")
+        endif()
+    endforeach()
+endforeach()
+
+# Fallback if no CPU sources are found
+if(NOT CNINE_CPU_SOURCES)
+    message(WARNING "No CPU source files found for cnine library. Adding dummy.cpp as fallback.")
+    list(APPEND CNINE_CPU_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/cuda/dummy.cpp")
+else()
+    message(STATUS "cnine CPU sources: ${CNINE_CPU_SOURCES}")
+endif()
+
+# Add the library with the collected source files
+add_library(cnine STATIC ${CNINE_CPU_SOURCES})
+# target_include_directories(cnine PUBLIC $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>) # Replaced by target_link_libraries with Eigen3::Eigen
 set_target_properties(cnine PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 set(cnine_include_dirs
@@ -49,6 +85,9 @@ set(cnine_include_dirs
   wrappers
   tensor_views
   tensors/functions
+  legacy/tensor # Added for RtensorObj.hpp and similar
+  legacy/backendA # Added for RtensorA.hpp and similar
+  legacy/scalar   # Added for RscalarA.hpp and similar
 )
 
 foreach(directory IN LISTS cnine_include_dirs)
@@ -56,6 +95,7 @@ foreach(directory IN LISTS cnine_include_dirs)
 endforeach()
 
 target_link_libraries(cnine PUBLIC "${TORCH_LIBRARIES}")
+target_link_libraries(cnine PUBLIC Eigen3::Eigen) # Modern way to use Eigen
 
 target_compile_definitions(cnine PUBLIC _WITH_ATEN)
 target_compile_definitions(cnine PUBLIC CNINE_RANGE_CHECKING)

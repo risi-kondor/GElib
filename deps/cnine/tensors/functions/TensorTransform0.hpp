@@ -12,8 +12,8 @@
  */
 
 
-#ifndef _CnineTensorTransform1
-#define _CnineTensorTransform1
+#ifndef _CNINETENSORTRANSFORM0_HPP_
+#define _CNINETENSORTRANSFORM0_HPP_
 
 #include "TensorView.hpp"
 #include "EinsumForm1.hpp"
@@ -24,7 +24,7 @@
 namespace cnine{
   
   template<typename TYPE>
-  class TensorTransform1{
+  class TensorTransform1{ // TODO: Should this be TensorTransform0?
   public:
 
     TensorTransform1(){}
@@ -35,3 +35,5 @@ namespace cnine{
   };
 
 }
+
+#endif // _CNINETENSORTRANSFORM0_HPP_

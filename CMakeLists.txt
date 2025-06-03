@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.18)
+message(STATUS "Initial CMAKE_CURRENT_BINARY_DIR is ${CMAKE_CURRENT_BINARY_DIR}")
+message(STATUS "Initial CMAKE_SOURCE_DIR is ${CMAKE_SOURCE_DIR}")
 project(gelib LANGUAGES CXX)
 enable_testing()
 
@@ -15,28 +17,10 @@ add_subdirectory(deps/cnine)
 
 # --- Core C++ Library (gelib_cpp_core) ---
 
-# 1. Identify C++ source files (excluding CUDA files)
-file(GLOB_RECURSE GELIB_CORE_SOURCES_ALL
-    "${CMAKE_CURRENT_SOURCE_DIR}/core/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/SO3/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/O3/*.cpp"
-)
-
-set(GELIB_CORE_SOURCES "")
-foreach(FILE ${GELIB_CORE_SOURCES_ALL})
-    if(NOT FILE MATCHES "\\.cu(\\.cc)?$")
-        list(APPEND GELIB_CORE_SOURCES ${FILE})
-    endif()
-endforeach()
-
-if(NOT GELIB_CORE_SOURCES)
-    message(WARNING "No C++ source files found for gelib_cpp_core in core/, SO3/, O3/. Please check paths and file extensions.")
-else()
-    # Debug: Print found source files
-    # message(STATUS "Core sources for gelib_cpp_core: ${GELIB_CORE_SOURCES}")
-endif()
-
-# 2. Create INTERFACE library (as core .cpp files seem to be missing or handled differently)
+# GElib's core logic for the Python bindings is primarily header-based (.hpp files)
+# or compiled directly into the Python extension via GElib_py.cpp (which includes GElib_base.cpp).
+# Therefore, gelib_cpp_core is an INTERFACE library to manage include paths,
+# compiler definitions, and transitive dependencies like cnine and PyTorch.
 add_library(gelib_cpp_core INTERFACE)
 
 # 3. Set C++17 standard for the target
@@ -96,14 +80,14 @@ set(GELIB_CXX_DEFINITIONS
 )
 # From setup.py's 'copy_warnings' and 'torch_convert_warnings' if enabled:
 list(APPEND GELIB_CXX_DEFINITIONS
-    # CNINE_COPY_WARNINGS # if enabled
-    # CNINE_ASSIGN_WARNINGS # if enabled
-    # CNINE_MOVE_WARNINGS # if enabled
-    # CNINE_MOVEASSIGN_WARNINGS # if enabled
-    GELIB_COPY_WARNINGS # if enabled
-    GELIB_MOVE_WARNINGS # if enabled
-    GELIB_CONVERT_WARNINGS # if enabled
-    CNINE_ATEN_CONVERT_WARNINGS # This was under torch_convert_warnings=True
+    CNINE_COPY_WARNINGS
+    CNINE_ASSIGN_WARNINGS
+    CNINE_MOVE_WARNINGS
+    CNINE_MOVEASSIGN_WARNINGS
+    GELIB_COPY_WARNINGS
+    GELIB_MOVE_WARNINGS
+    GELIB_CONVERT_WARNINGS
+    CNINE_ATEN_CONVERT_WARNINGS
 )
 target_compile_definitions(gelib_cpp_core INTERFACE ${GELIB_CXX_DEFINITIONS}) # INTERFACE because some might affect headers
 
@@ -118,7 +102,7 @@ endif()
 # in the current Python environment. scikit-build-core should handle this,
 # or it can be set manually:
 # e.g., cmake -DCMAKE_PREFIX_PATH=$(python -c 'import torch; print(torch.utils.cmake_prefix_path)') ...
-find_package(Torch REQUIRED)
+find_package(Torch 2.7.0 REQUIRED)
 
 # Check if Torch was found and print a message
 if(TORCH_FOUND)
@@ -149,6 +133,14 @@ if(TORCH_INCLUDE_DIRS)
     target_include_directories(gelib_cpp_core INTERFACE ${TORCH_INCLUDE_DIRS})
 endif()
 
+# --- pybind11 Integration ---
+find_package(pybind11 REQUIRED)
+if(pybind11_FOUND)
+    message(STATUS "pybind11 found. Version: ${pybind11_VERSION}")
+else()
+    message(FATAL_ERROR "pybind11 was not found. Ensure pybind11 is installed or discoverable by CMake.")
+endif()
+
 # --- Python Extension Module (gelib_base) ---
 
 # 1. Identify Binding Source Files
@@ -169,7 +161,7 @@ add_library(gelib_base MODULE ${GELIB_BINDING_SOURCES})
 
 # 3. Link against gelib_cpp_core (which brings cnine and PyTorch)
 # gelib_cpp_core should have PUBLIC/INTERFACE linkage for includes and libraries it uses.
-target_link_libraries(gelib_base PRIVATE gelib_cpp_core)
+target_link_libraries(gelib_base PRIVATE gelib_cpp_core pybind11::headers)
 
 # 4. Include Directories for bindings
 # The necessary include directories (project-specific, cnine, PyTorch)
