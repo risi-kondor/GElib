@@ -32,7 +32,7 @@
 GElib::GElibSession session;
 
 
-PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
+PYBIND11_MODULE(gelib_base, m) {
 
 
   using namespace cnine;

@@ -159,6 +159,7 @@ endif()
 # We are not using pybind11_add_module here as setup.py used CppExtension directly,
 # implying custom C++/ATen bindings.
 add_library(gelib_base MODULE ${GELIB_BINDING_SOURCES})
+set_target_properties(gelib_base PROPERTIES PREFIX "")
 
 # Add Python include directories if Python found
 if(Python3_FOUND AND Python3_INCLUDE_DIRS)

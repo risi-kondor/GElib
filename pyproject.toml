@@ -17,7 +17,8 @@ readme = "README.md"
 license = { file = "LICENSE.txt" } # Assuming LICENSE.txt exists at the root
 # authors = [{ name = "Your Name", email = "you@example.com" }] # Optional: Add author info
 dependencies = [
-    "torch==2.7.0" # Runtime dependency
+    "torch==2.7.0", # Runtime dependency
+    "numpy>=1.20"
 ]
 
 [project.optional-dependencies]
@@ -26,10 +27,6 @@ test = ["pytest"]
 [tool.scikit-build]
 # Directory containing the main CMakeLists.txt relative to pyproject.toml
 cmake.source-dir = "."
-
-# List of CMake targets to build and install.
-# Only gelib_base is needed for the Python extension wheel.
-cmake.targets = ["gelib_base"]
 
 # CMAKE_PREFIX_PATH for PyTorch:
 # scikit-build-core, when finding torch in the [build-system].requires,
@@ -44,6 +41,9 @@ cmake.targets = ["gelib_base"]
 # Verbosity for CMake configuration and build (optional, good for debugging)
 # cmake.verbose = true
 
+[tool.scikit-build.build]
+targets = ["gelib_base"]
+
 [tool.scikit-build.wheel]
 # Specifies the directory, relative to pyproject.toml, containing the Python package(s).
 # From setup.py: package_dir={'': 'src'}, which effectively means python/src/ if setup.py is in python/
@@ -53,7 +53,7 @@ cmake.targets = ["gelib_base"]
 
 # List of Python packages to include in the wheel.
 # This should find 'gelib' inside 'python/src/'.
-packages = ["gelib"]
+packages = ["python/src/gelib"]
 
 # Defines where the CMake-built artifacts (like gelib_base.so) should be installed
 # within the wheel, relative to the package directory.
