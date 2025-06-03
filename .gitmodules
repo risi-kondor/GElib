@@ -1,3 +1,0 @@
-[submodule "deps/cnine"]
-	path = deps/cnine
-	url = https://github.com/risi-kondor/cnine.git

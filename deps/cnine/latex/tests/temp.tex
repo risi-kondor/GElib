@@ -1,0 +1,19 @@
+\documentclass{article}
+\usepackage{anyfontsize}
+\usepackage{tikz}
+\begin{document}
+\begin{tikzpicture}[every node/.style={circle, draw=black},sibling distance=3cm]
+\node{}
+  child{
+  node[label={[font=\fontsize{6pt}{8pt}\selectfont]right:\texttt{for(i1=0; i1<n1; i1++)}}]{1}
+    child{
+    node{3}
+    }
+  }
+  child{
+  node{2}
+  }
+;
+\end{tikzpicture}
+
+ \end{document}
