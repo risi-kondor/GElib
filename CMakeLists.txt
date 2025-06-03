@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.18)
 project(gelib LANGUAGES CXX)
+enable_testing()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -35,14 +36,14 @@ else()
     # message(STATUS "Core sources for gelib_cpp_core: ${GELIB_CORE_SOURCES}")
 endif()
 
-# 2. Create static library
-add_library(gelib_cpp_core STATIC ${GELIB_CORE_SOURCES})
+# 2. Create INTERFACE library (as core .cpp files seem to be missing or handled differently)
+add_library(gelib_cpp_core INTERFACE)
 
 # 3. Set C++17 standard for the target
-target_compile_features(gelib_cpp_core PRIVATE cxx_std_17)
+target_compile_features(gelib_cpp_core INTERFACE cxx_std_17) # For INTERFACE libraries, features are INTERFACE
 
 # 4. Include Directories
-target_include_directories(gelib_cpp_core PUBLIC
+target_include_directories(gelib_cpp_core INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  # Project's public headers
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/core>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SO3>
@@ -58,7 +59,7 @@ target_include_directories(gelib_cpp_core PUBLIC
 # Assuming 'cnine' is the target name defined in deps/cnine/CMakeLists.txt
 # If cnine itself is a library target:
 if(TARGET cnine) # Or the actual target name for the cnine library
-    target_link_libraries(gelib_cpp_core PUBLIC cnine)
+    target_link_libraries(gelib_cpp_core INTERFACE cnine)
 else()
     message(WARNING "cnine target not found. Include directories from cnine might be missing for gelib_cpp_core.")
 endif()
@@ -83,7 +84,7 @@ set(GELIB_CXX_COMPILE_FLAGS
     # Add flags from setup.py's 'torch_convert_warnings' if they were true by default or desired
     # -DCNINE_ATEN_CONVERT_WARNINGS # This is a definition, not a compile option
 )
-target_compile_options(gelib_cpp_core PRIVATE ${GELIB_CXX_COMPILE_FLAGS})
+target_compile_options(gelib_cpp_core INTERFACE ${GELIB_CXX_COMPILE_FLAGS})
 
 set(GELIB_CXX_DEFINITIONS
     _WITH_ATEN # PyTorch related
@@ -99,16 +100,16 @@ list(APPEND GELIB_CXX_DEFINITIONS
     # CNINE_ASSIGN_WARNINGS # if enabled
     # CNINE_MOVE_WARNINGS # if enabled
     # CNINE_MOVEASSIGN_WARNINGS # if enabled
-    # GELIB_COPY_WARNINGS # if enabled
-    # GELIB_MOVE_WARNINGS # if enabled
-    # GELIB_CONVERT_WARNINGS # if enabled
+    GELIB_COPY_WARNINGS # if enabled
+    GELIB_MOVE_WARNINGS # if enabled
+    GELIB_CONVERT_WARNINGS # if enabled
     CNINE_ATEN_CONVERT_WARNINGS # This was under torch_convert_warnings=True
 )
-target_compile_definitions(gelib_cpp_core PUBLIC ${GELIB_CXX_DEFINITIONS}) # PUBLIC because some might affect headers
+target_compile_definitions(gelib_cpp_core INTERFACE ${GELIB_CXX_DEFINITIONS}) # INTERFACE because some might affect headers
 
 # Conditional CUDA-context C++ definitions (will be OFF for this task)
 if(GELIB_WITH_CUDA)
-    target_compile_definitions(gelib_cpp_core PUBLIC _WITH_CUDA _WITH_CUBLAS)
+    target_compile_definitions(gelib_cpp_core INTERFACE _WITH_CUDA _WITH_CUBLAS) # INTERFACE
     # Add any other C++ definitions that were conditional on CUDA in setup.py
 endif()
 
@@ -131,11 +132,11 @@ endif()
 # Link gelib_cpp_core with PyTorch
 # The _WITH_ATEN definition is already added to gelib_cpp_core's definitions.
 if(TARGET Torch::torch_cpu AND TARGET Torch::torch_global_deps)
-    target_link_libraries(gelib_cpp_core PUBLIC Torch::torch_cpu Torch::torch_global_deps)
+    target_link_libraries(gelib_cpp_core INTERFACE Torch::torch_cpu Torch::torch_global_deps)
     message(STATUS "Linking gelib_cpp_core with Torch::torch_cpu and Torch::torch_global_deps.")
 elseif(TORCH_LIBRARIES)
     # Fallback if specific Torch:: targets are not available (older PyTorch versions might use TORCH_LIBRARIES)
-    target_link_libraries(gelib_cpp_core PUBLIC ${TORCH_LIBRARIES})
+    target_link_libraries(gelib_cpp_core INTERFACE ${TORCH_LIBRARIES})
     message(STATUS "Linking gelib_cpp_core with PyTorch libraries: ${TORCH_LIBRARIES}.")
 else()
     message(WARNING "Could not determine PyTorch libraries to link against gelib_cpp_core. Check PyTorch CMake configuration.")
@@ -145,7 +146,7 @@ endif()
 # This is often handled by target_link_libraries with modern CMake targets like Torch::torch_cpu
 # but can be added explicitly if needed for older PyTorch versions or unusual setups.
 if(TORCH_INCLUDE_DIRS)
-    target_include_directories(gelib_cpp_core PUBLIC ${TORCH_INCLUDE_DIRS})
+    target_include_directories(gelib_cpp_core INTERFACE ${TORCH_INCLUDE_DIRS})
 endif()
 
 # --- Python Extension Module (gelib_base) ---
@@ -154,11 +155,11 @@ endif()
 # Based on setup.py, GElib_py.cpp is the main entry point for the 'gelib_base' extension.
 # It's assumed that if other _py.cpp files in python/bindings/ are needed by gelib_base,
 # they are included by GElib_py.cpp or compiled separately if they were part of other extensions.
-set(GELIB_BINDING_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/python/bindings/GElib_py.cpp")
+file(GLOB GELIB_BINDING_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/python/bindings/*.cpp")
 
 # Check if the main binding file exists
-if(NOT EXISTS ${GELIB_BINDING_SOURCES})
-    message(FATAL_ERROR "Main binding file ${GELIB_BINDING_SOURCES} not found!")
+if(NOT GELIB_BINDING_SOURCES)
+    message(FATAL_ERROR "No binding source files found in python/bindings/*.cpp")
 endif()
 
 # 2. Define Python Extension Target
@@ -176,6 +177,7 @@ target_link_libraries(gelib_base PRIVATE gelib_cpp_core)
 # Add python/bindings if it contains headers used by GElib_py.cpp itself.
 target_include_directories(gelib_base PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/python/bindings>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 
 # 5. Ensure correct module naming for Python
@@ -203,10 +205,14 @@ if(TARGET gelib_base)
             # MODULE DESTINATION is often more appropriate for Python modules.
             # For scikit-build-core, a relative path like 'gelib' is common.
             LIBRARY DESTINATION "gelib"  # Creates <prefix>/gelib/gelib_base.so
-            MODULE DESTINATION "gelib"   # Also often used for Python modules
+            # MODULE DESTINATION "gelib"   # This line was causing an error
             RUNTIME DESTINATION "gelib"  # For Windows DLLs if any, good practice
            )
     message(STATUS "Install rules added for target: gelib_base into 'gelib' directory.")
 else()
     message(WARNING "Target gelib_base not found. Cannot add install rules.")
 endif()
+
+message(STATUS "Configuring C++ tests...")
+add_subdirectory(O3/tests)
+add_subdirectory(SO3/tests)

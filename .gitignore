@@ -16,3 +16,6 @@ python/cnine
 CGproducts.csv
 GElib.log
 cnine.log
+
+# CMake build directory at the root
+build/
