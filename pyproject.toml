@@ -1,0 +1,70 @@
+[build-system]
+requires = [
+    "scikit-build-core>=0.7.0", # Specify a recent, reasonable version
+    "cmake>=3.18",
+    "ninja",                   # Recommended CMake generator
+    "torch"                    # For torch.utils.cmake_prefix_path and as a runtime dep
+]
+build-backend = "scikit_build_core.build"
+# backend-path = ["python"] # Not strictly needed if pyproject.toml is at the root and setup.py is not essential for build backend discovery
+
+[project]
+name = "gelib"
+version = "0.1.0" # Placeholder version
+description = "A library with C++/Python bindings, built with CMake and scikit-build-core."
+readme = "README.md"
+license = { file = "LICENSE.txt" } # Assuming LICENSE.txt exists at the root
+# authors = [{ name = "Your Name", email = "you@example.com" }] # Optional: Add author info
+dependencies = [
+    "torch" # Runtime dependency
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.scikit-build]
+# Directory containing the main CMakeLists.txt relative to pyproject.toml
+cmake.source-dir = "."
+
+# List of CMake targets to build and install.
+# Only gelib_base is needed for the Python extension wheel.
+cmake.targets = ["gelib_base"]
+
+# CMAKE_PREFIX_PATH for PyTorch:
+# scikit-build-core, when finding torch in the [build-system].requires,
+# often correctly configures CMake to find the PyTorch from the current Python environment.
+# If explicit control is needed (e.g., in CI or complex environments),
+# CMAKE_ARGS can be used, for example:
+# cmake.args = ["-DCMAKE_PREFIX_PATH={env:CMAKE_PREFIX_PATH_TORCH}"]
+# where CMAKE_PREFIX_PATH_TORCH would be set by:
+# python -c "import torch; print(torch.utils.cmake_prefix_path)"
+# For now, we rely on scikit-build-core's automatic discovery.
+
+# Verbosity for CMake configuration and build (optional, good for debugging)
+# cmake.verbose = true
+
+[tool.scikit-build.wheel]
+# Specifies the directory, relative to pyproject.toml, containing the Python package(s).
+# From setup.py: package_dir={'': 'src'}, which effectively means python/src/ if setup.py is in python/
+# If pyproject.toml is at the root, this should point to where the 'gelib' package source is.
+# The original setup.py used find_packages('src') and package_dir={'': 'src'}.
+# Assuming 'src' is 'python/src' relative to the project root.
+package-dir = "python/src"
+
+# List of Python packages to include in the wheel.
+# This should find 'gelib' inside 'python/src/'.
+packages = ["gelib"]
+
+# Defines where the CMake-built artifacts (like gelib_base.so) should be installed
+# within the wheel, relative to the package directory.
+# The CMake install rule `install(TARGETS gelib_base ... DESTINATION gelib)`
+# will place the .so file into a 'gelib' folder in the install root.
+# scikit-build-core will then pick this up and place it correctly within the
+# 'gelib' package in the wheel. So, no specific install-dir needed here usually.
+# install-dir = "gelib" # Usually not needed if CMake install DESTINATION matches package name.
+
+[tool.pytest.ini_options]
+testpaths = [
+    "python/tests",
+]
+# Add any other pytest configurations here if needed
