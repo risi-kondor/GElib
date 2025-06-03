@@ -36,6 +36,15 @@ class SO3partArr(torch.Tensor):
         """        
         return SO3partArr(torch.zeros([b]+adims+[2*l+1,n],dtype=torch.complex64,device=device))
 
+    
+    @staticmethod
+    def ones(b,adims,l,n,device='cpu'):
+        """
+        Create an SO(3)-part consisting of N*b lots of n vectors transforming according to the l'th irrep of SO(3).
+        The vectors are initialized to one, resulting in an b*(2+l+1)*n dimensional complex tensor of ones.
+        """        
+        return SO3partArr(torch.ones([b]+adims+[2*l+1,n],dtype=torch.complex64,device=device))
+
 
     @staticmethod
     def randn(b,adims,l,n,device='cpu'):
@@ -157,8 +166,7 @@ class SO3partArr(torch.Tensor):
         """
         Compute the l component of the diagonal Clesbsch--Gordan product of this SO3partArr with another SO3partArr y.
         """
-        return SO3partArr_DiagCGproductFn.apply(self,y,l)
-
+        return gelib.SO3part_DiagCGproductFn.apply(self,y,l)
 
     ## ---- I/O ----------------------------------------------------------------------------------------------
 
