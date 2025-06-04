@@ -20,27 +20,27 @@
 #include "Gtensor.hpp"
 
 #include "Rtensor1_view.hpp"
-#include "RtensorObj.hpp"
+#include "TensorView.hpp" // Changed from RtensorObj.hpp
 
 namespace cnine{
 
 #ifdef _WITH_EIGEN
-  extern pair<RtensorObj,RtensorObj> eigen_eigendecomp(const Rtensor2_view& x);
+  extern pair<TensorView<float>,TensorView<float>> eigen_eigendecomp(const Rtensor2_view& x);
 #endif
 
 
   class SymmetricEigendecomp{
   public:
 
-    typedef RtensorObj rtensor;
+    typedef TensorView<float> rtensor; // Changed from RtensorObj
 
-    rtensor U;
-    rtensor D;
+    TensorView<float> U; // Changed from rtensor
+    TensorView<float> D; // Changed from rtensor
 
     SymmetricEigendecomp(const Rtensor2_view& x){
 #ifdef _WITH_EIGEN
       auto p=eigen_eigendecomp(x);
-      U=p.first;
+      U=p.first; // U and D are now TensorView<float>
       D=p.second;
 #endif
     }

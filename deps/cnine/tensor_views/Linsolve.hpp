@@ -20,22 +20,24 @@
 #include "Gtensor.hpp"
 
 #include "Rtensor1_view.hpp"
-#include "RtensorObj.hpp"
+#include "TensorView.hpp" // Changed from RtensorObj.hpp
 
 namespace cnine{
 
 #ifdef _WITH_EIGEN
-  extern RtensorObj eigen_linsolve(const Rtensor2_view& A, const Rtensor2_view& b);
+  // Corrected second parameter to Rtensor1_view, return type to TensorView<float>
+  extern TensorView<float> eigen_linsolve(const Rtensor2_view& A, const Rtensor1_view& b);
 #endif
 
 
   class Linsolve{
   public:
 
-    typedef RtensorObj rtensor;
+    typedef TensorView<float> rtensor; // Changed from RtensorObj
 
     rtensor operator()(const Rtensor2_view& A, const Rtensor1_view& b){
 #ifdef _WITH_EIGEN
+      // The extern declaration above is now the one from EigenRoutines.cpp
       return eigen_linsolve(A,b);
 #endif
     }
