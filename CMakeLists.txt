@@ -7,6 +7,7 @@ enable_testing()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # Useful for debugging and IDEs
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE) # For RPATH handling
 
 # Placeholder for future CUDA integration
 option(GELIB_WITH_CUDA "Enable CUDA support (manual integration needed)" OFF)
@@ -157,6 +158,64 @@ if(NOT pybind11_FOUND)
     message(FATAL_ERROR "pybind11 was not found.")
 endif()
 
+# --- Manually Find PyTorch Libraries for Linking and RPATH ---
+set(PYTORCH_LIB_DIR "")
+if(TORCH_FOUND AND PYTHON_EXECUTABLE)
+    execute_process(
+        COMMAND "${PYTHON_EXECUTABLE}" -c "import os; import torch; print(os.path.dirname(torch.__file__))"
+        OUTPUT_VARIABLE PYTORCH_PACKAGE_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        RESULT_VARIABLE PYTORCH_LOCATE_SCRIPT_RESULT
+    )
+    if(PYTORCH_LOCATE_SCRIPT_RESULT EQUAL 0 AND PYTORCH_PACKAGE_DIR AND EXISTS "${PYTORCH_PACKAGE_DIR}/lib")
+        set(PYTORCH_LIB_DIR_TEMP "${PYTORCH_PACKAGE_DIR}/lib")
+        get_filename_component(PYTORCH_LIB_DIR ${PYTORCH_LIB_DIR_TEMP} ABSOLUTE) # Normalize path
+        message(STATUS "Found PyTorch package lib directory via Python script: ${PYTORCH_LIB_DIR}")
+    elseif(TORCH_CMAKE_PREFIX_PATH) # Fallback to TORCH_CMAKE_PREFIX_PATH if Python script fails or path doesn't exist
+        if(EXISTS "${TORCH_CMAKE_PREFIX_PATH}/lib")
+            set(PYTORCH_LIB_DIR_TEMP "${TORCH_CMAKE_PREFIX_PATH}/lib")
+            get_filename_component(PYTORCH_LIB_DIR ${PYTORCH_LIB_DIR_TEMP} ABSOLUTE)
+            message(STATUS "Found PyTorch package lib directory via TORCH_CMAKE_PREFIX_PATH/lib: ${PYTORCH_LIB_DIR}")
+        elseif(EXISTS "${TORCH_CMAKE_PREFIX_PATH}/../../lib") # Common for pip install structure
+             set(PYTORCH_LIB_DIR_TEMP "${TORCH_CMAKE_PREFIX_PATH}/../../lib")
+             get_filename_component(PYTORCH_LIB_DIR ${PYTORCH_LIB_DIR_TEMP} ABSOLUTE)
+             message(STATUS "Found PyTorch package lib directory via TORCH_CMAKE_PREFIX_PATH/../../lib: ${PYTORCH_LIB_DIR}")
+        endif()
+    endif()
+
+    if(PYTORCH_LIB_DIR AND EXISTS "${PYTORCH_LIB_DIR}")
+        find_library(TORCH_PYTHON_LIBRARY_PATH NAMES torch_python HINTS "${PYTORCH_LIB_DIR}" NO_DEFAULT_PATH)
+        find_library(TORCH_LIBRARY_PATH NAMES torch HINTS "${PYTORCH_LIB_DIR}" NO_DEFAULT_PATH) # General libtorch.so
+        find_library(TORCH_CPU_LIBRARY_PATH NAMES torch_cpu HINTS "${PYTORCH_LIB_DIR}" NO_DEFAULT_PATH) # Specific CPU lib
+        find_library(C10_LIBRARY_PATH NAMES c10 HINTS "${PYTORCH_LIB_DIR}" NO_DEFAULT_PATH)
+
+        if(NOT TORCH_PYTHON_LIBRARY_PATH)
+            message(WARNING "libtorch_python not found in ${PYTORCH_LIB_DIR}. This is often critical for PyTorch C++ extensions.")
+        else()
+            message(STATUS "Found libtorch_python: ${TORCH_PYTHON_LIBRARY_PATH}")
+        endif()
+        if(NOT (TORCH_LIBRARY_PATH OR TORCH_CPU_LIBRARY_PATH)) # Check if at least one main torch lib is found
+            message(WARNING "Main PyTorch library (libtorch.so or libtorch_cpu.so) not found in ${PYTORCH_LIB_DIR}")
+        else()
+            if(TORCH_LIBRARY_PATH)
+                message(STATUS "Found libtorch: ${TORCH_LIBRARY_PATH}")
+            endif()
+            if(TORCH_CPU_LIBRARY_PATH)
+                message(STATUS "Found libtorch_cpu: ${TORCH_CPU_LIBRARY_PATH}")
+            endif()
+        endif()
+        if(NOT C10_LIBRARY_PATH)
+            message(WARNING "libc10 not found in ${PYTORCH_LIB_DIR}")
+        else()
+            message(STATUS "Found libc10: ${C10_LIBRARY_PATH}")
+        endif()
+    else()
+        message(WARNING "Could not determine a valid PyTorch library directory (PYTORCH_LIB_DIR='${PYTORCH_LIB_DIR}'). Manual configuration might be needed.")
+    endif()
+else()
+    message(WARNING "PyTorch not found (TORCH_FOUND is false) or PYTHON_EXECUTABLE not available. Cannot manually find PyTorch libraries.")
+endif()
+
 # --- Python Extension Module (gelib_base) ---
 
 # 1. Identify Binding Source Files
@@ -204,35 +263,132 @@ endif()
 #    Also link directly against PyTorch libraries to ensure symbols for pybind11 casters are available.
 # gelib_cpp_core should have PUBLIC/INTERFACE linkage for includes and libraries it uses.
 
-# Separate gelib_cpp_core to link it as PUBLIC, others as PRIVATE.
-set(GELIB_BASE_PRIVATE_LINK_LIBS pybind11::pybind11)
+# RPATH Logic for PyTorch
+if(TORCH_FOUND)
+    if(TARGET Torch::torch_python)
+        get_target_property(TORCH_PYTHON_LIB_LOCATION Torch::torch_python IMPORTED_LOCATION_RELEASE)
+        if(NOT TORCH_PYTHON_LIB_LOCATION)
+            get_target_property(TORCH_PYTHON_LIB_LOCATION Torch::torch_python IMPORTED_LOCATION)
+        endif()
+        if(TORCH_PYTHON_LIB_LOCATION)
+            get_filename_component(PYTORCH_LIB_DIR ${TORCH_PYTHON_LIB_LOCATION} DIRECTORY)
+        endif()
+    endif()
 
-# Prefer linking against the general Torch::torch target if available, as it's comprehensive.
-if(TARGET Torch::torch)
-    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS Torch::torch)
-    message(STATUS "Prepared to link gelib_base with Torch::torch (PRIVATE).")
-elseif(TARGET Torch::torch_cpu AND TARGET Torch::torch_global_deps) # Fallback to cpu + global_deps
-    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS Torch::torch_cpu Torch::torch_global_deps)
-    message(STATUS "Prepared to link gelib_base with Torch::torch_cpu and Torch::torch_global_deps (PRIVATE).")
-elseif(TORCH_LIBRARIES) # Fallback to older TORCH_LIBRARIES variable
-    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS ${TORCH_LIBRARIES})
-    message(STATUS "Prepared to link gelib_base with TORCH_LIBRARIES: ${TORCH_LIBRARIES} (PRIVATE).")
+    if(NOT PYTORCH_LIB_DIR AND TARGET Torch::torch_cpu) # Fallback to torch_cpu if torch_python not found or location not resolved
+        get_target_property(TORCH_CPU_LIB_LOCATION Torch::torch_cpu IMPORTED_LOCATION_RELEASE)
+        if(NOT TORCH_CPU_LIB_LOCATION)
+            get_target_property(TORCH_CPU_LIB_LOCATION Torch::torch_cpu IMPORTED_LOCATION)
+        endif()
+        if(TORCH_CPU_LIB_LOCATION)
+            get_filename_component(PYTORCH_LIB_DIR ${TORCH_CPU_LIB_LOCATION} DIRECTORY)
+        endif()
+    endif()
+
+    if(NOT PYTORCH_LIB_DIR AND TORCH_CMAKE_PREFIX_PATH AND EXISTS "${TORCH_CMAKE_PREFIX_PATH}/../../lib")
+        set(PYTORCH_LIB_DIR "${TORCH_CMAKE_PREFIX_PATH}/../../lib") # Common structure for pip installed torch
+        get_filename_component(PYTORCH_LIB_DIR ${PYTORCH_LIB_DIR} ABSOLUTE)
+    elseif(NOT PYTORCH_LIB_DIR AND TORCH_CMAKE_PREFIX_PATH AND EXISTS "${TORCH_CMAKE_PREFIX_PATH}/lib")
+        set(PYTORCH_LIB_DIR "${TORCH_CMAKE_PREFIX_PATH}/lib") # Common structure for conda installed torch
+        get_filename_component(PYTORCH_LIB_DIR ${PYTORCH_LIB_DIR} ABSOLUTE)
+    endif()
+
+    if(PYTORCH_LIB_DIR AND EXISTS ${PYTORCH_LIB_DIR})
+        message(STATUS "Determined PyTorch library directory for RPATH: ${PYTORCH_LIB_DIR}")
+        set_property(TARGET gelib_base APPEND PROPERTY BUILD_RPATH "${PYTORCH_LIB_DIR}")
+        set_property(TARGET gelib_base APPEND PROPERTY INSTALL_RPATH "${PYTORCH_LIB_DIR}") # For wheel
+        # Also consider setting CMAKE_INSTALL_RPATH to this for broader effect if needed
+    else()
+        message(WARNING "Could not reliably determine PyTorch library directory for RPATH. PYTORCH_LIB_DIR='${PYTORCH_LIB_DIR}'. TORCH_CMAKE_PREFIX_PATH='${TORCH_CMAKE_PREFIX_PATH}'. Manual configuration might be needed if runtime errors persist.")
+    endif()
 else()
-    message(WARNING "gelib_base: Could not determine PyTorch libraries for direct linkage.")
+    message(WARNING "PyTorch not found, cannot set RPATH for PyTorch libraries.")
 endif()
 
-# Torch::torch_python is sometimes needed for pybind11 symbols if not included by Torch::torch
-if(NOT (TARGET Torch::torch) AND TARGET Torch::torch_python) # Only if Torch::torch wasn't found
-    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS Torch::torch_python)
-    message(STATUS "Additionally prepared to link gelib_base with Torch::torch_python (PRIVATE).")
+# Linking logic for gelib_base
+set(GELIB_BASE_PRIVATE_LINK_LIBS pybind11::pybind11)
+if(TARGET Torch::torch) # General, often includes python and c10 components
+    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS Torch::torch)
+    message(STATUS "Prepared to link gelib_base with Torch::torch (PRIVATE).")
+else() # More specific components if Torch::torch isn't available or isn't comprehensive
+    if(TARGET Torch::torch_cpu)
+        list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS Torch::torch_cpu)
+        message(STATUS "Prepared to link gelib_base with Torch::torch_cpu (PRIVATE).")
+    else()
+        message(WARNING "Torch::torch_cpu target not found for gelib_base linkage.")
+    endif()
+    if(TARGET Torch::torch_python) # Essential for pybind casters
+        list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS Torch::torch_python)
+        message(STATUS "Prepared to link gelib_base with Torch::torch_python (PRIVATE).")
+    else()
+        message(WARNING "Torch::torch_python target not found for gelib_base linkage. This might lead to runtime errors.")
+    endif()
+    if(TARGET Torch::c10) # Core C++ utilities
+        list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS Torch::c10)
+        message(STATUS "Prepared to link gelib_base with Torch::c10 (PRIVATE).")
+    else()
+        message(WARNING "Torch::c10 target not found for gelib_base linkage.")
+    endif()
+
+    # Fallback if specific modern targets are missing but older TORCH_LIBRARIES variable exists
+    if(NOT (TARGET Torch::torch_cpu OR TARGET Torch::torch_python OR TARGET Torch::c10) AND TORCH_LIBRARIES)
+        list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS ${TORCH_LIBRARIES})
+        message(STATUS "Linking gelib_base with TORCH_LIBRARIES as fallback: ${TORCH_LIBRARIES} (PRIVATE).")
+    endif()
 endif()
 
 target_link_libraries(gelib_base
     PUBLIC gelib_cpp_core # As per subtask instruction
     PRIVATE ${GELIB_BASE_PRIVATE_LINK_LIBS}
 )
-# The message below already reflects this structure if GELIB_BASE_PRIVATE_LINK_LIBS is composed correctly
-message(STATUS "Linking gelib_base with PUBLIC gelib_cpp_core and PRIVATE: ${GELIB_BASE_PRIVATE_LINK_LIBS}")
+# Linking logic for gelib_base (revised for manual library paths)
+set(GELIB_BASE_PRIVATE_LINK_LIBS_TEMP pybind11::pybind11) # Temporary list for PyTorch libs
+
+if(TORCH_PYTHON_LIBRARY_PATH)
+    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS_TEMP "${TORCH_PYTHON_LIBRARY_PATH}")
+endif()
+if(TORCH_CPU_LIBRARY_PATH) # Prefer specific torch_cpu if found
+    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS_TEMP "${TORCH_CPU_LIBRARY_PATH}")
+elseif(TORCH_LIBRARY_PATH) # Fallback to general torch lib if torch_cpu not found
+    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS_TEMP "${TORCH_LIBRARY_PATH}")
+endif()
+if(C10_LIBRARY_PATH)
+    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS_TEMP "${C10_LIBRARY_PATH}")
+endif()
+
+# Fallback to TORCH_LIBRARIES if manual finds yielded nothing substantial for core libs,
+# or if TORCH_LIBRARIES contains other necessary system dependencies (like pthreads, etc.)
+if(TORCH_LIBRARIES)
+    # This ensures that components from TORCH_LIBRARIES that are not already found manually are added.
+    # Useful if TORCH_LIBRARIES has more than just libtorch*, libc10*.
+    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS_TEMP ${TORCH_LIBRARIES})
+endif()
+list(REMOVE_DUPLICATES GELIB_BASE_PRIVATE_LINK_LIBS_TEMP)
+
+target_link_libraries(gelib_base
+    PUBLIC gelib_cpp_core
+    PRIVATE ${GELIB_BASE_PRIVATE_LINK_LIBS_TEMP}
+)
+message(STATUS "Linking gelib_base with PUBLIC gelib_cpp_core and PRIVATELY with: ${GELIB_BASE_PRIVATE_LINK_LIBS_TEMP}")
+
+# RPATH setting using the PYTORCH_LIB_DIR determined by the execute_process block
+if(PYTORCH_LIB_DIR AND EXISTS ${PYTORCH_LIB_DIR})
+    message(STATUS "Setting BUILD_RPATH for gelib_base to include PyTorch directory: ${PYTORCH_LIB_DIR}")
+    set_property(TARGET gelib_base APPEND PROPERTY BUILD_RPATH "${PYTORCH_LIB_DIR}")
+
+    # For INSTALL_RPATH in the wheel, make it relative to the location of gelib_base.so
+    # Assuming gelib_base.so is in .../site-packages/gelib/
+    # and torch libs are in .../site-packages/torch/lib/
+    # So, from gelib/, go up one level (to site-packages) then to torch/lib.
+    # $ORIGIN refers to the directory of the executable/library at runtime.
+    set_target_properties(gelib_base PROPERTIES
+        INSTALL_RPATH "$ORIGIN/../torch/lib"
+        INSTALL_RPATH_USE_LINK_PATH FALSE # We are manually setting INSTALL_RPATH
+    )
+    message(STATUS "Setting INSTALL_RPATH for gelib_base to $ORIGIN/../torch/lib")
+else()
+    message(WARNING "PYTORCH_LIB_DIR ('${PYTORCH_LIB_DIR}') is not valid or does not exist. RPATH for PyTorch libraries not optimally set for gelib_base wheel.")
+endif()
 
 # 4. Include Directories for bindings
 # The necessary include directories (project-specific, cnine, PyTorch)
