@@ -1,5 +1,5 @@
 import torch
-import gelib_base as gb
+from gelib import gelib_base as gb
 import gelib as g
 
 m=gb.gather_map.random(5,5)

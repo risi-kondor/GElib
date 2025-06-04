@@ -18,10 +18,9 @@
 #include "SO3SPHgen.hpp"
 
 
-extern GElib::SO3SPHgen SO3_SPHgen;
-
-
 namespace GElib{
+
+extern GElib::SO3SPHgen SO3_SPHgen; // Moved into namespace GElib
 
 
   template<typename TYPE>

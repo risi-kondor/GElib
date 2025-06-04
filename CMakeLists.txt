@@ -13,6 +13,8 @@ option(GELIB_WITH_CUDA "Enable CUDA support (manual integration needed)" OFF)
 
 # --- Add further CMake configurations below ---
 # Add cnine submodule
+set(WITH_CUDA OFF CACHE BOOL "Disable CUDA in cnine" FORCE)
+set(BUILD_PYTHON OFF CACHE BOOL "Disable Python in cnine" FORCE)
 add_subdirectory(deps/cnine)
 
 # --- Core C++ Library (gelib_cpp_core) ---
@@ -43,8 +45,12 @@ target_include_directories(gelib_cpp_core INTERFACE
 # Assuming 'cnine' is the target name defined in deps/cnine/CMakeLists.txt
 # If cnine itself is a library target:
 if(TARGET cnine) # Or the actual target name for the cnine library
-    target_link_libraries(gelib_cpp_core INTERFACE cnine)
+    # Also add pybind11::headers here to ensure cnine and gelib C++ code see pybind11 headers
+    # if any template/inline code needs them, in a context compatible with torch/extension.h
+    target_link_libraries(gelib_cpp_core INTERFACE cnine pybind11::headers)
+    message(STATUS "gelib_cpp_core linked with cnine and pybind11::headers.")
 else()
+    target_link_libraries(gelib_cpp_core INTERFACE pybind11::headers) # Still add pybind11 headers
     message(WARNING "cnine target not found. Include directories from cnine might be missing for gelib_cpp_core.")
 endif()
 
@@ -68,7 +74,13 @@ set(GELIB_CXX_COMPILE_FLAGS
     # Add flags from setup.py's 'torch_convert_warnings' if they were true by default or desired
     # -DCNINE_ATEN_CONVERT_WARNINGS # This is a definition, not a compile option
 )
+# Add PyTorch CXX flags which often include ABI settings
+if(TORCH_CXX_FLAGS)
+  target_compile_options(gelib_cpp_core INTERFACE ${TORCH_CXX_FLAGS})
+  message(STATUS "Added TORCH_CXX_FLAGS to gelib_cpp_core.")
+endif()
 target_compile_options(gelib_cpp_core INTERFACE ${GELIB_CXX_COMPILE_FLAGS})
+
 
 set(GELIB_CXX_DEFINITIONS
     _WITH_ATEN # PyTorch related
@@ -148,10 +160,16 @@ endif()
 # --- Python Extension Module (gelib_base) ---
 
 # 1. Identify Binding Source Files
-set(GELIB_BINDING_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/python/bindings/GElib_py.cpp")
+set(GELIB_BINDING_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/python/bindings/GElib_py.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/GElib_base.cpp" # Compile GElib_base.cpp as part of the module
+)
 
 # Check if the main binding file exists
-if(NOT EXISTS ${GELIB_BINDING_SOURCES})
+# Note: GELIB_BINDING_SOURCES is now a list, EXISTS checks the first element or if the var is defined.
+# Better to check each file if necessary, or rely on build failure if a source is missing.
+# For now, this check might be misleading or only check GElib_py.cpp.
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/python/bindings/GElib_py.cpp")
     message(FATAL_ERROR "Main binding source file GElib_py.cpp not found.")
 endif()
 
@@ -160,6 +178,18 @@ endif()
 # implying custom C++/ATen bindings.
 add_library(gelib_base MODULE ${GELIB_BINDING_SOURCES})
 set_target_properties(gelib_base PROPERTIES PREFIX "")
+
+# Apply PyTorch includes and compile flags directly to gelib_base
+if(TORCH_FOUND)
+    if(TORCH_INCLUDE_DIRS)
+        target_include_directories(gelib_base PRIVATE ${TORCH_INCLUDE_DIRS})
+        message(STATUS "Added TORCH_INCLUDE_DIRS directly to gelib_base.")
+    endif()
+    if(TORCH_CXX_FLAGS)
+        target_compile_options(gelib_base PRIVATE ${TORCH_CXX_FLAGS})
+        message(STATUS "Added TORCH_CXX_FLAGS directly to gelib_base.")
+    endif()
+endif()
 
 # Add Python include directories if Python found
 if(Python3_FOUND AND Python3_INCLUDE_DIRS)
@@ -171,8 +201,38 @@ else()
 endif()
 
 # 3. Link against gelib_cpp_core (which brings cnine and PyTorch)
+#    Also link directly against PyTorch libraries to ensure symbols for pybind11 casters are available.
 # gelib_cpp_core should have PUBLIC/INTERFACE linkage for includes and libraries it uses.
-target_link_libraries(gelib_base PRIVATE gelib_cpp_core pybind11::pybind11)
+
+# Separate gelib_cpp_core to link it as PUBLIC, others as PRIVATE.
+set(GELIB_BASE_PRIVATE_LINK_LIBS pybind11::pybind11)
+
+# Prefer linking against the general Torch::torch target if available, as it's comprehensive.
+if(TARGET Torch::torch)
+    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS Torch::torch)
+    message(STATUS "Prepared to link gelib_base with Torch::torch (PRIVATE).")
+elseif(TARGET Torch::torch_cpu AND TARGET Torch::torch_global_deps) # Fallback to cpu + global_deps
+    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS Torch::torch_cpu Torch::torch_global_deps)
+    message(STATUS "Prepared to link gelib_base with Torch::torch_cpu and Torch::torch_global_deps (PRIVATE).")
+elseif(TORCH_LIBRARIES) # Fallback to older TORCH_LIBRARIES variable
+    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS ${TORCH_LIBRARIES})
+    message(STATUS "Prepared to link gelib_base with TORCH_LIBRARIES: ${TORCH_LIBRARIES} (PRIVATE).")
+else()
+    message(WARNING "gelib_base: Could not determine PyTorch libraries for direct linkage.")
+endif()
+
+# Torch::torch_python is sometimes needed for pybind11 symbols if not included by Torch::torch
+if(NOT (TARGET Torch::torch) AND TARGET Torch::torch_python) # Only if Torch::torch wasn't found
+    list(APPEND GELIB_BASE_PRIVATE_LINK_LIBS Torch::torch_python)
+    message(STATUS "Additionally prepared to link gelib_base with Torch::torch_python (PRIVATE).")
+endif()
+
+target_link_libraries(gelib_base
+    PUBLIC gelib_cpp_core # As per subtask instruction
+    PRIVATE ${GELIB_BASE_PRIVATE_LINK_LIBS}
+)
+# The message below already reflects this structure if GELIB_BASE_PRIVATE_LINK_LIBS is composed correctly
+message(STATUS "Linking gelib_base with PUBLIC gelib_cpp_core and PRIVATE: ${GELIB_BASE_PRIVATE_LINK_LIBS}")
 
 # 4. Include Directories for bindings
 # The necessary include directories (project-specific, cnine, PyTorch)

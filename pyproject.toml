@@ -1,10 +1,10 @@
 [build-system]
 requires = [
-    "scikit-build-core>=0.11.0", # Specify a recent, reasonable version
+    "scikit-build-core>=0.9.0", # Specify a recent, reasonable version
     "cmake>=3.21",
     "ninja",                   # Recommended CMake generator
     "torch==2.7.0",            # For torch.utils.cmake_prefix_path and as a runtime dep
-    "pybind11>=2.10.0"         # Added pybind11
+    "pybind11>=2.11.0"         # Added pybind11
 ]
 build-backend = "scikit_build_core.build"
 # backend-path = ["python"] # Not strictly needed if pyproject.toml is at the root and setup.py is not essential for build backend discovery
@@ -18,7 +18,7 @@ license = { file = "LICENSE.txt" } # Assuming LICENSE.txt exists at the root
 # authors = [{ name = "Your Name", email = "you@example.com" }] # Optional: Add author info
 dependencies = [
     "torch==2.7.0", # Runtime dependency
-    "numpy>=1.20"
+    "numpy>=1.22.0"
 ]
 
 [project.optional-dependencies]
