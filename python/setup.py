@@ -42,7 +42,7 @@ def main():
 #        compile_with_cuda=False
 
     cwd = os.getcwd()
-    cnine_folder = "/../../cnine/"
+    cnine_folder = "/../deps/cnine/"
     ext_cuda_folder = "../cuda/"
     #ext_cuda_folder = "../../GElib-cuda/cuda/"
 
