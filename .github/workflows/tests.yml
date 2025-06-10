@@ -16,7 +16,9 @@ jobs:
         python-version: ['3.10']
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
@@ -30,15 +32,6 @@ jobs:
         pip install wheel
         # torch cpu version
         pip install --extra-index-url https://download.pytorch.org/whl/cpu torch
-        # cnine
-        ## needs to be installed in environment mode
-        ## in same directory level as GElib
-        cd ..
-        git clone https://github.com/risi-kondor/cnine.git
-        cd cnine/python
-        # pip install --no-build-isolation -e .
-        cd ../../GElib  
-        # GElib
         cd python
         pip install --no-build-isolation -e .
         cd ..
