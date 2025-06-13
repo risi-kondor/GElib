@@ -17,8 +17,9 @@ readme = "README.md"
 license = { file = "LICENSE.txt" } # Assuming LICENSE.txt exists at the root
 # authors = [{ name = "Your Name", email = "you@example.com" }] # Optional: Add author info
 dependencies = [
-    "torch==2.7.0", # Runtime dependency
-    "numpy>=1.22.0"
+    "torch>=2.7.0", # Runtime dependency
+    "numpy>=1.22.0",
+    "scipy",
 ]
 
 [project.optional-dependencies]
