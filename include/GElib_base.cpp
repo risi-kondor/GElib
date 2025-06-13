@@ -8,7 +8,7 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#include "Cnine_base.hpp" // Should include the header, not the cpp file
+#include "Cnine_base.cpp"
 #include "GElib_base.hpp"
 
 #include "SO3CGbank.hpp"

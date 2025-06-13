@@ -17,7 +17,6 @@
 
 #include "GElib_base.hpp"
 #include "SO3element.hpp"
-#include "Factorial.hpp" // Corrected path for cnine::factorial
 
 
 namespace GElib{
@@ -58,16 +57,15 @@ namespace GElib{
     
     
     float littled(const int m1, const int m2, const double beta) const{
-      static cnine::Factorial factorial_calculator; // Static instance
       double x=0;
 
       if(l<5){
 	for(int s=std::max(0,m1-m2); s<=std::min(l+m1,l-m2); s++){
-	  double pref=1.0/(factorial_calculator(l+m1-s)*factorial_calculator(s)*factorial_calculator(m2-m1+s)*factorial_calculator(l-m2-s));
+	  double pref=1.0/(cnine::factorial(l+m1-s)*cnine::factorial(s)*cnine::factorial(m2-m1+s)*cnine::factorial(l-m2-s));
 	  if((m2-m1+s)%2) pref=-pref;
 	  x+=pref*std::pow(cos(beta/2),2*l+m1-m2-2*s)*std::pow(sin(beta/2),m2-m1+2*s);
 	}
-	double v= sqrt(factorial_calculator(l+m1)*factorial_calculator(l-m1)*factorial_calculator(l+m2)*factorial_calculator(l-m2))*x;
+	double v= sqrt(cnine::factorial(l+m1)*cnine::factorial(l-m1)*cnine::factorial(l+m2)*cnine::factorial(l-m2))*x;
 	if(std::isnan(v)) cout<<l<<m1<<m2<<" "<<beta<<endl;
 	return v;
       }
