@@ -14,6 +14,7 @@
 #include "Gpart.hpp"
 #include "SO3group.hpp"
 #include "SO3type.hpp"
+#include "SO3CGbank.hpp" // Added missing include
 
 #include "SO3part_addSpharmFn.hpp"
 

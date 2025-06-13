@@ -7,15 +7,14 @@ import torch
 
 from gelib.gelib_common import *
 #from gelib.gather_map import *
-
-from gelib.gather_map import *
+# Removed redundant import of gather_map
 
 from gelib.SO3element import *
 from gelib.SO3irrep import *
 from gelib.SO3part import *
 from gelib.SO3vec import *
 
-# from gelib.SO3type import *
+from gelib.SO3type import *
 # from gelib.SO3weights import *
 # from gelib.SO3weightsArr import *
 # from gelib.SO3weights import *

@@ -9,13 +9,16 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-#include <torch/torch.h>
+// Define TORCH_EXTENSION_NAME before including torch/extension.h
+// This is crucial for PyTorch C++ extensions.
+#define TORCH_EXTENSION_NAME gelib_base
+#include <torch/extension.h> // For PyTorch C++ extensions and pybind11 type casters
 #include <pybind11/stl.h>
 #include <pybind11/complex.h>
 
 //#define _WITH_FAKE_GRAD
 
-#include "GElib_base.cpp"
+#include "GElib_base.hpp" // Use the header file
 #include "GElibSession.hpp"
 //#include "diff_class.hpp"
 
@@ -32,7 +35,7 @@
 GElib::GElibSession session;
 
 
-PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
+PYBIND11_MODULE(gelib_base, m) {
 
 
   using namespace cnine;

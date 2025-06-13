@@ -10,7 +10,7 @@
 
 
 import torch
-import gelib_base as gb
+from . import gelib_base as gb
 import gelib
 from gelib import *
 
