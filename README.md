@@ -2,7 +2,7 @@
 
 `GElib` is a C++/CUDA library for building equivariant neural networks. The library can be used as a pure 
 C++ library or as a C++ extension for PyTorch. 
-GElib uses [`cnine`](https://github.com/risi-kondor/cnine) as its backend.  
+GElib uses [`cnine`](https://github.com/risi-kondor/cnine) as its backend. 
 Documentation for the C++ API can be found in the 'doc' directory. 
 Documentation for the PyTorch API is at https://risi-kondor.github.io/GElib/.
 
