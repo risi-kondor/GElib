@@ -7,7 +7,7 @@ Documentation for the C++ API can be found in the 'doc' directory.
 Documentation for the PyTorch API is at https://risi-kondor.github.io/GElib/.
 
 GElib is released under a combination of the Mozilla Public License v. 2.0. and a custom noncommercial license to be found in the file NONCOMMERCIAL.TXT. 
-The latter also applies to the `cnine` component of the package. commercial use requires a licence from the 
+The latter also applies to the `cnine` component. Commercial use requires a licence from the 
 author(s). 
 
 
