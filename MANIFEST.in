@@ -1,0 +1,27 @@
+include deps/cnine/include/*.hpp
+include deps/cnine/include/*.cpp
+include deps/cnine/combinatorial/*.hpp
+include deps/cnine/containers/*.hpp
+include deps/cnine/hpc/*.hpp
+include deps/cnine/math/*.hpp
+include deps/cnine/matrices/*.hpp
+include deps/cnine/utility/*.hpp
+include deps/cnine/tensors/*.hpp
+include deps/cnine/tensors/*.inc
+include deps/cnine/tensors/functions/*.hpp
+include deps/cnine/wrappers/*.hpp
+include deps/cnine/tensor_views/*.hpp
+include deps/cnine/cuda/*.cpp
+include deps/cnine/cuda/*.cu
+
+include include/*.hpp
+include include/*.cpp
+
+include core/*.hpp
+include O3/*.hpp
+include SO3/*.hpp
+include cuda/*.hpp
+include cuda/*.cpp
+include cuda/*.cu
+include python/bindings/*.cpp
+

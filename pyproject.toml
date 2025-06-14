@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=42", "wheel", "torch"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "GElib"
+version = "0.2.2"
+authors = [
+  { name = "Risi Kondor", email = "risi@uchicago.edu" },
+]
+dependencies = ["torch"]
+description = "Group equivariant neural network library"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "NONCOMMERCIAL.txt" }
+urls = { homepage = "https://github.com/risi-kondor/GElib" }

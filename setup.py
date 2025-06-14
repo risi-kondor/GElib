@@ -22,6 +22,7 @@ def interpret_bool_string(string:Union[str,bool], _true_values:Tuple[str] = ("TR
 
 def main():
 
+    print("-------------------------------------------------------------")
     compile_with_cuda = interpret_bool_string(os.environ.get("WITH_CUDA", False))
     if compile_with_cuda:
         print("Compiling GElib with CUDA support")
@@ -32,8 +33,8 @@ def main():
     torch_convert_warnings = True
 
     cwd = os.getcwd()+"/"
-    cnine_folder = "../deps/cnine/"
-    ext_cuda_folder = "../cuda/"
+    cnine_folder = "/deps/cnine"
+    ext_cuda_folder = "cuda/"
 
     _include_dirs = [cwd + cnine_folder + '/include',
 		     cwd + cnine_folder + '/combinatorial',
@@ -48,11 +49,11 @@ def main():
                      cwd + cnine_folder + '/include/cmaps',
                      cwd + cnine_folder + '/objects/matrix',
                      cwd + cnine_folder + '/tensor_views',
-                     cwd + '../include',
-                     cwd + '../cuda',
-                     cwd + '../core',
-                     cwd + '../SO3',
-                     cwd + '../O3'
+                     cwd + 'include',
+                     cwd + 'cuda',
+                     cwd + 'core',
+                     cwd + 'SO3',
+                     cwd + 'O3'
                      ]
 
 
@@ -112,11 +113,11 @@ def main():
         ext_modules = [CUDAExtension('gelib_base', [
             cnine_folder+'include/Cnine_base.cu',
             cnine_folder+'cuda/TensorView_assign.cu',
-            '../cuda/GElib_base.cu',
-            '../cuda/SO3part_addCGproduct.cu',
-            '../cuda/SO3part_addCGproduct_back0.cu',
-            '../cuda/SO3part_addCGproduct_back1.cu',
-            'bindings/GElib_py.cpp'
+            'cuda/GElib_base.cu',
+            'cuda/SO3part_addCGproduct.cu',
+            'cuda/SO3part_addCGproduct_back0.cu',
+            'cuda/SO3part_addCGproduct_back1.cu',
+            'python/bindings/GElib_py.cpp'
         ],
             include_dirs=_include_dirs,
             extra_compile_args={
@@ -125,7 +126,7 @@ def main():
             depends=_depends
         )]
     else:
-        ext_modules = [CppExtension('gelib_base', ['bindings/GElib_py.cpp'],
+        ext_modules = [CppExtension('gelib_base', ['python/bindings/GElib_py.cpp'],
                                     include_dirs=_include_dirs,
                                     extra_compile_args={
             'cxx': _cxx_compile_args},
@@ -134,9 +135,9 @@ def main():
 
     setup(name='gelib',
           ext_modules=ext_modules,
-          packages=find_packages('src'),
-          package_dir={'': 'src'},
-          py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
+          packages=find_packages('python/src'),
+          package_dir={'': 'python/src'},
+          py_modules=[splitext(basename(path))[0] for path in glob('python/src/*.py')],
           include_package_data=True,
           zip_safe=False,
           cmdclass={'build_ext': BuildExtension})
