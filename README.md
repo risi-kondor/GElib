@@ -3,17 +3,12 @@
 `GElib` is a C++/CUDA library for building equivariant neural networks. The library can be used as a pure 
 C++ library or as a C++ extension for PyTorch. 
 GElib uses [`cnine`](https://github.com/risi-kondor/cnine) as its backend.  
-
 Documentation for the C++ API can be found in the 'doc' directory. 
-Documentation for the Python/PyTorch API is at https://risi-kondor.github.io/GElib/.
+Documentation for the PyTorch API is at https://risi-kondor.github.io/GElib/.
 
 `GElib` is released under a combination of the Mozilla Public License v. 2.0. and a custom noncommercial license to be found in the file NONCOMMERCIAL.TXT. 
 The latter also applies to the `cnine` component of the package. commercial use requires a licence from the 
 author(s). 
-
-Lead developer: Risi Kondor
-
-Contributors: Erik Henning Thiede, Ryan Keane
 
 
 ## Installing `GElib` as a Python module
@@ -29,6 +24,7 @@ To install `GElib` with CUDA support, you need to have the CUDA development envi
    git clone --recurse-submodules git@github.com:risi-kondor/GElib.git
    ```
 (The `--recurse-submodules` flag ensures that `cnine` is fetched automatically.)
+
 2. Move to the `python` subdirectory:
 ```bash
    cd GElib/python
@@ -46,4 +42,9 @@ To install `GElib` with CUDA support, you need to have the CUDA development envi
    pip3 install -e .
    ``` 
 
+## Credits 
+
+Lead developer: Risi Kondor
+
+Contributors: Erik Henning Thiede, Ryan Keane
 
