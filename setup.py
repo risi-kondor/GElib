@@ -33,7 +33,7 @@ def main():
     torch_convert_warnings = True
 
     cwd = os.getcwd()+"/"
-    cnine_folder = "/deps/cnine"
+    cnine_folder = "/deps/cnine/"
     ext_cuda_folder = "cuda/"
 
     _include_dirs = [cwd + cnine_folder + '/include',
