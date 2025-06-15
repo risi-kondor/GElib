@@ -13,8 +13,8 @@ author(s).
 
 ## Installing GElib as a Python module
 
-GElib is distributed in source code format, therefore to install it you need to have a working C++ 
-compiler supporting C++17 (or higher). You also need PyTorch. 
+GElib is distributed in source code format, therefore to install it you must have a working C++ 
+compiler supporting C++17 (or higher) on your system. You also need PyTorch. 
 
 If these requirements are satified, in most cases GElib can be installed simply by running  
 ```bash
