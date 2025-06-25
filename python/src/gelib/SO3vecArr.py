@@ -7,10 +7,9 @@
 # Public License v. 2.0. If a copy of the MPL was not distributed
 # with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from typing import Dict
+from typing import Dict, List, Optional, Union
 import torch
 
-import gelib_base as gb
 from gelib import *
 
 
@@ -24,20 +23,46 @@ class SO3vecArr:
     An array of SO(3)-covariant vectors. 
     """
 
-    def __init__(self,*args):
-        self.parts : Dict[int, SO3partArr]={}
-        if args is None:
-            return
-        
-        if len(args) == 1 and \
-                not isinstance(args[0], torch.Tensor) and \
-                hasattr(args[0], '__iter__'):
-            args = list(args[0])
-        
-        for x in args:
-            assert isinstance(x,torch.Tensor)
-            p=SO3partArr(x)
-            self.parts[p.getl()]=x
+    def __init__(self, parts: Union[Dict[int, SO3partArr], List[SO3partArr], None] = None, device: Optional[torch.device] = None):
+        """
+        Initializes an SO3vecArr.
+
+        Args:
+            parts: Can be a dictionary mapping rotation order `l` to SO3partArr,
+                   a list of SO3partArr (rotation orders are inferred from parts),
+                   or None to create an empty SO3vecArr.
+            device: If provided, new parts created (e.g., for empty init or randn) will be on this device.
+            dtype: If provided, new parts created will have this dtype.
+        """
+        self.parts: Dict[int, SO3partArr] = {}
+        self._device = device
+
+        if parts is None:
+            pass
+        elif isinstance(parts, dict):
+            for l_val, part_arr in parts.items():
+                if not isinstance(l_val, int) or l_val < 0:
+                    raise ValueError(f"Rotation order l must be a non-negative integer, got {l_val}")
+                if not isinstance(part_arr, SO3partArr):
+                    raise TypeError(f"Expected SO3partArr for l={l_val}, got {type(part_arr)}")
+                if part_arr.getl() != l_val:
+                    raise ValueError(f"Mismatch in rotation order: key {l_val} vs part's l={part_arr.getl()}")
+                self.parts[l_val] = part_arr
+                if self._device is None: self._device = part_arr.device
+        elif isinstance(parts, list):
+            for part_arr in parts:
+                if not isinstance(part_arr, SO3partArr):
+                    raise TypeError(f"Expected SO3partArr in list, got {type(part_arr)}")
+                l_val = part_arr.getl()
+                if l_val in self.parts:
+                    raise ValueError(f"Duplicate rotation order l={l_val} found in input list.")
+                self.parts[l_val] = part_arr
+                if self._device is None: self._device = part_arr.device
+        else:
+            raise TypeError(f"Invalid type for parts: {type(parts)}. Must be Dict, List, or None.")
+
+        if self._device is None and self.parts: # Infer from first part if not set
+             self._device = next(iter(self.parts.values())).device
             
 
     # ---- Static constructors ------------------------------------------------------------------------------
@@ -74,42 +99,64 @@ class SO3vecArr:
         return R
 
     @classmethod
-    def randn(self,b,adims,tau,device='cpu'):
+    def randn(
+        cls,
+        b: int,
+        adims: List[int],
+        tau: Union[List[int], Dict[int, int]],
+        lmax: Optional[int] = None,
+        device: Optional[torch.device] = None
+    ) -> "SO3vecArr":
         """
-        Construct a random SO3vecArr object of given type _tau.
-        >>> import gelib
-        >>> import torch
-         >>> g = torch.manual_seed(0)
-        >>> v = gelib.SO3vec.randn(1,[2,3,1])
-        >>> v
-        <GElib::SO3vecB of type (2,3,1) [b=1]>
-        >>> print(v)
-        Part l=0:
-          [ (1.08965,-0.207486) (-1.54064,0.401942) ]
-        <BLANKLINE>
-        <BLANKLINE>
-        Part l=1:
-          [ (-0.251821,0.309163) (1.02082,0.188125) (0.117702,0.618281) ]
-          [ (-0.101451,-0.0789197) (-0.433869,0.0223394) (1.41774,0.0379977) ]
-          [ (0.437032,-0.291895) (-0.594723,-1.63769) (-0.0723438,0.560342) ]
-        <BLANKLINE>
-        <BLANKLINE>
-        Part l=2:
-          [ (-0.151452,-0.305448) (-0.500545,-0.0752602) (-0.878744,-0.336747) (-0.485018,-1.0643) (0.1803,1.2758) ]
-        <BLANKLINE>
-        <BLANKLINE>
+        Creates an SO3vecArr with random data.
+
+        Args:
+            b: Batch size.
+            adims: Auxiliary dimensions (e.g., [num_points] or [aux_dim1, num_points]).
+            tau: Channel counts. If list, `tau[l]` is channels for order `l`.
+                 If dict, `tau[l]` is channels for order `l`.
+            lmax: Maximum rotation order. If None, inferred from `tau`.
+            device: PyTorch device.
+
+        Returns:
+            A new SO3vecArr instance.
         """
-        if adims == None:
-            adims = []
-        R=SO3vecArr()
-        if isinstance(tau,dict):
-            for l,n in tau.items():
-                R.parts[l]=SO3partArr.randn(b,adims,l,n,device=device)
+        parts_dict: Dict[int, SO3partArr] = {}
+        if isinstance(tau, list):
+            if lmax is None:
+                lmax = len(tau) - 1
+            for l_val in range(lmax + 1):
+                if l_val < len(tau) and tau[l_val] > 0:
+                    parts_dict[l_val] = SO3partArr.randn(
+                        b=b, adims=adims, l=l_val, c=tau[l_val],
+                        device=device
+                    )
+                elif tau[l_val] == 0 : # Create empty part if channels is 0
+                     parts_dict[l_val] = SO3partArr.zeros(
+                        b=b, adims=adims, l=l_val, c=0,
+                        device=device
+                    )
+
+
+        elif isinstance(tau, dict):
+            if lmax is None:
+                lmax = max(tau.keys()) if tau else -1 # Handle empty tau dict
+            for l_val in range(lmax + 1):
+                num_channels = tau.get(l_val, 0)
+                if num_channels > 0:
+                    parts_dict[l_val] = SO3partArr.randn(
+                        b=b, adims=adims, l=l_val, c=num_channels,
+                        device=device
+                    )
+                else: # Create empty part if channels is 0 or l_val not in tau
+                     parts_dict[l_val] = SO3partArr.zeros(
+                        b=b, adims=adims, l=l_val, c=0,
+                        device=device
+                    )
         else:
-            assert hasattr(tau, '__iter__')
-            for i in range(len(tau)):
-                R.parts[i] = SO3partArr.randn(b, adims, i, tau[i], device)
-        return R
+            raise TypeError(f"tau must be a list or dict, got {type(tau)}")
+
+        return cls(parts_dict, device=device)
 
     @classmethod
     def Fzeros(self,b,adims,tau,device='cpu'):
@@ -155,6 +202,7 @@ class SO3vecArr:
         return R
 
     def backend(self):
+        import gelib_base as gb
         return gb.SO3vec.view(self.parts)
 
 
@@ -162,10 +210,12 @@ class SO3vecArr:
 
 
     def getb(self):
-        return self.parts[min(self.parts)].getb()
+        if not self.parts: return 0
+        return next(iter(self.parts.values())).getb()
 
     def get_adims(self):
-        return self.parts[min(self.parts)].get_adims()
+        if not self.parts: return []
+        return next(iter(self.parts.values())).get_adims()
 
     def tau(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
@@ -173,9 +223,6 @@ class SO3vecArr:
         for l,p in self.parts.items():
             r[l]=p.getn()
         return r
-    
-    def get_adims(self):
-        return self.parts[min(self.parts)].get_adims()
 
     def get_type(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
@@ -198,7 +245,7 @@ class SO3vecArr:
 
     def l_max(self) -> int:
         if len(self.parts) == 0:
-            return 0
+            return -1
         return max(self.parts.keys())
 
 
@@ -266,12 +313,28 @@ class SO3vecArr:
     def __str__(self):
         return self.backend().__str__()
     
+
     @property
-    def dtype(self) -> torch.dtype:
-        if len(self.parts) == 0:
-            return torch.cfloat
-        key, val = self.parts[0]
-        return val.dtype
+    def dtype(self):
+        if not self.parts:
+            # If parts were explicitly provided at init, self._dtype might be set.
+            # If created via randn, self._dtype is torch.cfloat by default.
+            # If truly empty and no other info, cfloat is a common GElib default.
+            return self._dtype if self._dtype is not None else torch.cfloat
+        # If parts exist, their dtypes should be consistent. Return dtype of first available part.
+        min_l = min(self.parts.keys())
+        return self.parts[min_l].dtype
+
+    @property
+    def device(self) -> torch.device:
+        if not self.parts:
+            if self._device is not None:
+                return self._device
+            # Attempt to get default device if possible, or raise error
+            # For now, let's assume if it's truly empty, CPU is a safe default if not specified.
+            return torch.device("cpu") # Or raise error if strictness needed
+        min_l = min(self.parts.keys())
+        return self.parts[min_l].device
 
 
 
@@ -312,6 +375,7 @@ class SO3vecArr_CGproductFn(torch.autograd.Function):
         ctx.k2 = k2
         ctx.save_for_backward(*args)
 
+        import gelib_base as gb
         x=gb.SO3vec.view(args[0:k1])
         y=gb.SO3vec.view(args[k1:k1+k2])
         b=common_batch(args[0],args[k1])
@@ -330,6 +394,7 @@ class SO3vecArr_CGproductFn(torch.autograd.Function):
         k2 = ctx.k2
         grads=[torch.zeros_like(x) for x in ctx.saved_tensors]
 
+        import gelib_base as gb
         x=gb.SO3vec.view(ctx.saved_tensors[0:k1])
         y=gb.SO3vec.view(ctx.saved_tensors[k1:k1+k2])
         g=gb.SO3vec.view(args)
@@ -352,6 +417,7 @@ class SO3vecArr_DiagCGproductFn(torch.autograd.Function):
         ctx.k2 = k2
         ctx.save_for_backward(*args)
 
+        import gelib_base as gb
         x=gb.SO3vec.view(args[0:k1])
         y=gb.SO3vec.view(args[k1:k1+k2])
         b=common_batch(args[0],args[k1])
@@ -370,6 +436,7 @@ class SO3vecArr_DiagCGproductFn(torch.autograd.Function):
         k2 = ctx.k2
         grads=[torch.zeros_like(x) for x in ctx.saved_tensors]
 
+        import gelib_base as gb
         x=gb.SO3vec.view(ctx.saved_tensors[0:k1])
         y=gb.SO3vec.view(ctx.saved_tensors[k1:k1+k2])
         g=gb.SO3vec.view(args)

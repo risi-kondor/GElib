@@ -10,7 +10,6 @@
 # accompanied by a verbatim copy of the license. 
 
 import torch
-import gelib_base as gb
 from gelib import *
 
 
@@ -122,6 +121,7 @@ class SO3vec:
         return R
 
     def backend(self):
+        import gelib_base as gb
         return gb.SO3vec.view(self.parts)
 
 
@@ -219,6 +219,7 @@ class SO3vec_CGproductFn(torch.autograd.Function):
         ctx.k2 = k2
         ctx.save_for_backward(*args)
 
+        import gelib_base as gb
         x=gb.SO3vec.view(args[0:k1])
         y=gb.SO3vec.view(args[k1:k1+k2])
         b=common_batch(args[0],args[k1])
@@ -237,6 +238,7 @@ class SO3vec_CGproductFn(torch.autograd.Function):
         k2 = ctx.k2
         grads=[torch.zeros_like(x) for x in ctx.saved_tensors]
 
+        import gelib_base as gb
         x=gb.SO3vec.view(ctx.saved_tensors[0:k1])
         y=gb.SO3vec.view(ctx.saved_tensors[k1:k1+k2])
         g=gb.SO3vec.view(args)
@@ -259,6 +261,7 @@ class SO3vec_DiagCGproductFn(torch.autograd.Function):
         ctx.k2 = k2
         ctx.save_for_backward(*args)
 
+        import gelib_base as gb
         x=gb.SO3vec.view(args[0:k1])
         y=gb.SO3vec.view(args[k1:k1+k2])
         b=common_batch(args[0],args[k1])
@@ -276,6 +279,7 @@ class SO3vec_DiagCGproductFn(torch.autograd.Function):
         k2 = ctx.k2
         grads=[torch.zeros_like(x) for x in ctx.saved_tensors]
 
+        import gelib_base as gb
         x=gb.SO3vec.view(ctx.saved_tensors[0:k1])
         y=gb.SO3vec.view(ctx.saved_tensors[k1:k1+k2])
         g=gb.SO3vec.view(args)

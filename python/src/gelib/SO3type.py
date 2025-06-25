@@ -8,13 +8,13 @@
 # with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import torch
-import gelib_base as gb
 
 
 class SO3type:
 
     def __init__(self,x):
         if isinstance(x,dict):
+            import gelib_base as gb
             self.obj=gb.SO3type(x)
 
 

@@ -10,7 +10,6 @@
 # accompanied by a verbatim copy of the license. 
 
 import torch
-import gelib_base as gb
 
 
 class SO3element(torch.Tensor):
@@ -32,6 +31,7 @@ class SO3element(torch.Tensor):
 
     @classmethod
     def random(self):
+        import gelib_base as gb
         return SO3element(gb.SO3element.random().torch())
 
 

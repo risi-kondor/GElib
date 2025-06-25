@@ -10,7 +10,6 @@
 
 
 import torch
-import gelib_base as gb
 import gelib
 from gelib import *
 
@@ -103,6 +102,7 @@ class SO3partArr(torch.Tensor):
 
 
     def backend(self):
+        import gelib_base as gb
         return gb.SO3part.view(self)
 
     def collapse(self):
@@ -203,6 +203,7 @@ class SO3partArr_CGproductFn(torch.autograd.Function):
         #g=SO3part(_g)
         xg=x.zeros_like()
         yg=y.zeros_like()
+        import gelib_base as gb
         gb.SO3part.view(xg).add_CGproduct_back0(gb.SO3part.view(g),gb.SO3part.view(y))
         gb.SO3part.view(yg).add_CGproduct_back1(gb.SO3part.view(g),gb.SO3part.view(x))
         return xg,yg,None
@@ -228,6 +229,7 @@ class SO3partArr_DiagCGproductFn(torch.autograd.Function):
         x,y = ctx.saved_tensors
         xg=x.zeros_like()
         yg=y.zeros_like()
+        import gelib_base as gb
         gb.SO3part.view(xg).add_DiagCGproduct_back0(gb.SO3part.view(g),gb.SO3part.view(y))
         gb.SO3part.view(yg).add_DiagCGproduct_back1(gb.SO3part.view(g),gb.SO3part.view(x))
         return xg,yg,None
