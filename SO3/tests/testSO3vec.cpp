@@ -1,5 +1,5 @@
 #include "GElib_base.cpp"
-//#include "GElibSession.hpp"
+#include "GElibSession.hpp"
 #include "SO3vec.hpp"
 #include "SO3functions.hpp"
 
@@ -7,7 +7,7 @@ using namespace cnine;
 using namespace GElib;
 
 int main(int argc, char** argv){
-  //GElibSession session;
+  GElibSession session;
   cout<<endl;
 
   SO3vec<float> u(ttype=SO3type({{2,1},{3,1}}),filltype=4);

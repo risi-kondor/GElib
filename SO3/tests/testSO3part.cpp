@@ -9,7 +9,7 @@ using namespace GElib;
 
 
 int main(int argc, char** argv){
-  //lGElibSession session;
+  //GElibSession session;
   cout<<endl;
 
   int b=3;
