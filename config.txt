@@ -1,6 +1,7 @@
 # CC=clang 
 
-CNINE_ROOT=$(ROOTDIR)/../cnine/
+#CNINE_ROOT=$(ROOTDIR)/../cnine/
+CNINE_ROOT=$(ROOTDIR)/deps/cnine/
 
 #GELIB_SO3CG_DEBUG=t
 
@@ -26,7 +27,7 @@ endif
 
 NVCC=nvcc #/usr/local/cuda/bin/nvc c #/Developer/NVIDIA/CUDA-9.1/bin/nvcc
 
-NVCCFLAGS= -lcublas -rdc=true # rdc is required for separate compilation 
+NVCCFLAGS= -rdc=true -lcublas # rdc is required for separate compilation 
 
 #NVCCFLAGS= -ccbin clang++ -m64  -Xcompiler -arch -Xcompiler x86_64  \
 #-gencode arch=compute_61,code=sm_61 -lcublas 

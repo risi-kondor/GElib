@@ -10,7 +10,7 @@
 from typing import Dict
 import torch
 
-from . import gelib_base as gb
+import gelib_base as gb
 from gelib import *
 
 
