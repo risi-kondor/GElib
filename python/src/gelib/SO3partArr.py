@@ -166,7 +166,8 @@ class SO3partArr(torch.Tensor):
         """
         Compute the l component of the diagonal Clesbsch--Gordan product of this SO3partArr with another SO3partArr y.
         """
-        return gelib.SO3part_DiagCGproductFn.apply(self,y,l)
+        return gelib.SO3partArr_DiagCGproductFn.apply(self,y,l)
+
 
     ## ---- I/O ----------------------------------------------------------------------------------------------
 
