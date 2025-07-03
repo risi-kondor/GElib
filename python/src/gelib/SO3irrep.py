@@ -9,8 +9,8 @@
 
 
 import torch
-from gelib import *
 import gelib_base as gb
+from gelib import *
 
 
 class SO3irrep:
@@ -31,8 +31,12 @@ class SO3irrep:
 
 
     def matrix(self,R):
-        assert(isinstance(R,SO3element))
-        return self.obj.matrix(gb.SO3element.view(R))
+        if isinstance(R,SO3element):
+            return self.obj.matrix(gb.SO3element.view(R))
+        if isinstance(R,list):
+            assert len(R)==3
+            return self.obj.matrix(R[0],R[1],R[2])
+
 
 
     # ---- I/O ----------------------------------------------------------------------------------------------
