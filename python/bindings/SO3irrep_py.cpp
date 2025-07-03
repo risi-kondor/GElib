@@ -18,7 +18,10 @@ py::class_<SO3irrep>(m,"SO3irrep",
 
   .def(py::init([](int l){return SO3irrep(l);}))
 
-  .def("matrix",[](const SO3irrep& x, const SO3element<float>& R){return x.matrix(R).torch();})
+  .def("matrix",[](const SO3irrep& x, float alpha, float beta, float gamma){
+	 return x.matrix<float>(alpha,beta,gamma).torch();})
+  .def("matrix",[](const SO3irrep& x, const SO3element<float>& R){
+	 return x.matrix(R).torch();})
     
   .def("str",&SO3irrep::str,py::arg("indent")="")
   .def("__str__",&SO3irrep::str,py::arg("indent")="")

@@ -53,19 +53,17 @@ def check_gelib_consistency():
     sh_x_rotated_by_identity = sh_x_from_gelib.apply(identity_rotation)
     coeffs_x_rotated_by_identity = sh_x_rotated_by_identity.as_subclass(torch.Tensor)[0, :, :].clone()
     identity_preserves_coeffs = torch.allclose(coeffs_x_from_gelib, coeffs_x_rotated_by_identity, atol=1e-6)
-    print(identity_rotation)
-    rho=gelib.SO3irrep(1)
-    print(rho.matrix(identity_rotation))
-    print("----")
     print(sh_x_from_gelib)
-    print(coeffs_x_from_gelib)
-    print(sh_x_rotated_by_identity)
-    print(coeffs_x_rotated_by_identity)
+    #print(coeffs_x_from_gelib)
+    #print(sh_x_rotated_by_identity)
+    #print(coeffs_x_rotated_by_identity)
 
     # --- Test 2: GElib Rotation Self-Consistency ---
     # `gelib.apply(rot, spharm(v))` should equal `spharm(rot @ v)`.
     sh_x_rotated_by_rz = sh_x_from_gelib.apply(rz_so3)
     coeffs_path_A = sh_x_rotated_by_rz.as_subclass(torch.Tensor)[0, :, :].clone()
+    print(sh_x_rotated_by_rz)
+    print(sh_y_from_gelib)
     rotation_is_self_consistent = torch.allclose(coeffs_path_A, coeffs_y_from_gelib, atol=1e-6)
 
     # --- Test 3: Manual Rotation Self-Consistency ---
