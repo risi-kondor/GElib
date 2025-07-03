@@ -3,6 +3,7 @@ import torch
 from setuptools import setup
 from setuptools import find_packages
 from torch.utils.cpp_extension import CppExtension, BuildExtension, CUDAExtension
+from torch.utils.cpp_extension import include_paths, library_paths
 import time
 from os.path import splitext
 from os.path import basename
@@ -118,7 +119,7 @@ def main():
             'cuda/SO3part_addCGproduct_back0.cu',
             'cuda/SO3part_addCGproduct_back1.cu',
             'python/bindings/GElib_py.cpp'
-        ],
+            ],
             include_dirs=_include_dirs,
             extra_compile_args={
             'nvcc': _nvcc_compile_args,
@@ -126,10 +127,12 @@ def main():
             depends=_depends
         )]
     else:
-        ext_modules = [CppExtension('gelib_base', ['python/bindings/GElib_py.cpp'],
-                                    include_dirs=_include_dirs,
-                                    extra_compile_args={
-            'cxx': _cxx_compile_args},
+        ext_modules=[CppExtension('gelib_base',
+            ['python/bindings/GElib_py.cpp'],
+            include_dirs=_include_dirs,
+            #library_dirs=library_paths(),
+            #libraries=['c10'],
+            extra_compile_args={'cxx': _cxx_compile_args},
             depends=_depends
         )]
 
@@ -143,6 +146,7 @@ def main():
           cmdclass={'build_ext': BuildExtension})
 
     print("Compilation finished:", time.ctime(time.time()))
+
 
     # ------------------------------------------------------------------------------------------------------------
 
