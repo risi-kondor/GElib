@@ -62,8 +62,8 @@ def check_gelib_consistency():
     # `gelib.apply(rot, spharm(v))` should equal `spharm(rot @ v)`.
     sh_x_rotated_by_rz = sh_x_from_gelib.apply(rz_so3)
     coeffs_path_A = sh_x_rotated_by_rz.as_subclass(torch.Tensor)[0, :, :].clone()
-    print(sh_x_rotated_by_rz)
-    print(sh_y_from_gelib)
+    #print(sh_x_rotated_by_rz)
+    #print(sh_y_from_gelib)
     rotation_is_self_consistent = torch.allclose(coeffs_path_A, coeffs_y_from_gelib, atol=1e-6)
 
     # --- Test 3: Manual Rotation Self-Consistency ---
