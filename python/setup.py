@@ -76,8 +76,8 @@ def main():
                           '-D_DEF_CGCMEM',
                           '-DGELIB_RANGE_CHECKING',
                           '-DWITH_FAKE_GRAD',
-                          '-std=c++17',
-                          '-rdc=true'
+                          '-std=c++17'
+#                          '-rdc=true'
                           ]
 
     if copy_warnings:
@@ -122,6 +122,7 @@ def main():
             extra_compile_args={
             'nvcc': _nvcc_compile_args,
             'cxx': _cxx_compile_args},
+            extra_link_args=['-lcudart','-lcudadevrt'],
             depends=_depends
         )]
     else:

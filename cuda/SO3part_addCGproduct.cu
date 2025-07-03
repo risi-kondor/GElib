@@ -26,7 +26,7 @@
 
 
 extern GElib::SO3CGbank SO3_CGbank;
-extern __device__ __constant__ unsigned char cg_cmem[]; 
+//extern __device__ __constant__ unsigned char cg_cmem[]; 
 
 
 __global__ void SO3part_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r, 
@@ -48,11 +48,13 @@ __global__ void SO3part_addCGproduct_tiled_kernel(const cnine::Ctensor4_view r,
   if(preloadCG){
     cptr=reinterpret_cast<float*>(_shared);
     xpr=cptr+((x.n2*y.n2-1)/32+1)*32;
-    if(Cptr>=0) loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n2*y.n2);
-    else loadf(cptr,cptr_global,x.n2*y.n2);
+    //if(Cptr>=0)loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n2*y.n2);
+    //else 
+    loadf(cptr,cptr_global,x.n2*y.n2);
   }else{
-    if(Cptr>=0) cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
-    else cptr=cptr_global;
+    //if(Cptr>=0) cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
+    //else 
+    cptr=cptr_global;
     xpr=reinterpret_cast<float*>(_shared);
   }
 

@@ -25,7 +25,7 @@
 
 
 extern GElib::SO3CGbank SO3_CGbank;
-extern __device__ __constant__ unsigned char cg_cmem[]; 
+//extern __device__ __constant__ unsigned char cg_cmem[]; 
 
 
 __global__ void SO3part_addCGproduct_back1_tiled_kernel(const cnine::Ctensor5_view x, 
@@ -47,11 +47,13 @@ __global__ void SO3part_addCGproduct_back1_tiled_kernel(const cnine::Ctensor5_vi
   if(preloadCG){
     cptr=reinterpret_cast<float*>(_shared);
     xpr=cptr+((x.n2*y.n2-1)/32+1)*32;
-    if(Cptr>=0) loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n2*y.n2);
-    else loadf(cptr,cptr_global,x.n2*y.n2);
+    //if(Cptr>=0) loadf(cptr,reinterpret_cast<float*>(cg_cmem)+Cptr,x.n2*y.n2);
+    //else 
+    loadf(cptr,cptr_global,x.n2*y.n2);
   }else{
-    if(Cptr>=0) cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
-    else cptr=cptr_global;
+    //if(Cptr>=0) cptr=reinterpret_cast<float*>(cg_cmem)+Cptr;
+    //else 
+    cptr=cptr_global;
     xpr=reinterpret_cast<float*>(_shared);
   }
 
@@ -126,7 +128,7 @@ __global__ void SO3part_addCGproduct_back1_tiled_kernel(const cnine::Ctensor5_vi
 namespace GElib{
 
 
-  void SO3part_addCGproduct_back1_cu(const SO3part<float>& y, SO3part<float>& r, SO3part<float>& x, const int offs, const cudaStream_t& stream){
+  void SO3part_addCGproduct_back1_cu(const SO3part<float>& y, const SO3part<float>& r, const SO3part<float>& x, const int offs, const cudaStream_t& stream){
 
     GELIB_ASSRT(r.get_dev()==1);
     GELIB_ASSRT(x.get_dev()==1);
