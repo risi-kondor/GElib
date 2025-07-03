@@ -10,6 +10,7 @@
 
 import torch
 from gelib import *
+import gelib_base as gb
 
 
 class SO3irrep:
@@ -18,7 +19,6 @@ class SO3irrep:
     """
 
     def __init__(self, l):
-        import gelib_base as gb
         assert(isinstance(l,int))
         self.obj=gb.SO3irrep(l)
         
@@ -32,7 +32,6 @@ class SO3irrep:
 
     def matrix(self,R):
         assert(isinstance(R,SO3element))
-        import gelib_base as gb
         return self.obj.matrix(gb.SO3element.view(R))
 
 
