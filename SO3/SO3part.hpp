@@ -57,6 +57,7 @@ namespace GElib{
     using TENSOR::dim;
     using TENSOR::dims;
     using TENSOR::inc;
+    using TENSOR::dtype_str;
 
     using BASE::unroller;
     //using BASE::zeros_like;
@@ -337,13 +338,13 @@ namespace GElib{
 
     string repr() const{
       ostringstream oss;
-      oss<<"<SO3part";
-      if(BASE::is_batched()) oss<<" b="<<BASE::getb();
-      if(BASE::is_grid()) oss<<" grid="<<BASE::gdims();
-      oss<<" l="<<getl();
-      oss<<" nc="<<getn();
-      if(get_dev()>0) oss<<" device="<<get_dev();
-      oss<<">";
+      oss<<"<SO3part<"<<dtype_str()<<">:";
+      if(BASE::is_batched()) oss<<" b="<<BASE::getb()<<",";
+      if(BASE::is_grid()) oss<<" grid="<<BASE::gdims()<<",";
+      oss<<" l="<<getl()<<",";
+      oss<<" nc="<<getn()<<",";
+      if(get_dev()>0) oss<<" device="<<get_dev()<<",";
+      oss<<"\b>";
       return oss.str();
     }
     

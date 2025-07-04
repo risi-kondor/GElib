@@ -32,6 +32,32 @@ __forceinline__ __device__ void loadf(float* dest, const float* src, const int n
 }
 
 
+__forceinline__ __device__ void loadf(float* dest, const float* src, const int n, const int s){
+  int nthreads=blockDim.x;
+  if(n<=nthreads){
+    if(tix<n) dest[tix]=src[tix*s];
+  }else{
+    int I=n/nthreads;
+    int n0=I*nthreads;
+    for(int i=0; i<I; i++)
+      dest[i*nthreads+tix]=src[(i*nthreads+tix)*s];
+    if(tix<n-I*n0)
+      dest[n0+tix]=src[(n0+tix)*s];
+  }
+}
+
+
+// Load an I x J tile to dest
+// assumption: number of threads is at least I
+__forceinline__ __device__ void load_tile(float* dest, const float* src, const int I, const int J, const int s0, const int s1){
+  if(tix<J){
+    for(int i=0; i<I; i++)
+      dest[i*J+tix]=src[i*s0+tix*s1];
+  }
+}
+
+
+
 // Load n fragments from x to dest 
 // assumption: number of threads is at least n
 __forceinline__ __device__ int loadg_tile(float* dest, const cnine::Ctensor4_view& x, const int b, const int i, const int n){

@@ -33,6 +33,7 @@ using namespace std;
 #define GELIB_ERROR(msg) throw std::runtime_error("GElib error in "+string(__PRETTY_FUNCTION__)+" : "+msg+".");
 
 #define GELIB_NONFATAL(msg) {cnine::CoutLock lk; cerr<<"GElib exception in function '"<<__PRETTY_FUNCTION__<<"' : "<<msg<<endl;};
+#define GELIB_SKIP(msg) {cnine::CoutLock lk; cerr<<"Function "<<__func__<<" skipped: "<<msg<<"."<<endl; return;};
 
 
 // ---- Helpers ------------------------------------------------------------------------------------------------------
