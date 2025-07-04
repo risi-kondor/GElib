@@ -198,6 +198,10 @@ namespace GElib{
     auto rsubdims=r.dims.chunk(0,3);
     if(x.dims.chunk(0,3)!=rsubdims) GELIB_SKIP("leading dimensions of x and r must be same");
     if(y.dims.chunk(0,3)!=rsubdims) GELIB_SKIP("leading dimensions of y and r must be same");
+    if(r.dims[0]>65535) GELIB_SKIP("dims[0] exceeds 65535");
+    if(r.dims[1]>65535) GELIB_SKIP("dims[1] exceeds 65535");
+    if(r.dims[2]>65535) GELIB_SKIP("dims[2] exceeds 65535");
+    if((size_t)(r.dims[0])*r.dims[1]*r.dims[2]>INT_MAX) GELIB_SKIP("product of block dimensions exceeds 2^31-1");
 
     const int l1=x.getl();
     const int l2=y.getl();
@@ -217,37 +221,45 @@ namespace GElib{
 
     float* cptr=SO3_CGbank.get<float>(l1,l2,l,r.dev).get_arr(); 
     int clines=cnine::roundup(L1*L2,32)/32;
+    int nlines=cnine::roundup(L1*xn*2,32)/32+cnine::roundup(L2*yn*2,32)/32;
 
     bool tiled=xn*yn>1024;
     if(x.strides[3]!=x.strides[4]*x.dims[4]) tiled=true;
     if(y.strides[3]!=y.strides[4]*y.dims[4]) tiled=true;
+    if(nlines+clines>384) tiled=true;
 
+    if(!tiled){
+      dim3 blocks(r.dims[0],r.dims[1],r.dims[2]);
+      SO3part_addCGproduct_kernel<<<blocks,cnine::roundup(xn*yn,32),(nlines+clines)*128,stream>>>
+	(rv,xv,yv,-1,cptr,true);
+      return;
+    }
 
-    if(!tiled){ // Untiled option
-
-      int nlines=cnine::roundup(L1*xn*2,32)/32+cnine::roundup(L2*yn*2,32)/32;
-
-      if(nlines<=384){
-	bool preloadCG=(nlines+clines<=384);
-	dim3 blocks(r.dims[0],r.dims[1],r.dims[2]);
-	SO3part_addCGproduct_kernel<<<blocks,cnine::roundup(xn*yn,32),(nlines+preloadCG*clines)*128,stream>>>
-	  (rv,xv,yv,-1,cptr,preloadCG);
-	return;
-      }
-
-    }else{ // Tiled option
-
+    if(tiled){
       auto [xn,yn]=optimal_tile_size(x.getn(),y.getn());
       int nlines=cnine::roundup(L1*xn*2,32)/32+cnine::roundup(L2*yn*2,32)/32;
+      int conservative_clines=clines;
+      if(conservative_clines>200) conservative_clines=0; // try preloading CG if it uses at most 200 lines
 
-      if(nlines<=384){
+      if(nlines>384-conservative_clines){
+	if(cnine::roundup(L1*2,32)/32+cnine::roundup(L2*yn*2,32)/32<=384-conservative_clines) // try reducing just xn
+	  xn=std::min(1024/yn,(32*(384-conservative_clines)-cnine::roundup(L2*yn*2,32))/(2*L1));
+	else{
+	  xn=1;
+	  yn=std::min(1024,(32*(384-conservative_clines)-cnine::roundup(L1*xn*2,32))/(2*L2)); // reduce yn too 
+	  if(yn==0) yn=std::min(1024,(32*384-cnine::roundup(L1*xn*2,32))/(2*L2)); // give up on preloading CG
+	  if(yn==0) GELIB_SKIP("not even a single fragment of x and y fit in shared memory");
+	}
+	nlines=cnine::roundup(L1*xn*2,32)/32+cnine::roundup(L2*yn*2,32)/32;
+      }
+
+      if(nlines<=384){ // should always be true
 	bool preloadCG=(nlines+clines<=384);
 	dim3 blocks(r.dims[0],r.dims[1],r.dims[2]);
 	SO3part_addCGproduct_tiled_kernel<<<blocks,cnine::roundup(xn*yn,32),(nlines+preloadCG*clines)*128,stream>>>
 	  (rv,xv,yv,xn,yn,-1,cptr,preloadCG);
 	return;
       }
-
     }
 
     GELIB_SKIP("no appropriate kernel found");
