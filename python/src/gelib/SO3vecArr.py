@@ -9,6 +9,7 @@
 
 from typing import Dict
 import torch
+import torch.types
 
 import gelib_base as gb
 from gelib import *
@@ -227,6 +228,19 @@ class SO3vecArr:
         Gather the elements of this SO3vecArr into a new SO3vecArr according to the gather_map
         """
         return SO3vecArr(*[p.gather(gmap,dim) for p in self.parts.values])
+    
+    def to(self, device, non_blocking=False, copy=False, memory_format=torch.preserve_format):
+        assert device is not None
+        r=SO3vecArr()
+        for ro,part in self.parts.items():
+            r.parts[ro]=part.to(device, non_blocking=non_blocking, copy=copy, memory_format=memory_format)
+        return r
+    
+    @property
+    def device(self):
+        if not self.parts:
+            return torch.device("cpu")
+        return next(iter(self.parts.values())).device
 
         
     # ---- Products -----------------------------------------------------------------------------------------
