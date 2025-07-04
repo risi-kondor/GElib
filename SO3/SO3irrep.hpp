@@ -37,20 +37,41 @@ namespace GElib{
 
     template<typename TYPE>
     cnine::TensorView<complex<TYPE> > matrix(const SO3element<TYPE>& R) const{
+
+      // z-y-z convention, extrinsic 
+      double alpha,beta,gamma;
+      TYPE r22=R(2,2);
+      beta=acos(R(2,2));
+      if(abs(r22)<1-1e-6){
+	alpha=atan2(R(0,2),-R(1,2)); // why?
+	gamma=atan2(R(2,0),R(2,1));
+      }else{
+	if(r22>=1-1e-6){
+	  alpha=atan2(R(1,0),R(0,0));
+	  gamma=0;
+	}else{
+	  alpha=atan2(-R(1,0),-R(0,0));
+	  gamma=0;
+	}
+      }
+      //cout<<alpha<<" "<<beta<<" "<<gamma<<endl;
+
+      return matrix<TYPE>(alpha,beta,gamma);
+    }
+
+
+    template<typename TYPE>
+    cnine::TensorView<complex<TYPE> > matrix(const double alpha, const double beta, const double gamma) const{
       cnine::TensorView<complex<TYPE> > M({2*l+1,2*l+1},0,0);
-      double beta=acos(R(2,2));
-      double alpha=atan2(R(2,0),-R(2,1));
-      double gamma=atan2(R(0,2),R(1,2));
-      //double psi=atan2(R(1,0),R(0,0));
-      //double phi=atan2(R(2,1),R(2,2));
-      //double theta=atan2(-R(2,0),sqrt(R(0,0)*R(0,0)+R(1,0)*R(1,0)));
+
       for(int m1=-l; m1<=l; m1++)
 	for(int m2=-l; m2<=l; m2++){
 	  //complex<TYPE> d=littled(m2,m1,theta);
 	  complex<TYPE> d=littled(m2,m1,beta);
 	  //M.set(m1+l,m2+l,d*exp(-complex<TYPE>(0,m1*phi))*exp(-complex<TYPE>(0,m2*psi)));
+	  M.set(m1+l,m2+l,d*exp(complex<TYPE>(0,m1*alpha))*exp(complex<TYPE>(0,m2*gamma)));
 	  //M.set(m1+l,m2+l,d*exp(-complex<TYPE>(0,m1*alpha))*exp(-complex<TYPE>(0,m2*gamma)));
-	  M.set(m2+l,m1+l,d*exp(-complex<TYPE>(0,m1*alpha))*exp(-complex<TYPE>(0,m2*gamma))); // why transpose?
+	  //M.set(m2+l,m1+l,d*exp(-complex<TYPE>(0,m1*alpha))*exp(-complex<TYPE>(0,m2*gamma))); // why transpose?
 	}
       return M;
     }
