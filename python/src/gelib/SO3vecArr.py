@@ -316,7 +316,7 @@ class SO3vecArr_CGproductFn(torch.autograd.Function):
         y=gb.SO3vec.view(args[k1:k1+k2])
         b=common_batch(args[0],args[k1])
         adims=args[0].get_adims()
-        tau=x.get_tau().CGproduct(y.get_tau())
+        tau=x.get_tau().CGproduct(y.get_tau(),maxl)
         rparts=MakeZeroSO3partArrs(b,adims,tau.get_parts(),args[0].device)
         r=gb.SO3vec.view(rparts)
         r.addCGproduct(x,y)
