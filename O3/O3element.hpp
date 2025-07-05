@@ -27,7 +27,6 @@ namespace GElib{
   class O3element: public Gelement, public cnine::TensorView<TYPE>{ //public GelementRealMx<SO3element>{
   public:
 
-    //typedef GelementRealMx<SO3element> BASE;
     typedef cnine::TensorView<TYPE> BASE;
     using BASE::BASE;
     using BASE::str; 

@@ -1,7 +1,7 @@
 #include "GElib_base.cpp"
 #include "GElibSession.hpp"
 #include "SO3vec.hpp"
-#include "SO3functions.hpp"
+#include "Gfunctions.hpp"
 
 using namespace cnine;
 using namespace GElib;

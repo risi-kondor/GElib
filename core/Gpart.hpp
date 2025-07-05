@@ -28,12 +28,12 @@ namespace GElib{
 
 
   template<typename GPART, typename TYPE>
-  class Gpart: //public cnine::TensorView<TYPE>, 
-    public cnine::BatchedTensor<TYPE>{
+  class Gpart: public cnine::BatchedTensor<TYPE>{
   public:
 
     using TENSOR=cnine::TensorView<TYPE>;
     using BASE=cnine::BatchedTensor<TYPE>;
+    //using IRREP_IX=typename GPART::IRREP_IX;
 
     using Gdims=cnine::Gdims;
     using GstridesB=cnine::GstridesB;
@@ -148,6 +148,10 @@ namespace GElib{
 
   public: // ---- Access ----------------------------------------------------------------------------------------------
 
+
+    //IRREP_IX get_ix() const{
+    //return ix.get_ix();
+    //}
 
     int getn() const{
       return dims.last();
@@ -529,11 +533,11 @@ namespace GElib{
 
 
     template<typename GPART2> // dummy template to break circular dependency
-    GPART CGproduct(const GPART2& y, const typename GPART2::IRREP_IX& l) const{
+    GPART CGproduct(const GPART2& y, const typename GPART2::IRREP_IX& ix) const{
       auto& x=static_cast<const GPART&>(*this);
-      int m=GPART::GROUP::CGmultiplicity(x.getl(),y.getl(),l);
+      int m=GPART::GROUP::CGmultiplicity(x.get_ix(),y.get_ix(),ix);
       GELIB_ASSRT(m>0);
-      GPART R(x.dominant_batch(y),x.dominant_gdims(y),l,x.getn()*y.getn(),0,dev);
+      GPART R(ix,x.dominant_batch(y),x.dominant_gdims(y),x.getn()*y.getn(),0,dev);
       R.add_CGproduct(x,y);
       return R;
     }
@@ -625,12 +629,12 @@ namespace GElib{
 
 
     template<typename GPART2> // dummy template to break circular dependency
-    GPART DiagCGproduct(const GPART2& y, const typename GPART2::IRREP_IX& l) const{
+    GPART DiagCGproduct(const GPART2& y, const typename GPART2::IRREP_IX& ix) const{
       auto& x=static_cast<const GPART&>(*this);
-      int m=GPART::GROUP::CGmultiplicity(x.getl(),y.getl(),l);
+      int m=GPART::GROUP::CGmultiplicity(x.get_ix(),y.get_ix(),ix);
       GELIB_ASSRT(m>0);
       GELIB_ASSRT(x.getn()==y.getn())
-      GPART R(x.dominant_batch(y),x.dominant_gdims(y),l,x.getn(),0,dev);
+      GPART R(x.dominant_batch(y),x.dominant_gdims(y),ix,x.getn(),0,dev);
       R.add_DiagCGproduct(x,y);
       return R;
     }

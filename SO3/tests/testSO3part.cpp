@@ -2,7 +2,7 @@
 //#include "GElibSession.hpp"
 
 #include "SO3part.hpp"
-#include "SO3functions.hpp"
+#include "Gfunctions.hpp"
 
 using namespace cnine;
 using namespace GElib;

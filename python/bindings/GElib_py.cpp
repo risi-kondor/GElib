@@ -23,7 +23,7 @@
 #include "SO3type.hpp"
 #include "SO3part.hpp"
 #include "SO3vec.hpp"
-#include "SO3functions.hpp"
+#include "Gfunctions.hpp"
 
 
 GElib::GElibSession session;

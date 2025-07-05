@@ -82,6 +82,9 @@ namespace GElib{
     SO3part(const int _b, const Gdims& _gdims, const int _l, const int _nc, const int _fcode=0, const int _dev=0):
       BASE(_b,_gdims,2*_l+1,_nc,_fcode,_dev){}
 
+    SO3part(const int _l, const int _b, const Gdims& _gdims, const int _nc, const int _fcode=0, const int _dev=0):
+      BASE(_b,_gdims,2*_l+1,_nc,_fcode,_dev){}
+
     //SO3part(const cnine::TensorView<complex<TYPE> >& M):
     //BASE(M){}
 
@@ -177,6 +180,10 @@ namespace GElib{
   public: // ---- Access -------------------------------------------------------------------------------------
 
     
+    int get_ix() const{
+      return (dims(-2)-1)/2;
+    }
+
     int getl() const{
       return (dims(-2)-1)/2;
     }

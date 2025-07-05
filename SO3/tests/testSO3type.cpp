@@ -1,6 +1,6 @@
 #include "GElib_base.cpp"
 #include "SO3type.hpp"
-#include "SO3functions.hpp"
+#include "Gfunctions.hpp"
 
 using namespace cnine;
 using namespace GElib;
