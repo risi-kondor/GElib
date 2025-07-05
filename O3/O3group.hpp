@@ -39,20 +39,23 @@ namespace GElib{
       int l1=p1.getl();
       int l2=p2.getl();
       int l=p.getl();
-      if(l>=std::abs(l1-l2) && l<=l1+l2) return 1;
+      if(l>=std::abs(l1-l2) && l<=l1+l2 && p1.getp()*p2.getp()==p.getp()) return 1;
       return 0;
     }
 
-    // TODO 
     static void for_each_CGcomponent(const O3index p1, const O3index p2, 
       const std::function<void(const O3index l, const int m)>& lambda){
-      //for(int l=std::abs(l1-l2); l<=l1+l2; l++)
-      //lambda(l,1);
+      int l1=p1.getl();
+      int l2=p2.getl();
+      for(int l=std::abs(l1-l2); l<=l1+l2; l++)
+	lambda(O3index(l,p1.getp()*p2.getp()),1);
     }
 
     static int CG_sign_rule(const O3index p1, const O3index p2, const O3index p){
-      //return 1-2*((l1+l2-l)%2);
-      return 0;
+      int l1=p1.getl();
+      int l2=p2.getl();
+      int l=p.getl();
+      return 1-2*((l1+l2-l)%2);
     }
 
 

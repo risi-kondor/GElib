@@ -17,15 +17,15 @@
 namespace GElib{
 
 
-  template<typename OBJ, typename... Args>
-  OBJ CGproduct(const OBJ& x, const OBJ& y, const Args&... args){
-    return x.CGproduct(y,args...); 
-  }
+  //template<typename OBJ, typename... Args>
+  //OBJ CGproduct(const OBJ& x, const OBJ& y, const Args&... args){
+  //return x.CGproduct(y,args...); 
+  //}
 
-  template<typename OBJ, typename... Args>
-  OBJ DiagCGproduct(const OBJ& x, const OBJ& y, const Args&... args){
-    return x.DiagCGproduct(y,args...); 
-  }
+  //template<typename OBJ, typename... Args>
+  //OBJ DiagCGproduct(const OBJ& x, const OBJ& y, const Args&... args){
+  //return x.DiagCGproduct(y,args...); 
+  //}
 
 }
 

@@ -14,7 +14,7 @@
 #include "Gpart.hpp"
 #include "SO3group.hpp"
 #include "SO3type.hpp"
-//#include "SO3CGbank.hpp" // Added missing include
+#include "SO3CGbank.hpp"
 
 #include "SO3part_addSpharmFn.hpp"
 
@@ -37,7 +37,7 @@ namespace GElib{
   
 
   template<typename TYPE>
-  class SO3part: public Gpart<SO3part<TYPE>,complex<TYPE> >{
+  class SO3part: public Gpart<SO3part<TYPE>,complex<TYPE> >, public GpartBase{
   public:
 
     typedef Gpart<SO3part<TYPE>,complex<TYPE> > BASE;

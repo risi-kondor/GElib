@@ -17,6 +17,7 @@
 
 #include "GElib_base.hpp"
 #include "Gelement.hpp"
+#include "Determinant.hpp"
 #include "ColumnSpace.hpp"
 #include "TensorView_functions.hpp"
 
@@ -24,7 +25,7 @@
 namespace GElib{
 
   template<typename TYPE>
-  class O3element: public Gelement, public cnine::TensorView<TYPE>{ //public GelementRealMx<SO3element>{
+  class O3element: public Gelement, public cnine::TensorView<TYPE>{
   public:
 
     typedef cnine::TensorView<TYPE> BASE;
@@ -50,6 +51,11 @@ namespace GElib{
 
   public: // ---- Operations --------------------------------------------------------------------------------
 
+
+    int parity() const{
+      TYPE det=cnine::determinant(*this);
+      if(det>=0) return 1; else return -1;
+    }
 
     O3element operator*(const O3element& y) const{
       cnine::TensorView<TYPE> R({3,3},0,0);

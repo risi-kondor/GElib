@@ -18,14 +18,14 @@
 
 namespace GElib{
 
-  class O3type: public Gtype<O3group>{
+  class O3type: public Gtype<O3group>, public GtypeBase{
   public:
 
     typedef O3group GROUP;
     typedef O3index GINDEX;
     typedef Gtype<O3group> BASE;
 
-    static constexpr O3index null_ix=O3index(-1);
+    static constexpr O3index null_ix=-1;
 
     using BASE::parts;
 

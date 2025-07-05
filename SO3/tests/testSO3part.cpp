@@ -2,7 +2,8 @@
 //#include "GElibSession.hpp"
 
 #include "SO3part.hpp"
-#include "Gfunctions.hpp"
+#include "CGproduct.hpp"
+#include "DiagCGproduct.hpp"
 
 using namespace cnine;
 using namespace GElib;

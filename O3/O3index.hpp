@@ -22,13 +22,10 @@ namespace GElib{
   public:
 
     int z;
-    //int l;
-    //bool p;
 
     O3index(): z(0){}
 
     O3index(const int l, const int p):
-      //l(_l),p(_p){}
       z(2*l+(p==-1)){
       GELIB_ASSRT(p==1||p==-1);
     }

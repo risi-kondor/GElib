@@ -17,8 +17,8 @@
 
 namespace GElib{
 
-  //class SO3type: public Gtype<int>{
-  class SO3type: public Gtype<SO3group>{
+
+  class SO3type: public Gtype<SO3group>, public GtypeBase{
   public:
 
     typedef Gtype<SO3group> BASE;

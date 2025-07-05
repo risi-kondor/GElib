@@ -19,7 +19,7 @@ namespace GElib{
 
 
   template<typename TYPE>
-  class SO3vec: public Gvec<SO3vec<TYPE>,SO3part<TYPE> >{
+  class SO3vec: public Gvec<SO3vec<TYPE>,SO3part<TYPE> >, public GvecBase{
   public:
 
     typedef Gvec<SO3vec,SO3part<TYPE> > BASE;

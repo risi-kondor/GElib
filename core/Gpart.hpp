@@ -529,200 +529,6 @@ namespace GElib{
     }
 
  
-  public: // ---- CG-products --------------------------------------------------------------------------------
-
-
-    template<typename GPART2> // dummy template to break circular dependency
-    GPART CGproduct(const GPART2& y, const typename GPART2::IRREP_IX& ix) const{
-      auto& x=static_cast<const GPART&>(*this);
-      int m=GPART::GROUP::CGmultiplicity(x.get_ix(),y.get_ix(),ix);
-      GELIB_ASSRT(m>0);
-      GPART R(ix,x.dominant_batch(y),x.dominant_gdims(y),x.getn()*y.getn(),0,dev);
-      R.add_CGproduct(x,y);
-      return R;
-    }
-
-
-    void add_CGproduct(GPART x, GPART y, const int offs=0){
-      GPART r(*this);
-      const int dev=r.dev;
-      GELIB_ASSRT(x.get_dev()==dev);
-      GELIB_ASSRT(y.get_dev()==dev);
-
-      if(!r.reconcile_batches(x,y))
-	GELIB_NONFATAL("Skipping CGproduct: batch dimensions cannot be reconciled.");
-
-      if(!r.reconcile_grids(x,y))
-	GELIB_NONFATAL("Skipping CGproduct: grid dimensions cannot be reconciled.");
-
-      r.co_canonicalize_to_5d(x,y);
-
-      if(dev==0){
-	auto C=r.get_CGmatrix(x,y);
-	r.for_each_cell_multi(x,y,[&](const TENSOR& r, const TENSOR& x, const TENSOR& y){
-	    GPART::add_CGproduct_kernel(r,x,y,C,offs);
-	      });
-      }
-
-      if(dev==1){
-	GPART::add_CGproduct_dev(r,x,y,offs);
-      }
-
-    }
-
-
-    void add_CGproduct_back0(GPART r, GPART y, const int offs=0){
-      GPART x(*this);
-      const int dev=r.dev;
-      GELIB_ASSRT(x.get_dev()==dev);
-      GELIB_ASSRT(y.get_dev()==dev);
-
-      if(!r.reconcile_batches(x,y))
-	GELIB_NONFATAL("Skipping CGproduct: batch dimensions cannot be reconciled.");
-
-      if(!r.reconcile_grids(x,y))
-	GELIB_NONFATAL("Skipping CGproduct: grid dimensions cannot be reconciled.");
-
-      r.co_canonicalize_to_5d(x,y);
-
-      if(dev==0){
-	auto C=r.get_CGmatrix(x,y);
-	x.for_each_cell_multi(r,y,[&](const TENSOR& x, const TENSOR& r, const TENSOR& y){
-	    GPART::add_CGproduct_back0_kernel(r,x,y,C,offs);});
-      }
-
-      if(dev==1){
-	GPART::add_CGproduct_back0_dev(r,x,y,offs);
-      }
-
-    }
-
-
-    void add_CGproduct_back1(GPART r, GPART x, const int offs=0){
-      GPART y(*this);
-      const int dev=r.dev;
-      GELIB_ASSRT(x.get_dev()==dev);
-      GELIB_ASSRT(y.get_dev()==dev);
-
-      if(!r.reconcile_batches(x,y))
-	GELIB_NONFATAL("Skipping CGproduct: batch dimensions cannot be reconciled.");
-
-      if(!r.reconcile_grids(x,y))
-	GELIB_NONFATAL("Skipping CGproduct: grid dimensions cannot be reconciled.");
-
-      r.co_canonicalize_to_5d(x,y);
-
-      if(dev==0){
-	auto C=r.get_CGmatrix(x,y);
-	y.for_each_cell_multi(r,x,[&](const TENSOR& y, const TENSOR& r, const TENSOR& x){
-	    GPART::add_CGproduct_back1_kernel(r,x,y,C,offs);});
-      }
-
-      if(dev==1){
-	GPART::add_CGproduct_back1_dev(r,x,y,offs);
-      }
-
-    }
-
-
-  public: // ---- Diagonal CG-products -----------------------------------------------------------------------
-
-
-    template<typename GPART2> // dummy template to break circular dependency
-    GPART DiagCGproduct(const GPART2& y, const typename GPART2::IRREP_IX& ix) const{
-      auto& x=static_cast<const GPART&>(*this);
-      int m=GPART::GROUP::CGmultiplicity(x.get_ix(),y.get_ix(),ix);
-      GELIB_ASSRT(m>0);
-      GELIB_ASSRT(x.getn()==y.getn())
-      GPART R(x.dominant_batch(y),x.dominant_gdims(y),ix,x.getn(),0,dev);
-      R.add_DiagCGproduct(x,y);
-      return R;
-    }
-
-
-    void add_DiagCGproduct(GPART x, GPART y, const int offs=0){
-      GPART r(*this);
-      const int dev=r.dev;
-      GELIB_ASSRT(x.get_dev()==dev);
-      GELIB_ASSRT(y.get_dev()==dev);
-
-      if(!r.reconcile_batches(x,y))
-	GELIB_NONFATAL("Skipping DiagCGproduct: batch dimensions cannot be reconciled.");
-
-      if(!r.reconcile_grids(x,y))
-	GELIB_NONFATAL("Skipping DiagCGproduct: grid dimensions cannot be reconciled.");
-
-      r.co_canonicalize_to_5d(x,y);
-
-      if(dev==0){
-	auto C=r.get_CGmatrix(x,y);
-	r.for_each_cell_multi(x,y,[&](const TENSOR& r, const TENSOR& x, const TENSOR& y){
-	    GPART::add_DiagCGproduct_kernel(r,x,y,C,offs);
-	      });
-      }
-
-      if(dev==1){
-	GPART::add_DiagCGproduct_dev(r,x,y,offs);
-      }
-
-    }
-
-
-    void add_DiagCGproduct_back0(GPART r, GPART y, const int offs=0){
-      GPART x(*this);
-      const int dev=r.dev;
-      GELIB_ASSRT(x.get_dev()==dev);
-      GELIB_ASSRT(y.get_dev()==dev);
-
-      if(!r.reconcile_batches(x,y))
-	GELIB_NONFATAL("Skipping DiagCGproduct: batch dimensions cannot be reconciled.");
-
-      if(!r.reconcile_grids(x,y))
-	GELIB_NONFATAL("Skipping DiagCGproduct: grid dimensions cannot be reconciled.");
-
-      r.co_canonicalize_to_5d(x,y);
-
-      if(dev==0){
-	auto C=r.get_CGmatrix(x,y);
-	x.for_each_cell_multi(r,y,[&](const TENSOR& x, const TENSOR& r, const TENSOR& y){
-	    GPART::add_DiagCGproduct_back0_kernel(r,x,y,C,offs);});
-      }
-
-      if(dev==1){
-	GPART::add_DiagCGproduct_back0_dev(r,x,y,offs);
-      }
-
-    }
-
-
-    void add_DiagCGproduct_back1(GPART r, GPART x, const int offs=0){
-      GPART y(*this);
-      const int dev=r.dev;
-      GELIB_ASSRT(x.get_dev()==dev);
-      GELIB_ASSRT(y.get_dev()==dev);
-
-      if(!r.reconcile_batches(x,y))
-	GELIB_NONFATAL("Skipping DiagCGproduct: batch dimensions cannot be reconciled.");
-
-      if(!r.reconcile_grids(x,y))
-	GELIB_NONFATAL("Skipping DiagCGproduct: grid dimensions cannot be reconciled.");
-
-      r.co_canonicalize_to_5d(x,y);
-
-      if(dev==0){
-	auto C=r.get_CGmatrix(x,y);
-	y.for_each_cell_multi(r,x,[&](const TENSOR& y, const TENSOR& r, const TENSOR& x){
-	    GPART::add_DiagCGproduct_back1_kernel(r,x,y,C,offs);});
-      }
-
-      if(dev==1){
-	GPART::add_DiagCGproduct_back1_dev(r,x,y,offs);
-      }
-
-    }
-
-
-
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
 
@@ -764,4 +570,199 @@ namespace GElib{
 #endif 
 
 
+
+
+
+    /*
+    template<typename GPART2> // dummy template to break circular dependency
+    GPART CGproduct(const GPART2& y, const typename GPART2::IRREP_IX& ix) const{
+      auto& x=static_cast<const GPART&>(*this);
+      int m=GPART::GROUP::CGmultiplicity(x.get_ix(),y.get_ix(),ix);
+      GELIB_ASSRT(m>0);
+      GPART R(ix,x.dominant_batch(y),x.dominant_gdims(y),x.getn()*y.getn(),0,dev);
+      //R.add_CGproduct(x,y);
+      Gpart_add_CGproduct(R,x,y);
+      return R;
+    }
+    */
+
+    /*
+    void add_CGproduct(GPART x, GPART y, const int offs=0){
+      GPART r(*this);
+      const int dev=r.dev;
+      GELIB_ASSRT(x.get_dev()==dev);
+      GELIB_ASSRT(y.get_dev()==dev);
+
+      if(!r.reconcile_batches(x,y))
+	GELIB_NONFATAL("Skipping CGproduct: batch dimensions cannot be reconciled.");
+
+      if(!r.reconcile_grids(x,y))
+	GELIB_NONFATAL("Skipping CGproduct: grid dimensions cannot be reconciled.");
+
+      r.co_canonicalize_to_5d(x,y);
+
+      if(dev==0){
+	auto C=r.get_CGmatrix(x,y);
+	r.for_each_cell_multi(x,y,[&](const TENSOR& r, const TENSOR& x, const TENSOR& y){
+	    GPART::add_CGproduct_kernel(r,x,y,C,offs);
+	      });
+      }
+
+      if(dev==1){
+	GPART::add_CGproduct_dev(r,x,y,offs);
+      }
+
+    }
+    */
+
+    /*
+    void add_CGproduct_back0(GPART r, GPART y, const int offs=0){
+      GPART x(*this);
+      const int dev=r.dev;
+      GELIB_ASSRT(x.get_dev()==dev);
+      GELIB_ASSRT(y.get_dev()==dev);
+
+      if(!r.reconcile_batches(x,y))
+	GELIB_NONFATAL("Skipping CGproduct: batch dimensions cannot be reconciled.");
+
+      if(!r.reconcile_grids(x,y))
+	GELIB_NONFATAL("Skipping CGproduct: grid dimensions cannot be reconciled.");
+
+      r.co_canonicalize_to_5d(x,y);
+
+      if(dev==0){
+	auto C=r.get_CGmatrix(x,y);
+	x.for_each_cell_multi(r,y,[&](const TENSOR& x, const TENSOR& r, const TENSOR& y){
+	    GPART::add_CGproduct_back0_kernel(r,x,y,C,offs);});
+      }
+
+      if(dev==1){
+	GPART::add_CGproduct_back0_dev(r,x,y,offs);
+      }
+
+    }
+    */
+
+    /*
+    void add_CGproduct_back1(GPART r, GPART x, const int offs=0){
+      GPART y(*this);
+      const int dev=r.dev;
+      GELIB_ASSRT(x.get_dev()==dev);
+      GELIB_ASSRT(y.get_dev()==dev);
+
+      if(!r.reconcile_batches(x,y))
+	GELIB_NONFATAL("Skipping CGproduct: batch dimensions cannot be reconciled.");
+
+      if(!r.reconcile_grids(x,y))
+	GELIB_NONFATAL("Skipping CGproduct: grid dimensions cannot be reconciled.");
+
+      r.co_canonicalize_to_5d(x,y);
+
+      if(dev==0){
+	auto C=r.get_CGmatrix(x,y);
+	y.for_each_cell_multi(r,x,[&](const TENSOR& y, const TENSOR& r, const TENSOR& x){
+	    GPART::add_CGproduct_back1_kernel(r,x,y,C,offs);});
+      }
+
+      if(dev==1){
+	GPART::add_CGproduct_back1_dev(r,x,y,offs);
+      }
+
+    }
+    */
+    /*
+    template<typename GPART2> // dummy template to break circular dependency
+    GPART DiagCGproduct(const GPART2& y, const typename GPART2::IRREP_IX& ix) const{
+      auto& x=static_cast<const GPART&>(*this);
+      int m=GPART::GROUP::CGmultiplicity(x.get_ix(),y.get_ix(),ix);
+      GELIB_ASSRT(m>0);
+      GELIB_ASSRT(x.getn()==y.getn())
+      GPART R(x.dominant_batch(y),x.dominant_gdims(y),ix,x.getn(),0,dev);
+      R.add_DiagCGproduct(x,y);
+      return R;
+    }
+    */
+    /*
+    void add_DiagCGproduct(GPART x, GPART y, const int offs=0){
+      GPART r(*this);
+      const int dev=r.dev;
+      GELIB_ASSRT(x.get_dev()==dev);
+      GELIB_ASSRT(y.get_dev()==dev);
+
+      if(!r.reconcile_batches(x,y))
+	GELIB_NONFATAL("Skipping DiagCGproduct: batch dimensions cannot be reconciled.");
+
+      if(!r.reconcile_grids(x,y))
+	GELIB_NONFATAL("Skipping DiagCGproduct: grid dimensions cannot be reconciled.");
+
+      r.co_canonicalize_to_5d(x,y);
+
+      if(dev==0){
+	auto C=r.get_CGmatrix(x,y);
+	r.for_each_cell_multi(x,y,[&](const TENSOR& r, const TENSOR& x, const TENSOR& y){
+	    GPART::add_DiagCGproduct_kernel(r,x,y,C,offs);
+	      });
+      }
+
+      if(dev==1){
+	GPART::add_DiagCGproduct_dev(r,x,y,offs);
+      }
+
+    }
+    */
+    /*
+    void add_DiagCGproduct_back0(GPART r, GPART y, const int offs=0){
+      GPART x(*this);
+      const int dev=r.dev;
+      GELIB_ASSRT(x.get_dev()==dev);
+      GELIB_ASSRT(y.get_dev()==dev);
+
+      if(!r.reconcile_batches(x,y))
+	GELIB_NONFATAL("Skipping DiagCGproduct: batch dimensions cannot be reconciled.");
+
+      if(!r.reconcile_grids(x,y))
+	GELIB_NONFATAL("Skipping DiagCGproduct: grid dimensions cannot be reconciled.");
+
+      r.co_canonicalize_to_5d(x,y);
+
+      if(dev==0){
+	auto C=r.get_CGmatrix(x,y);
+	x.for_each_cell_multi(r,y,[&](const TENSOR& x, const TENSOR& r, const TENSOR& y){
+	    GPART::add_DiagCGproduct_back0_kernel(r,x,y,C,offs);});
+      }
+
+      if(dev==1){
+	GPART::add_DiagCGproduct_back0_dev(r,x,y,offs);
+      }
+
+    }
+    */
+
+    /*
+    void add_DiagCGproduct_back1(GPART r, GPART x, const int offs=0){
+      GPART y(*this);
+      const int dev=r.dev;
+      GELIB_ASSRT(x.get_dev()==dev);
+      GELIB_ASSRT(y.get_dev()==dev);
+
+      if(!r.reconcile_batches(x,y))
+	GELIB_NONFATAL("Skipping DiagCGproduct: batch dimensions cannot be reconciled.");
+
+      if(!r.reconcile_grids(x,y))
+	GELIB_NONFATAL("Skipping DiagCGproduct: grid dimensions cannot be reconciled.");
+
+      r.co_canonicalize_to_5d(x,y);
+
+      if(dev==0){
+	auto C=r.get_CGmatrix(x,y);
+	y.for_each_cell_multi(r,x,[&](const TENSOR& y, const TENSOR& r, const TENSOR& x){
+	    GPART::add_DiagCGproduct_back1_kernel(r,x,y,C,offs);});
+      }
+
+      if(dev==1){
+	GPART::add_DiagCGproduct_back1_dev(r,x,y,offs);
+      }
+
+    }
+    */
 

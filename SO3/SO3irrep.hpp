@@ -36,9 +36,10 @@ namespace GElib{
 
 
     template<typename TYPE>
-    cnine::TensorView<complex<TYPE> > matrix(const SO3element<TYPE>& R) const{
+    cnine::TensorView<complex<TYPE> > matrix(const SO3element<TYPE>& R, const int c=1) const{
 
-      // z-y-z convention, extrinsic 
+      // z-y-z convention, extrinsic
+      // the factor c is for O(3)
       double alpha,beta,gamma;
       TYPE r22=R(2,2);
       beta=acos(R(2,2));
@@ -56,22 +57,18 @@ namespace GElib{
       }
       //cout<<alpha<<" "<<beta<<" "<<gamma<<endl;
 
-      return matrix<TYPE>(alpha,beta,gamma);
+      return matrix<TYPE>(alpha,beta,gamma,c);
     }
 
 
     template<typename TYPE>
-    cnine::TensorView<complex<TYPE> > matrix(const double alpha, const double beta, const double gamma) const{
+    cnine::TensorView<complex<TYPE> > matrix(const double alpha, const double beta, const double gamma, const int c=1) const{
       cnine::TensorView<complex<TYPE> > M({2*l+1,2*l+1},0,0);
 
       for(int m1=-l; m1<=l; m1++)
 	for(int m2=-l; m2<=l; m2++){
-	  //complex<TYPE> d=littled(m2,m1,theta);
 	  complex<TYPE> d=littled(m2,m1,beta);
-	  //M.set(m1+l,m2+l,d*exp(-complex<TYPE>(0,m1*phi))*exp(-complex<TYPE>(0,m2*psi)));
-	  M.set(m1+l,m2+l,d*exp(complex<TYPE>(0,m1*alpha))*exp(complex<TYPE>(0,m2*gamma)));
-	  //M.set(m1+l,m2+l,d*exp(-complex<TYPE>(0,m1*alpha))*exp(-complex<TYPE>(0,m2*gamma)));
-	  //M.set(m2+l,m1+l,d*exp(-complex<TYPE>(0,m1*alpha))*exp(-complex<TYPE>(0,m2*gamma))); // why transpose?
+	  M.set(m1+l,m2+l,d*exp(complex<TYPE>(0,m1*alpha))*exp(complex<TYPE>(0,m2*gamma))*(TYPE)c);
 	}
       return M;
     }

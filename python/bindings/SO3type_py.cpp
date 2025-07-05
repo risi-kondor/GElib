@@ -25,8 +25,8 @@ py::class_<SO3type>(m,"SO3type","Class to store the type of an SO3-vector")
   .def("__setitem__",&SO3type::set)
   .def("get_parts",[](const SO3type& x){return x.parts;})
     
-  .def("CGproduct",[](const SO3type& x, const SO3type& y) {return x.CGproduct(y,-1);})
-  .def("CGproduct",[](const SO3type& x, const SO3type& y, int maxl) {return x.CGproduct(y,maxl);})
+  .def("CGproduct",[](const SO3type& x, const SO3type& y) {return CGproduct(x,y,-1);})
+  .def("CGproduct",[](const SO3type& x, const SO3type& y, int maxl) {return CGproduct(x,y,maxl);})
 
   .def("DiagCGproduct",[](const SO3type& x, const SO3type& y) {return x.DiagCGproduct(y,-1);})
   .def("DiagCGproduct",[](const SO3type& x, const SO3type& y, int maxl) {return x.DiagCGproduct(y,maxl);})

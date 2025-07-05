@@ -40,6 +40,10 @@ using namespace std;
 
 namespace GElib{
 
+  class GtypeBase{};
+  class GpartBase{};
+  class GvecBase{};
+
 
   template<typename TYPE>
   auto print_if_possible(const TYPE& x, int) -> decltype(x.to_print(),std::to_string(1)){

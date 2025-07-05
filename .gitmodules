@@ -1,4 +1,4 @@
 [submodule "deps/cnine"]
 	path = deps/cnine
-	url = https://github.com/risi-kondor/cnine.git
+	url = git@github.com:risi-kondor/GElib.git 
 	branch = main

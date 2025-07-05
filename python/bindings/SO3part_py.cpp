@@ -27,18 +27,18 @@ py::class_<SO3part<float> >(m,"SO3part",
 
 
   .def("add_CGproduct",[](SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs){
-      r.add_CGproduct(x,y,offs);},py::arg("x"),py::arg("y"),py::arg("offs")=0)
+	 Gpart_add_CGproduct(r,x,y,offs);},py::arg("x"),py::arg("y"),py::arg("offs")=0)
   .def("add_CGproduct_back0",[](SO3part<float>& r, SO3part<float>& g, const SO3part<float>& y, const int offs){
-      r.add_CGproduct_back0(g,y,offs);},py::arg("g"),py::arg("y"),py::arg("offs")=0)
+	 Gpart_add_CGproduct_back0(r,g,y,offs);},py::arg("g"),py::arg("y"),py::arg("offs")=0)
   .def("add_CGproduct_back1",[](SO3part<float>& r, SO3part<float>& g, const SO3part<float>& x, const int offs){
-      r.add_CGproduct_back1(g,x,offs);},py::arg("g"),py::arg("x"),py::arg("offs")=0)
+	 Gpart_add_CGproduct_back1(r,g,x,offs);},py::arg("g"),py::arg("x"),py::arg("offs")=0)
   
   .def("add_DiagCGproduct",[](SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs){
-      r.add_DiagCGproduct(x,y,offs);},py::arg("x"),py::arg("y"),py::arg("offs")=0)
+	 Gpart_add_DiagCGproduct(r,x,y,offs);},py::arg("x"),py::arg("y"),py::arg("offs")=0)
   .def("add_DiagCGproduct_back0",[](SO3part<float>& r, SO3part<float>& g, const SO3part<float>& y, const int offs){
-      r.add_DiagCGproduct_back0(g,y,offs);},py::arg("g"),py::arg("y"),py::arg("offs")=0)
+	 Gpart_add_DiagCGproduct_back0(r,g,y,offs);},py::arg("g"),py::arg("y"),py::arg("offs")=0)
   .def("add_DiagCGproduct_back1",[](SO3part<float>& r, SO3part<float>& g, const SO3part<float>& x, const int offs){
-      r.add_DiagCGproduct_back1(g,x,offs);},py::arg("g"),py::arg("x"),py::arg("offs")=0)
+	 Gpart_add_DiagCGproduct_back1(r,g,x,offs);},py::arg("g"),py::arg("x"),py::arg("offs")=0)
   
 //  .def("apply",&SO3part<float>::rotate)
   

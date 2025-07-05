@@ -52,7 +52,7 @@ namespace GElib{
     Gvec(const int __nbatch, const Gdims& __gdims, const GTYPE& tau, const int fcode=0, const int _dev=0):
       Gvec(__nbatch,__gdims,_dev){
       for(auto& p: tau.parts)
-	parts.emplace(p.first,GPART(__nbatch,__gdims,p.first,p.second,fcode,_dev));
+	parts.emplace(p.first,GPART(p.first,__nbatch,__gdims,p.second,fcode,_dev));
     }
 
 
@@ -304,7 +304,7 @@ namespace GElib{
       auto& x=static_cast<const GVEC&>(*this);
       //GVEC R=x.zeros_like(x.get_tau().CGproduct(y.get_tau(),limit));
       GVEC R(x.dominant_batch(y),x.dominant_gdims(y),x.get_tau().CGproduct(y.get_tau(),limit),0,x.get_dev());
-      R.add_CGproduct(x,y);
+      //R.add_CGproduct(x,y);
       return R;
     }
 
@@ -314,7 +314,8 @@ namespace GElib{
 	for(auto& q:y.parts)
 	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const IRREP_IX& z, const int m){
 	      if(!has_part(z)) return;
-	      part(z).add_CGproduct(p.second,q.second,offset[z]);
+	      //part(z).add_CGproduct(p.second,q.second,offset[z]);
+	      Gpart_add_CGproduct(part(z),p.second,q.second,offset[z]);
 	      offset[z]+=m*p.second.getn()*q.second.getn();
 	    });
     }
@@ -325,7 +326,8 @@ namespace GElib{
 	for(auto& q:y.parts)
 	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const IRREP_IX& z, const int m){
 	      if(!g.has_part(z)) return;
-	      p.second.add_CGproduct_back0(g.part(z),q.second,offset[z]);
+	      //p.second.add_CGproduct_back0(g.part(z),q.second,offset[z]);
+	      Gpart_add_CGproduct_back0(p.second,g.part(z),q.second,offset[z]);
 	      offset[z]+=m*p.second.getn()*q.second.getn();
 	    });
     }
@@ -336,7 +338,8 @@ namespace GElib{
 	for(auto& q:parts)
 	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const IRREP_IX& z, const int m){
 	      if(!g.has_part(z)) return;
-	      q.second.add_CGproduct_back1(g.part(z),p.second,offset[z]);
+	      //q.second.add_CGproduct_back1(g.part(z),p.second,offset[z]);
+	      Gpart_add_CGproduct_back1(q.second,g.part(z),p.second,offset[z]);
 	      offset[z]+=m*p.second.getn()*q.second.getn();
 	    });
     }
@@ -358,7 +361,7 @@ namespace GElib{
 	for(auto& q:y.parts)
 	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const IRREP_IX& z, const int m){
 	      if(!has_part(z)) return;
-	      part(z).add_DiagCGproduct(p.second,q.second,offset[z]);
+	      Gpart_add_DiagCGproduct(part(z),p.second,q.second,offset[z]);
 	      offset[z]+=m*p.second.getn();
 	    });
     }
@@ -369,7 +372,7 @@ namespace GElib{
 	for(auto& q:y.parts)
 	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const IRREP_IX& z, const int m){
 	      if(!g.has_part(z)) return;
-	      p.second.add_DiagCGproduct_back0(g.part(z),q.second,offset[z]);
+	      Gpart_add_DiagCGproduct_back0(p.second,g.part(z),q.second,offset[z]);
 	      offset[z]+=m*p.second.getn();
 	    });
     }
@@ -380,7 +383,7 @@ namespace GElib{
 	for(auto& q:parts)
 	  GROUP::for_each_CGcomponent(p.first,q.first,[&](const IRREP_IX& z, const int m){
 	      if(!g.has_part(z)) return;
-	      q.second.add_DiagCGproduct_back1(g.part(z),p.second,offset[z]);
+	      Gpart_add_DiagCGproduct_back1(q.second,g.part(z),p.second,offset[z]);
 	      offset[z]+=m*p.second.getn();
 	    });
     }
