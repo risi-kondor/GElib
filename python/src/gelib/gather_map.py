@@ -10,7 +10,7 @@
 # accompanied by a verbatim copy of the license. 
 
 import torch
-from . import gelib_base as gb
+import gelib_base as gb
 
 class gather_map:
 

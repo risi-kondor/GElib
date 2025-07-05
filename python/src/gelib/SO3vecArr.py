@@ -9,6 +9,7 @@
 
 from typing import Dict
 import torch
+import torch.types
 
 import gelib_base as gb
 from gelib import *
@@ -162,10 +163,12 @@ class SO3vecArr:
 
 
     def getb(self):
-        return self.parts[min(self.parts)].getb()
+        if not self.parts: return 0
+        return next(iter(self.parts.values())).getb()
 
     def get_adims(self):
-        return self.parts[min(self.parts)].get_adims()
+        if not self.parts: return []
+        return next(iter(self.parts.values())).get_adims()
 
     def tau(self):
         "Return the 'type' of the SO3vec, i.e., how many components it has corresponding to l=0,1,2,..."
@@ -186,7 +189,7 @@ class SO3vecArr:
 
     def l_max(self) -> int:
         if len(self.parts) == 0:
-            return 0
+            return -1
         return max(self.parts.keys())
 
     def requires_grad_(self):
@@ -225,6 +228,19 @@ class SO3vecArr:
         Gather the elements of this SO3vecArr into a new SO3vecArr according to the gather_map
         """
         return SO3vecArr(*[p.gather(gmap,dim) for p in self.parts.values])
+    
+    def to(self, device, non_blocking=False, copy=False, memory_format=torch.preserve_format):
+        assert device is not None
+        r=SO3vecArr()
+        for ro,part in self.parts.items():
+            r.parts[ro]=part.to(device, non_blocking=non_blocking, copy=copy, memory_format=memory_format)
+        return r
+    
+    @property
+    def device(self):
+        if not self.parts:
+            return torch.device("cpu")
+        return next(iter(self.parts.values())).device
 
         
     # ---- Products -----------------------------------------------------------------------------------------
@@ -267,11 +283,11 @@ class SO3vecArr:
         return self.backend().__str__()
     
     @property
-    def dtype(self) -> torch.dtype:
-        if len(self.parts) == 0:
-            return torch.cfloat
-        key, val = self.parts[0]
-        return val.dtype
+    def dtype(self):
+        if not self.parts:
+            return self._dtype if self._dtype is not None else torch.cfloat
+        min_l = min(self.parts.keys())
+        return self.parts[min_l].dtype
 
 
 
