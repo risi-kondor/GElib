@@ -162,12 +162,19 @@ namespace GElib{
   public: // ---- Conversions ---------------------------------------------------------------------------------
 
 
+    O3part(const TENSOR& x, const O3index& _ix):
+      BASE(x),
+      ix(_ix){
+      GELIB_ASSRT(ndims()>=3);
+      GELIB_ASSRT(_ix.getl()*2+1==dims(-2));
+    }
+
     O3part(const TENSOR& x, const int p):
-      BASE(x){
+      BASE(x),
+      ix((x.dims(-2)-1)/2,p){
       GELIB_ASSRT(ndims()>=3);
       GELIB_ASSRT(dims(-2)%2==1);
       GELIB_ASSRT(p==1||p==-1);
-      ix=O3index(dims(-2)%2-1,p);
     }
 
     /*

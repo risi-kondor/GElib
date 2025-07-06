@@ -10,18 +10,26 @@ from gelib.gelib_common import *
 # Removed redundant import of gather_map
 
 from gelib.SO3element import *
+from gelib.SO3type import *
 from gelib.SO3irrep import *
 from gelib.SO3part import *
 from gelib.SO3vec import *
+from gelib.SO3partArr import *
+from gelib.SO3vecArr import *
 
-from gelib.SO3type import *
 # from gelib.SO3weights import *
 # from gelib.SO3weightsArr import *
 # from gelib.SO3weights import *
 # from gelib.SO3mvec import *
 
-from gelib.SO3partArr import *
-from gelib.SO3vecArr import *
+from gelib.O3element import *
+from gelib.O3type import *
+from gelib.O3irrep import *
+from gelib.O3part import *
+#from gelib.O3vec import *
+#from gelib.O3partArr import *
+#from gelib.O3vecArr import *
+
 
 #from gelib.SO3weightsArr import *
 #from gelib.Wigner import *

@@ -17,6 +17,8 @@ py::class_<O3part<float> >(m,"O3part",
 
   .def_static("view",[](at::Tensor& x, int p){
 		return O3part<float>(tensorc::view(x),p);})
+  .def_static("view",[](at::Tensor& x, const pair<int,int>& mu){
+		return O3part<float>(tensorc::view(x),mu);})
 
   .def("add_gather",[](O3part<float>& r, const O3part<float>& x, const GatherMapB& gmap, const int d){
       r.add_gather(x,gmap,d);})
