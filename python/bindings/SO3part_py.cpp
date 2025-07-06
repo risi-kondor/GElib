@@ -1,13 +1,16 @@
-
-// This file is part of GElib, a C++/CUDA library for group
-// equivariant tensor operations. 
-// 
-// Copyright (c) 2023, Imre Risi Kondor
-//
-// This Source Code Form is subject to the terms of the Mozilla
-// Public License v. 2.0. If a copy of the MPL was not distributed
-// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+/*
+ * This file is part of GElib, a C++/CUDA library for group equivariant 
+ * tensor operations. 
+ *  
+ * Copyright (c) 2023, Imre Risi Kondor
+ *
+ * This source code file is subject to the terms of the noncommercial 
+ * license distributed with GElib in the file NONCOMMERICAL.TXT. Commercial 
+ * use is prohibited. All redistributed versions of this file (in orginal
+ * or modified form) must retain this copyright notice and must be 
+ * accompanied by a verbatim copy of the license. 
+ *
+ */
 
 py::class_<SO3part<float> >(m,"SO3part",
   "Class to store an array consisting of n vectors transforming according to a specific irreducible representation of SO(3)")
