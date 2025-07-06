@@ -64,7 +64,6 @@ namespace GElib{
     template<typename TYPE>
     cnine::TensorView<complex<TYPE> > matrix(const double alpha, const double beta, const double gamma, const int c=1) const{
       cnine::TensorView<complex<TYPE> > M({2*l+1,2*l+1},0,0);
-
       for(int m1=-l; m1<=l; m1++)
 	for(int m2=-l; m2<=l; m2++){
 	  complex<TYPE> d=littled(m2,m1,beta);

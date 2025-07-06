@@ -22,13 +22,22 @@
 
 #include "GatherMapB.hpp" // temporary 
 
+#include "Gpart.hpp"
+#include "Gvec.hpp"
+#include "CGproduct.hpp"
+#include "DiagCGproduct.hpp"
+
 #include "SO3element.hpp"
 #include "SO3irrep.hpp"
 #include "SO3type.hpp"
 #include "SO3part.hpp"
 #include "SO3vec.hpp"
-#include "CGproduct.hpp"
-#include "DiagCGproduct.hpp"
+
+#include "O3element.hpp"
+#include "O3irrep.hpp"
+#include "O3type.hpp"
+#include "O3part.hpp"
+#include "O3vec.hpp"
 
 
 GElib::GElibSession session;
@@ -55,6 +64,12 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   #include "SO3type_py.cpp"
   #include "SO3part_py.cpp"
   #include "SO3vec_py.cpp"
+
+  #include "O3element_py.cpp"
+  #include "O3irrep_py.cpp"
+  #include "O3type_py.cpp"
+  #include "O3part_py.cpp"
+  #include "O3vec_py.cpp"
 
 }
 

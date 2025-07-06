@@ -26,8 +26,6 @@
 namespace GElib{
 
 
-  
-
   template<typename TYPE>
   class O3part: public Gpart<O3part<TYPE>,complex<TYPE> >, public GpartBase{
   public:
@@ -163,13 +161,16 @@ namespace GElib{
 
   public: // ---- Conversions ---------------------------------------------------------------------------------
 
-    /*
-    O3part(const TENSOR& x):
+
+    O3part(const TENSOR& x, const int p):
       BASE(x){
       GELIB_ASSRT(ndims()>=3);
       GELIB_ASSRT(dims(-2)%2==1);
+      GELIB_ASSRT(p==1||p==-1);
+      ix=O3index(dims(-2)%2-1,p);
     }
 
+    /*
     O3part like(const TENSOR& x) const{
       GELIB_ASSRT(ndims()>=3);
       GELIB_ASSRT(dims(-2)==x.dims(-2));
@@ -266,7 +267,7 @@ namespace GElib{
 
     void add_spharm(const RTENSOR& x){
       GELIB_ASSRT(getp()==1-2*(getl()%2));
-      SO3part<TYPE>::add_spharm(x);
+      SO3part<TYPE>(*this).add_spharm(x);
     }
 
 

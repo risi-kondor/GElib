@@ -40,6 +40,11 @@ namespace GElib{
     O3type(const std::map<O3index,int>& _parts):
       BASE(_parts){}
 
+    O3type(const std::map<pair<int,int>,int>& _parts){
+      for(auto& p:_parts)
+	parts[O3index(p.first)]=p.second;
+    }
+
     O3type(const initializer_list<pair<O3index,int> >& list){
       for(auto p:list)
 	parts[p.first]=p.second;

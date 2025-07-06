@@ -28,7 +28,6 @@ namespace GElib{
 
     O3index ix;
     
-
     O3irrep(const O3index& _ix): ix(_ix){}
 
 
@@ -39,10 +38,17 @@ namespace GElib{
     cnine::TensorView<complex<TYPE> > matrix(const O3element<TYPE>& R) const{
       SO3irrep sub(ix.getl());
       int p=R.parity();
-      if(ix.getp()==1) return sub.matrix(SO3element(R*(TYPE)p));
-      else return sub.matrix(SO3element(R*(TYPE)p),p);
+      if(ix.getp()==1) return sub.matrix<TYPE>(SO3element(R*(TYPE)p));
+      else return sub.matrix<TYPE>(SO3element(R*(TYPE)p),p);
     }
     
+    template<typename TYPE>
+    cnine::TensorView<complex<TYPE> > matrix(const double alpha, const double beta, const double gamma, const int p) const{
+      SO3irrep sub(ix.getl());
+      if(ix.getp()==-1 && p==-1) return sub.matrix<TYPE>(alpha,beta,gamma,-1);
+      else return sub.matrix<TYPE>(alpha,beta,gamma,1);
+    }
+
 
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
