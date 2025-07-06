@@ -128,6 +128,9 @@ class O3part(torch.Tensor):
     def getb(self):
         return self.size(0)
 
+    def get_mu(self):
+        return self.mu
+
     def getp(self):
         return self.mu[1]
 

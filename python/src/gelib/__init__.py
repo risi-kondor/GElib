@@ -26,7 +26,7 @@ from gelib.O3element import *
 from gelib.O3type import *
 from gelib.O3irrep import *
 from gelib.O3part import *
-#from gelib.O3vec import *
+from gelib.O3vec import *
 #from gelib.O3partArr import *
 #from gelib.O3vecArr import *
 

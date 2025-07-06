@@ -18,7 +18,7 @@ py::class_<O3vec<float> >(m,"O3vec",
   .def_static("view",[](map<pair<int,int>,at::Tensor>& parts){
       O3vec<float> R;
       for(auto p:parts)
-	R.parts.emplace(O3index(p.first),O3part<float>(tensorc::view(p.second),p.first.second));
+	R.parts.emplace(O3index(p.first),O3part<float>(tensorc::view(p.second),p.first));
       if(R.parts.size()>0){
 	auto& P=R.parts.begin()->second;
 	R._nbatch=P.getb();

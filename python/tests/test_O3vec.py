@@ -1,29 +1,27 @@
 import torch
 import gelib as g
 
-P=g.SO3part.randn(1,2,3)
-print(P)
+A=g.O3vec.randn(1,{(1,1):2,(2,-1):2})
+Ad=g.O3vec.randn(1,{(1,1):2,(2,-1):2})
+B=g.O3vec.randn(3,{(2,1):1,(3,1):1})
+print(A.__repr__())
+print(A)
+print(B)
 
-print(P.getb())
-print(P.getl())
-print(P.getn())
+print("Rotate:")
+R0=g.O3element.random()
+A1=A.apply(R0)
+print(A1)
 
-A=torch.randn([2,3,4])
-P=g.SO3part.spharm(1,A)
-print(P)
+print("CGproduct:")
+C=g.CGproduct(A,A)
+print(C)
 
-R0=g.SO3element.random()
-P1=P.apply(R0)
-print(P1)
+print("CGproduct:")
+E=g.CGproduct(A,B)
+print(E)
 
-P=g.SO3part.randn(1,1,2)
-Q=g.SO3part.randn(1,2,2)
-R=g.CGproduct(P,Q,1)
-print(R)
+print("DiagCGproduct:")
+D=g.DiagCGproduct(A,Ad,2)
+print(D)
 
-S=g.DiagCGproduct(P,P,2)
-print(S)
-
-Q=g.SO3part.randn(3,2,2)
-R=g.CGproduct(Q,P,1)
-print(R)
