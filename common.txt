@@ -35,7 +35,7 @@ GELIB_CUDADIR=$(ROOTDIR)/cuda
 # GROUPSDIR=$(ROOTDIR)/objects/groups
 # SNDIR=$(ROOTDIR)/objects/Sn
 
-CFLAGS= -std=c++17 -O3 -ferror-limit=3  
+CFLAGS= -std=c++17 -O3 #-ferror-limit=3  
 INCLUDE= -I $(ROOTDIR)/include 
 LIBS= -lstdc++ -lm -lpthread 
 
@@ -52,6 +52,10 @@ endif
 ifdef WITH_CUDA
 MACROS+=-D_WITH_CUDA
 endif 
+
+ifndef WITH_CUDA
+CFLAGS+= -ferror-limit=3 
+endif
 
 ifdef WITH_CUBLAS
 MACROS+=-D_WITH_CUBLAS

@@ -78,7 +78,7 @@ namespace GElib{
     }
 
     if(dev==1){
-      GPART::add_CGproduct_back0_dev(r,x,y,offs);
+      GPART::add_CGproduct_back0_dev(x,r,y,offs);
     }
   }
 
@@ -99,7 +99,7 @@ namespace GElib{
     }
 
     if(dev==1){
-      GPART::add_CGproduct_back1_dev(r,x,y,offs);
+      GPART::add_CGproduct_back1_dev(y,r,x,offs);
     }
   }
 

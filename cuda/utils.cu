@@ -41,8 +41,23 @@ __forceinline__ __device__ void loadf(float* dest, const float* src, const int n
     int n0=I*nthreads;
     for(int i=0; i<I; i++)
       dest[i*nthreads+tix]=src[(i*nthreads+tix)*s];
-    if(tix<n-I*n0)
+    if(tix<n-n0)
       dest[n0+tix]=src[(n0+tix)*s];
+  }
+}
+
+
+__forceinline__ __device__ void savef(float* dest, const float* src, const int n, const int s){
+  int nthreads=blockDim.x;
+  if(n<=nthreads){
+    if(tix<n) dest[tix*s]=src[tix];
+  }else{
+    int I=n/nthreads;
+    int n0=I*nthreads;
+    for(int i=0; i<I; i++)
+      dest[(i*nthreads+tix)*s]=src[i*nthreads+tix];
+    if(tix<n-n0)
+      dest[(n0+tix)*s]=src[n0+tix];
   }
 }
 
@@ -53,6 +68,15 @@ __forceinline__ __device__ void load_tile(float* dest, const float* src, const i
   if(tix<J){
     for(int i=0; i<I; i++)
       dest[i*J+tix]=src[i*s0+tix*s1];
+  }
+}
+
+// Load an I x J tile to dest
+// assumption: number of threads is at least I
+__forceinline__ __device__ void save_tile(float* dest, const float* src, const int I, const int J, const int s0, const int s1){
+  if(tix<J){
+    for(int i=0; i<I; i++)
+      dest[i*s0+tix*s1]=src[i*J+tix];
   }
 }
 

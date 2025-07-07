@@ -19,7 +19,6 @@
 #include <cuda_runtime.h>
 
 #include "SO3CGbank.hpp"
-#include "Ctensor5_view.hpp"
 #include "GPUtensor.hpp"
 #include "utils.hpp"
 #include "utils.cu"

@@ -29,13 +29,13 @@ int main(int argc, char** argv){
   auto z=CGproduct(x,y,1);
   auto Z=CGproduct(X,Y,1);
   print(z);
-  print(zg);
+  print(Z);
 
   cout<<"CG product back0:"<<endl;
   auto xg=x.zeros_like();
   Gpart_add_CGproduct_back0(xg,z,y);
   auto Xg=X.zeros_like();
-  Gpart_add_CGproduct_back0(Xg,z,Y);
+  Gpart_add_CGproduct_back0(Xg,Z,Y);
   print(xg);
   print(Xg);
 
@@ -43,7 +43,7 @@ int main(int argc, char** argv){
   auto yg=x.zeros_like();
   Gpart_add_CGproduct_back1(yg,z,x);
   auto Yg=Y.zeros_like();
-  Gpart_add_CGproduct_back1(Yg,z,X);
+  Gpart_add_CGproduct_back1(Yg,Z,X);
   print(yg);
   print(Yg);
 
