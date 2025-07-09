@@ -10,7 +10,7 @@
  * or modified form) must retain this copyright notice and must be 
  * accompanied by a verbatim copy of the license. 
  *
- */
+ */ 
 
 #ifndef _GElibGirrep
 #define _GElibGirrep
