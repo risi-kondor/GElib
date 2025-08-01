@@ -50,7 +50,7 @@ extern GElib::SO3SPHgen SO3_SPHgen; // Moved into namespace GElib
 
 	      if(len2==0 || std::isnan(vx/len2) || std::isnan(vy/len2)){
 		float a=sqrt(((float)(2*l+1))/(M_PI*4.0));
-		r.inc(0,j,a); // check this
+		r.inc(l,j,a); // check this
 	      }else{
 		complex<float> cphi(vx/len2,vy/len2);
 		auto P=SO3_SPHgen(l,vz/length);
