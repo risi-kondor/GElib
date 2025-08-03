@@ -1,12 +1,16 @@
-// This file is part of GElib, a C++/CUDA library for group
-// equivariant tensor operations. 
-// 
-// Copyright (c) 2024, Imre Risi Kondor
-//
-// This Source Code Form is subject to the terms of the Mozilla
-// Public License v. 2.0. If a copy of the MPL was not distributed
-// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+/*
+ * This file is part of GElib, a C++/CUDA library for group equivariant 
+ * tensor operations. 
+ *  
+ * Copyright (c) 2023, Imre Risi Kondor
+ *
+ * This source code file is subject to the terms of the noncommercial 
+ * license distributed with GElib in the file NONCOMMERICAL.TXT. Commercial 
+ * use is prohibited. All redistributed versions of this file (in orginal
+ * or modified form) must retain this copyright notice and must be 
+ * accompanied by a verbatim copy of the license. 
+ *
+ */
 
 #ifndef _GElibSO3part
 #define _GElibSO3part
@@ -15,8 +19,8 @@
 #include "SO3group.hpp"
 #include "SO3type.hpp"
 #include "SO3CGbank.hpp"
-
-#include "SO3part_addSpharmFn.hpp"
+#include "TensorUtils.hpp"
+//#include "SO3part_addSpharmFn.hpp"
 
 
 namespace GElib{
@@ -32,6 +36,7 @@ namespace GElib{
   // void SO3part_addDiagCGproduct_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
   // void SO3part_addDiagCGproduct_back0_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
   // void SO3part_addDiagCGproduct_back1_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
+  void addSPharm_cu(const SO3part<float> r, TensorView<float> x, const cudaStream_t& stream);
   #endif
 
   
@@ -142,8 +147,8 @@ namespace GElib{
 
 
     static SO3part spharm(const int l, const cnine::TensorView<TYPE>& x){
-      CNINE_ASSRT(x.ndims()==3);
-      CNINE_ASSRT(x.dim(2)==3);
+      GELIB_ASSRT(x.ndims()==3);
+      GELIB_ASSRT(x.dim(1)==3);
       SO3part R=zeros_like(l,x);
       R.add_spharm(x);
       return R;
@@ -331,8 +336,61 @@ namespace GElib{
   public: // ---- Spherical harmonics -----------------------------------------------------------------------
 
 
-    void add_spharm(const RTENSOR& x){
-      SO3part_addSpharmFn<TYPE>()(*this,x);
+    void add_spharm(const RTENSOR& _x){
+
+      RTENSOR x(_x);
+      int xb=cnine::ifthen(x.ndims()>2,x.dim(0),1);
+      int b=std::max(getb(),xb);
+      if((xb!=getb()) && (xb!=1) && (getb()!=1)) 
+	GELIB_SKIP("batch dimensions cannot be reconciled.");
+      int L=getl();
+      int nc=getn();
+
+      if(get_dev()==0){
+	this->template for_each_cell_multi<TYPE>(x,[&](const int b, const int g, const TENSOR& r, const RTENSOR& x){
+	    for(int j=0; j<nc; j++){
+
+	      float vx=x(0,j);
+	      float vy=x(1,j);
+	      float vz=x(2,j);
+	      float length=sqrt(vx*vx+vy*vy+vz*vz); 
+	      float len2=sqrt(vx*vx+vy*vy);
+
+	      if(len2==0 || std::isnan(vx/len2) || std::isnan(vy/len2)){
+		float a=sqrt(((float)(2*L+1))/(M_PI*4.0));
+		r.inc(L,j,a); 
+	      }else{
+		//auto P=SO3_SPHgen(l,vz/length);
+
+		// Recursively compute associated Legendre
+		float x=vz/length;
+		RTENSOR P({2*L+1,2*L+1},0,0);
+		P(0,0)=1;
+		float xfact=sqrt(1.0-x*x);
+		for(int l=1; l<=L; l++){
+		  P(l,l)=-(2.0*l-1.0)*xfact*P(l-1,l-1);
+		  P(l,l-1)=(2.0*l-1.0)*P(l-1,l-1)*x;
+		  for(int m=0; m<l-1; m++)
+		    P(l,m)=((2.0*l-1.0)*P(l-1,m)*x-(l+m-1.0)*(P(l-2,m)))/((float)(l-m));
+		}
+
+		//vector<complex<float> > phase(l+1);
+		complex<float> cphi(vx/len2,vy/len2);
+		complex<float> phase(sqrt((2.0*L+1.0)/(M_PI*4.0)),0);
+		//for(int m=1; m<=L; m++)
+		//phase[m]=cphi*sqrt(((float)(L-m))/((float)(L+m)))*phase[m-1];
+	    
+		for(int m=0; m<=L; m++){
+		  complex<float> a=phase*P(L,m);
+		  r.inc(L+m,j,a);
+		  if(m>0) r.inc(L-m,j,complex<float>(1-2*(m%2))*std::conj(a));
+		  if(m<L) phase*=cphi*sqrt(((float)(L-m))/((float)(L+m)));
+		}
+	      }
+	    }
+	  });
+      }// dev==0
+
     }
 
 

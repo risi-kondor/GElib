@@ -13,6 +13,7 @@ ifdef WITH_CUDA
 INCLUDE+=-I$(CUDA_HOME)/include
 CUDA_OBJECTS+=GElib_base.o 
 CUDA_OBJECTS+=SO3part_addCGproduct.o SO3part_addCGproduct_back0.o SO3part_addCGproduct_back1.o 
+CUDA_OBJECTS+=SPharm.o 
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
 endif 
 

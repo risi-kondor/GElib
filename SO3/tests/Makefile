@@ -27,6 +27,7 @@ CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3part_addCGproduct.o $(GELIB_CUDADIR)/SO3part_a
 #CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3part_addDiagCGproduct.o $(GELIB_CUDADIR)/SO3part_addDiagCGproduct_back0.o $(GELIB_CUDADIR)/SO3part_addDiagCGproduct_back1.o 
 #CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3Fpart_addFproduct.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back0.o $(GELIB_CUDADIR)/SO3Fpart_addFproduct_back1.o 
 #CUDA_OBJECTS+=$(GELIB_CUDADIR)/SO3part_addCGtransform.o 
+CUDA_OBJECTS+=$(GELIB_CUDADIR)/SPharm.o 
 CUDA_EXTERNS+=$(CNINE_ROOT)/include/Cnine_base.cu 
 endif 
 

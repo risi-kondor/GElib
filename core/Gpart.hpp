@@ -184,6 +184,17 @@ namespace GElib{
       return true;
     }
 
+    /*
+    bool reconcile_batches_with_2Dtensor(Gpart& x){
+      int xb=cnine::ifthen(x.ndims()>2,x.dim(0),1);
+      int b=std::max(getb(),xb);
+      if(dims[0]!=1 &&  dims[0]!=b) return false;
+      if(xb!=1 &&  xb!=b) return false;
+      promote_batch_to(b);
+      promote_batch_ofto(x,b);
+      return true;
+    }
+    */
 
   public: // ---- Grid ---------------------------------------------------------------------------------------
 
@@ -454,6 +465,29 @@ namespace GElib{
 	GELIB_ASSRT(g!=-1);
 	dims=cnine::Gdims({dims[0],g,1,dims[d-2],dims[d-1]});
 	strides=cnine::GstridesB({strides[0],(size_t)s,(size_t)0,strides[d-2],strides[d-1]});
+      }
+    }
+
+
+    template<typename TYPE2>
+    static void canonicalize_to_5d(cnine::TensorView<TYPE2>& x){
+      int d=x.dims.size();
+      if(d==3){
+	x.dims=cnine::Gdims({x.dims[0],1,1,x.dims[1],x.dims[2]});
+	x.strides=cnine::GstridesB({x.strides[0],(size_t)0,(size_t)0,x.strides[1],x.strides[2]});
+      }
+      if(d==4){
+	x.dims=cnine::Gdims({x.dims[0],x.dims[1],1,x.dims[2],x.dims[3]});
+	x.strides=cnine::GstridesB({x.strides[0],x.strides[1],(size_t)0,x.strides[2],x.strides[3]});
+      }
+      if(d==5) return;
+      if(d>5){
+	Gdims gdims=x.dims.chunk(1,d-3);
+	GstridesB gstrides=x.strides.chunk(1,d-3);
+	auto [s,g]=gstrides.fuser(gdims);
+	GELIB_ASSRT(g!=-1);
+	x.dims=cnine::Gdims({x.dims[0],g,1,x.dims[d-2],x.dims[d-1]});
+	x.strides=cnine::GstridesB({x.strides[0],(size_t)s,(size_t)0,x.strides[d-2],x.strides[d-1]});
       }
     }
 

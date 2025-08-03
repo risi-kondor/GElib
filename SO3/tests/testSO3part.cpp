@@ -45,8 +45,8 @@ int main(int argc, char** argv){
   print(DiagCGproduct(xg,yg,1));
   #endif
 
-  //TensorView<float> M({1,3,2},4,0);
-  //auto r=SO3part<float>::spharm(M,2);
-  //print(r);
+  TensorView<float> M({1,3,2},4,0);
+  auto r=SO3part<float>::spharm(2,M);
+  print(r);
 
 }

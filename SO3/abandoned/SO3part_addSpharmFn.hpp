@@ -67,7 +67,7 @@ extern GElib::SO3SPHgen SO3_SPHgen; // Moved into namespace GElib
 		}
 	      }
 	    }
-	  });
+	 });
       }// dev==0
  
    }
