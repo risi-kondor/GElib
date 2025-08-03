@@ -371,7 +371,7 @@ namespace GElib{
 		  P(l,l)=-(2.0*l-1.0)*xfact*P(l-1,l-1);
 		  P(l,l-1)=(2.0*l-1.0)*P(l-1,l-1)*x;
 		  for(int m=0; m<l-1; m++)
-		    P(l,m)=((2.0*l-1.0)*P(l-1,m)*x-(l+m-1.0)*(P(l-2,m)))/((float)(l-m));
+		    P(l,m)=((2.0*l-1.0)*P(l-1,m)*x-((float)(l+m-1.0))*(P(l-2,m)))/((float)(l-m));
 		}
 
 		//vector<complex<float> > phase(l+1);
@@ -384,7 +384,8 @@ namespace GElib{
 		  complex<float> a=phase*P(L,m);
 		  r.inc(L+m,j,a);
 		  if(m>0) r.inc(L-m,j,complex<float>(1-2*(m%2))*std::conj(a));
-		  if(m<L) phase*=cphi*sqrt(((float)(L-m))/((float)(L+m)));
+		  if(m<L) phase*=cphi/((float)sqrt((L-m)*(L+m+1)));
+		  //if(m==L-1) phase*=cphi*sqrt(((float)1.0)/((float)(L+m+1)));
 		}
 	      }
 	    }
