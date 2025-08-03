@@ -388,7 +388,7 @@ namespace GElib{
 		  complex<float> a=phase*P(L,m);
 		  r.inc(L+m,j,a);
 		  if(m>0) r.inc(L-m,j,complex<float>(1-2*(m%2))*std::conj(a));
-		  if(m<L) phase*=cphi/((float)sqrt((L-m)*(L+m+1)));
+		  if(m<L) phase*=cphi/sqrt((float)(L-m)*(L+m+1));
 		  //if(m==L-1) phase*=cphi*sqrt(((float)1.0)/((float)(L+m+1)));
 		}
 	      }

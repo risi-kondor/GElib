@@ -24,4 +24,8 @@ print(A)
 B=g.SO3part.spharm(l,M)
 print(B)
 
+Mg=M.to('cuda:0')
+Bg=g.SO3part.spharm(l,Mg)
+print(Bg)
+
 print(A/B)

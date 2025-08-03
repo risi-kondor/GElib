@@ -52,12 +52,12 @@ class SO3part(torch.Tensor):
         return SO3part(torch.randn([b,2*l+1,n],dtype=torch.complex64,device=device))
 
     @classmethod
-    def spharm(self,l,X,device='cpu'):
+    def spharm(self,l,X):
         """
         Return the spherical harmonics of the vectors in the tensor (x,y,z)
         """
         assert(X.dim()==3)
-        R = SO3part.zeros(X.size(0),l,X.size(2),device=device)
+        R = SO3part.zeros(X.size(0),l,X.size(2),device=X.device)
         R.backend().add_spharm(X)
         return R
 

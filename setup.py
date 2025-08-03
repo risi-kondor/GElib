@@ -115,6 +115,7 @@ def main():
             cnine_folder+'include/Cnine_base.cu',
             cnine_folder+'cuda/TensorView_assign.cu',
             'cuda/GElib_base.cu',
+            'cuda/SPharm.cu',
             'cuda/SO3part_addCGproduct.cu',
             'cuda/SO3part_addCGproduct_back0.cu',
             'cuda/SO3part_addCGproduct_back1.cu',

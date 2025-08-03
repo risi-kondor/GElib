@@ -77,7 +77,7 @@ namespace GElib{
       thrust::complex<float> a=phase*(*(prev+m*ss));
       *reinterpret_cast<thrust::complex<float>*>(rarr+m*rs)+=a;
       if(m>0) *reinterpret_cast<thrust::complex<float>*>(rarr-m*rs)+=thrust::conj(a)*(1-2*(m%2));
-      if(m<L) phase*=cphi*sqrt(((float)(L-m))/((float)(L+m)));
+      if(m<L) phase*=cphi/sqrt((float)(L-m)*(L+m+1));
     }
     
   }

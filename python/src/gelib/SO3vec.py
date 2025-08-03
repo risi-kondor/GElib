@@ -98,13 +98,13 @@ class SO3vec:
         return R
 
     @classmethod
-    def spharm(self,l,X,device='cpu'):
+    def spharm(self,l,X):
         """
         Return the spherical harmonics of the vectors in the tensor X
         """
         assert(X.dim()==3)
         R=SO3vec()
-        R.parts[l]=SO3part.spharm(b,l,X,device=device)
+        R.parts[l]=SO3part.spharm(b,l,X,device=X.device)
         return R
 
     @classmethod
