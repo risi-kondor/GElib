@@ -48,11 +48,12 @@ int main(int argc, char** argv){
   print(Yg);
 
 
-  TensorView<float> m({1,3,1},4,0);
+  TensorView<float> m({1,3,6},4,0);
   TensorView<float> M(m,1);
   cout<<"Spherical harmonics:"<<endl;
   cout<<SO3part<float>::spharm(2,m)<<endl;
   cout<<SO3part<float>::spharm(2,M)<<endl;
+  cout<<M<<endl;
 
   #endif
 
