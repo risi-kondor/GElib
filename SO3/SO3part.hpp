@@ -36,7 +36,7 @@ namespace GElib{
   // void SO3part_addDiagCGproduct_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
   // void SO3part_addDiagCGproduct_back0_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
   // void SO3part_addDiagCGproduct_back1_cu(const SO3part<float>& r, const SO3part<float>& x, const SO3part<float>& y, const int offs, const cudaStream_t& stream);
-  void addSPharm_cu(const SO3part<float> r, TensorView<float> x, const cudaStream_t& stream);
+  void addSPharm_cu(const SO3part<float> r, cnine::TensorView<float> x, const cudaStream_t& stream);
   #endif
 
   
@@ -130,8 +130,9 @@ namespace GElib{
       return BASE::zeros_like(2*l+1,n);
     }
 
-    static SO3part zeros_like(const int l, const cnine::TensorView<TYPE>& x, const int fcode=0, const int dev=0){
+    static SO3part zeros_like(const int l, const cnine::TensorView<TYPE>& x, const int fcode=0, int dev=-1){
       int d=x.ndims();
+      if(dev==-1) dev=x.get_dev();
       int nc=cnine::ifthen(d>1,x.dims(-1),1);
       int b=cnine::ifthen(d>2,x.dims[0],1);
       Gdims gdims=cnine::ifthen(d>3,x.dims.chunk(1,d-3),Gdims());
@@ -346,7 +347,10 @@ namespace GElib{
       int L=getl();
       int nc=getn();
 
-      if(get_dev()==0){
+      int dev=get_dev();
+      GELIB_ASSRT(_x.get_dev()==dev);
+
+      if(dev==0){
 	this->template for_each_cell_multi<TYPE>(x,[&](const int b, const int g, const TENSOR& r, const RTENSOR& x){
 	    for(int j=0; j<nc; j++){
 
@@ -391,6 +395,10 @@ namespace GElib{
 	    }
 	  });
       }// dev==0
+
+      if(dev==1){
+	CUDA_STREAM(addSPharm_cu(*this,_x,stream));
+      }
 
     }
 

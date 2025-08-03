@@ -74,7 +74,7 @@ namespace cnine{
       *(arr+i0*strides[0]+i1*strides[1]+i2*strides[2]+i3*strides[3])=v;
     }
 
-    int offset(const int i0, const int i1, const int i2, const int i3, const int i4) const{
+    __device__ int offset(const int i0, const int i1, const int i2, const int i3, const int i4) const{
       return i0*strides[0]+i1*strides[1]+i2*strides[2]+i3*strides[3]+i4*strides[4];
     }
 

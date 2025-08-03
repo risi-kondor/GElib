@@ -28,25 +28,26 @@
 namespace GElib{
 
   __global__ void add_spharm_kernel(cnine::GPUtensor<float,5> r, 
-				    const cnine::GPUtensor<float,5> x){
+				    const cnine::GPUtensor<float,5> M){
     extern __shared__ unsigned char _shared[]; 
-    float* arr=reinterpret_cast<float*>(_shared);
 
     const int b0=blockIdx.x;
     const int b1=blockIdx.y;
     const int b2=blockIdx.z;
     const int L=(r.dims[3]-1)/2;
     const int t=threadIdx.x;
+    const int ss=blockDim.x;
+    float* arr=reinterpret_cast<float*>(_shared)+t;
     
-    const float* xarr=x.arr+x.offset(b0,b1,b2,0,t);
+    const float* xarr=M.arr+M.offset(b0,b1,b2,0,t);
     const float vx=*(xarr);
-    const float vy=*xarr+x.strides[3];
-    const float vz=*xarr+2*x.strides[3];
+    const float vy=*(xarr+M.strides[3]);
+    const float vz=*(xarr+2*M.strides[3]);
     const float length=sqrt(vx*vx+vy*vy+vz*vz); 
     const float len2=sqrt(vx*vx+vy*vy);
     
     float* rarr=r.arr+r.offset(b0,b1,b2,L,t);
-    int rs=r.strides[4];
+    int rs=r.strides[3];
 
     if(len2==0 || std::isnan(vx/len2) || std::isnan(vy/len2)){
       (*rarr)+=sqrt(((float)(2*L+1))/(M_PI*4.0));
@@ -60,29 +61,29 @@ namespace GElib{
     float* prev=arr;
     float* current=arr+1;
     for(int l=1; l<=L; l++){
-      *(current+l)=-(2.0*l-1.0)*xfact*(*(prev+l-1));
-      *(current+l-1)=(2.0*l-1.0)*(*(prev+l-1))*x;
+      *(current+l*ss)=-(2.0*l-1.0)*xfact*(*(prev+(l-1)*ss));
+      *(current+(l-1)*ss)=(2.0*l-1.0)*(*(prev+(l-1)*ss))*x;
       for(int m=0; m<l-1; m++)
-	*(current+m)=((2.0*l-1.0)*(*(prev+m))*x-(l+m-1.0)*(*(pprev+m)))/((float)(l-m));
+	*(current+m*ss)=((2.0*l-1.0)*(*(prev+m*ss))*x-(l+m-1.0)*(*(pprev+m*ss)))/((float)(l-m));
       pprev=prev;
       prev=current;
-      current+=l+1;
+      current+=(l+1)*ss;
     }
 
     thrust::complex<float> cphi(vx/len2,vy/len2);
     thrust::complex<float> phase(sqrt((2.0*L+1.0)/(M_PI*4.0)),0);
 	    
     for(int m=0; m<=L; m++){
-      thrust::complex<float> a=phase*P(L,m);
-      reinterpret_cast<thurst::complex<float>*>(*rarr+m*rs)+=a;
-      if(m>0) reinterpret_cast<thurst::complex<float>*>(*rarr-m)+=std::conj(a)*(1-2*(m%2));
+      thrust::complex<float> a=phase*(*(prev+m*ss));
+      *reinterpret_cast<thrust::complex<float>*>(rarr+m*rs)+=a;
+      if(m>0) *reinterpret_cast<thrust::complex<float>*>(rarr-m*rs)+=thrust::conj(a)*(1-2*(m%2));
       if(m<L) phase*=cphi*sqrt(((float)(L-m))/((float)(L+m)));
     }
     
   }
 
 
-  void addSPharm_cu(const SO3part<float> r, TensorView<float> x, const cudaStream_t& stream){
+  void addSPharm_cu(SO3part<float> r, cnine::TensorView<float> x, const cudaStream_t& stream){
 
     int b=r.getb();
     int l=r.getl();
@@ -95,7 +96,7 @@ namespace GElib{
     if(x.dim(-2)!=3) GELIB_SKIP("dim(-2) of x must be 3.")
 
     if(x.ndims()>2){
-      if(x.dims[0]==1) {x.dims[0]=b; x.strides[0]=0} 
+      if(x.dims[0]==1) {x.dims[0]=b; x.strides[0]=0;} 
       else {if(x.dims[0]!=b) GELIB_SKIP("batch dimensions cannot be reconciled.");}
     }else{
       x.dims.prepend(b);
@@ -112,7 +113,7 @@ namespace GElib{
 
     if((size_t)(r.dims[0])*r.dims[1]*r.dims[2]>INT_MAX) GELIB_SKIP("product of block dimensions exceeds 2^31-1");
     if(n>1024) GELIB_SKIP("Channel dimension exceeds 1024");
-    if((l+1)*(l+2)/2>384) GELIB_SKIP("Legendre factors do not fit in shared memory")
+    if(n*(l+1)*(l+2)/2>49152) GELIB_SKIP("Legendre factors do not fit in shared memory")
 
     dim3 blocks(r.dims[0],r.dims[1],r.dims[2]);
     int mem=n*(l+1)*(l+2)/2;
