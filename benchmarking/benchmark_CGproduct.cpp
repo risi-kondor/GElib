@@ -4,6 +4,8 @@
 #include "SO3part.hpp"
 #include "CGproduct.hpp"
 #include "DiagCGproduct.hpp"
+#include "LatexDocument.hpp"
+
 
 using namespace cnine;
 using namespace GElib;
@@ -85,6 +87,12 @@ int main(int argc, char** argv){
 	
       }
     }
+
+    LatexDoc doc;
+
+    doc<<"\section{CG-product}"<<endl;
+
+    doc.compile("results");
 
   }
 
