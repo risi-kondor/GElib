@@ -133,12 +133,12 @@ class SO3vecArr:
         return R
 
     @classmethod
-    def spharm(self, l : int, X : torch.Tensor, device : str = 'cpu') -> 'SO3vecArr':
+    def spharm(self, l : int, X : torch.Tensor) -> 'SO3vecArr':
         """
         Return the spherical harmonics of the vector (x,y,z) for all ro <= l.
         """
         R=SO3vecArr()
-        R.parts[l]=SO3partArr.spharm(l,X,device=device)
+        R.parts[l]=SO3partArr.spharm(l,X,device=X.device)
         return R
 
     @classmethod
