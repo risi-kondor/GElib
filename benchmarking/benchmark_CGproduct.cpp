@@ -38,9 +38,9 @@ int main(int argc, char** argv){
   if(argc>1) dev=stoi(argv[1]);
 
   //int niter=10;
-  vector<int> l_values({1,2,3,5,7,12});
+  vector<int> l_values({7,12,15});
   vector<int> nc_values({4,8,16,32,64});
-  vector<int> b_values({1,8});
+  vector<int> b_values({1,8,32});
 
   TensorView<double> flops1({b_values.size(),l_values.size(),l_values.size(),l_values.size(),nc_values.size()},0,0);
 
