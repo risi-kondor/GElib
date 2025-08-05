@@ -5,7 +5,7 @@ import math
 import time
 
 torch.set_printoptions(sci_mode=False)
-device="cpu"
+device="cuda"
 
 A=torch.randn(10,3)
 
@@ -41,7 +41,7 @@ for nc in [1,4,16,64,256,1024,2048]:
     A=torch.randn(nc,3,device=device)
     gA=A.t().unsqueeze(0)
     
-    for l in [2,3,5,7]:
+    for l in [2,3,5,7,9,11]:
         niter=100
 
         start=time.time()

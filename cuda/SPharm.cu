@@ -113,12 +113,12 @@ namespace GElib{
 
     if((size_t)(r.dims[0])*r.dims[1]*r.dims[2]>INT_MAX) GELIB_SKIP("product of block dimensions exceeds 2^31-1");
     if(n>1024) GELIB_SKIP("Channel dimension exceeds 1024");
-    if(n*(l+1)*(l+2)/2>49152) GELIB_SKIP("Legendre factors do not fit in shared memory")
+    if(4*n*(l+1)*(l+2)/2>49152) GELIB_SKIP("Legendre factors do not fit in shared memory")
 
     dim3 blocks(r.dims[0],r.dims[1],r.dims[2]);
     int mem=n*(l+1)*(l+2)/2;
 
-    add_spharm_kernel<<<blocks,n,mem,stream>>>(rv,xv);
+    add_spharm_kernel<<<blocks,n,4*mem,stream>>>(rv,xv);
 
   }
 
