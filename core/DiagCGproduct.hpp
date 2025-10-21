@@ -32,7 +32,6 @@ namespace GElib{
   template<typename GPART>
   typename std::enable_if<std::is_base_of<GpartBase, GPART>::value, GPART>::type
   DiagCGproduct(const GPART& x, const GPART& y, const typename GPART::IRREP_IX& ix){
-    //auto& x=static_cast<const GPART&>(*this);
     int m=GPART::GROUP::CGmultiplicity(x.get_ix(),y.get_ix(),ix);
     GELIB_ASSRT(m>0);
     GELIB_ASSRT(x.getn()==y.getn());

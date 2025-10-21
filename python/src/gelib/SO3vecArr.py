@@ -38,7 +38,7 @@ class SO3vecArr:
         for x in args:
             assert isinstance(x,torch.Tensor)
             p=SO3partArr(x)
-            self.parts[p.getl()]=x
+            self.parts[p.getl()]=p
             
 
     # ---- Static constructors ------------------------------------------------------------------------------

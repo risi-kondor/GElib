@@ -76,9 +76,9 @@ namespace GElib{
     void unroller(vparams& v, const cnine::GridArgument& x, const Args&... args){
       v.gdims=x.get(); unroller(v, args...);}
 
-    template<typename... Args>
-    void unroller(vparams& v, const TtypeArgument& x, const Args&... args){
-      v.tau=x.get(); unroller(v, args...);}
+    //template<typename... Args>
+    //void unroller(vparams& v, const TtypeArgument& x, const Args&... args){
+    //v.tau=x.get(); unroller(v, args...);}
 
     template<typename... Args>
     void unroller(vparams& v, const cnine::FillArgument& x, const Args&... args){

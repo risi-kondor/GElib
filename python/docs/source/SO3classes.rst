@@ -14,4 +14,3 @@ The core classes in GElib for storing and manipulating SO(3)-equivariant vectors
 
 The library also provides the ``SO3element`` and ``SO3type`` helper classes. 
 
-

@@ -16,7 +16,7 @@
 py::class_<SO3type>(m,"SO3type","Class to store the type of an SO3-vector")
 
   .def(pybind11::init<>(),"")
-  .def(pybind11::init<vector<int> >(),"")
+  .def(pybind11::init<vector<int> (),"")
   .def(pybind11::init<map<int,int> >(),"")
     
   .def("__len__",&SO3type::size)
