@@ -223,6 +223,10 @@ class SO3vecArr:
         assert(list(self.parts.keys())==list(y.parts.keys()))
         return SO3vecArr(*[self.parts[l]+y.parts[l] for l in self.parts.keys()])
 
+    def __mult__(self,y):
+        assert(isinstance(y,SO3weights))
+        return SO3vecArr(list(SO3vecArr_multFn.apply(*(self.parts+y.parts))))
+
     def gather(self,gmap,dim=0):
         """
         Gather the elements of this SO3vecArr into a new SO3vecArr according to the gather_map

@@ -171,6 +171,11 @@ class SO3vec:
         assert(list(self.parts.keys())==list(y.parts.keys()))
         return SO3vec(*[self.parts[l]+y.parts[l] for l in self.parts.keys()])
 
+    def __mul__(self,y):
+        #assert(isinstance(y,SO3weights))
+        #return SO3vec(*list(SO3vec_multFn.apply(*([p for l,p in self.parts.items()]+y.parts))))
+        return SO3vec(*[torch.matmul(p,w) for p,w in zip(self.parts.values(),y.parts)])
+
         
     # ---- Products -----------------------------------------------------------------------------------------
 
@@ -206,6 +211,23 @@ class SO3vec:
 # ----------------------------------------------------------------------------------------------------------
 # ---- Autograd functions -----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------
+
+# not needed?
+class SO3vec_multFn(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx,*args):
+        k=int(len(args)/2)
+        ctx.v=args[0:k]
+        ctx.w=args[k:2*k]
+        R=[]
+        for p,w in zip(ctx.v,ctx.w):
+            R.append(torch.matmul(p,w))
+        return tuple(R)
+        
+    @staticmethod
+    def backward(ctx,*args):
+        pass
 
 
 class SO3vec_CGproductFn(torch.autograd.Function):

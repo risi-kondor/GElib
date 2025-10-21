@@ -11,21 +11,25 @@ import torch
 import gelib_base as gb
 
 
-class SO3type:
+class SO3type(dict):
 
-    def __init__(self,x):
-        if isinstance(x,dict):
-            self.obj=gb.SO3type(x)
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args, **kwargs)
+        # self.dict=x
+        #if isinstance(x,dict):
+        #    self.obj=gb.SO3type(x)
 
 
     # ---- I/O ----------------------------------------------------------------------------------------------
 
 
-    def __repr__(self):
-        return self.obj.__repr__()
+    #def __repr__(self):
+     #   return repr(self.dict)
+        # return self.obj.__repr__()
 
-    def __str__(self):
-        return self.obj.__str__()
+    #def __str__(self):
+    #    return str(self.dict)
+        # return self.obj.__str__()
 
 
 
