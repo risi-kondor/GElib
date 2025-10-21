@@ -16,3 +16,6 @@ u=v*W
 print(u)
 
 
+L=g.SO3linear(tau1,tau2)
+u=L(v)
+print(u)

@@ -223,9 +223,9 @@ class SO3vecArr:
         assert(list(self.parts.keys())==list(y.parts.keys()))
         return SO3vecArr(*[self.parts[l]+y.parts[l] for l in self.parts.keys()])
 
-    def __mult__(self,y):
+    def __mul__(self,y):
         assert(isinstance(y,SO3weights))
-        return SO3vecArr(list(SO3vecArr_multFn.apply(*(self.parts+y.parts))))
+        return SO3vecArr(*[torch.matmul(p,w) for p,w in zip(self.parts.values(),y.parts)])
 
     def gather(self,gmap,dim=0):
         """

@@ -70,3 +70,16 @@ class SO3weights:
             r+=str(x)+"\n"
         return r
     
+
+
+class SO3linear(torch.nn.Module):
+
+    def __init__(self,tau_in,tau_out,device='cpu'):
+        super().__init__()
+        assert(isinstance(tau_in,SO3type))
+        assert(isinstance(tau_out,SO3type))
+        self.W=gelib.SO3weights.randn(tau_in,tau_out,device)
+
+    def forward(self,x):
+        assert(isinstance(x,SO3vec) or isinstance(x,SO3vecArr))
+        return x*self.W
