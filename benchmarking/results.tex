@@ -1,0 +1,100 @@
+\documentclass{article}
+\usepackage{anyfontsize}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\begin{document}
+\section*{CG-product}
+\subsection*{Batch size 1}
+\begin{tikzpicture}\begin{axis}[xlabel={$x$}, ylabel={$y$}, grid=both ]
+\addplot[smooth, color=red, mark=*]
+coordinates {
+(4,72)(8,72)(16,74)(32,73)(64,72)};
+\end{axis}
+\end{tikzpicture}
+\\ \\ 
+k\subsubsection*{$\ell$=3~ $n_c$=8}\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+&2&3&5&7&10&12\\
+\hline
+2&66&63&56&0&0&0\\
+3&62&62&59&0&0&0\\
+5&55&59&60&59&0&0\\
+7&0&0&59&60&58&0\\
+10&0&0&0&57&59&58\\
+12&0&0&0&0&58&59\\
+\hline
+\end{tabular}
+\\ 
+\\ \\ \\ 
+\subsubsection*{$\ell$=3~ $n_c$=32}\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+&2&3&5&7&10&12\\
+\hline
+2&67&64&57&0&0&0\\
+3&63&63&60&0&0&0\\
+5&56&59&61&59&0&0\\
+7&0&0&57&60&58&0\\
+10&0&0&0&57&59&58\\
+12&0&0&0&0&58&59\\
+\hline
+\end{tabular}
+\\ 
+\\ \\ \\ 
+\subsubsection*{$\ell$=7~ $n_c$=8}\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+&2&3&5&7&10&12\\
+\hline
+2&0&0&78&74&0&0\\
+3&0&0&75&73&70&0\\
+5&77&76&75&74&72&71\\
+7&73&74&73&74&73&72\\
+10&0&70&72&73&72&69\\
+12&0&0&70&71&72&73\\
+\hline
+\end{tabular}
+\\ 
+\\ \\ \\ 
+\subsubsection*{$\ell$=7~ $n_c$=32}\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+&2&3&5&7&10&12\\
+\hline
+2&0&0&78&73&0&0\\
+3&0&0&74&73&70&0\\
+5&77&64&75&74&72&70\\
+7&73&74&73&73&72&71\\
+10&0&70&72&72&72&66\\
+12&0&0&70&71&72&72\\
+\hline
+\end{tabular}
+\\ 
+\\ \\ \\ 
+\subsubsection*{$\ell$=12~ $n_c$=8}\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+&2&3&5&7&10&12\\
+\hline
+2&0&0&0&0&80&78\\
+3&0&0&0&0&79&78\\
+5&0&0&0&81&79&78\\
+7&0&0&80&80&79&78\\
+10&79&79&79&78&78&78\\
+12&76&77&77&78&76&77\\
+\hline
+\end{tabular}
+\\ 
+\\ \\ \\ 
+\subsubsection*{$\ell$=12~ $n_c$=32}\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+&2&3&5&7&10&12\\
+\hline
+2&0&0&0&0&79&76\\
+3&0&0&0&0&78&76\\
+5&0&0&0&80&78&75\\
+7&0&0&79&78&76&75\\
+10&79&78&78&77&76&75\\
+12&76&76&77&77&76&76\\
+\hline
+\end{tabular}
+\\ 
+\\ \\ \\ 
+
+ \end{document}

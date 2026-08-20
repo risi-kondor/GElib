@@ -9,6 +9,7 @@ print(P.getl())
 print(P.getn())
 
 A=torch.randn([2,3,4])
+print(A)
 P=g.SO3part.spharm(1,A)
 print(P)
 

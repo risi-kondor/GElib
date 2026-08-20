@@ -38,7 +38,7 @@ class SO3vecArr:
         for x in args:
             assert isinstance(x,torch.Tensor)
             p=SO3partArr(x)
-            self.parts[p.getl()]=x
+            self.parts[p.getl()]=p
             
 
     # ---- Static constructors ------------------------------------------------------------------------------
@@ -222,6 +222,10 @@ class SO3vecArr:
     def __add__(self,y):
         assert(list(self.parts.keys())==list(y.parts.keys()))
         return SO3vecArr(*[self.parts[l]+y.parts[l] for l in self.parts.keys()])
+
+    def __mul__(self,y):
+        assert(isinstance(y,SO3weights))
+        return SO3vecArr(*[torch.matmul(p,w) for p,w in zip(self.parts.values(),y.parts)])
 
     def gather(self,gmap,dim=0):
         """
