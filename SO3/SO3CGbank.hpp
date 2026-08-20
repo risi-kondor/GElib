@@ -30,6 +30,13 @@ namespace GElib{
     unordered_map<SO3CGindex,FTENSOR> coeffsf;
     unordered_map<SO3CGindex,FTENSOR> coeffsf_gpu;
 
+    ~SO3CGbank(){
+      //cout<<"Closing SO3 CGbank"<<endl;
+      //coeffsf.clear();
+      //coeffsf_gpu.clear();
+      //cout<<"SO3 CGbank caches cleared"<<endl;
+    }
+
     template<typename TYPE>
     cnine::TensorView<TYPE>& get(const int l1, const int l2, const int l, const int dev=0){
       SO3CGindex ix(l1,l2,l);
@@ -43,7 +50,8 @@ namespace GElib{
 	if(dev==1){
 	  auto it=coeffsf_gpu.find(ix);
 	  if(it!=coeffsf_gpu.end()) return it->second;
-	  coeffsf_gpu.emplace(ix,FTENSOR(get<float>(l1,l2,l,0),dev));
+	  coeffsf_gpu.emplace(ix,FTENSOR({2*l1+1,2*l2+1},dev));
+	  //coeffsf_gpu.emplace(ix,FTENSOR(get<float>(l1,l2,l,0),dev));
 	  return coeffsf_gpu[ix];
 	}
 	GELIB_ERROR("CG matrix must be on CPU or GPU0.");

@@ -5,11 +5,16 @@ import math
 import time
 
 torch.set_printoptions(sci_mode=False)
-device="cpu"
+device="cuda"
+
+def findb(c):
+    if(c<32):
+        return [1,c]
+    return [int(c/32),32]
+
 
 l1=2
 nc1=10
-
 
 l2=2
 nc2=10
@@ -30,19 +35,21 @@ z=tp(x1,x2)
 #print(z.size())
 #print(z)
 
-for l in [2,3,5,7]:
+for l in [2,3,5,7,9,11,13,15]:
 
-    for nc in [1,4,16,64]:
+    for nc in [1,4,16,64,256]:
 
         rho1=o3.Irreps(str(nc)+"x"+str(l)+"e")
         rho2=o3.Irreps(str(nc)+"x"+str(l)+"e")
-        tp=o3.FullTensorProduct(rho1,rho2)
+        tp=o3.FullTensorProduct(rho1,rho2).to(device)
 
-        x1=rho1.randn(-1)
-        x2=rho2.randn(-1)
+        x1=rho1.randn(-1,device=device)
+        x2=rho2.randn(-1,device=device)
 
-        gx1=g.SO3vec.randn(1,{l:nc})
-        gx2=g.SO3vec.randn(1,{l:nc})
+        [b,c]=findb(nc)
+        print(b,c)
+        gx1=g.SO3vec.randn(b*b,{l:c},device=device)
+        gx2=g.SO3vec.randn(b*b,{l:c},device=device)
     
         niter=100
 
@@ -56,4 +63,4 @@ for l in [2,3,5,7]:
             gz=g.CGproduct(gx1,gx2)
         GElib_time=time.time()-start
 
-        print("nc=",nc," l=",l," E3NN/GElib: ",e3nn_time/GElib_time)
+        print("nc=",nc," l=",l," E3NN/GElib: ",(4*e3nn_time)/GElib_time)
